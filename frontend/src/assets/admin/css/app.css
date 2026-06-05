@@ -1,0 +1,63 @@
+/* =========================================
+   Admin Dashboard — EcomFashion
+   Design System: Urban Luxe Light Theme
+   ========================================= */
+
+/* --- CSS Variables --- */
+:root {
+  --admin-sidebar-bg: #ffffff;
+  --admin-sidebar-width: 220px;
+  --admin-topbar-height: 60px;
+  --admin-bg: #f4f6f9;
+  --admin-text: #1e293b;
+  --admin-text-muted: #64748b;
+  --admin-text-label: #94a3b8;
+  --admin-border: #e2e8f0;
+  --admin-blue: #2563eb;
+  --admin-blue-light: #eff6ff;
+  --admin-blue-dark: #1d4ed8;
+  --admin-active-bg: #2563eb;
+  --admin-active-text: #ffffff;
+  --admin-card-bg: #ffffff;
+  --admin-card-radius: 10px;
+  --admin-card-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+/* --- Global Reset for Admin scope --- */
+.admin-layout * {
+  box-sizing: border-box;
+}
+
+/* --- Scrollbars --- */
+.admin-sidebar-nav::-webkit-scrollbar {
+  width: 3px;
+}
+.admin-sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-sidebar-nav::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 2px;
+}
+
+.admin-content::-webkit-scrollbar {
+  width: 5px;
+}
+.admin-content::-webkit-scrollbar-track {
+  background: #f4f6f9;
+}
+.admin-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+.admin-content::-webkit-scrollbar-thumb:hover {
+  background: #2563eb;
+}
+
+/* --- Shared Card Style --- */
+.admin-card {
+  background: var(--admin-card-bg);
+  border-radius: var(--admin-card-radius);
+  border: 1px solid var(--admin-border);
+  box-shadow: var(--admin-card-shadow);
+}

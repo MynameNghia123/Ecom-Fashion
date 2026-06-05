@@ -1,16 +1,15 @@
 <script setup>
-import ClientLayout from './layouts/client/ClientLayout.vue'
-import Homepage from './views/client/home/Homepage.vue'
+import AdminLayout from './layouts/AdminLayout.vue'
+// import Dashboard from '@/views/admin/dashboard/Dashboard.vue'
 </script>
 
 <template>
-  <ClientLayout>
-    <Homepage />
-  </ClientLayout>
+  <AdminLayout>
+    <Dashboard />
+  </AdminLayout>
 </template>
 
 <style>
-/* Bạn có thể thêm các style toàn cục phụ ở đây nếu cần, hiện tại đang dùng style.css rồi */
 body {
   margin: 0;
   padding: 0;
