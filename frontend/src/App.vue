@@ -1,12 +1,18 @@
 <script setup>
-import AdminLayout from './layouts/AdminLayout.vue'
-// import Dashboard from '@/views/admin/dashboard/Dashboard.vue'
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import ClientLayout from './layouts/client/ClientLayout.vue'
+
+const router = useRouter()
+const isTransparent = computed(() => {
+  return router.currentRoute.value ? router.currentRoute.value.path === '/' : true
+})
 </script>
 
 <template>
-  <AdminLayout>
-    <Dashboard />
-  </AdminLayout>
+  <ClientLayout :is-transparent="isTransparent">
+    <router-view />
+  </ClientLayout>
 </template>
 
 <style>

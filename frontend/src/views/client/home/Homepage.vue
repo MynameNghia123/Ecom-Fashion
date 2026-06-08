@@ -7,7 +7,7 @@
       <!-- Hero Content -->
       <div class="grow flex flex-col justify-center items-center text-center px-5 -mt-[50px]">
         <h2 class="font-title text-[36px] max-md:text-[24px] font-bold mb-0 tracking-[-0.5px]">Xu Hướng Mùa Hè Này</h2>
-        <h1 class="font-title text-[180px] max-lg:text-[120px] max-md:text-[80px] m-[-10px_0_20px_0] font-bold leading-none tracking-[5px] drop-shadow-[2px_4px_10px_rgba(0,0,0,0.1)]">NURFIA</h1>
+        <h1 class="font-title text-[180px] max-lg:text-[120px] max-md:text-[80px] m-[-10px_0_20px_0] font-bold leading-none tracking-[5px] drop-shadow-[2px_4px_10px_rgba(0,0,0,0.1)]">Luxury</h1>
         <p class="font-text text-[16px] max-md:text-[14px] leading-[1.6] max-w-[650px] mx-auto mb-10 font-normal drop-shadow-[1px_1px_3px_rgba(0,0,0,0.3)]">
           Được thiết kế cho những ai trân trọng sự tối giản và mạnh mẽ. Hình dáng đương đại, chi tiết cân đối
           <br>và phong thái tự tin trong mùa hè.

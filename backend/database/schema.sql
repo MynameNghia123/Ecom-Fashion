@@ -1,10 +1,96 @@
+// ============================================================
+// EcomFashion Database Schema (DBML-style)
+// Convention: Laravel snake_case (tables plural, columns snake_case)
+// Relationships: *> = many-to-one (FK), > = one-to-one (FK)
+// ============================================================
+
+// ===================== STAFF & RBAC =====================
+
+Staff {
+	Id integer pk increments unique
+	FullName string
+	Email string unique
+	Password string
+	PhoneNumber string null
+	Avatar string null
+	IsActive boolean default(true)
+	LastLoginAt datetime null
+	CreatedAt datetime
+	UpdatedAt datetime
+	DeletedAt datetime null
+}
+
+Role {
+	Id integer pk increments unique
+	Name string unique
+	Description string null
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+Permission {
+	Id integer pk increments unique
+	Module string
+	Action string
+	// unique(['module', 'action']) — composite unique index
+}
+
+RolePermission {
+	RoleId integer *> Role.Id
+	PermissionId integer *> Permission.Id
+	// pk(['role_id', 'permission_id']) — composite primary key
+}
+
+StaffRole {
+	StaffId integer *> Staff.Id
+	RoleId integer *> Role.Id
+	// pk(['staff_id', 'role_id']) — composite primary key
+}
+
+StaffPermission {
+	StaffId integer *> Staff.Id
+	PermissionId integer *> Permission.Id
+	// pk(['staff_id', 'permission_id']) — composite primary key
+}
+
+// ===================== CUSTOMER =====================
+
+Customer {
+	Id integer pk increments unique
+	FirstName string
+	LastName string
+	Email string unique
+	PhoneNumber string null
+	Password string
+	Status integer default(1)
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+CustomerAddress {
+	Id integer pk increments unique
+	CustomerId integer *> Customer.Id
+	ReceiverName string
+	ReceiverPhone string
+	Province string
+	District string
+	Ward string
+	DetailAddress string
+	IsDefault boolean default(false)
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+// ===================== CATALOG =====================
 
 Category {
 	Id integer pk increments unique
 	Name string
 	Slug string unique
 	ParentId integer null *> Category.Id
-	Description string
+	Description string null
+	CreatedAt datetime
+	UpdatedAt datetime
 }
 
 Product {
@@ -12,69 +98,79 @@ Product {
 	CategoryId integer *> Category.Id
 	Name string
 	Slug string unique
-	Description text
-	IsActive boolean
-	CreatedAt datetime
-	DeletedAt datetime null
-	Brand string
-	ThumbNail string
-	User_Manual string
+	Description text null
+	Brand string null
+	Thumbnail string null
+	UserManual string null
+	IsActive boolean default(true)
 	CreatedByStaffId integer *> Staff.Id
 	UpdatedByStaffId integer null *> Staff.Id
+	CreatedAt datetime
+	UpdatedAt datetime
+	DeletedAt datetime null
+}
+
+ProductImage {
+	Id integer pk increments unique
+	ProductId integer *> Product.Id
+	ProductVariantId integer null *> ProductVariant.Id
+	ImageUrl string
+	AltText string null
+	DisplayOrder integer default(0)
+	IsThumbnail boolean default(false)
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+Attribute {
+	Id integer pk increments unique
+	Name string
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+ProductVariant {
+	Id integer pk increments unique
+	ProductId integer *> Product.Id
+	SKU string unique
+	Price decimal(12,2)
+	SalePrice decimal(12,2) null
+	CostPrice decimal(12,2) null
+	StockQuantity integer default(0)
+	Thumbnail string null
+	IsActive boolean default(true)
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+AttributeValue {
+	Id integer pk increments unique
+	AttributeId integer *> Attribute.Id
+	ProductVariantId integer *> ProductVariant.Id
+	Value string
+	// unique(['attribute_id', 'product_variant_id']) — mỗi variant chỉ có 1 giá trị cho 1 attribute
+}
+
+// ===================== CART =====================
+
+Cart {
+	Id integer pk increments unique
+	CustomerId integer unique > Customer.Id
+	Status string default('active')
+	CreatedAt datetime
+	UpdatedAt datetime
 }
 
 CartItem {
 	Id integer pk increments unique
 	CartId integer *> Cart.Id
-	ProductVariantID integer *> ProductVariant.Id
-	Quantity integer
-	CreatedAt datetime
-}
-
-OrderDetail {
-	Id integer pk increments unique
-	OrderId integer *> Order.Id
 	ProductVariantId integer *> ProductVariant.Id
 	Quantity integer
-	UnitPrice decimal(12,2)
-	CostPrice decimal(12,2)
-	IsReturn boolean
-	ReturnQuantity integer
-	ReturnRequestId integer >* ReturnRequest.Id
-}
-
-Review {
-	Id integer pk increments unique
-	ProductId integer *> Product.Id
-	OrderDetailId integer null *> OrderDetail.Id
-	CustomerId integer *> Customer.Id
-	Rating integer
-	Comment text
 	CreatedAt datetime
+	UpdatedAt datetime
 }
 
-Coupon {
-	Id integer pk increments unique
-	Code string unique
-	DiscountValue decimal(12,2)
-	IsActive boolean
-	Type string
-	PriceMinOrderValue decimal(12,2)
-	MaxUsage integer
-	UsedCount integer
-	ExpiryDate datetime
-	CreatedByStaffId integer *> Staff.Id
-}
-
-Customer {
-	Id integer pk increments unique
-	FirstName string
-	LastName string
-	Email string unique
-	PhoneNumber string
-	Password string
-	Status integer
-}
+// ===================== ORDERS & PAYMENT =====================
 
 Order {
 	Id integer pk increments unique
@@ -85,102 +181,90 @@ Order {
 	ShippingPhone string
 	ShippingAddress string
 	SubTotalAmount decimal(12,2)
-	CouponDiscountAmount decimal(12,2)
-	ShippingFee decimal(12,2)
+	CouponDiscountAmount decimal(12,2) default(0)
+	ShippingFee decimal(12,2) default(0)
 	FinalAmount decimal(12,2)
-	Status string
-	PaymentStatus string
+	Status string default('pending')
+	PaymentMethod string
+	PaymentStatus string default('unpaid')
+	TransactionId string null
 	CreatedAt datetime
+	UpdatedAt datetime
 }
 
-CustomerAddress {
+OrderDetail {
 	Id integer pk increments unique
-	ReceiverName string
-	ReceiverPhone string
-	Province string
-	District string
-	Ward string
-	DetailAddress string
-	IsDefault boolean
-	CustomerId integer *> Customer.Id
-}
-
-ProductImage {
-	Id integer pk increments unique
-	ProductId integer *> Product.Id
-	ImageUrl string
-	AltText string
-	DisplayOrder integer
-	IsThumbnail boolean
-	CreatedAt datetime
-}
-
-Staff {
-	Id integer pk increments unique
-	FullName string
-	Email string unique
-	Password string
-	PhoneNumber string null
-	Avatar string null
-	IsActive boolean
-	LastLoginAt datetime null
-	CreatedAt datetime
-	DeletedAt datetime null
-}
-
-Role {
-	Id integer pk increments unique
-	Name string unique
-	Slug string unique
-	Description string null
-	CreatedAt datetime
-}
-
-RolePermission {
-	RoleId integer *> Role.Id
-	PermissionId integer *> Permission.Id
-}
-
-StaffRole {
-	StaffId integer *> Staff.Id
-	RoleId integer *> Role.Id
-}
-
-StaffPermission {
-	StaffId integer *> Staff.Id
-	PermissionId integer *> Permission.Id
+	OrderId integer *> Order.Id
+	ProductVariantId integer *> ProductVariant.Id
+	Quantity integer
+	UnitPrice decimal(12,2)
+	CostPrice decimal(12,2)
+	IsReturn boolean default(false)
+	ReturnQuantity integer default(0)
+	ReturnRequestId integer null *> ReturnRequest.Id
 }
 
 ReturnRequest {
 	Id integer pk increments unique
-	OrderId integer > Order.Id
+	OrderId integer *> Order.Id
 	Reason text
 	EvidenceImages json null
-	Status string
+	Status string default('pending')
 	RefundAmount decimal(12,2) null
 	ProcessedByStaffId integer null *> Staff.Id
 	CreatedAt datetime
 	UpdatedAt datetime
 }
 
-Banner {
-	Title string
+// ===================== COUPON =====================
+
+Coupon {
 	Id integer pk increments unique
-	ImageUrl string
-	TargetUrl string null
-	Position string
-	DisplayOrder integer
-	IsActive boolean
-	StartDate datetime null
-	EndDate datetime null
+	Code string unique
+	Type string
+	DiscountValue decimal(12,2)
+	PriceMinOrderValue decimal(12,2) default(0)
+	MaxUsage integer
+	UsedCount integer default(0)
+	IsActive boolean default(true)
+	ExpiryDate datetime
+	CreatedByStaffId integer *> Staff.Id
+	CreatedAt datetime
+	UpdatedAt datetime
 }
+
+CustomerCoupon {
+	Id integer pk increments unique
+	CouponId integer *> Coupon.Id
+	CustomerId integer *> Customer.Id
+	UsedAt datetime
+	// unique(['coupon_id', 'customer_id']) — mỗi khách chỉ dùng 1 coupon 1 lần
+}
+
+// ===================== REVIEW =====================
+
+Review {
+	Id integer pk increments unique
+	ProductId integer *> Product.Id
+	OrderDetailId integer null *> OrderDetail.Id
+	CustomerId integer *> Customer.Id
+	Rating integer
+	Comment text null
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+// ===================== WISHLIST =====================
 
 Wishlist {
 	Id integer pk increments unique
 	CustomerId integer *> Customer.Id
 	ProductId integer *> Product.Id
 	CreatedAt datetime
+	// unique(['customer_id', 'product_id']) — mỗi khách chỉ thích 1 sản phẩm 1 lần
 }
+
+// ===================== NOTIFICATION =====================
 
 Notification {
 	Id integer pk increments unique
@@ -188,52 +272,41 @@ Notification {
 	Title string
 	Content text
 	Type string
-	IsRead boolean
-	CreatedAt datetime
-}
-
-Attribute {
-	Id integer pk increments unique
-	Name string
-}
-
-AttributeValue {
-	Id integer pk increments unique
-	AttributeId integer *> Attribute.Id
-	Value string
-	ProductVariantId integer *> ProductVariant.Id
-}
-
-ProductVariant {
-	Id integer pk increments unique
-	ProductId integer *> Product.Id
-	Price decimal(12,2)
-	SalePrice decimal(12,2)
-	CostPrice decimal(12,2) null
-	StockQuantity integer
-	Thumbnail string
-	IsActive boolean
-	SKU string unique
-}
-
-Cart {
-	Id integer pk increments unique
-	CustomerId integer unique > Customer.Id
-	Status string
+	IsRead boolean default(false)
 	CreatedAt datetime
 	UpdatedAt datetime
 }
+
+// ===================== BLOG =====================
 
 Blog {
 	Id integer pk increments unique
 	Name string
 	Slug string unique
-	Description text
-	Status boolean
-	Image string
-	IsActive boolean
+	Description text null
+	Image string null
+	Status boolean default(true)
 	CreatedAt datetime
+	UpdatedAt datetime
 }
+
+// ===================== BANNER =====================
+
+Banner {
+	Id integer pk increments unique
+	Title string
+	ImageUrl string
+	TargetUrl string null
+	Position string
+	DisplayOrder integer default(0)
+	IsActive boolean default(true)
+	StartDate datetime null
+	EndDate datetime null
+	CreatedAt datetime
+	UpdatedAt datetime
+}
+
+// ===================== SUPPLIER & GOODS RECEIPT =====================
 
 Supplier {
 	Id integer pk increments unique
@@ -241,7 +314,7 @@ Supplier {
 	Phone string null
 	Email string null unique
 	Address string null
-	IsActive boolean
+	IsActive boolean default(true)
 	CreatedAt datetime
 	UpdatedAt datetime
 }
@@ -252,8 +325,7 @@ GoodsReceipt {
 	SupplierId integer *> Supplier.Id
 	StaffId integer *> Staff.Id
 	TotalAmountPrice decimal(12,2)
-	Note text null
-	Status string
+	Status string default('pending')
 	CreatedAt datetime
 	UpdatedAt datetime
 }
@@ -266,13 +338,7 @@ GoodsReceiptDetail {
 	ImportPrice decimal(12,2)
 }
 
-Permission {
-	Id integer pk increments unique
-	Module string
-	Action string
-	Name string unique
-	Description string null
-}
+// ===================== SYSTEM =====================
 
 SystemSetting {
 	Key string pk unique
@@ -282,11 +348,3 @@ SystemSetting {
 	UpdatedByStaffId integer null *> Staff.Id
 	UpdatedAt datetime
 }
-
-CustomerCoupon {
-	Id integer pk increments unique
-	CouponId integer *> Coupon.Id
-	CustomerId integer *> Customer.Id
-	UsedAt datetime
-}
-

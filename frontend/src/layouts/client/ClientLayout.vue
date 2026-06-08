@@ -1,6 +1,6 @@
 <template>
   <div class="client-layout">
-    <Header />
+    <Header :is-transparent="isTransparent" />
     <main class="main-content">
       <slot />
     </main>
@@ -11,6 +11,13 @@
 <script setup>
 import Header from '@/components/client/Header.vue'
 import Footer from '@/components/client/Footer.vue'
+
+defineProps({
+  isTransparent: {
+    type: Boolean,
+    default: false
+  }
+})
 </script>
 
 <style scoped>
@@ -25,3 +32,4 @@ import Footer from '@/components/client/Footer.vue'
   flex: 1;
 }
 </style>
+

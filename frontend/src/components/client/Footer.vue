@@ -5,9 +5,9 @@
         <h4 class="font-title text-[15px] font-semibold mb-[25px] mt-0 text-white">Công ty</h4>
         <ul class="list-none p-0 m-0 flex flex-col gap-[15px]">
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Tuyển dụng</a></li>
-          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Về chúng tôi</a></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Về chúng tôi</router-link></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quan hệ nhà đầu tư</a></li>
-          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Thiết bị Nurfia</a></li>
+          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Thiết bị Luxury</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Đánh giá khách hàng</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trách nhiệm xã hội</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Hệ thống cửa hàng</a></li>
@@ -31,10 +31,10 @@
       <div class="flex flex-col">
         <h4 class="font-title text-[15px] font-semibold mb-[25px] mt-0 text-white">Hỗ trợ</h4>
         <ul class="list-none p-0 m-0 flex flex-col gap-[15px]">
-          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Bán hàng trên Nurfia</a></li>
+          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Bán hàng trên Luxury</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Cung cấp dịch vụ</a></li>
-          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Nurfia Doanh nghiệp</a></li>
-          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Ứng dụng Nurfia</a></li>
+          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Luxury Doanh nghiệp</a></li>
+          <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Ứng dụng Luxury</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trở thành đối tác liên kết</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quảng cáo sản phẩm</a></li>
           <li><a href="#" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Hợp tác xuất bản</a></li>
