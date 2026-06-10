@@ -2,17 +2,27 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import ClientLayout from './layouts/client/ClientLayout.vue'
+import AdminLayout from './layouts/AdminLayout.vue'
+import BlankLayout from './layouts/BlankLayout.vue'
 
 const router = useRouter()
+
+const currentLayout = computed(() => {
+  const layout = router.currentRoute.value?.meta?.layout
+  if (layout === 'AdminLayout') return AdminLayout
+  if (layout === 'BlankLayout') return BlankLayout
+  return ClientLayout
+})
+
 const isTransparent = computed(() => {
   return router.currentRoute.value ? router.currentRoute.value.path === '/' : true
 })
 </script>
 
 <template>
-  <ClientLayout :is-transparent="isTransparent">
+  <component :is="currentLayout" :is-transparent="isTransparent">
     <router-view />
-  </ClientLayout>
+  </component>
 </template>
 
 <style>
