@@ -221,11 +221,7 @@ const handleSignIn = () => {
 </template>
 
 <style scoped>
-.signin-container {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-}
-
-/* Keyframes for shake animation on errors */
+/* Keyframes for shake animation on errors — kept here since Tailwind cannot define custom keyframes without config */
 @keyframes shake {
   0%, 100% { transform: translateX(0); }
   20%, 60% { transform: translateX(-6px); }

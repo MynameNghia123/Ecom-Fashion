@@ -2,14 +2,8 @@
   <aside class="w-[260px] min-h-screen bg-white border-r border-[#eef2f7] flex flex-col shrink-0 select-none">
     
     <!-- Logo Header -->
-    <div class="px-6 py-5 flex items-center gap-3 border-b border-[#f8fafc] mb-2">
-      <div class="w-8 h-8 rounded-lg bg-[#0258cb] flex items-center justify-center text-white font-bold text-base shadow-sm">
-        EF
-      </div>
-      <div>
-        <h2 class="text-sm font-extrabold text-slate-800 tracking-wide uppercase leading-tight">EcomFashion</h2>
-        <span class="text-[9px] font-semibold text-slate-400 uppercase tracking-widest leading-none">Admin Area</span>
-      </div>
+    <div class="h-16 px-6 flex items-center border-b border-[#eef2f7] shrink-0">
+      <span class="text-lg font-bold text-[#0258cb] tracking-wide">BFD Admin</span>
     </div>
 
     <!-- Navigation Scroll Area -->
@@ -18,8 +12,8 @@
       <!-- 1. Dashboard Link -->
       <router-link 
         to="/admin/dashboard" 
-        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-l-[3px] border-transparent rounded-r-lg transition-all"
-        active-class="active-menu-link"
+        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-l-[3px] border-transparent rounded-r-lg transition-all no-underline"
+        active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb] [&_svg]:!text-[#0258cb]"
       >
         <!-- Dashboard Grid Icon -->
         <svg class="w-5 h-5 text-slate-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -43,13 +37,22 @@
           <span>Quản lý sản phẩm</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/categories" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/categories"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent rounded-r-2 transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Danh mục
           </router-link>
-          <router-link to="/admin/products" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/products"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent rounded-r-2 transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Sản phẩm và biến thể
           </router-link>
-          <router-link to="/admin/product-attributes" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/product-attributes"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent rounded-r-2 transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Thuộc tính sản phẩm
           </router-link>
         </div>
@@ -67,10 +70,16 @@
           <span>Quản lý bán hàng</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/orders" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/orders"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Đơn hàng
           </router-link>
-          <router-link to="/admin/return-requests" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/return-requests"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Yêu cầu đổi trả
           </router-link>
         </div>
@@ -88,10 +97,16 @@
           <span>Quản lý kho</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/suppliers" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/suppliers"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Nhà cung cấp
           </router-link>
-          <router-link to="/admin/warehouse-receipts" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/warehouse-receipts"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Phiếu nhập kho
           </router-link>
         </div>
@@ -110,10 +125,16 @@
           <span>Khách hàng & Đánh giá</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/customers" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/customers"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Danh sách khách hàng
           </router-link>
-          <router-link to="/admin/reviews" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/reviews"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Quản lý Đánh giá
           </router-link>
         </div>
@@ -131,10 +152,16 @@
           <span>Tiếp thị</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/discounts" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/discounts"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Mã giảm giá
           </router-link>
-          <router-link to="/admin/banners" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/banners"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Banner quảng cáo
           </router-link>
         </div>
@@ -154,7 +181,10 @@
           <span>Quản lý nội dung</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/blog" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/blog"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Blog
           </router-link>
         </div>
@@ -172,10 +202,16 @@
           <span>Phân quyền & Nhân sự</span>
         </div>
         <div class="space-y-0.5">
-          <router-link to="/admin/staff-accounts" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/staff-accounts"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Tài khoản nhân viên
           </router-link>
-          <router-link to="/admin/roles-permissions" class="nav-sub-link" active-class="active-sub-link">
+          <router-link to="/admin/roles-permissions"
+            class="block pl-[44px] pr-4 py-2 text-[13px] font-medium text-slate-500 border-l-[3px] border-transparent transition-all duration-150 no-underline hover:text-slate-800 hover:bg-slate-50 rounded-r-lg"
+            active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb]"
+          >
             Vai trò & Quyền hạn
           </router-link>
         </div>
@@ -184,8 +220,8 @@
       <!-- 9. Cấu hình hệ thống Link -->
       <router-link 
         to="/admin/settings" 
-        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-l-[3px] border-transparent rounded-r-lg transition-all"
-        active-class="active-menu-link"
+        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-l-[3px] border-transparent rounded-r-lg transition-all no-underline"
+        active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb] [&_svg]:!text-[#0258cb]"
       >
         <!-- Gear Settings Icon -->
         <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -200,7 +236,7 @@
 </template>
 
 <style scoped>
-/* Scrollbar styling for navigation list */
+/* Scrollbar pseudo-selectors — cannot be expressed in Tailwind utilities */
 .admin-sidebar-nav::-webkit-scrollbar {
   width: 4px;
 }
@@ -213,44 +249,5 @@
 }
 .admin-sidebar-nav::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
-}
-
-/* Custom class for normal child sub-links */
-.nav-sub-link {
-  display: block;
-  padding-left: 44px; /* Align perfectly under header text (pl-3 = 12px + icon w-5 = 20px + gap-3 = 12px => 44px) */
-  padding-right: 16px;
-  padding-top: 8px;
-  padding-bottom: 8px;
-  font-size: 13px;
-  font-weight: 500;
-  color: #64748b; /* text-slate-500 */
-  border-left: 3px solid transparent;
-  border-radius: 0 8px 8px 0; /* Right rounded corners to match active design */
-  transition: all 0.15s ease-in-out;
-  text-decoration: none;
-}
-.nav-sub-link:hover {
-  color: #1e293b; /* text-slate-800 */
-  background-color: #f8fafc; /* soft background hover state */
-}
-
-/* Custom class for active child sub-links */
-.active-sub-link {
-  background-color: #eff6ff !important; /* soft blue */
-  color: #0258cb !important; /* vibrant blue */
-  font-weight: 600 !important;
-  border-left: 3px solid #0258cb !important;
-}
-
-/* Custom class for active main menu links (Dashboard / Settings) */
-.active-menu-link {
-  background-color: #eff6ff !important;
-  color: #0258cb !important;
-  font-weight: 600 !important;
-  border-left: 3px solid #0258cb !important;
-}
-.active-menu-link svg {
-  color: #0258cb !important;
 }
 </style>
