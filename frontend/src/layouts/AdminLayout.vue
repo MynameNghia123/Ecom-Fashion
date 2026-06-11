@@ -76,26 +76,6 @@
 
       <!-- Page Content -->
       <main class="flex-1 p-6 px-7 overflow-y-auto admin-content">
-        <!-- Breadcrumbs Trail -->
-        <div class="flex items-center gap-1.5 text-xs font-semibold select-none mb-4">
-          <template v-for="(crumb, idx) in breadcrumbs" :key="crumb.path">
-            <router-link
-              :to="crumb.path"
-              class="text-[12px] text-slate-500 no-underline font-medium transition-colors duration-150 hover:text-slate-800 last:text-[#0258cb] last:font-semibold last:pointer-events-none"
-            >{{ crumb.name }}</router-link>
-            <svg
-              v-if="idx < breadcrumbs.length - 1"
-              class="w-3.5 h-3.5 text-slate-400"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              viewBox="0 0 24 24"
-            >
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
-          </template>
-        </div>
-
         <slot />
       </main>
 
@@ -104,60 +84,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
 import Sidebar from '@/components/admin/layout/Sidebar.vue'
-
-const route = useRoute()
 
 const avatarLoaded = ref(true)
 const handleAvatarError = () => {
   avatarLoaded.value = false
 }
-
-const breadcrumbs = computed(() => {
-  const path = route.path
-  if (!path) return [{ name: 'Dashboard', path: '/admin/dashboard' }]
-  
-  const parts = path.split('/').filter(Boolean)
-  const list = []
-  
-  let currentPath = ''
-  parts.forEach((part) => {
-    currentPath += `/${part}`
-    let name = part
-    
-    if (part === 'admin') name = 'Dashboard'
-    else if (part === 'products') name = 'Sản phẩm & Biến thể'
-    else if (part === 'categories') name = 'Danh mục'
-    else if (part === 'product-attributes') name = 'Thuộc tính sản phẩm'
-    else if (part === 'orders') name = 'Đơn hàng'
-    else if (part === 'return-requests') name = 'Yêu cầu đổi trả'
-    else if (part === 'suppliers') name = 'Nhà cung cấp'
-    else if (part === 'warehouse-receipts') name = 'Phiếu nhập kho'
-    else if (part === 'customers') name = 'Danh sách khách hàng'
-    else if (part === 'reviews') name = 'Quản lý Đánh giá'
-    else if (part === 'discounts') name = 'Mã giảm giá'
-    else if (part === 'banners') name = 'Banner quảng cáo'
-    else if (part === 'blog') name = 'Blog'
-    else if (part === 'staff-accounts') name = 'Tài khoản nhân viên'
-    else if (part === 'roles-permissions') name = 'Vai trò & Quyền hạn'
-    else if (part === 'settings') name = 'Cấu hình hệ thống'
-    else if (part === 'dashboard') return // Skip duplicate
-    
-    const displayName = name.charAt(0).toUpperCase() + name.slice(1)
-    
-    list.push({
-      name: displayName,
-      path: currentPath
-    })
-  })
-  
-  if (list.length === 0) {
-    return [{ name: 'Dashboard', path: '/admin/dashboard' }]
-  }
-  return list
-})
 </script>
 
 <style>
