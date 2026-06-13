@@ -28,10 +28,12 @@ export const useAttributeStore = defineStore('attribute', () => {
         per_page: meta.value.per_page,
         ...params,
       })
+      // res.data.success === true
       attributes.value = res.data.data
       meta.value = res.data.meta
     } catch (e) {
-      error.value = e.response?.data?.message || 'Lỗi khi tải danh sách thuộc tính.'
+      // e.message đã được chuẩn hóa bởi http interceptor
+      error.value = e.message
     } finally {
       loading.value = false
     }
@@ -40,37 +42,40 @@ export const useAttributeStore = defineStore('attribute', () => {
   /**
    * Thêm thuộc tính mới
    * @param {string} name
-   * @returns {Promise<{ success: boolean, message: string }>}
+   * @returns {Promise<{ success: boolean, data: object, message: string }>}
    */
   async function createAttribute(name) {
     const res = await attributeService.create({ name })
     // Reload trang hiện tại để cập nhật danh sách
     await fetchAttributes({ page: meta.value.current_page })
-    return res.data
+    return res.data // { success: true, data: {...}, message: '...' }
   }
 
   /**
    * Cập nhật tên thuộc tính
    * @param {number} id
    * @param {string} name
+   * @returns {Promise<{ success: boolean, data: object, message: string }>}
    */
   async function updateAttribute(id, name) {
     const res = await attributeService.update(id, { name })
     await fetchAttributes({ page: meta.value.current_page })
-    return res.data
+    return res.data // { success: true, data: {...}, message: '...' }
   }
 
   /**
    * Xóa thuộc tính
    * @param {number} id
+   * @returns {Promise<{ success: boolean, message: string }>}
    */
   async function deleteAttribute(id) {
-    await attributeService.delete(id)
+    const res = await attributeService.delete(id)
     // Nếu xóa hết trang cuối thì về trang trước
     const newPage = attributes.value.length === 1 && meta.value.current_page > 1
       ? meta.value.current_page - 1
       : meta.value.current_page
     await fetchAttributes({ page: newPage })
+    return res.data // { success: true, message: '...' }
   }
 
   return {
@@ -86,3 +91,4 @@ export const useAttributeStore = defineStore('attribute', () => {
     deleteAttribute,
   }
 })
+

@@ -4,7 +4,7 @@ namespace App\Services\Admin\Interfaces;
 
 use App\Models\Attribute;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-
+use \Illuminate\Database\Eloquent\Model;
 /**
  * Attribute Service Interface — extends Base, dùng return type cụ thể.
  */
@@ -29,5 +29,5 @@ interface AttributeServiceInterface extends BaseServiceInterface
      *
      * @param array{ name: string } $data
      */
-    public function update(\Illuminate\Database\Eloquent\Model $model, array $data): Attribute;
+    public function update(Model $model, array $data): Attribute;
 }

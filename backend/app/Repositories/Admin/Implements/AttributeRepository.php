@@ -21,7 +21,7 @@ class AttributeRepository implements AttributeRepositoryInterface
         $query = $this->model->newQuery();
 
         if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+            $query->where('name', 'like',  $filters['search'] . '%');
         }
 
         return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);

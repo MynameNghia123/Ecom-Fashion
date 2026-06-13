@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttributeController;
+use App\Http\Controllers\Admin\CategoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +13,7 @@ use App\Http\Controllers\Admin\AttributeController;
 // Admin routes (thêm middleware auth:sanctum khi hoàn thiện auth)
 Route::prefix('admin')->group(function () {
     Route::apiResource('attributes', AttributeController::class);
+    Route::apiResource('categories', CategoryController::class);
 });
 //Route::get('/attributes', [AttributeController::class, 'index']);
 //Route::post('/attributes', [AttributeController::class, 'store']);
