@@ -86,6 +86,7 @@ Cấu hình frontend hiện tại:
 VITE_APP_NAME=EcomFashion
 VITE_API_BASE_URL=http://localhost:8000
 VITE_DEV_SERVER_PORT=5173
+VITE_API_URL=http://localhost:8000/api
 ```
 
 ## Cách Khởi Động Dự Án
