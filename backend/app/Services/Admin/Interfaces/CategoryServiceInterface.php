@@ -27,5 +27,12 @@ interface CategoryServiceInterface extends BaseServiceInterface
      * @param array{ name: string, parent_id?: int } $data
      */
     public function update(Model $model, array $data): Category;
+
+    /**
+     * Lấy toàn bộ danh mục không phân trang.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getAll();
 }
 ?>

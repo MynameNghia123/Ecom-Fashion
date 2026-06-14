@@ -92,29 +92,6 @@
             class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
           />
         </div>
-
-        <!-- Filter theo parent_id -->
-        <div class="relative">
-          <select
-            id="select-filter-parent"
-            v-model="filterParentId"
-            @change="onFilterParentChange"
-            class="appearance-none pl-4 pr-10 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer"
-          >
-            <option value="">— Tất cả danh mục —</option>
-            <option value="none">— Chỉ danh mục gốc —</option>
-            <option
-              v-for="parent in filterParents"
-              :key="parent.id"
-              :value="parent.id"
-            >
-              {{ parent.name }}
-            </option>
-          </select>
-          <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-          </span>
-        </div>
       </div>
 
       <!-- Table -->
@@ -496,15 +473,14 @@ const getCategoryName = (id) => {
   return cat ? cat.name : `#${id}`
 }
 
-// ─── Search, Filter & Pagination ─────────────────────────────────────────────
+// ─── Search & Pagination ─────────────────────────────────────────────────────
 const searchQuery = ref('')
-const filterParentId = ref('')
 const filterParents = ref([])
 let searchTimer = null
 
 const fetchFilterParents = async () => {
   try {
-    const res = await categoryService.getAll({ parent_id: 'none', per_page: 100 })
+    const res = await categoryService.getParents()
     filterParents.value = res.data.data
   } catch (e) {
     console.error('Không thể tải danh sách danh mục cha:', e)
@@ -514,22 +490,18 @@ const fetchFilterParents = async () => {
 const onSearch = () => {
   clearTimeout(searchTimer)
   searchTimer = setTimeout(() => {
-    categoryStore.fetchCategories({ search: searchQuery.value, page: 1, parent_id: filterParentId.value })
+    categoryStore.fetchCategories({ search: searchQuery.value, page: 1 })
   }, 400)
-}
-
-const onFilterParentChange = () => {
-  categoryStore.fetchCategories({ search: searchQuery.value, page: 1, parent_id: filterParentId.value })
 }
 
 const goToPage = (page) => {
   if (page < 1 || page > categoryStore.meta.last_page) return
-  categoryStore.fetchCategories({ search: searchQuery.value, page, parent_id: filterParentId.value })
+  categoryStore.fetchCategories({ search: searchQuery.value, page })
 }
 
 const handlePerPageChange = (newPerPage) => {
   categoryStore.meta.per_page = newPerPage
-  categoryStore.fetchCategories({ search: searchQuery.value, page: 1, parent_id: filterParentId.value })
+  categoryStore.fetchCategories({ search: searchQuery.value, page: 1 })
 }
 
 

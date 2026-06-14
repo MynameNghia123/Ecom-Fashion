@@ -33,4 +33,9 @@ class CategoryService implements CategoryServiceInterface
     {
         $this->categoryRepository->delete($model);
     }
+
+    public function getAll()
+    {
+        return $this->categoryRepository->getAll();
+    }
 }

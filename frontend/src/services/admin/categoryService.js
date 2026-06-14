@@ -12,6 +12,13 @@ export const categoryService = {
   },
 
   /**
+   * Lấy danh sách các danh mục cha (gốc) không phân trang
+   */
+  getParents() {
+    return http.get(`${BASE}/parents`)
+  },
+
+  /**
    * Lấy chi tiết một danh mục
    * @param {number} id
    */
