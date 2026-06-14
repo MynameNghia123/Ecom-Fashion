@@ -138,6 +138,7 @@
       <Pagination
         :current-page="store.meta.current_page"
         :per-page="store.meta.per_page"
+        @update:per-page="handlePerPageChange"
         :total="store.meta.total"
         :last-page="store.meta.last_page"
         :loading="store.loading"
@@ -267,9 +268,14 @@ const handlePageChange = (newPage) => {
   store.fetchAttributes({ search: searchQuery.value, page: newPage })
 }
 
+const handlePerPageChange = (newPerPage) => {
+  store.meta.per_page = newPerPage
+  store.fetchAttributes({ search: searchQuery.value, page: 1 })
+}
+
 // ======== Mount: load first page ========
 onMounted(() => {
-  store.fetchAttributes({ page: 1, per_page: 4 })
+  store.fetchAttributes({ page: 1, per_page: store.meta.per_page })
 })
 
 // ======== Shared submit state ========

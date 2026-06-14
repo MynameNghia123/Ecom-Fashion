@@ -171,22 +171,13 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex items-center justify-between px-5 py-4 border-t border-slate-100 flex-wrap gap-3">
-        <p class="text-xs text-slate-500">
-          Hiển thị <span class="font-semibold text-slate-700">{{ paginationFrom }}–{{ paginationTo }}</span> trên <span class="font-semibold text-slate-700">{{ filteredProducts.length }}</span> trang thiết bị
-        </p>
-        <div class="flex items-center gap-1">
-          <button @click="currentPage--" :disabled="currentPage === 1" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all disabled:cursor-not-allowed">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
-          </button>
-          <button v-for="page in displayedPages" :key="page" @click="page !== '...' && (currentPage = page)"
-            :class="['w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold transition-all',
-              page === currentPage ? 'bg-[#0258cb] text-white border border-[#0258cb]' : page === '...' ? 'text-slate-400 cursor-default border border-transparent' : 'border border-slate-200 text-slate-600 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50']"
-          >{{ page }}</button>
-          <button @click="currentPage++" :disabled="currentPage === totalPages" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all disabled:cursor-not-allowed">
-            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          </button>
-        </div>
+      <div class="px-5 py-4 border-t border-slate-100">
+        <Pagination
+          v-model:currentPage="currentPage"
+          v-model:perPage="pageSize"
+          :total="filteredProducts.length"
+          :lastPage="totalPages"
+        />
       </div>
     </div>
 
@@ -600,6 +591,7 @@
 <script setup>
 import { ref, computed, reactive, watch } from 'vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
+import Pagination from '@/components/admin/Pagination.vue'
 
 // ======== Category options ========
 const categoryOptions = ['Điện tử', 'Thời trang', 'Nhà cửa', 'Thể thao', 'Mỹ phẩm', 'Laptop & Máy tính']
@@ -680,24 +672,12 @@ const filteredProducts = computed(() => products.value.filter(p => {
 
 // ======== Pagination ========
 const currentPage = ref(1)
-const pageSize = 5
+const pageSize = ref(10)
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredProducts.value.length / pageSize)))
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredProducts.value.length / pageSize.value)))
 const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  return filteredProducts.value.slice(start, start + pageSize)
-})
-const paginationFrom = computed(() => Math.min((currentPage.value - 1) * pageSize + 1, filteredProducts.value.length))
-const paginationTo = computed(() => Math.min(currentPage.value * pageSize, filteredProducts.value.length))
-const displayedPages = computed(() => {
-  const total = totalPages.value, cur = currentPage.value
-  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
-  const pages = [1]
-  if (cur > 3) pages.push('...')
-  for (let i = Math.max(2, cur - 1); i <= Math.min(total - 1, cur + 1); i++) pages.push(i)
-  if (cur < total - 2) pages.push('...')
-  pages.push(total)
-  return pages
+  const start = (currentPage.value - 1) * pageSize.value
+  return filteredProducts.value.slice(start, start + pageSize.value)
 })
 
 watch(filteredProducts, () => { if (currentPage.value > totalPages.value) currentPage.value = 1 })

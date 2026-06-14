@@ -1,13 +1,36 @@
 <template>
-  <div class="flex items-center justify-between flex-wrap gap-3">
-    <!-- Info Text -->
-    <p class="text-xs text-slate-500">
-      Hiển thị
-      <span class="font-semibold text-slate-700">{{ paginationFrom }}-{{ paginationTo }}</span>
-      trong số
-      <span class="font-semibold text-slate-700">{{ total }}</span>
-      mục
-    </p>
+  <div class="flex items-center justify-between flex-wrap gap-3 w-full">
+    <!-- Info Text & Per Page Selector -->
+    <div class="flex items-center gap-3 flex-wrap">
+      <p class="text-xs text-slate-500">
+        Hiển thị
+        <span class="font-semibold text-slate-700">{{ paginationFrom }}-{{ paginationTo }}</span>
+        trong số
+        <span class="font-semibold text-slate-700">{{ total }}</span>
+        mục
+      </p>
+
+      <!-- Per Page Selector -->
+      <div class="relative flex items-center gap-1.5 text-xs text-slate-500">
+        <span class="text-slate-300">·</span>
+        <select
+          :value="perPage"
+          @change="onPerPageChange"
+          :disabled="loading"
+          class="appearance-none pl-2.5 pr-7 py-1.5 border border-slate-200 rounded-lg text-slate-600 bg-white hover:border-[#0258cb] focus:border-[#0258cb] focus:ring-2 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer font-medium"
+        >
+          <option :value="4">4 / trang</option>
+          <option :value="10">10 / trang</option>
+          <option :value="25">25 / trang</option>
+          <option :value="50">50 / trang</option>
+        </select>
+        <span class="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-slate-400">
+          <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </span>
+      </div>
+    </div>
 
     <!-- Pagination Controls -->
     <div class="flex items-center gap-1">
@@ -82,7 +105,14 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:currentPage'])
+const emit = defineEmits(['update:currentPage', 'update:perPage'])
+
+// ========== Events ==========
+const onPerPageChange = (event) => {
+  const newPerPage = parseInt(event.target.value, 10)
+  emit('update:perPage', newPerPage)
+  emit('update:currentPage', 1)
+}
 
 // ========== Computed ==========
 const paginationFrom = computed(() => {

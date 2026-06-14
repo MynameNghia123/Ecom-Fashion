@@ -21,6 +21,14 @@ class CategoryRepository implements CategoryRepositoryInterface
             $query->where('name', 'like', $filters['search'] . '%');
         }
 
+        if (isset($filters['parent_id']) && $filters['parent_id'] !== '') {
+            if ($filters['parent_id'] === 'null' || $filters['parent_id'] === 'none' || $filters['parent_id'] === '0') {
+                $query->whereNull('parent_id');
+            } else {
+                $query->where('parent_id', $filters['parent_id']);
+            }
+        }
+
         return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);
     }
     public function findById(int $id): ?Category

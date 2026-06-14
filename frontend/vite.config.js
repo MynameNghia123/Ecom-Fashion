@@ -21,4 +21,12 @@ export default defineConfig({
       '@errors': fileURLToPath(new URL('./src/views/errors', import.meta.url)),
     },
   },
+  server: {
+    host: '0.0.0.0',
+    port: 5173,
+    strictPort: true,
+    watch: {
+      usePolling: true,
+    },
+  },
 })

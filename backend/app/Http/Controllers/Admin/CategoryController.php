@@ -18,8 +18,9 @@ class CategoryController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $paginator = $this->categoryService->getList([
-            'search'   => $request->query('search'),
-            'per_page' => (int) $request->query('per_page', 10),
+            'search'    => $request->query('search'),
+            'parent_id' => $request->query('parent_id'),
+            'per_page'  => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
