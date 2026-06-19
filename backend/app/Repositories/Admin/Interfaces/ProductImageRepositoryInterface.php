@@ -20,6 +20,8 @@ interface ProductImageRepositoryInterface
      */
     public function create(array $data): ProductImage;
 
+    public function insertMany(array $data) : bool;
+
     /**
      * {@inheritdoc}
      *

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('thumbnail')->nullable();
             $table->string('user_manual')->nullable();
             $table->boolean('is_active')->default(true);
-            $table->foreignId('created_by_staff_id')->constrained('staff');
+            $table->foreignId('created_by_staff_id')->nullable()->constrained('staff');
             $table->foreignId('updated_by_staff_id')->nullable()->constrained('staff');
             $table->timestamps();
             $table->softDeletes();

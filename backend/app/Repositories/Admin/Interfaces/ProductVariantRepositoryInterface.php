@@ -26,4 +26,6 @@ interface ProductVariantRepositoryInterface
      * @param array{ product_id: int, attribute_value_ids: array<int>, price: float, stock: int } $data
      */
     public function update(\Illuminate\Database\Eloquent\Model $model, array $data): ProductVariant;
+
+    public function delete(\Illuminate\Database\Eloquent\Model $model): void;
 }   

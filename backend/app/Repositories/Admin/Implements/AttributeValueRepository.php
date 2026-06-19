@@ -1,8 +1,8 @@
 <?php
-namespace App\Repositories\Admin\Interfaces;
+namespace App\Repositories\Admin\Implements;
 
 use App\Models\AttributeValue;
-use App\Repositories\Admin\Interfaces\AtributeValueRepositoryInterface;
+use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
 use Illuminate\Database\Eloquent\Model;
 
 class AttributeValueRepository implements AttributeValueRepositoryInterface
@@ -45,4 +45,10 @@ class AttributeValueRepository implements AttributeValueRepositoryInterface
         $model->delete();
     }
 
+    public function insertMany(array $data) : bool
+    {
+        if (empty($data)) return false;
+        
+        return $this->model->insert($data);
+    }
 }

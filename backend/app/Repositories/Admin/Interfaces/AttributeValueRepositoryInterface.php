@@ -9,6 +9,7 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
  */
 interface AttributeValueRepositoryInterface 
 {
+    public function insertMany(array $data): bool;
     /**
      * {@inheritdoc}
      */

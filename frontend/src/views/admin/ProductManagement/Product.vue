@@ -186,7 +186,7 @@
       <Transition name="modal-fade">
         <div v-if="showViewModal" class="fixed inset-0 z-[9998] flex items-center justify-center p-4" @click.self="showViewModal = false">
           <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[860px] max-h-[90vh] flex flex-col animate-modal-in">
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[1080px] max-h-[90vh] flex flex-col animate-modal-in">
             <!-- Header -->
             <div class="flex items-center justify-between px-7 pt-5 pb-4 border-b border-slate-100 shrink-0">
               <div class="flex items-center gap-3">
@@ -280,9 +280,10 @@
                       <tr class="bg-slate-50 border-y border-slate-200">
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Ảnh</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">SKU</th>
-                        <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá bán</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Tên biến thể</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá vốn</th>
+                        <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá bán</th>
+                        <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá KM</th>
                         <th class="py-2.5 px-3 text-center text-xs font-bold text-slate-500 uppercase">Tồn kho</th>
                         <th class="py-2.5 px-3 text-center text-xs font-bold text-slate-500 uppercase">Kích hoạt</th>
                       </tr>
@@ -296,9 +297,15 @@
                           </div>
                         </td>
                         <td class="py-3 px-3 font-mono text-xs text-slate-700 font-semibold">{{ v.sku }}</td>
-                        <td class="py-3 px-3 text-sm font-semibold text-slate-800">{{ formatPrice(v.salePrice) }}</td>
                         <td class="py-3 px-3 text-sm text-[#0258cb] font-medium">{{ v.name }}</td>
                         <td class="py-3 px-3 text-sm text-slate-600">{{ formatPrice(v.costPrice) }}</td>
+                        <td class="py-3 px-3 text-sm font-semibold text-slate-800">{{ formatPrice(v.salePrice) }}</td>
+                        <td class="py-3 px-3">
+                          <span v-if="v.promotionPrice" class="inline-block text-xs font-semibold text-pink-600 bg-pink-50 border border-pink-200 px-2 py-0.5 rounded-lg">
+                            {{ formatPrice(v.promotionPrice) }}
+                          </span>
+                          <span v-else class="text-slate-400 text-sm">—</span>
+                        </td>
                         <td class="py-3 px-3 text-center font-bold" :class="v.stock < 20 ? 'text-red-500' : 'text-slate-800'">{{ v.stock }}</td>
                         <td class="py-3 px-3 text-center">
                           <span :class="v.active ? 'bg-emerald-50 text-emerald-600 border-emerald-200' : 'bg-slate-100 text-slate-400 border-slate-200'"
@@ -337,7 +344,7 @@
       <Transition name="modal-fade">
         <div v-if="showFormModal" class="fixed inset-0 z-[9998] flex items-center justify-center p-4" @click.self="closeFormModal">
           <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[860px] max-h-[92vh] flex flex-col animate-modal-in">
+          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[1080px] max-h-[92vh] flex flex-col animate-modal-in">
 
             <!-- Modal Header -->
             <div class="flex items-center justify-between px-7 pt-5 pb-4 border-b border-slate-100 shrink-0">
@@ -516,6 +523,7 @@
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">SKU</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá vốn (đ)</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá bán (đ)</th>
+                        <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Giá KM (đ)</th>
                         <th class="py-2.5 px-3 text-left text-xs font-bold text-slate-500 uppercase">Tồn kho</th>
                         <th class="py-2.5 px-3 text-center text-xs font-bold text-slate-500 uppercase">Hoạt động</th>
                       </tr>
@@ -540,6 +548,10 @@
                         <td class="py-2.5 px-3">
                           <input v-model.number="v.salePrice" type="number" min="0" placeholder="0"
                             class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:border-[#0258cb] focus:outline-none transition-all text-right" />
+                        </td>
+                        <td class="py-2.5 px-3">
+                          <input v-model.number="v.promotionPrice" type="number" min="0" placeholder="0"
+                            class="w-full px-2.5 py-1.5 text-xs border border-pink-200 rounded-lg bg-pink-50 focus:border-pink-400 focus:outline-none transition-all text-right placeholder-pink-300" />
                         </td>
                         <td class="py-2.5 px-3">
                           <input v-model.number="v.stock" type="number" min="0" placeholder="0"
@@ -767,7 +779,7 @@ const regenerateVariants = () => {
   const existingMap = Object.fromEntries(form.variants.map(v => [v.name, v]))
   form.variants = combinations.map(combo => {
     const name = combo.join(' / ')
-    return existingMap[name] || { name, sku: '', costPrice: 0, salePrice: 0, stock: 0, active: true, image: '' }
+    return existingMap[name] || { name, sku: '', costPrice: 0, salePrice: 0, promotionPrice: 0, stock: 0, active: true, image: '' }
   })
 }
 

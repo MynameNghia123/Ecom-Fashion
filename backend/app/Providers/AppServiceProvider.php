@@ -8,10 +8,25 @@ use App\Services\Admin\Implements\AttributeService;
 use App\Services\Admin\Interfaces\AttributeServiceInterface;
 
 use App\Repositories\Admin\Implements\CategoryRepository;
+use App\Repositories\Admin\Implements\ProductImageRepository;
+use App\Repositories\Admin\Implements\ProductRepository;
+use App\Repositories\Admin\Implements\ProductVariantRepository;
+use App\Repositories\Admin\Implements\AttributeValueRepository;  // ← fix: Implements, không phải Interfaces
+use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
+use App\Repositories\Admin\Interfaces\ProductImageRepositoryInterface;
+use App\Repositories\Admin\Interfaces\ProductRepositoryInterface;
+use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
+use App\Services\Admin\Implements\AttributeValueService;
 use App\Services\Admin\Implements\CategoryService;
+use App\Services\Admin\Implements\ProductImageService;
+use App\Services\Admin\Implements\ProductService;
+use App\Services\Admin\Implements\ProductVariantService;
+use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
-
+use App\Services\Admin\Interfaces\ProductImageServiceInterface;
+use App\Services\Admin\Interfaces\ProductServiceInterface;
+use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -28,10 +43,30 @@ class AppServiceProvider extends ServiceProvider
             AttributeRepositoryInterface::class,
             AttributeRepository::class,
         );
+        // Product
+        $this->app->bind(
+            ProductRepositoryInterface::class,
+            ProductRepository::class,
+        );
+        // ProductImage
+        $this->app->bind(
+            ProductImageRepositoryInterface::class,
+            ProductImageRepository::class,
+        );
+        // ProductVariant
+        $this->app->bind(
+            ProductVariantRepositoryInterface::class,
+            ProductVariantRepository::class,
+        );
+        // AttributeValue
+        $this->app->bind(
+            AttributeValueRepositoryInterface::class,
+            AttributeValueRepository::class,
+        );
         // Category
         $this->app->bind(
             CategoryRepositoryInterface::class,
-            CategoryRepository::class
+            CategoryRepository::class,
         );
 
         // ── Services ──────────────────────────────────────────────────────
@@ -40,10 +75,30 @@ class AppServiceProvider extends ServiceProvider
             AttributeServiceInterface::class,
             AttributeService::class,
         );
+        // Product
+        $this->app->bind(
+            ProductServiceInterface::class,
+            ProductService::class,
+        );
+        // ProductImage
+        $this->app->bind(
+            ProductImageServiceInterface::class,
+            ProductImageService::class,
+        );
+        // ProductVariant
+        $this->app->bind(
+            ProductVariantServiceInterface::class,
+            ProductVariantService::class,
+        );
+        // AttributeValue
+        $this->app->bind(
+            AttributeValueServiceInterface::class,
+            AttributeValueService::class,
+        );
         // Category
         $this->app->bind(
             CategoryServiceInterface::class,
-            CategoryService::class
+            CategoryService::class,
         );
     }
 

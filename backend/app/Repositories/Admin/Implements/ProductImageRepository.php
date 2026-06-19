@@ -18,7 +18,16 @@ class ProductImageRepository implements ProductImageRepositoryInterface
     {
         return $this->model->find($id);
     }
-
+    /**
+     * Chèn nhiều bức ảnh.
+     */
+    public function insertMany(array $data): bool
+    {
+        if (empty($data))
+            return false;
+        return $this->model->insert($data);
+    }
+     
     /**
      * INSERT bản ghi mới.
      */

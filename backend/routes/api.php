@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,6 +16,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('attributes', AttributeController::class);
     Route::get('categories/parents', [CategoryController::class, 'parents']);
     Route::apiResource('categories', CategoryController::class);
+    Route::apiResource('products', ProductController::class);
 });
 //Route::get('/attributes', [AttributeController::class, 'index']);
 //Route::post('/attributes', [AttributeController::class, 'store']);

@@ -23,7 +23,10 @@ class ProductRepository implements ProductRepositoryInterface
             $query->where('name', 'like',  $filters['search'] . '%');
         }
 
-        return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);
+        return $query
+            ->with(['productImages', 'productVariants.attributeValues'])
+            ->orderBy('id', 'desc')
+            ->paginate($filters['per_page'] ?? 10);
     }
 
     
