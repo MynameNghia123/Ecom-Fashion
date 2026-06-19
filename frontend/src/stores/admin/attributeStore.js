@@ -40,7 +40,15 @@ export const useAttributeStore = defineStore('attribute', () => {
   }
 
   /**
-   * Thêm thuộc tính mới
+   * Fetch lần đầu — chỉ gọi API nếu chưa có data.
+   * Dùng trong onMounted để tránh re-fetch khi tab qua lại.
+   */
+  async function initialFetch(params = {}) {
+    if (attributes.value.length > 0) return
+    return fetchAttributes(params)
+  }
+
+  /**
    * @param {string} name
    * @returns {Promise<{ success: boolean, data: object, message: string }>}
    */
@@ -86,6 +94,7 @@ export const useAttributeStore = defineStore('attribute', () => {
     error,
     // Actions
     fetchAttributes,
+    initialFetch,
     createAttribute,
     updateAttribute,
     deleteAttribute,

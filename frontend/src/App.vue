@@ -21,7 +21,10 @@ const isTransparent = computed(() => {
 
 <template>
   <component :is="currentLayout" :is-transparent="isTransparent">
-    <router-view />
+    <router-view v-if="currentLayout !== AdminLayout" />
+    <keep-alive v-else>
+      <router-view />
+    </keep-alive>
   </component>
 </template>
 

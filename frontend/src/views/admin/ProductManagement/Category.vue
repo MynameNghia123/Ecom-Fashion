@@ -453,7 +453,7 @@ const categoryStore = useCategoryStore()
 
 // ─── Load dữ liệu khi mount ──────────────────────────────────────────────────
 onMounted(() => {
-  categoryStore.fetchCategories()
+  categoryStore.initialFetch()   // chỉ fetch nếu chưa có data
   fetchFilterParents()
 })
 

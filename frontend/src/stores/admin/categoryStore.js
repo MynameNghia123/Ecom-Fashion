@@ -40,7 +40,15 @@ export const useCategoryStore = defineStore('category', () => {
   }
 
   /**
-   * Thêm danh mục mới
+   * Fetch lần đầu — chỉ gọi API nếu chưa có data.
+   * Dùng trong onMounted để tránh re-fetch khi tab qua lại.
+   */
+  async function initialFetch(params = {}) {
+    if (categories.value.length > 0) return
+    return fetchCategories(params)
+  }
+
+  /**
    * @param {{ name: string, slug?: string, description?: string, parent_id?: number|null }} data
    * @returns {Promise<{ success: boolean, data: object, message: string }>}
    */
@@ -84,6 +92,7 @@ export const useCategoryStore = defineStore('category', () => {
     error,
     // Actions
     fetchCategories,
+    initialFetch,
     createCategory,
     updateCategory,
     deleteCategory,

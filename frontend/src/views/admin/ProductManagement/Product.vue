@@ -601,126 +601,143 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, watch } from 'vue'
+import { ref, computed, reactive, watch, onMounted } from 'vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 import Pagination from '@/components/admin/Pagination.vue'
+import { useProductStore } from '@/stores/admin/productStore'
+import { useCategoryStore } from '@/stores/admin/categoryStore'
 
-// ======== Category options ========
-const categoryOptions = ['Điện tử', 'Thời trang', 'Nhà cửa', 'Thể thao', 'Mỹ phẩm', 'Laptop & Máy tính']
+// ======== Stores ========
+const productStore = useProductStore()
+const categoryStore = useCategoryStore()
 
-// ======== Mock Products ========
-const products = ref([
-  {
-    id: 1024, name: 'Smart Laptop Pro M1', sku: 'LP-8829', brand: 'TechMaster', category: 'Điện tử',
-    stock: 12, status: 'active', createdAt: '12/10/2023', slug: 'smart-laptop-pro-m1',
-    description: 'Laptop cao cấp với chip M1, hiệu năng vượt trội, pin cực bền.\n- Chip Apple M1 8 nhân\n- RAM 16GB Unified Memory\n- SSD 512GB NVMe\n- Pin 20 giờ sử dụng',
-    thumbnail: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=200&q=80',
-    images: [
-      { url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&q=80', alt: 'Mặt trước Laptop', isThumbnail: true },
-      { url: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=300&q=80', alt: 'Cạnh bên sản phẩm', isThumbnail: false },
-    ],
-    variants: [
-      { sku: 'LP-M1-SLV', name: 'Bạc', salePrice: 32000000, costPrice: 25000000, stock: 8, active: true, image: '' },
-      { sku: 'LP-M1-GLD', name: 'Vàng', salePrice: 33500000, costPrice: 26000000, stock: 4, active: true, image: '' },
-    ]
-  },
-  {
-    id: 1023, name: 'Runner Speed 5.0', sku: 'SH-1192', brand: 'NeoStep', category: 'Thời trang',
-    stock: 12, status: 'active', createdAt: '10/10/2023', slug: 'runner-speed-5-0',
-    description: 'Giày chạy bộ chuyên nghiệp với đế siêu nhẹ, hỗ trợ vận động tốt nhất.',
-    thumbnail: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=200&q=80',
-    images: [
-      { url: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=300&q=80', alt: 'Giày màu đỏ', isThumbnail: true },
-    ],
-    variants: [
-      { sku: 'SH-1192-RED-40', name: 'Đỏ / Size 40', salePrice: 2800000, costPrice: 1500000, stock: 5, active: true, image: '' },
-      { sku: 'SH-1192-RED-41', name: 'Đỏ / Size 41', salePrice: 2800000, costPrice: 1500000, stock: 4, active: true, image: '' },
-      { sku: 'SH-1192-BLK-41', name: 'Đen / Size 41', salePrice: 2800000, costPrice: 1500000, stock: 3, active: false, image: '' },
-    ]
-  },
-  {
-    id: 1022, name: 'H-Audio Noise Cancel', sku: 'AU-9901', brand: 'AuraSound', category: 'Điện tử',
-    stock: 12, status: 'inactive', createdAt: '08/10/2023', slug: 'h-audio-noise-cancel',
-    description: 'Tai nghe chống ồn chủ động cao cấp với âm thanh Hi-Fi 360 độ.',
-    thumbnail: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&q=80',
-    images: [
-      { url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&q=80', alt: 'Tai nghe màu đen', isThumbnail: true },
-    ],
-    variants: [
-      { sku: 'AU-9901-BLK', name: 'Đen', salePrice: 4500000, costPrice: 2800000, stock: 8, active: true, image: '' },
-      { sku: 'AU-9901-SLV', name: 'Bạc', salePrice: 4500000, costPrice: 2800000, stock: 4, active: true, image: '' },
-    ]
-  },
-  {
-    id: 1021, name: 'UltraBook Air X1', sku: 'LP-2201', brand: 'TechMaster', category: 'Laptop & Máy tính',
-    stock: 6, status: 'active', createdAt: '05/10/2023', slug: 'ultrabook-air-x1',
-    description: 'Laptop siêu mỏng nhẹ dành cho dân văn phòng và designer.',
-    thumbnail: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=200&q=80',
-    images: [],
-    variants: [{ sku: 'LP-2201-BLK', name: 'Đen', salePrice: 28000000, costPrice: 20000000, stock: 6, active: true, image: '' }]
-  },
-  {
-    id: 1020, name: 'Sports Jacket Pro', sku: 'JK-4421', brand: 'FitStyle', category: 'Thể thao',
-    stock: 0, status: 'inactive', createdAt: '01/10/2023', slug: 'sports-jacket-pro',
-    description: 'Áo khoác thể thao chống nước, giữ ấm tốt.',
-    thumbnail: '',
-    images: [],
-    variants: []
-  },
-])
+// ======== Helpers ========
+const formatPrice = (n) => n ? Number(n).toLocaleString('vi-VN') + 'đ' : '0đ'
+const generateSlug = (t) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')
 
-// ======== Filter & Search ========
-const searchQuery = ref('')
+/**
+ * Map API product → UI format
+ * API: { id, name, slug, brand, is_active, category, product_images, product_variants }
+ * UI: { id, name, slug, brand, status, category, stock, thumbnail, images, variants }
+ */
+const mapProduct = (p) => ({
+  id:          p.id,
+  name:        p.name,
+  slug:        p.slug,
+  brand:       p.brand ?? '',
+  description: p.description ?? '',
+  thumbnail:   p.thumbnail ?? '',
+  status:      p.is_active ? 'active' : 'inactive',
+  // category có thể là object {id, name} hoặc string tùy API response
+  category:    p.category?.name ?? p.category ?? '',
+  category_id: p.category_id ?? p.category?.id ?? null,
+  createdAt:   p.created_at ? new Date(p.created_at).toLocaleDateString('vi-VN') : '',
+  // Tổng tồn kho từ các biến thể
+  stock: (p.product_variants ?? []).reduce((s, v) => s + (v.stock_quantity ?? 0), 0),
+  images: (p.product_images ?? []).map(img => ({
+    id:          img.id,
+    url:         img.image_url,
+    alt:         img.alt_text ?? '',
+    isThumbnail: !!img.is_thumbnail,
+    order:       img.display_order ?? 1,
+  })),
+  variants: (p.product_variants ?? []).map(v => ({
+    id:             v.id,
+    sku:            v.sku,
+    name:           (v.attribute_values ?? []).map(a => a.value).join(' / '),
+    costPrice:      v.cost_price ?? 0,
+    salePrice:      v.price ?? 0,
+    promotionPrice: v.sale_price ?? 0,
+    stock:          v.stock_quantity ?? 0,
+    active:         !!v.is_active,
+    image:          v.thumbnail ?? '',
+    attribute_values: v.attribute_values ?? [],
+  })),
+})
+
+// ======== Computed từ store ========
+const products = computed(() => (productStore.products ?? []).map(mapProduct))
+const meta     = computed(() => productStore.meta)
+const loading  = computed(() => productStore.loading)
+
+// ======== Category options (dùng cho filter & form) ========
+const categoryOptions = computed(() => categoryStore.categories ?? [])
+
+// ======== Filter & Search (client-side nhanh, server-side cho pagination) ========
+const searchQuery    = ref('')
 const filterCategory = ref('')
-const filterStatus = ref('')
+const filterStatus   = ref('')
+
+// Debounce search để tránh gọi API liên tục
+let searchTimer = null
+watch(searchQuery, (val) => {
+  clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => {
+    currentPage.value = 1
+    loadProducts()
+  }, 400)
+})
 
 const filteredProducts = computed(() => products.value.filter(p => {
   const q = searchQuery.value.toLowerCase()
-  const matchSearch = !q || p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q) || p.sku.toLowerCase().includes(q)
-  const matchCat = !filterCategory.value || p.category === filterCategory.value
-  const matchStatus = !filterStatus.value || p.status === filterStatus.value
+  const matchSearch  = !q || p.name.toLowerCase().includes(q) || (p.brand ?? '').toLowerCase().includes(q)
+  const matchCat     = !filterCategory.value || p.category_id == filterCategory.value
+  const matchStatus  = !filterStatus.value || p.status === filterStatus.value
   return matchSearch && matchCat && matchStatus
 }))
 
-// ======== Pagination ========
+// ======== Pagination (server-side) ========
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize    = ref(10)
 
-const totalPages = computed(() => Math.max(1, Math.ceil(filteredProducts.value.length / pageSize.value)))
-const paginatedProducts = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  return filteredProducts.value.slice(start, start + pageSize.value)
+const totalPages       = computed(() => meta.value.last_page ?? 1)
+const paginatedProducts = computed(() => filteredProducts.value)
+
+watch(currentPage, () => loadProducts())
+watch(pageSize,    () => { currentPage.value = 1; loadProducts() })
+
+// ======== Load dữ liệu ========
+async function loadProducts() {
+  await productStore.fetchProducts({
+    page:     currentPage.value,
+    per_page: pageSize.value,
+    search:   searchQuery.value || undefined,
+  })
+}
+
+onMounted(async () => {
+  await Promise.all([
+    productStore.initialFetch(),                         // chỉ fetch nếu chưa có data
+    categoryStore.initialFetch({ per_page: 100 }),       // lấy tất cả để hiển thị filter
+  ])
 })
-
-watch(filteredProducts, () => { if (currentPage.value > totalPages.value) currentPage.value = 1 })
-
-// ======== Helpers ========
-const formatPrice = (n) => n ? n.toLocaleString('vi-VN') + 'đ' : '0đ'
-const generateSlug = (t) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')
 
 // ======== View Modal ========
 const showViewModal = ref(false)
-const viewTarget = ref(null)
+const viewTarget    = ref(null)
 const openViewModal = (p) => { viewTarget.value = p; showViewModal.value = true }
 
 // ======== Form Modal ========
 const showFormModal = ref(false)
-const modalMode = ref('add')
+const modalMode     = ref('add')
+const submitting    = ref(false)
+const serverErrors  = ref({})
 
 const defaultForm = () => ({
-  id: null, name: '', slug: '', category: '', brand: '', description: '', status: 'active',
-  thumbnail: '', sku: '',
-  images: [{ preview: '', alt: '', order: 1, isThumbnail: true }],
+  id: null, name: '', slug: '', category: '', category_id: null,
+  brand: '', description: '', status: 'active', thumbnail: '',
+  images: [{ id: null, preview: '', alt: '', order: 1, isThumbnail: true }],
   attributeGroups: [],
   variants: []
 })
 
-const form = reactive(defaultForm())
+const form       = reactive(defaultForm())
 const formErrors = reactive({ name: '', category: '' })
 
 const resetForm = () => {
   Object.assign(form, defaultForm())
   formErrors.name = ''; formErrors.category = ''
+  serverErrors.value = {}
 }
 
 const openAddModal = () => {
@@ -731,99 +748,143 @@ const openAddModal = () => {
 
 const openEditModal = (p) => {
   resetForm()
-  form.id = p.id; form.name = p.name; form.slug = p.slug; form.category = p.category
-  form.brand = p.brand; form.description = p.description; form.status = p.status
-  form.thumbnail = p.thumbnail; form.sku = p.sku
-  form.images = p.images?.length
-    ? p.images.map(img => ({ preview: img.url, alt: img.alt, order: 1, isThumbnail: img.isThumbnail }))
-    : [{ preview: '', alt: '', order: 1, isThumbnail: true }]
-  form.variants = (p.variants || []).map(v => ({ ...v }))
+  form.id          = p.id
+  form.name        = p.name
+  form.slug        = p.slug
+  form.category_id = p.category_id
+  form.category    = p.category
+  form.brand       = p.brand
+  form.description = p.description
+  form.status      = p.status
+  form.thumbnail   = p.thumbnail
+  form.images      = p.images?.length
+    ? p.images.map(img => ({ id: img.id, preview: img.url, alt: img.alt, order: img.order, isThumbnail: img.isThumbnail }))
+    : [{ id: null, preview: '', alt: '', order: 1, isThumbnail: true }]
+  form.variants = (p.variants ?? []).map(v => ({ ...v }))
   form.attributeGroups = []
   modalMode.value = 'edit'
   showFormModal.value = true
 }
 
 const closeFormModal = () => { showFormModal.value = false }
-
-const autoSlug = () => { if (modalMode.value === 'add') form.slug = generateSlug(form.name) }
+const autoSlug       = () => { if (modalMode.value === 'add') form.slug = generateSlug(form.name) }
 
 // Image helpers
-const setThumbnail = (idx) => { form.images.forEach((img, i) => img.isThumbnail = i === idx) }
-const removeImage = (idx) => { form.images.splice(idx, 1) }
+const setThumbnail = (idx) => form.images.forEach((img, i) => img.isThumbnail = i === idx)
+const removeImage  = (idx) => form.images.splice(idx, 1)
 
 // Attribute group helpers
-const addAttributeGroup = () => form.attributeGroups.push({ name: '', values: [] })
-const removeAttributeGroup = (gIdx) => {
-  form.attributeGroups.splice(gIdx, 1)
-  regenerateVariants()
-}
-const addAttributeValue = (gIdx) => {
+const addAttributeGroup    = () => form.attributeGroups.push({ name: '', values: [] })
+const removeAttributeGroup = (gIdx) => { form.attributeGroups.splice(gIdx, 1); regenerateVariants() }
+const addAttributeValue    = (gIdx) => {
   const val = prompt('Nhập giá trị (VD: Đỏ, Size 40...)')
-  if (val?.trim()) {
-    form.attributeGroups[gIdx].values.push(val.trim())
-    regenerateVariants()
-  }
+  if (val?.trim()) { form.attributeGroups[gIdx].values.push(val.trim()); regenerateVariants() }
 }
-const removeAttributeValue = (gIdx, vIdx) => {
-  form.attributeGroups[gIdx].values.splice(vIdx, 1)
-  regenerateVariants()
-}
+const removeAttributeValue = (gIdx, vIdx) => { form.attributeGroups[gIdx].values.splice(vIdx, 1); regenerateVariants() }
 
-// Auto-generate variants from attribute groups using cartesian product
+// Auto-generate variants from attribute groups
 const cartesian = (arrays) => arrays.reduce((a, b) => a.flatMap(x => b.map(y => [...x, y])), [[]])
 
 const regenerateVariants = () => {
   const groups = form.attributeGroups.filter(g => g.values.length > 0)
   if (groups.length === 0) { form.variants = []; return }
   const combinations = cartesian(groups.map(g => g.values))
-  const existingMap = Object.fromEntries(form.variants.map(v => [v.name, v]))
+  const existingMap  = Object.fromEntries(form.variants.map(v => [v.name, v]))
   form.variants = combinations.map(combo => {
     const name = combo.join(' / ')
-    return existingMap[name] || { name, sku: '', costPrice: 0, salePrice: 0, promotionPrice: 0, stock: 0, active: true, image: '' }
+    return existingMap[name] ?? { id: null, name, sku: '', costPrice: 0, salePrice: 0, promotionPrice: 0, stock: 0, active: true, image: '' }
   })
 }
 
 watch(() => form.attributeGroups.map(g => g.values.join(',')).join('|'), regenerateVariants)
 
-// Submit
+// ======== Build payload gửi lên API ========
+const buildPayload = () => ({
+  category_id: form.category_id,
+  name:        form.name,
+  slug:        form.slug || generateSlug(form.name),
+  description: form.description || null,
+  brand:       form.brand || null,
+  thumbnail:   form.thumbnail || null,
+  is_active:   form.status === 'active',
+  images: form.images
+    .filter(img => img.preview)
+    .map((img, idx) => ({
+      ...(img.id ? { id: img.id } : {}),
+      image_url:     img.preview,
+      alt_text:      img.alt || null,
+      display_order: img.order ?? idx + 1,
+      is_thumbnail:  img.isThumbnail,
+    })),
+  variants: form.variants.map(v => ({
+    ...(v.id ? { id: v.id } : {}),
+    sku:            v.sku,
+    price:          v.salePrice,
+    sale_price:     v.promotionPrice || null,
+    cost_price:     v.costPrice || null,
+    stock_quantity: v.stock ?? 0,
+    is_active:      v.active,
+    thumbnail:      v.image || null,
+    attribute_values: (v.attribute_values ?? []).map(a => ({
+      ...(a.id ? { id: a.id } : {}),
+      attribute_id: a.attribute_id,
+      value:        a.value,
+    })),
+  })),
+})
+
+// Validate
 const validateForm = () => {
-  formErrors.name = form.name.trim() ? '' : 'Tên sản phẩm không được để trống.'
-  formErrors.category = form.category ? '' : 'Vui lòng chọn danh mục.'
+  formErrors.name     = form.name.trim()   ? '' : 'Tên sản phẩm không được để trống.'
+  formErrors.category = form.category_id   ? '' : 'Vui lòng chọn danh mục.'
   return !formErrors.name && !formErrors.category
 }
 
-const submitForm = () => {
-  if (!validateForm()) return
-  if (!form.slug) form.slug = generateSlug(form.name)
-  const productData = {
-    id: form.id || (Math.max(...products.value.map(p => p.id)) + 1),
-    name: form.name, slug: form.slug, category: form.category, brand: form.brand,
-    description: form.description, status: form.status, sku: form.sku || `${form.name.substring(0,2).toUpperCase()}-${Date.now().toString().slice(-4)}`,
-    stock: form.variants.reduce((s, v) => s + (v.stock || 0), 0),
-    createdAt: modalMode.value === 'add' ? new Date().toLocaleDateString('vi-VN') : products.value.find(p => p.id === form.id)?.createdAt,
-    thumbnail: form.images.find(i => i.preview && i.isThumbnail)?.preview || form.images.find(i => i.preview)?.preview || '',
-    images: form.images.filter(i => i.preview).map(i => ({ url: i.preview, alt: i.alt, isThumbnail: i.isThumbnail })),
-    variants: form.variants.map(v => ({ ...v }))
+// Submit
+const submitForm = async () => {
+  if (!validateForm() || submitting.value) return
+  submitting.value   = true
+  serverErrors.value = {}
+
+  try {
+    const payload = buildPayload()
+
+    if (modalMode.value === 'add') {
+      await productStore.createProduct(payload)
+    } else {
+      await productStore.updateProduct(form.id, payload)
+    }
+    closeFormModal()
+  } catch (err) {
+    // Hiển thị lỗi validation từ server (422)
+    if (err.response?.status === 422) {
+      serverErrors.value = err.response.data.errors ?? {}
+    } else {
+      alert(err.response?.data?.message ?? 'Có lỗi xảy ra, vui lòng thử lại.')
+    }
+  } finally {
+    submitting.value = false
   }
-  if (modalMode.value === 'add') {
-    products.value.unshift(productData)
-  } else {
-    const idx = products.value.findIndex(p => p.id === form.id)
-    if (idx !== -1) products.value[idx] = productData
-  }
-  closeFormModal()
 }
 
 // ======== Delete ========
 const showDeleteModal = ref(false)
-const deleteTarget = ref(null)
-const triggerDelete = (p) => { deleteTarget.value = p; showDeleteModal.value = true }
-const executeDelete = () => {
-  products.value = products.value.filter(p => p.id !== deleteTarget.value.id)
-  showDeleteModal.value = false
-  deleteTarget.value = null
+const deleteTarget    = ref(null)
+const triggerDelete   = (p) => { deleteTarget.value = p; showDeleteModal.value = true }
+const executeDelete   = async () => {
+  try {
+    await productStore.deleteProduct(deleteTarget.value.id)
+  } catch {
+    alert('Xóa sản phẩm thất bại.')
+  } finally {
+    showDeleteModal.value = false
+    deleteTarget.value    = null
+  }
 }
 </script>
+
+
+
 
 <style scoped>
 .modal-fade-enter-active,

@@ -69,7 +69,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Danh mục đã được xóa thành công.',
+            'message' => 'Sản phẩm đã được xóa thành công.',
         ], 200); 
     }
 

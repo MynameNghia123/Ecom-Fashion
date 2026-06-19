@@ -275,7 +275,7 @@ const handlePerPageChange = (newPerPage) => {
 
 // ======== Mount: load first page ========
 onMounted(() => {
-  store.fetchAttributes({ page: 1, per_page: store.meta.per_page })
+  store.initialFetch()   // chỉ fetch nếu chưa có data
 })
 
 // ======== Shared submit state ========
