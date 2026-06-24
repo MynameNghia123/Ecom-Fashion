@@ -1,26 +1,40 @@
 <?php
-namespace App\Services\Admin\Implements;
 
-use App\Models\AttributeValue;
-use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
-use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
+namespace App\Services\Admin\Interfaces;
+
+use App\Models\Role;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
-class AttributeValueService implements AttributeValueServiceInterface
+/**
+ * Interface RoleServiceInterface
+ * * Định nghĩa các hợp đồng nghiệp vụ (Business Logic) cho thực thể Vai trò (Role).
+ * * @package App\Services\Admin\Interfaces
+ */
+interface RoleServiceInterface 
 {
-    public function __construct(
-        private readonly AttributeValueRepositoryInterface $repo
-    ){}
+    /**
+     * Lấy danh sách vai trò có phân trang và bộ lọc.
+     * * @param array $filters
+     * @return LengthAwarePaginator
+     */
+    public function getList(array $filters): LengthAwarePaginator;
 
-    public function create(array $data): AttributeValue
-    {
-        return $this->repo->create($data);
-    }
+    /**
+     * Tạo mới vai trò và đồng bộ quyền hạn đi kèm.
+     * * @param array $data
+     * @return Role
+     */
+    public function create(array $data): Role;
 
-    public function update(Model $model, array $data): AttributeValue
-    {
-        return $this->repo->update($model, $data);
-    }
+    /**
+     * Cập nhật thông tin vai trò và làm mới danh sách quyền hạn.
+     * * @param Model $model
+     * @param array $data
+     * @return Role
+     */
+    public function update(Model $model, array $data): Role;
 
     public function delete(Model $model): void
     {

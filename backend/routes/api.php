@@ -6,6 +6,11 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +29,10 @@ Route::prefix('admin')->group(function () {
     Route::post('upload-image',    [UploadController::class, 'upload']);
     Route::delete('upload-image',  [UploadController::class, 'delete']);
     Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('coupons', CouponController::class);
+    Route::apiResource('staffs', StaffController::class);
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
 });
 
 //Route::get('/attributes', [AttributeController::class, 'index']);
