@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
  * * Định nghĩa các hợp đồng nghiệp vụ (Business Logic) cho thực thể Vai trò (Role).
  * * @package App\Services\Admin\Interfaces
  */
-interface RoleServiceInterface
+interface RoleServiceInterface 
 {
     /**
      * Lấy danh sách vai trò có phân trang và bộ lọc.
@@ -37,15 +37,9 @@ interface RoleServiceInterface
     public function update(Model $model, array $data): Role;
 
     /**
-     * Xóa vai trò khỏi hệ thống.
+     * Xóa vai trò và làm mới danh sách quyền hạn.
      * * @param Model $model
      * @return void
      */
     public function delete(Model $model): void;
-
-    /**
-     * Lấy toàn bộ danh sách vai trò không phân trang.
-     * * @return Collection
-     */
-    public function getAll(): Collection;
 }

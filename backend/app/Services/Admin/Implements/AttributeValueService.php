@@ -1,65 +1,67 @@
 <?php
 
-namespace App\Services\Admin\Interfaces;
+namespace App\Services\Admin\Implements;
 
-use App\Models\Role;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use App\Models\AttributeValue;
+use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
+use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Collection;
 
-/**
- * Interface RoleServiceInterface
- * * Định nghĩa các hợp đồng nghiệp vụ (Business Logic) cho thực thể Vai trò (Role).
- * * @package App\Services\Admin\Interfaces
- */
-interface RoleServiceInterface 
+class AttributeValueService implements AttributeValueServiceInterface
 {
-    /**
-     * Lấy danh sách vai trò có phân trang và bộ lọc.
-     * * @param array $filters
-     * @return LengthAwarePaginator
-     */
-    public function getList(array $filters): LengthAwarePaginator;
+    public function __construct(
+        private readonly AttributeValueRepositoryInterface $repo
+    ) {}
 
     /**
-     * Tạo mới vai trò và đồng bộ quyền hạn đi kèm.
-     * * @param array $data
-     * @return Role
+     * Tạo mới một attribute_value.
      */
-    public function create(array $data): Role;
+    public function create(array $data): AttributeValue
+    {
+        return $this->repo->create($data);
+    }
 
     /**
-     * Cập nhật thông tin vai trò và làm mới danh sách quyền hạn.
-     * * @param Model $model
-     * @param array $data
-     * @return Role
+     * Cập nhật attribute_value.
      */
-    public function update(Model $model, array $data): Role;
+    public function update(Model $model, array $data): AttributeValue
+    {
+        return $this->repo->update($model, $data);
+    }
 
+    /**
+     * Xóa attribute_value.
+     */
     public function delete(Model $model): void
     {
         $this->repo->delete($model);
     }
-    
-    public function insertMany(array $attributesData, $variantId) : void
+
+    /**
+     * Thêm nhiều attribute_values cùng lúc (bulk insert) cho một variant.
+     */
+    public function insertMany(array $attributesData, $variantId): void
     {
-        if (empty($attributesData))
+        if (empty($attributesData)) {
             return;
-        
-        // Chỉ giữ các field hợp lệ của bảng attribute_values
-        $allowedFields = ['product_variant_id', 'attribute_id', 'value'];
+        }
 
-        $prepareAttribute = array_map(function ($attribute) use ($variantId, $allowedFields){
+        $prepareAttribute = array_map(function ($attribute) use ($variantId) {
             $attribute['product_variant_id'] = $variantId;
-
-            return array_intersect_key($attribute, array_flip($allowedFields));
+            return $attribute;
         }, $attributesData);
 
         $this->repo->insertMany($prepareAttribute);
     }
+
+    /**
+     * Đồng bộ attribute_values của một variant:
+     * - UPDATE nếu id đã tồn tại
+     * - CREATE nếu là attribute mới
+     * - DELETE nếu không còn trong danh sách
+     */
     public function syncAttributes(Model $variant, array $attributeValues): void
     {
-        // Lấy tất cả attribute_values hiện có của variant, đánh index theo id
         $existingAttributes = $variant->attributeValues->keyBy('id');
         $keptAttributeIds   = [];
 
