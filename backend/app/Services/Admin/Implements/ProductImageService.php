@@ -27,17 +27,22 @@ class ProductImageService implements ProductImageServiceInterface
         $this->repo->delete($model);
     }
    
-    public function insertMany(array $data,int $productId): void
+    public function insertMany(array $data, int $productId): void
     {
         if (empty($data)) return;
 
         $now = now();
 
-        $prepareData = array_map(function ($images) use ($productId, $now){
-            $images['product_id'] = $productId;
-            $images['created_at'] = $now;
+        // Chỉ giữ các field hợp lệ của bảng product_images
+        $allowedFields = ['product_id', 'image_url', 'alt_text', 'display_order', 'is_thumbnail', 'created_at', 'updated_at'];
 
-            return $images;
+        $prepareData = array_map(function ($image) use ($productId, $now, $allowedFields) {
+            $image['product_id'] = $productId;
+            $image['created_at'] = $now;
+            $image['updated_at'] = $now;
+
+            // Chỉ giữ lại các key hợp lệ (loại bỏ id, preview_url, file, v.v. từ frontend)
+            return array_intersect_key($image, array_flip($allowedFields));
         }, $data);
 
         $this->repo->insertMany($prepareData);

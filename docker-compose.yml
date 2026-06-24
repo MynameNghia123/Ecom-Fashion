@@ -41,7 +41,7 @@ services:
     volumes:
       - ./backend:/var/www/html
       - backend_vendor:/var/www/html/vendor
-      - backend_storage:/var/www/html/storage
+      # - backend_storage:/var/www/html/storage
       - backend_bootstrap_cache:/var/www/html/bootstrap/cache
     command: >
       sh -c "mkdir -p database storage/logs bootstrap/cache
@@ -73,6 +73,6 @@ services:
 volumes:
   mysql_data:
   backend_vendor:
-  backend_storage:
+  # backend_storage:
   backend_bootstrap_cache:
   frontend_node_modules:

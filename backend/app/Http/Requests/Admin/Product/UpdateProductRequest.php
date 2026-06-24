@@ -38,10 +38,12 @@ class UpdateProductRequest extends FormRequest
             // ==========================================
             // 2. HÌNH ẢNH
             // ==========================================
-            'images'             => 'nullable|array',
-            'images.*.id'        => 'nullable|integer|exists:product_images,id', // Kèm theo ID để biết là update hay tạo mới
-            'images.*.image_url' => 'required|url',
-            'images.*.alt_text'  => 'nullable|string|max:100',
+            'images'                 => 'nullable|array',
+            'images.*.id'            => 'nullable|integer|exists:product_images,id',
+            'images.*.image_url'     => 'nullable|url|max:2048',  // URL storage thật sau khi upload
+            'images.*.alt_text'      => 'nullable|string|max:100',
+            'images.*.display_order' => 'nullable|integer|min:1',
+            'images.*.is_thumbnail'  => 'nullable|boolean',
 
             // ==========================================
             // 3. BIẾN THỂ
@@ -75,6 +77,8 @@ class UpdateProductRequest extends FormRequest
             'variants.*.price'          => 'required|numeric|min:0',
             'variants.*.stock_quantity' => 'required|integer|min:0',
             'variants.*.is_active'      => 'boolean',
+            'variants.*.cost_price'     => 'nullable|numeric|min:0',
+            'variants.*.thumbnail'      => 'nullable|url|max:2048',
             'variants.*.sale_price'     => [
                 'nullable',
                 'numeric',

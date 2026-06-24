@@ -105,7 +105,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:currentPage', 'update:perPage'])
+const emit = defineEmits(['update:currentPage', 'update:  '])
 
 // ========== Events ==========
 const onPerPageChange = (event) => {
