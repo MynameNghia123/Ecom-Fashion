@@ -12,7 +12,7 @@ use Illuminate\Support\Collection;
  * * Định nghĩa các hợp đồng nghiệp vụ (Business Logic) cho thực thể Vai trò (Role).
  * * @package App\Services\Admin\Interfaces
  */
-interface RoleServiceInterface 
+interface RoleServiceInterface
 {
     /**
      * Lấy danh sách vai trò có phân trang và bộ lọc.

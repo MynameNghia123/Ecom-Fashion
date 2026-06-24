@@ -5,6 +5,11 @@ use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\PermissionController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +24,10 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
     Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('coupons', CouponController::class);
+    Route::apiResource('staffs', StaffController::class);
+    Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
 });
 //Route::get('/attributes', [AttributeController::class, 'index']);
 //Route::post('/attributes', [AttributeController::class, 'store']);
