@@ -17,17 +17,25 @@ use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductImageRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
+use App\Repositories\Admin\Interfaces\CustomerRepositoryInterface;
+use App\Repositories\Admin\Implements\CustomerRepository;
+
 use App\Services\Admin\Implements\AttributeValueService;
 use App\Services\Admin\Implements\CategoryService;
 use App\Services\Admin\Implements\ProductImageService;
 use App\Services\Admin\Implements\ProductService;
 use App\Services\Admin\Implements\ProductVariantService;
+use App\Services\Admin\Implements\CustomerService;
+
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
 use App\Services\Admin\Interfaces\ProductImageServiceInterface;
 use App\Services\Admin\Interfaces\ProductServiceInterface;
 use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
+use App\Services\Admin\Interfaces\CustomerServiceInterface;
 use Illuminate\Support\ServiceProvider;
+
+
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -68,6 +76,11 @@ class AppServiceProvider extends ServiceProvider
             CategoryRepositoryInterface::class,
             CategoryRepository::class,
         );
+        // Customer
+        $this->app->bind(
+            CustomerRepositoryInterface::class,
+            CustomerRepository::class,
+        );
 
         // ── Services ──────────────────────────────────────────────────────
         // Attribute
@@ -99,6 +112,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CategoryServiceInterface::class,
             CategoryService::class,
+        );
+        // Customer
+        $this->app->bind(
+            CustomerServiceInterface::class,
+            CustomerService::class,
         );
     }
 
