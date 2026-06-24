@@ -95,6 +95,7 @@
       </div>
 
       <!-- Table -->
+
       <div class="overflow-x-auto">
         <table class="w-full text-sm">
           <thead>
@@ -110,70 +111,82 @@
           <tbody class="divide-y divide-slate-50">
 
             <!-- Loading skeleton -->
-            <tr v-if="categoryStore.loading" v-for="i in perPage" :key="'sk-'+i">
+            <!-- <tr v-if="categoryStore.loading" v-for="i in perPage" :key="'sk-'+i">
               <td colspan="6" class="py-4 px-5">
                 <div class="h-5 bg-slate-100 rounded-lg animate-pulse w-full"></div>
               </td>
-            </tr>
-
+            </tr> -->
+            <template v-if="categoryStore.loading">
+              <tr v-for="i in categoryStore.meta.per_page" :key="i" class="animate-pulse">
+                <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-12"></div></td>
+                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-40"></div></td>
+                <td class="py-4 px-6">
+                  <div class="flex justify-end gap-2">
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
+                  </div>
+                </td>
+              </tr>
+            </template>
             <!-- Rows -->
-            <tr
-              v-else
-              v-for="cat in categoryStore.categories"
-              :key="cat.id"
-              class="hover:bg-blue-50/40 transition-colors duration-100 group"
-            >
-              <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ cat.id }}</td>
-              <td class="py-4 px-4 font-semibold text-slate-800">{{ cat.name }}</td>
-              <td class="py-4 px-4">
-                <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono px-2.5 py-1 rounded-lg max-w-[160px] truncate">{{ cat.slug }}</span>
-              </td>
-              <td class="py-4 px-4">
-                <span v-if="cat.parent_id" class="inline-block bg-blue-50 text-[#0258cb] text-xs font-semibold px-2.5 py-1 rounded-lg max-w-[110px] truncate">
-                  {{ getCategoryName(cat.parent_id) }}
-                </span>
-                <span v-else class="text-slate-400 text-sm font-medium">—</span>
-              </td>
-              <td class="py-4 px-4 text-slate-500 max-w-[240px]">
-                <span class="line-clamp-1 text-xs">{{ cat.description || '—' }}</span>
-              </td>
-              <td class="py-4 px-4">
-                <div class="flex items-center justify-end gap-1">
-                  <!-- View -->
-                  <button
-                    @click="openViewModal(cat)"
-                    class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150"
-                    title="Xem chi tiết"
-                  >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  </button>
-                  <!-- Edit -->
-                  <button
-                    @click="openEditModal(cat)"
-                    class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all duration-150"
-                    title="Chỉnh sửa"
-                  >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                  </button>
-                  <!-- Delete -->
-                  <button
-                    @click="confirmDelete(cat)"
-                    class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-150"
-                    title="Xóa"
-                  >
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                    </svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
+             <template v-else>
+                <tr
+                  v-for="cat in categoryStore.categories"
+                  :key="cat.id"
+                  class="hover:bg-blue-50/40 transition-colors duration-100 group"
+                >
+                  <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ cat.id }}</td>
+                  <td class="py-4 px-4 font-semibold text-slate-800">{{ cat.name }}</td>
+                  <td class="py-4 px-4">
+                    <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono px-2.5 py-1 rounded-lg max-w-[160px] truncate">{{ cat.slug }}</span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <span v-if="cat.parent_id" class="inline-block bg-blue-50 text-[#0258cb] text-xs font-semibold px-2.5 py-1 rounded-lg max-w-[110px] truncate">
+                      {{ getCategoryName(cat.parent_id) }}
+                    </span>
+                    <span v-else class="text-slate-400 text-sm font-medium">—</span>
+                  </td>
+                  <td class="py-4 px-4 text-slate-500 max-w-[240px]">
+                    <span class="line-clamp-1 text-xs">{{ cat.description || '—' }}</span>
+                  </td>
+                  <td class="py-4 px-4">
+                    <div class="flex items-center justify-end gap-1">
+                      <!-- View -->
+                      <button
+                        @click="openViewModal(cat)"
+                        class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150"
+                        title="Xem chi tiết"
+                      >
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                        </svg>
+                      </button>
+                      <!-- Edit -->
+                      <button
+                        @click="openEditModal(cat)"
+                        class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all duration-150"
+                        title="Chỉnh sửa"
+                      >
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                      </button>
+                      <!-- Delete -->
+                      <button
+                        @click="confirmDelete(cat)"
+                        class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-150"
+                        title="Xóa"
+                      >
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                          <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                        </svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+             </template>
 
             <!-- Empty state -->
             <tr v-if="!categoryStore.loading && categoryStore.categories.length === 0">

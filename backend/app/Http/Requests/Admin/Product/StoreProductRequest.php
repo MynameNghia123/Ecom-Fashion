@@ -23,10 +23,12 @@ class StoreProductRequest extends FormRequest
             'thumbnail'   => 'nullable|url',
             'is_active'   => 'boolean',
 
-            // 2. HÌNH ẢNH (Đã cập nhật đúng key của bạn)
-            'images'             => 'nullable|array',
-            'images.*.image_url' => 'required|url', // Sửa từ url thành image_url
-            'images.*.alt_text'  => 'nullable|string|max:100', // Sửa từ alt thành alt_text
+            // 2. HÌNH ẢNH
+            'images'                 => 'nullable|array',
+            'images.*.image_url'     => 'nullable|url|max:2048',  // URL storage thật sau khi upload
+            'images.*.alt_text'      => 'nullable|string|max:100',
+            'images.*.display_order' => 'nullable|integer|min:1',
+            'images.*.is_thumbnail'  => 'nullable|boolean',
 
             // 3. BIẾN THỂ
             'variants'                  => 'required|array|min:1',
@@ -34,6 +36,8 @@ class StoreProductRequest extends FormRequest
             'variants.*.price'          => 'required|numeric|min:0',
             'variants.*.stock_quantity' => 'required|integer|min:0',
             'variants.*.is_active'      => 'boolean',
+            'variants.*.cost_price'     => 'nullable|numeric|min:0',
+            'variants.*.thumbnail'      => 'nullable|url|max:2048',
             'variants.*.sale_price'     => [
                 'nullable',
                 'numeric',

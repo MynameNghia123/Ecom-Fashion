@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UploadController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,7 +18,12 @@ Route::prefix('admin')->group(function () {
     Route::get('categories/parents', [CategoryController::class, 'parents']);
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
+
+    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
+    Route::post('upload-image',    [UploadController::class, 'upload']);
+    Route::delete('upload-image',  [UploadController::class, 'delete']);
 });
+
 //Route::get('/attributes', [AttributeController::class, 'index']);
 //Route::post('/attributes', [AttributeController::class, 'store']);
 //Route::get('/attributes/{attribute}', [AttributeController::class, 'show']);

@@ -32,10 +32,13 @@ class AttributeValueService implements AttributeValueServiceInterface
         if (empty($attributesData))
             return;
         
-        $prepareAttribute = array_map(function ($attribute) use ($variantId){
+        // Chỉ giữ các field hợp lệ của bảng attribute_values
+        $allowedFields = ['product_variant_id', 'attribute_id', 'value'];
+
+        $prepareAttribute = array_map(function ($attribute) use ($variantId, $allowedFields){
             $attribute['product_variant_id'] = $variantId;
 
-            return $attribute;
+            return array_intersect_key($attribute, array_flip($allowedFields));
         }, $attributesData);
 
         $this->repo->insertMany($prepareAttribute);
