@@ -1,0 +1,314 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Tài liệu API E-commerce Fashion",
+        "description": "Hợp đồng API giữa Vue.js Frontend và Laravel Backend",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Local Development Server"
+        }
+    ],
+    "paths": {
+        "/api/admin/attributes": {
+            "get": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Lấy danh sách thuộc tính (có phân trang & tìm kiếm)",
+                "operationId": "b03eaa5cffbd4af2fe7f05a8618af91f",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm (theo tên thuộc tính)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng bản ghi trên mỗi trang (Mặc định: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Thêm mới một thuộc tính",
+                "operationId": "5443f17032686e2a592418c931679e03",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Tên thuộc tính",
+                                        "type": "string",
+                                        "example": "Màu sắc"
+                                    },
+                                    "type": {
+                                        "description": "Loại thuộc tính (nếu có)",
+                                        "type": "string",
+                                        "example": "color"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Thêm thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thuộc tính đã được thêm thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/attributes/{attribute}": {
+            "get": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Xem chi tiết một thuộc tính",
+                "operationId": "9f186bb260df2cdbbe8aa22c235cb904",
+                "parameters": [
+                    {
+                        "name": "attribute",
+                        "in": "path",
+                        "description": "ID của thuộc tính",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy thuộc tính"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Cập nhật một thuộc tính",
+                "operationId": "ffc080f838f562c3c7b1cd18fe560615",
+                "parameters": [
+                    {
+                        "name": "attribute",
+                        "in": "path",
+                        "description": "ID của thuộc tính cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "name": {
+                                        "description": "Tên thuộc tính mới",
+                                        "type": "string",
+                                        "example": "Kích thước"
+                                    },
+                                    "type": {
+                                        "type": "string",
+                                        "example": "size"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thuộc tính đã được cập nhật thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Attributes"
+                ],
+                "summary": "Xóa một thuộc tính",
+                "operationId": "2677838a2568384efb68b6dba02f2105",
+                "parameters": [
+                    {
+                        "name": "attribute",
+                        "in": "path",
+                        "description": "ID của thuộc tính cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thuộc tính đã được xóa thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Attributes",
+            "description": "Quản lý các thuộc tính sản phẩm (VD: Màu sắc, Kích thước...)"
+        }
+    ]
+}

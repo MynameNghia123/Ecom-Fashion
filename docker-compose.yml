@@ -47,6 +47,8 @@ services:
       sh -c "mkdir -p database storage/logs bootstrap/cache
       && chmod -R 777 storage bootstrap/cache
       && composer install --no-interaction --prefer-dist
+      && (php artisan storage:link || true)
+      && (php artisan l5-swagger:generate || true)
       && php artisan migrate --force
       && php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:

@@ -28,9 +28,9 @@ class UploadController extends Controller
         ]);
 
         $folder = $request->input('folder', 'products');
-
+        
         $file = $request->file('file');
-
+        
         // Tạo tên file duy nhất: uuid + đuôi gốc
         $extension = $file->getClientOriginalExtension() ?: 'jpg';
         $filename  = Str::uuid() . '.' . $extension;
