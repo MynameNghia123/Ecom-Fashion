@@ -24,6 +24,8 @@ class StaffRequest extends FormRequest
             'password' => [$this->isMethod('post') ? 'required' : 'nullable', 'string', 'min:6', 'max:255'],
             'avatar' => ['nullable', 'string', 'max:2048'],
             'is_active' => ['required', 'boolean'],
+            'role_ids' => ['nullable', 'array'],
+            'role_ids.*' => ['integer', 'exists:roles,id'],
         ];
     }
 
@@ -40,6 +42,9 @@ class StaffRequest extends FormRequest
             'password.min'       => 'Mật khẩu phải có ít nhất 6 ký tự.',
             'is_active.required' => 'Trạng thái hoạt động không được để trống.',
             'is_active.boolean'  => 'Trạng thái hoạt động không hợp lệ.',
+            'role_ids.array'     => 'Danh sách vai trò phải là một mảng.',
+            'role_ids.*.integer' => 'ID vai trò phải là số nguyên.',
+            'role_ids.*.exists'  => 'Một hoặc nhiều vai trò không tồn tại trong hệ thống.',
         ];
     }
 }

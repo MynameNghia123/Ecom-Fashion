@@ -15,7 +15,7 @@ class StaffRepository implements StaffRepositoryInterface
     
     public function paginate(array $filters): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->newQuery()->with('roles');
 
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
@@ -34,16 +34,28 @@ class StaffRepository implements StaffRepositoryInterface
 
     public function findById(int $id): ?Staff
     {
-        return $this->model->find($id);
+        return $this->model->with('roles')->find($id);
     }
 
     public function create(array $data): Staff
     {
-        return $this->model->create($data);
+        $roleIds = $data['role_ids'] ?? [];
+        unset($data['role_ids']);
+
+        $staff = $this->model->create($data);
+
+        if (!empty($roleIds)) {
+            $staff->roles()->sync($roleIds);
+        }
+
+        return $staff->load('roles');
     }
 
     public function update(Model $model, array $data): Staff
     {
+        $roleIds = $data['role_ids'] ?? null;
+        unset($data['role_ids']);
+
         // Nếu không đổi mật khẩu, loại bỏ trường password tránh ghi đè rỗng
         if (isset($data['password'])) {
             if (empty($data['password'])) {
@@ -55,16 +67,22 @@ class StaffRepository implements StaffRepositoryInterface
         
         $model->update($data);
 
-        return $model->fresh();
+        if ($roleIds !== null) {
+            $model->roles()->sync($roleIds);
+        }
+
+        return $model->fresh()->load('roles');
     }
 
     public function delete(Model $model): void
     {
+        $model->roles()->detach();
+        $model->permissions()->detach();
         $model->delete();
     }
 
     public function getAll()
     {
-        return $this->model->orderBy('id', 'desc')->get();
+        return $this->model->with('roles')->orderBy('id', 'desc')->get();
     }
 }

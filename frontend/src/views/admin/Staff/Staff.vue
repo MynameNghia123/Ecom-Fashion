@@ -159,7 +159,18 @@
                     <img v-if="staff.avatar" :src="staff.avatar" :alt="staff.full_name" class="w-full h-full object-cover" />
                     <span v-else>{{ getInitials(staff.full_name) }}</span>
                   </div>
-                  <p class="font-semibold text-slate-800 leading-tight">{{ staff.full_name }}</p>
+                  <div>
+                    <p class="font-semibold text-slate-800 leading-tight">{{ staff.full_name }}</p>
+                    <div v-if="staff.roles && staff.roles.length" class="flex flex-wrap gap-1 mt-1">
+                      <span
+                        v-for="role in staff.roles"
+                        :key="role.id"
+                        class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase"
+                      >
+                        {{ role.name }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </td>
 
@@ -357,6 +368,28 @@
                 </div>
               </div>
 
+              <!-- Vai trò -->
+              <div>
+                <label class="block text-sm font-semibold text-slate-600 mb-1.5">Vai trò (Roles)</label>
+                <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                  <div
+                    v-for="role in dropdownRoles"
+                    :key="role.id"
+                    class="flex items-center gap-2"
+                  >
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer"
+                        :value="role.id"
+                        v-model="form.role_ids"
+                      />
+                      <span class="font-medium text-slate-700">{{ role.name }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <!-- Trạng thái -->
               <div>
                 <label class="block text-sm font-semibold text-slate-600 mb-1.5">Trạng thái</label>
@@ -472,6 +505,19 @@
                   <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Đã xóa</p>
                   <p class="text-xs text-slate-600">{{ viewTarget?.deleted_at || '—' }}</p>
                 </div>
+                <div class="bg-slate-50 rounded-xl px-4 py-3 col-span-2">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vai trò (Roles)</p>
+                  <div v-if="viewTarget?.roles && viewTarget.roles.length" class="flex flex-wrap gap-1 mt-1">
+                    <span
+                      v-for="role in viewTarget.roles"
+                      :key="role.id"
+                      class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 uppercase"
+                    >
+                      {{ role.name }}
+                    </span>
+                  </div>
+                  <p v-else class="text-xs text-slate-500">—</p>
+                </div>
               </div>
             </div>
 
@@ -510,15 +556,18 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useStaffStore } from '@/stores/admin/staffStore'
+import { useRoleStore } from '@/stores/admin/roleStore'
 import Pagination from '@/components/admin/Pagination.vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 
 const staffStore = useStaffStore()
+const roleStore = useRoleStore()
 
 // State liên kết Store
 const mockStaffList = computed(() => staffStore.staffList)
-const loading = computed(() => staffStore.loading)
-const errorMessage = computed(() => staffStore.error)
+const dropdownRoles = computed(() => roleStore.dropdownRoles)
+const loading = computed(() => staffStore.loading || roleStore.loading)
+const errorMessage = computed(() => staffStore.error || roleStore.error)
 const paginationMeta = computed(() => staffStore.meta)
 
 // Thống kê động (Stats)
@@ -546,6 +595,7 @@ watch([searchQuery, filterStatus], () => {
 
 onMounted(() => {
   staffStore.fetchStaffs()
+  roleStore.fetchDropdownRoles()
 })
 
 const goToPage = (page) => {
@@ -577,6 +627,7 @@ const form = reactive({
   password: '',
   avatar: '',
   is_active: true,
+  role_ids: [],
 })
 
 const getInitials = (name) => {
@@ -594,6 +645,7 @@ const resetForm = () => {
   form.password = ''
   form.avatar = ''
   form.is_active = true
+  form.role_ids = []
 }
 
 const openAddModal = () => {
@@ -611,6 +663,7 @@ const openEditModal = (staff) => {
   form.password = ''
   form.avatar = staff.avatar || ''
   form.is_active = staff.is_active
+  form.role_ids = staff.roles ? staff.roles.map(r => r.id) : []
   modalMode.value = 'edit'
   showFormModal.value = true
 }
