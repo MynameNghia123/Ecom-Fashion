@@ -9,6 +9,7 @@ use App\Services\Admin\Interfaces\PermissionServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Permission;
+use App\Http\Resources\Admin\Staff\StaffResource;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
