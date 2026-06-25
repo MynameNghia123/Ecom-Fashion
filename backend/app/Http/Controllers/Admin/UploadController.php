@@ -6,7 +6,12 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use OpenApi\Attributes as OA;
 
+#[OA\Tag(
+    name: 'Upload',
+    description: 'Upload / xóa ảnh lên server storage. Ảnh được upload trước khi lưu sản phẩm.'
+)]
 class UploadController extends Controller
 {
     /**
@@ -20,6 +25,37 @@ class UploadController extends Controller
      *
      * Response: { success: true, url: "http://..../storage/images/products/xxx.webp" }
      */
+    #[OA\Post(
+        path: '/api/admin/upload-image',
+        summary: 'Upload một ảnh lên server storage',
+        description: "Upload file ảnh lên `storage/app/public/images/{folder}` và trả về URL đầy đủ.\nFile được lưu với tên `uuid.ext` để tránh trùng.\nYêu cầu `php artisan storage:link` đã được chạy.",
+        tags: ['Upload'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\MediaType(
+                mediaType: 'multipart/form-data',
+                schema: new OA\Schema(
+                    required: ['file'],
+                    properties: [
+                        new OA\Property(property: 'file', type: 'string', format: 'binary', description: 'File ảnh (jpeg, png, webp, gif). Tối đa 5MB.'),
+                        new OA\Property(property: 'folder', type: 'string', default: 'products', example: 'products', description: 'Thư mục con trong images/. Tối đa 50 ký tự, chỉ chữ cái, số, dấu gạch.'),
+                    ]
+                )
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 201,
+                description: 'Upload thành công',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: true),
+                    new OA\Property(property: 'url', type: 'string', format: 'uri', example: 'http://localhost/storage/images/products/550e8400-e29b-41d4-a716-446655440000.jpg', description: 'URL đầy đủ để hiển thị ảnh'),
+                    new OA\Property(property: 'path', type: 'string', example: 'images/products/550e8400-e29b-41d4-a716-446655440000.jpg', description: 'Đường dẫn tương đối (dùng để xóa ảnh sau nếu cần)'),
+                ])
+            ),
+            new OA\Response(response: 422, description: 'Lỗi validate (sai định dạng, quá dung lượng...)'),
+        ]
+    )]
     public function upload(Request $request): JsonResponse
     {
         $request->validate([
@@ -59,6 +95,39 @@ class UploadController extends Controller
      * DELETE /admin/upload-image
      * Body: { path: "images/products/xxx.webp" }
      */
+    #[OA\Delete(
+        path: '/api/admin/upload-image',
+        summary: 'Xóa ảnh đã upload khỏi storage',
+        description: "Xóa file ảnh khỏi disk 'public'. Dùng khi user bỏ ảnh trước khi lưu sản phẩm.\nChỉ cho phép xóa trong thư mục `images/`.",
+        tags: ['Upload'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['path'],
+                properties: [
+                    new OA\Property(property: 'path', type: 'string', example: 'images/products/550e8400-e29b-41d4-a716-446655440000.jpg', description: 'Đường dẫn tương đối nhận từ response upload. Phải bắt đầu bằng images/.'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Xóa thành công',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: true),
+                    new OA\Property(property: 'message', type: 'string', example: 'Đã xóa ảnh thành công.'),
+                ])
+            ),
+            new OA\Response(
+                response: 422,
+                description: 'Đường dẫn không hợp lệ (không bắt đầu bằng images/)',
+                content: new OA\JsonContent(properties: [
+                    new OA\Property(property: 'success', type: 'boolean', example: false),
+                    new OA\Property(property: 'message', type: 'string', example: 'Đường dẫn không hợp lệ.'),
+                ])
+            ),
+        ]
+    )]
     public function delete(Request $request): JsonResponse
     {
         $request->validate([

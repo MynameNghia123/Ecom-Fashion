@@ -21,22 +21,22 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tổng sản phẩm</p>
-        <p class="text-3xl font-bold text-slate-800">1,284</p>
+        <p class="text-3xl font-bold text-slate-800">{{ totalProducts }}</p>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Đang hoạt động</p>
         <div class="flex items-end gap-2">
-          <p class="text-3xl font-bold text-slate-800">1,150</p>
-          <span class="mb-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">89.5%</span>
+          <p class="text-3xl font-bold text-slate-800">{{ totalActiveProducts }}</p>
+          <span class="mb-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ percentActiveProducts }}%</span>
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Hết hàng</p>
-        <p class="text-3xl font-bold text-red-500">12</p>
+        <p class="text-3xl font-bold text-red-500">{{ totalProductsInStock }}</p>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Mới trong tháng</p>
-        <p class="text-3xl font-bold text-[#0258cb]">+45</p>
+        <p class="text-3xl font-bold text-[#0258cb]">+{{ totalNewProductsThisMonth }}</p>
       </div>
     </div>
     
@@ -98,77 +98,96 @@
               <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Thao tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-50">
-            <tr v-for="product in productStore.products" :key="product.id"
-              class="hover:bg-blue-50/40 transition-colors duration-100">
-              <td class="py-4 px-5 font-mono text-xs text-slate-500">
-                #{{ product.id }}
-              </td>
-              <td class="py-4 px-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
-                    <img v-if="product.thumbnail" :src="product.thumbnail" class="w-full h-full object-cover" />
-                    <svg v-else class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <template v-if="productStore.loading">
+              <tr v-for="i in categoryStore.meta.per_page" :key="i" class="animate-pulse">
+                <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-12"></div></td>
+                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-40"></div></td>
+                <td class="py-4 px-6">
+                  <div class="flex justify-end gap-2">
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                   </div>
-                  <div>
-                    <p class="font-semibold text-slate-800 leading-tight">{{ product.name }}</p>
+                </td>
+              </tr>
+            </template>
+            <template v-else-if="productStore.products.length === 0">
+              <tr>
+                <td colspan="8" class="py-6 text-center text-slate-500">Không có sản phẩm nào</td>
+              </tr>
+            </template>
+            <template v-else>
+              <tbody class="divide-y divide-slate-50">
+              <tr v-for="product in productStore.products" :key="product.id"
+                class="hover:bg-blue-50/40 transition-colors duration-100">
+                <td class="py-4 px-5 font-mono text-xs text-slate-500">
+                  #{{ product.id }}
+                </td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center shrink-0 overflow-hidden border border-slate-200">
+                      <img v-if="product.thumbnail" :src="product.thumbnail" class="w-full h-full object-cover" />
+                      <svg v-else class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                    </div>
+                    <div>
+                      <p class="font-semibold text-slate-800 leading-tight">{{ product.name }}</p>
+                    </div>
                   </div>
-                </div>
-              </td>
-              <td class="py-4 px-4 text-slate-700 font-medium text-sm">{{ product.brand }}</td>
-              <td class="py-4 px-4">
-                <span class="inline-block bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-lg">
-                  {{ categoryStore.categories.find(cate => cate.id === product.category_id)?.name || 'Chưa phân loại' }}
-                </span>
-              </td>
-              <td class="py-4 px-4 text-center">
-                <span class="text-slate-800 font-semibold">
-                  {{ getProductStock(product) }}
-                </span>
-              </td>
-              <td class="py-4 px-4">
-                <span
-                  :class="product.is_active
-                    ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
-                    : 'bg-slate-100 text-slate-500 border-slate-200'"
-                  class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border"
-                >
-                  <span :class="product.is_active ? 'bg-emerald-500' : 'bg-slate-400'" class="w-1.5 h-1.5 rounded-full"></span>
-                  {{ product.is_active ? 'Active' : 'Inactive' }}
-                </span>
-              </td>
-              <td class="py-4 px-4 text-slate-500 text-sm">
-                {{ formatDateOnly(product.created_at) }}
-              </td>
-              <td class="py-4 px-4">
-                <div class="flex items-center justify-end gap-1">
-                  <button 
-                    @click="openDetail(product)"
-                    class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all" title="Xem chi tiết">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  </button>
-                  <button 
-                    @click="openEdit(product)"  
-                  class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all" title="Chỉnh sửa">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                    </svg>
-                  </button>
-                  <button 
-                  @click="openDelete(product)"
-                  class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Xóa">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-                      <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-                    </svg>
-                  </button>
-                </div>
-              </td>
-            </tr>
-            </tbody>
+                </td>
+                <td class="py-4 px-4 text-slate-700 font-medium text-sm">{{ product.brand }}</td>
+                <td class="py-4 px-4">
+                  <span class="inline-block bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-lg">
+                    {{ categoryStore.categories.find(cate => cate.id === product.category_id)?.name || 'Chưa phân loại' }}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-center">
+                  <span class="text-slate-800 font-semibold">
+                    {{ getProductStock(product) }}
+                  </span>
+                </td>
+                <td class="py-4 px-4">
+                  <span
+                    :class="product.is_active
+                      ? 'bg-emerald-50 text-emerald-600 border-emerald-200'
+                      : 'bg-slate-100 text-slate-500 border-slate-200'"
+                    class="inline-flex items-center gap-1.5 text-xs font-semibold px-2.5 py-1 rounded-full border"
+                  >
+                    <span :class="product.is_active ? 'bg-emerald-500' : 'bg-slate-400'" class="w-1.5 h-1.5 rounded-full"></span>
+                    {{ product.is_active ? 'Active' : 'Inactive' }}
+                  </span>
+                </td>
+                <td class="py-4 px-4 text-slate-500 text-sm">
+                  {{ formatDateOnly(product.created_at) }}
+                </td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center justify-end gap-1">
+                    <button 
+                      @click="openDetail(product)"
+                      class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all" title="Xem chi tiết">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                      </svg>
+                    </button>
+                    <button 
+                      @click="openEdit(product)"  
+                    class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all" title="Chỉnh sửa">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                    </button>
+                    <button 
+                    @click="openDelete(product)"
+                    class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all" title="Xóa">
+                      <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                        <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                      </svg>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </template>
         </table>
       </div>
 
@@ -220,7 +239,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useProductStore } from '@/stores/admin/productStore'
 import { useCategoryStore } from '@/stores/admin/categoryStore'
 import  Pagination from '@/components/admin/Pagination.vue'
@@ -234,9 +253,37 @@ const categoryStore = useCategoryStore();
 const useModal = ref('');
 const selectedProduct = ref(null);
 
+const totalNewProductsThisMonth = computed(() =>{
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  return productStore.products.filter(product => {
+    const createdAt = new Date(product.created_at);
+    return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
+  }).length;
+})
+
+const totalProducts = computed(() => {
+    return productStore.meta?.total || 0; 
+});
+
+const totalActiveProducts = computed(() => {
+    return productStore.products.filter(p => p.is_active).length;
+});
+
+const totalProductsInStock = computed(() => {
+  return productStore.products.filter(product => getProductStock(product) === 0).length;
+});
+
+const percentActiveProducts = computed(() => {
+  if (totalProducts.value === 0) return 0;
+  return ((totalActiveProducts.value / totalProducts.value) * 100).toFixed(1);
+});
 onMounted(async () => {
   await productStore.initialFetch();
   await categoryStore.initialFetch();
+
 });
 
 const formatDateOnly = (dateString) => {
@@ -314,7 +361,6 @@ const moveToUpdate = () => {
 </script>
 
 <style scoped>
-/* Giữ lại animation cho Modal hiển thị cho mượt */
 .modal-fade-enter-active,
 .modal-fade-leave-active { transition: opacity 0.2s ease; }
 .modal-fade-enter-from,
