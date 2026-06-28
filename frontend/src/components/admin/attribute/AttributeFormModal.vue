@@ -68,7 +68,7 @@
 <script setup>
 import { ref, reactive, watch, nextTick } from 'vue'
 import { useAttributeStore } from '@/stores/admin/attributeStore'
-import { useAttributeValidation } from '@/composables/admin/useAttributeValidation'
+import { useAttributeValidation } from '@/composables/admin/validation/useAttributeValidation'
 
 const props = defineProps({
   show:      { type: Boolean, default: false },

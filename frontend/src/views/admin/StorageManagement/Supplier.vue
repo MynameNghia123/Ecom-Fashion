@@ -131,7 +131,9 @@
             </td>
             <td class="py-4 px-4">
               <div class="flex items-center justify-end gap-1">
-                <button class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150" title="Xem chi tiết">
+                <button 
+                  @click="isShowView = true; selectedSupplier = supplier"
+                  class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150" title="Xem chi tiết">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
@@ -173,11 +175,17 @@
     </div>
   </div>
 
+  <SupplierView
+    :isShowView="isShowView"
+    :supplierData="selectedSupplier"
+    @close="onCloseView"
+    @edit="isShowView = false; show = true; typeOfAction='update'"
+  />
 
   <SupplierForm
   :show="show"
   :typeOfAction="typeOfAction"
-  :selectedSupplier="selectedSupplier"
+  :supplierData="selectedSupplier"
   @cancel="onCancel"
   @submit="onSubmit"
   />
@@ -194,15 +202,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue';
-// import SupplierView from '@/components/admin/SupplierView.vue'
+import SupplierView from '@/components/admin/supplier/SupplierView.vue'
 import SupplierForm from '@/components/admin/supplier/SupplierForm.vue'
 import { useSupplierStore } from '@/stores/admin/supplierStore.js'
 
 const supplierStore = useSupplierStore()
+const showDeleteModal = ref(false)
+const selectedSupplier = ref(null)
+const isShowView = ref(false)
 
-
+watch (
+  () => selectedSupplier.value,
+  (newVal) => {
+    console.log('Selected supplier changed:', newVal)
+  }
+)
 
 onMounted(async () => {
   await supplierStore.initialFetch()
@@ -216,19 +232,27 @@ const onCancel = () => {
   show.value = false
   selectedSupplier.value = null
 }
-
-const onSubmit = async (formData) => {
-  if (typeOfAction.value === 'add') {
-    await supplierStore.createSupplier(formData)
-  } else if (typeOfAction.value === 'update' && selectedSupplier.value) {
-    await supplierStore.updateSupplier(selectedSupplier.value.id, formData)
-  }
-  show.value = false
+const onCloseView = function() {
+  isShowView.value = false
   selectedSupplier.value = null
 }
+
+const onSubmit = async ({formData, applyBackendErrors}) => {
+  try {
+    if (typeOfAction.value === 'add') {
+      console.log(formData);
+      await supplierStore.createSupplier(formData)
+    } else if (typeOfAction.value === 'update' && selectedSupplier.value) {
+      await supplierStore.updateSupplier(selectedSupplier.value.id, formData)
+    }
+    show.value = false
+    selectedSupplier.value = null    
+  } catch (e) {
+    applyBackendErrors(e) 
+  }
+
+}
 // delete
-const showDeleteModal = ref(false)
-const selectedSupplier = ref(null)
 
 const deleteSupplier = async () => {
   if (!selectedSupplier.value) return

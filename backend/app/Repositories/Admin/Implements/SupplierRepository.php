@@ -44,7 +44,7 @@ class SupplierRepository implements SupplierRepositoryInterface
     public function update(Model $model, array $data): Supplier
     {
         $model->update($data);
-        return $this->model->fresh();
+        return $model->fresh();
     }
 
     public function delete(Model $model): void
