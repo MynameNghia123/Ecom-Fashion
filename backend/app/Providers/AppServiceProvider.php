@@ -25,6 +25,8 @@ use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
 use App\Repositories\Admin\Implements\RoleRepository;
 use App\Repositories\Admin\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Admin\Implements\PermissionRepository;
+use App\Repositories\Admin\Implements\SupplierRepository;
+use App\Repositories\Admin\Interfaces\SupplierRepositoryInterface;
 use App\Repositories\Admin\Interfaces\PermissionRepositoryInterface;
 
 use App\Services\Admin\Implements\AttributeValueService;
@@ -37,8 +39,7 @@ use App\Services\Admin\Implements\CouponService;
 use App\Services\Admin\Implements\StaffService;
 use App\Services\Admin\Implements\RoleService;
 use App\Services\Admin\Implements\PermissionService;
-
-
+use App\Services\Admin\Implements\SupplierService;
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
 use App\Services\Admin\Interfaces\ProductImageServiceInterface;
@@ -49,7 +50,7 @@ use App\Services\Admin\Interfaces\CouponServiceInterface;
 use App\Services\Admin\Interfaces\StaffServiceInterface;
 use App\Services\Admin\Interfaces\RoleServiceInterface;
 use App\Services\Admin\Interfaces\PermissionServiceInterface;
-
+use App\Services\Admin\Interfaces\SupplierServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -67,6 +68,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AttributeRepositoryInterface::class,
             AttributeRepository::class,
+        );
+        $this->app->bind(
+            SupplierRepositoryInterface::class,
+            SupplierRepository::class,
         );
         // Product
         $this->app->bind(
@@ -99,10 +104,10 @@ class AppServiceProvider extends ServiceProvider
             CustomerRepository::class,
         );
         // Coupon
-        $this->app->bind(
-            CouponRepositoryInterface::class,
-            CouponRepository::class,
-        );
+        // $this->app->bind(
+        //     CouponRepositoryInterface::class,
+        //     CouponRepository::class,
+        // );
         // Staff
         $this->app->bind(
             StaffRepositoryInterface::class,
@@ -119,6 +124,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             ProductServiceInterface::class,
             ProductService::class,
+        );
+        $this->app->bind(
+            SupplierServiceInterface::class,
+            SupplierService::class,
         );
         // ProductImage
         $this->app->bind(
@@ -146,10 +155,10 @@ class AppServiceProvider extends ServiceProvider
             CustomerService::class,
         );
         // Coupon
-        $this->app->bind(
-            CouponRepositoryInterface::class,
-            CouponRepository::class,
-        );
+        // $this->app->bind(
+        //     CouponRepositoryInterface::class,
+        //     CouponRepository::class,
+        // );
         // Staff 
         $this->app->bind(
             StaffServiceInterface::class,

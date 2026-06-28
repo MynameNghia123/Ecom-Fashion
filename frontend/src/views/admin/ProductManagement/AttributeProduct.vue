@@ -147,87 +147,14 @@
       />
     </div>
 
-    <!-- ============================= ADD MODAL ============================= -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showAddModal"
-          class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-          @click.self="showAddModal = false"
-        >
-          <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[440px] animate-modal-in">
-            <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
-              <h2 class="text-base font-bold text-slate-800">Thêm thuộc tính mới</h2>
-              <button @click="showAddModal = false" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div class="px-6 py-5">
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">Tên thuộc tính</label>
-              <input
-                v-model="addForm.name"
-                ref="addInputRef"
-                type="text"
-                placeholder="Vd: Kích thước, Màu sắc..."
-                @keyup.enter="submitAdd"
-                class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
-                :class="addErrors.name ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
-              />
-              <p v-if="addErrors.name" class="text-xs text-red-500 mt-1.5">{{ addErrors.name }}</p>
-            </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-              <button @click="showAddModal = false" :disabled="isSubmitting" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all disabled:opacity-50">Hủy</button>
-              <button @click="submitAdd" :disabled="isSubmitting" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
-                <svg v-if="isSubmitting" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                Thêm thuộc tính
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
-
-    <!-- ============================= EDIT MODAL ============================= -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showEditModal"
-          class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-          @click.self="showEditModal = false"
-        >
-          <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[440px] animate-modal-in">
-            <div class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-slate-100">
-              <h2 class="text-base font-bold text-slate-800">Chỉnh sửa thuộc tính</h2>
-              <button @click="showEditModal = false" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-              </button>
-            </div>
-            <div class="px-6 py-5">
-              <label class="block text-xs font-bold text-slate-700 mb-1.5">Tên thuộc tính</label>
-              <input
-                v-model="editForm.name"
-                ref="editInputRef"
-                type="text"
-                placeholder="Nhập tên thuộc tính..."
-                @keyup.enter="submitEdit"
-                class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
-                :class="editErrors.name ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
-              />
-              <p v-if="editErrors.name" class="text-xs text-red-500 mt-1.5">{{ editErrors.name }}</p>
-            </div>
-            <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-slate-100">
-              <button @click="showEditModal = false" :disabled="isSubmitting" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all disabled:opacity-50">Hủy</button>
-              <button @click="submitEdit" :disabled="isSubmitting" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed">
-                <svg v-if="isSubmitting" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
-                Lưu thay đổi
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <!-- ============================= FORM MODAL ============================= -->
+    <AttributeFormModal
+      :show="showFormModal"
+      :mode="formMode"
+      :attribute="editTarget"
+      @saved="onSaved"
+      @cancel="showFormModal = false"
+    />
 
     <!-- ============================= CONFIRM DELETE ============================= -->
     <ConfirmDeleteModal
@@ -245,10 +172,11 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, nextTick, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useAttributeStore } from '@/stores/admin/attributeStore'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 import Pagination from '@/components/admin/Pagination.vue'
+import AttributeFormModal from '@/components/admin/attribute/AttributeFormModal.vue'
 
 const store = useAttributeStore()
 
@@ -273,87 +201,34 @@ const handlePerPageChange = (newPerPage) => {
   store.fetchAttributes({ search: searchQuery.value, page: 1 })
 }
 
-// ======== Mount: load first page ========
+// ======== Mount ========
 onMounted(() => {
-  store.initialFetch()   // chỉ fetch nếu chưa có data
+  store.initialFetch()
 })
 
-// ======== Shared submit state ========
-const isSubmitting = ref(false)
-
-// ======== Add Modal ========
-const showAddModal = ref(false)
-const addInputRef = ref(null)
-const addForm = reactive({ name: '' })
-const addErrors = reactive({ name: '' })
+// ======== Form Modal (Add / Edit) ========
+const showFormModal = ref(false)
+const formMode = ref('add')      // 'add' | 'edit'
+const editTarget = ref(null)
 
 const openAddModal = () => {
-  addForm.name = ''
-  addErrors.name = ''
-  showAddModal.value = true
-  nextTick(() => addInputRef.value?.focus())
+  formMode.value  = 'add'
+  editTarget.value = null
+  showFormModal.value = true
 }
-
-const submitAdd = async () => {
-  addErrors.name = ''
-  if (!addForm.name.trim()) {
-    addErrors.name = 'Tên thuộc tính không được để trống.'
-    return
-  }
-  isSubmitting.value = true
-  try {
-    await store.createAttribute(addForm.name.trim())
-    showAddModal.value = false
-  } catch (e) {
-    // Lỗi validation từ backend (422)
-    const errors = e.response?.data?.errors
-    if (errors?.name) {
-      addErrors.name = errors.name[0]
-    } else {
-      addErrors.name = e.response?.data?.message || 'Có lỗi xảy ra.'
-    }
-  } finally {
-    isSubmitting.value = false
-  }
-}
-
-// ======== Edit Modal ========
-const showEditModal = ref(false)
-const editInputRef = ref(null)
-const editForm = reactive({ id: null, name: '' })
-const editErrors = reactive({ name: '' })
 
 const openEditModal = (attr) => {
-  editForm.id = attr.id
-  editForm.name = attr.name
-  editErrors.name = ''
-  showEditModal.value = true
-  nextTick(() => editInputRef.value?.focus())
+  formMode.value   = 'edit'
+  editTarget.value  = attr
+  showFormModal.value = true
 }
 
-const submitEdit = async () => {
-  editErrors.name = ''
-  if (!editForm.name.trim()) {
-    editErrors.name = 'Tên thuộc tính không được để trống.'
-    return
-  }
-  isSubmitting.value = true
-  try {
-    await store.updateAttribute(editForm.id, editForm.name.trim())
-    showEditModal.value = false
-  } catch (e) {
-    const errors = e.response?.data?.errors
-    if (errors?.name) {
-      editErrors.name = errors.name[0]
-    } else {
-      editErrors.name = e.response?.data?.message || 'Có lỗi xảy ra.'
-    }
-  } finally {
-    isSubmitting.value = false
-  }
+const onSaved = () => {
+  showFormModal.value = false
 }
 
 // ======== Delete ========
+const isSubmitting = ref(false)
 const showDeleteModal = ref(false)
 const deleteTarget = ref(null)
 

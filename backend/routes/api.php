@@ -10,7 +10,8 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
-
+use app\Http\Controllers\Admin\SupplierController;
+use App\Models\Supplier;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,17 +23,20 @@ use App\Http\Controllers\Admin\PermissionController;
 Route::prefix('admin')->group(function () {
     Route::apiResource('attributes', AttributeController::class);
     Route::get('categories/parents', [CategoryController::class, 'parents']);
+
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
-
-    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
-    Route::post('upload-image',    [UploadController::class, 'upload']);
-    Route::delete('upload-image',  [UploadController::class, 'delete']);
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('staffs', StaffController::class);
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
+    Route::apiResource('suppliers', SupplierController::class);
+
+
+    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
+    Route::post('upload-image',    [UploadController::class, 'upload']);
+    Route::delete('upload-image',  [UploadController::class, 'delete']);
 });
 
 //Route::get('/attributes', [AttributeController::class, 'index']);
