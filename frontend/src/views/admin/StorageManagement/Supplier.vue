@@ -104,6 +104,19 @@
             <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-28">Thao tác</th>
           </tr>
         </thead>
+      <template v-if="supplierStore.loading">
+        <tbody>
+          <tr v-for="i in 5" :key="'sk-'+i" class="animate-pulse">
+            <td class="py-4 px-5"><div class="h-4 bg-slate-200 rounded w-8"></div></td>
+            <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-36"></div></td>
+            <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-28"></div></td>
+            <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-28"></div></td>
+            <td class="py-4 px-4"><div class="h-6 bg-slate-200 rounded-full w-24"></div></td>
+            <td class="py-4 px-4"><div class="flex justify-end gap-2"><div class="h-8 w-8 bg-slate-200 rounded-lg"></div><div class="h-8 w-8 bg-slate-200 rounded-lg"></div><div class="h-8 w-8 bg-slate-200 rounded-lg"></div></div></td>
+          </tr>
+        </tbody>
+      </template>
+      <template v-else>
         <tbody class="divide-y divide-slate-50">
           <tr v-for="supplier in supplierStore.suppliers" 
               :key="supplier.id"
@@ -158,25 +171,26 @@
             </td>
           </tr>
         </tbody>
-      </table>
+      </template>
+    </table>
     </div>
 
-    <div class="px-5 py-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-      <p class="text-xs text-slate-500">
-        Hiển thị 10 / 150 nhà phân phối
-      </p>
-      <div class="flex items-center gap-1">
-        <button class="w-8 h-8 rounded-lg text-sm font-semibold transition-all duration-150 bg-[#0258cb] text-white shadow-sm">1</button>
-        <button class="w-8 h-8 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-500 hover:bg-slate-100">2</button>
-        <button class="w-8 h-8 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-500 hover:bg-slate-100">3</button>
-        <span class="w-8 h-8 flex items-center justify-center text-slate-400 text-sm">...</span>
-        <button class="w-8 h-8 rounded-lg text-sm font-semibold transition-all duration-150 text-slate-500 hover:bg-slate-100">15</button>
-      </div>
+    <!-- Pagination footer -->
+    <div class="px-5 py-4 border-t border-slate-100">
+      <Pagination
+        :current-page="supplierStore.meta.current_page"
+        :per-page="supplierStore.meta.per_page"
+        :total="supplierStore.meta.total"
+        :last-page="supplierStore.meta.last_page"
+        @update:current-page="handleCurrentPage"
+        @update:per-page="handlePerPageChange"
+      />
     </div>
+
   </div>
 
   <SupplierView
-    :isShowView="isShowView"
+    :show="isShowView"
     :supplierData="selectedSupplier"
     @close="onCloseView"
     @edit="isShowView = false; show = true; typeOfAction='update'"
@@ -206,6 +220,7 @@ import { ref, onMounted, watch } from 'vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue';
 import SupplierView from '@/components/admin/supplier/SupplierView.vue'
 import SupplierForm from '@/components/admin/supplier/SupplierForm.vue'
+import Pagination from '@/components/admin/Pagination.vue';
 import { useSupplierStore } from '@/stores/admin/supplierStore.js'
 
 const supplierStore = useSupplierStore()
@@ -263,6 +278,15 @@ const deleteSupplier = async () => {
   } catch (error) {
     console.error('Error deleting supplier:', error)
   }
+}
+
+// ─── Phân trang ──────────────────────────────────────────────────────────────
+const handleCurrentPage = async (page) => {
+  if (page === supplierStore.meta.current_page) return
+  await supplierStore.fetchSuppliers({ page, per_page: supplierStore.meta.per_page })
+}
+const handlePerPageChange = async (perPage) => {
+  await supplierStore.fetchSuppliers({ page: 1, per_page: perPage })
 }
 </script>
 

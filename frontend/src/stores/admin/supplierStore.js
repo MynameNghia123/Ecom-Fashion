@@ -22,7 +22,7 @@ export const useSupplierStore = defineStore('supplier', () => {
         error.value = null;
         try {
             const res = await supplierService.getAll({
-                per_page: meta.per_page,
+                per_page: meta.value.per_page,
                 ...params
             });
             suppliers.value = res.data.data;
