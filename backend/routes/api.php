@@ -10,7 +10,8 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
-use app\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Models\Supplier;
 
 /*
@@ -32,7 +33,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
     Route::apiResource('suppliers', SupplierController::class);
-
+    Route::apiResource('good-receipts', GoodReceiptController::class);
 
     // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
     Route::post('upload-image',    [UploadController::class, 'upload']);

@@ -51,6 +51,18 @@ use App\Services\Admin\Interfaces\StaffServiceInterface;
 use App\Services\Admin\Interfaces\RoleServiceInterface;
 use App\Services\Admin\Interfaces\PermissionServiceInterface;
 use App\Services\Admin\Interfaces\SupplierServiceInterface;
+
+use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
+use App\Services\Admin\Implements\GoodReceiptService;
+
+use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
+use App\Services\Admin\Implements\GoodReceiptDetailService;
+
+use App\Repositories\Admin\Interfaces\GoodReceiptDetailRepoInterface;
+use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
+
+use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
+use App\Repositories\Admin\Implements\GoodReceiptRepo;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -68,6 +80,22 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             AttributeRepositoryInterface::class,
             AttributeRepository::class,
+        );
+        $this->app->bind(
+            GoodReceiptDetailRepoInterface::class,
+            GoodReceiptDetailRepo::class,
+        );
+        $this->app->bind(
+            GoodReceiptDetailServiceInterface::class,
+            GoodReceiptDetailService::class,
+        );
+        $this->app->bind(
+            GoodReceiptRepoInterface::class,
+            GoodReceiptRepo::class,
+        );
+        $this->app->bind(
+            GoodReceiptServiceInterface::class,
+            GoodReceiptService::class,
         );
         $this->app->bind(
             SupplierRepositoryInterface::class,

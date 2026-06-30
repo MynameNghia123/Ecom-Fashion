@@ -105,11 +105,6 @@
                                         "description": "Tên thuộc tính",
                                         "type": "string",
                                         "example": "Màu sắc"
-                                    },
-                                    "type": {
-                                        "description": "Loại thuộc tính (nếu có)",
-                                        "type": "string",
-                                        "example": "color"
                                     }
                                 },
                                 "type": "object"
@@ -217,10 +212,6 @@
                                         "description": "Tên thuộc tính mới",
                                         "type": "string",
                                         "example": "Kích thước"
-                                    },
-                                    "type": {
-                                        "type": "string",
-                                        "example": "size"
                                     }
                                 },
                                 "type": "object"
@@ -1459,6 +1450,234 @@
                     },
                     "404": {
                         "description": "Không tìm thấy khách hàng"
+                    }
+                }
+            }
+        },
+        "/api/admin/good-receipts": {
+            "get": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Lấy danh sách phiếu nhập hàng",
+                "operationId": "86317c2fdec7cba8c1f2ff085118fde9",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng trên 1 trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 4
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách phiếu nhập"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Tạo mới phiếu nhập hàng",
+                "operationId": "2d8808d3279836f7fb17017500d08198",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "receipt_code",
+                                    "supplier_id",
+                                    "total_amount_price",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "receipt_code": {
+                                        "type": "string",
+                                        "example": "GR20231001"
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "staff_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "total_amount_price": {
+                                        "type": "number",
+                                        "example": 100000
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "good_receipt_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "import_price": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo mới thành công"
+                    }
+                }
+            }
+        },
+        "/api/admin/good-receipts/{id}": {
+            "get": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Lấy chi tiết phiếu nhập hàng",
+                "operationId": "bcffd5895ac7aa0148081944e69c5d09",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết phiếu nhập"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Cập nhật phiếu nhập hàng",
+                "operationId": "80eecb0841822ccfe071197bd733b560",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "receipt_code": {
+                                        "type": "string",
+                                        "example": "GR20231001"
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "staff_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "total_amount_price": {
+                                        "type": "number",
+                                        "example": 100000
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "good_receipt_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "import_price": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Xóa phiếu nhập hàng",
+                "operationId": "ef60d14ebf90ca6acc37c5990075af8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa thành công"
                     }
                 }
             }
@@ -3481,6 +3700,10 @@
         {
             "name": "Upload",
             "description": "Upload / xóa ảnh lên server storage. Ảnh được upload trước khi lưu sản phẩm."
+        },
+        {
+            "name": "Admin - Good Receipt",
+            "description": "Admin - Good Receipt"
         },
         {
             "name": "Admin - Suppliers",
