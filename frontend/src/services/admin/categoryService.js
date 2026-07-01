@@ -11,7 +11,7 @@ export const categoryService = {
     return http.get(BASE, { params })
   },
 
-  /**
+  /** 
    * Lấy danh sách các danh mục cha (gốc) không phân trang
    */
   getParents() {

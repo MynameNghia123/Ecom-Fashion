@@ -33,7 +33,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
     Route::apiResource('suppliers', SupplierController::class);
-    Route::apiResource('good-receipts', GoodReceiptController::class);
+    Route::apiResource('goods-receipts', GoodReceiptController::class);
 
     // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
     Route::post('upload-image',    [UploadController::class, 'upload']);
