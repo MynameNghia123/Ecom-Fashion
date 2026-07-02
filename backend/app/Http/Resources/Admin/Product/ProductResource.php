@@ -36,9 +36,9 @@ class ProductResource extends JsonResource
 
             'created_by_staff_id' => $this->created_by_staff_id,
             'updated_by_staff_id' => $this->updated_by_staff_id,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
-            'deleted_at' => $this->deleted_at,
+            'created_at' => $this->created_at?->format('d/m/Y H:i'),
+            'updated_at' => $this->updated_at?->format('d/m/Y H:i'),
+            'deleted_at' => $this->deleted_at?->format('d/m/Y H:i'),
         ];
     }
 }

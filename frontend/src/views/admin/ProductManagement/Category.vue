@@ -219,226 +219,23 @@
     </div>
 
     <!-- ========== ADD / EDIT MODAL ========== -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showFormModal"
-          class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-          @click.self="closeFormModal"
-        >
-          <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[560px] animate-modal-in flex flex-col max-h-[90vh]">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line v-if="modalMode === 'add'" x1="12" y1="5" x2="12" y2="19"/><line v-if="modalMode === 'add'" x1="5" y1="12" x2="19" y2="12"/>
-                    <path v-if="modalMode === 'edit'" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                    <path v-if="modalMode === 'edit'" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                  </svg>
-                </div>
-                <h2 class="text-base font-bold text-slate-800">
-                  {{ modalMode === 'add' ? 'Thêm danh mục mới' : 'Chỉnh sửa danh mục' }}
-                </h2>
-              </div>
-              <button @click="closeFormModal" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-
-            <!-- Modal Body -->
-            <div class="px-7 py-6 overflow-y-auto space-y-5">
-
-              <!-- Server error banner -->
-              <div
-                v-if="formServerError"
-                class="flex items-center gap-2 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
-              >
-                <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                {{ formServerError }}
-              </div>
-
-              <!-- Row: Name + Slug -->
-              <div class="grid grid-cols-2 gap-4">
-                <!-- Name -->
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                    Tên danh mục <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="input-category-name"
-                    v-model="form.name"
-                    @input="autoSlug"
-                    type="text"
-                    placeholder="Vd: Thời trang nam"
-                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
-                    :class="fieldError('name') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
-                  />
-                  <p v-if="fieldError('name')" class="text-xs text-red-500 mt-1">{{ fieldError('name') }}</p>
-                </div>
-
-                <!-- Slug -->
-                <div>
-                  <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                    Slug <span class="text-red-500">*</span>
-                  </label>
-                  <input
-                    id="input-category-slug"
-                    v-model="form.slug"
-                    type="text"
-                    placeholder="thoi-trang-nam"
-                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-600 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-mono"
-                    :class="fieldError('slug') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
-                  />
-                  <p v-if="fieldError('slug')" class="text-xs text-red-500 mt-1">{{ fieldError('slug') }}</p>
-                </div>
-              </div>
-
-              <!-- Parent Category -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Danh mục cha</label>
-                <div class="relative">
-                  <select
-                    id="select-category-parent"
-                    v-model="form.parent_id"
-                    class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
-                  >
-                    <option :value="null">— Không có (Danh mục gốc) —</option>
-                    <option
-                      v-for="cat in filterParents"
-                      :key="cat.id"
-                      :value="cat.id"
-                      :disabled="modalMode === 'edit' && cat.id === form.id"
-                    >{{ cat.name }}</option>
-                  </select>
-                  <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
-                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-                  </span>
-                </div>
-                <p v-if="fieldError('parent_id')" class="text-xs text-red-500 mt-1">{{ fieldError('parent_id') }}</p>
-              </div>
-
-              <!-- Description -->
-              <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1.5">Mô tả</label>
-                <textarea
-                  id="textarea-category-description"
-                  v-model="form.description"
-                  rows="3"
-                  placeholder="Nhập mô tả ngắn về danh mục này (tối đa 255 ký tự)..."
-                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 resize-none leading-relaxed"
-                  :class="fieldError('description') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
-                ></textarea>
-                <div class="flex items-center justify-between mt-1">
-                  <p v-if="fieldError('description')" class="text-xs text-red-500">{{ fieldError('description') }}</p>
-                  <p class="text-xs text-slate-400 ml-auto">{{ form.description?.length || 0 }}/255</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Modal Footer -->
-            <div class="flex items-center justify-end gap-3 px-7 py-5 border-t border-slate-100">
-              <button
-                @click="closeFormModal"
-                :disabled="formSubmitting"
-                class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all duration-150 disabled:opacity-50"
-              >Hủy</button>
-              <button
-                id="btn-submit-category"
-                @click="submitForm"
-                :disabled="formSubmitting"
-                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                  <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
-                </svg>
-                {{ formSubmitting ? 'Đang lưu...' : (modalMode === 'add' ? 'Thêm danh mục' : 'Lưu thay đổi') }}
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <CategoryFormModal
+      :show="showFormModal"
+      :mode="modalMode"
+      :category="editTarget"
+      :filter-parents="filterParents"
+      @saved="onSaved"
+      @cancel="showFormModal = false"
+    />
 
     <!-- ========== VIEW DETAIL MODAL ========== -->
-    <Teleport to="body">
-      <Transition name="modal-fade">
-        <div
-          v-if="showViewModal"
-          class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-          @click.self="showViewModal = false"
-        >
-          <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
-          <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[480px] animate-modal-in">
-            <!-- Header -->
-            <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
-              <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
-                  </svg>
-                </div>
-                <h2 class="text-base font-bold text-slate-800">Chi tiết danh mục</h2>
-              </div>
-              <button @click="showViewModal = false" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-                </svg>
-              </button>
-            </div>
-            <!-- Content -->
-            <div class="px-7 py-6 space-y-4">
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-50 rounded-xl px-4 py-3">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">ID</p>
-                  <p class="text-sm font-mono font-semibold text-slate-700">{{ viewTarget?.id }}</p>
-                </div>
-                <div class="bg-slate-50 rounded-xl px-4 py-3">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Danh mục cha</p>
-                  <p class="text-sm font-semibold text-[#0258cb]">
-                    {{ viewTarget?.parent_id ? getCategoryName(viewTarget.parent_id) : '—' }}
-                  </p>
-                </div>
-              </div>
-              <div class="bg-slate-50 rounded-xl px-4 py-3">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Tên danh mục</p>
-                <p class="text-sm font-bold text-slate-800">{{ viewTarget?.name }}</p>
-              </div>
-              <div class="bg-slate-50 rounded-xl px-4 py-3">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Slug</p>
-                <p class="text-sm font-mono text-slate-600">{{ viewTarget?.slug }}</p>
-              </div>
-              <div class="bg-slate-50 rounded-xl px-4 py-3">
-                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Mô tả</p>
-                <p class="text-sm text-slate-600 leading-relaxed">{{ viewTarget?.description || 'Chưa có mô tả.' }}</p>
-              </div>
-              <div class="grid grid-cols-2 gap-4">
-                <div class="bg-slate-50 rounded-xl px-4 py-3">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ngày tạo</p>
-                  <p class="text-xs text-slate-600">{{ viewTarget?.created_at }}</p>
-                </div>
-                <div class="bg-slate-50 rounded-xl px-4 py-3">
-                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Cập nhật</p>
-                  <p class="text-xs text-slate-600">{{ viewTarget?.updated_at }}</p>
-                </div>
-              </div>
-            </div>
-            <!-- Footer -->
-            <div class="flex items-center justify-end gap-3 px-7 py-5 border-t border-slate-100">
-              <button @click="showViewModal = false" class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all duration-150">Đóng</button>
-              <button @click="openEditModal(viewTarget); showViewModal = false" class="px-5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 font-semibold text-sm hover:bg-amber-100 transition-all duration-150">
-                Chỉnh sửa
-              </button>
-            </div>
-          </div>
-        </div>
-      </Transition>
-    </Teleport>
+    <CategoryViewModal
+      :show="showViewModal"
+      :category="viewTarget"
+      :get-category-name="getCategoryName"
+      @close="showViewModal = false"
+      @edit="onViewModalEdit"
+    />
 
     <!-- ========== CONFIRM DELETE MODAL ========== -->
     <ConfirmDeleteModal
@@ -456,11 +253,13 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useCategoryStore } from '@/stores/admin/categoryStore'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 import Pagination from '@/components/admin/Pagination.vue'
 import { categoryService } from '@/services/admin/categoryService'
+import CategoryFormModal from '@/components/admin/category/CategoryFormModal.vue'
+import CategoryViewModal from '@/components/admin/category/CategoryViewModal.vue'
 
 const categoryStore = useCategoryStore()
 
@@ -471,7 +270,6 @@ onMounted(() => {
 })
 
 // ─── Stats tính từ toàn bộ danh sách trang hiện tại ──────────────────────────
-// (thống kê chính xác sẽ cần API riêng, ở đây dùng meta.total để hiển thị tổng)
 const parentCount = computed(() =>
   categoryStore.categories.filter(c => !c.parent_id).length
 )
@@ -517,111 +315,38 @@ const handlePerPageChange = (newPerPage) => {
   categoryStore.fetchCategories({ search: searchQuery.value, page: 1 })
 }
 
-
-
-// ─── Slug helper ─────────────────────────────────────────────────────────────
-const generateSlug = (text) =>
-  (text || '').toLowerCase()
-    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-    .replace(/đ/g, 'd').replace(/[^a-z0-9\s-]/g, '')
-    .trim().replace(/\s+/g, '-')
-
-// ─── Form Modal (Add / Edit) ─────────────────────────────────────────────────
+// ─── Form Modal (Add / Edit) — delegated to CategoryFormModal ────────────────
 const showFormModal = ref(false)
 const modalMode = ref('add') // 'add' | 'edit'
-const formSubmitting = ref(false)
-const formServerError = ref('')
-const formErrors = reactive({}) // { name: '...', slug: '...', ... }
-
-const form = reactive({
-  id: null,
-  name: '',
-  slug: '',
-  description: '',
-  parent_id: null,
-})
-
-const resetForm = () => {
-  form.id = null
-  form.name = ''
-  form.slug = ''
-  form.description = ''
-  form.parent_id = null
-  formServerError.value = ''
-  Object.keys(formErrors).forEach(k => delete formErrors[k])
-}
-
-const fieldError = (field) => formErrors[field]?.[0] ?? ''
+const editTarget = ref(null)
 
 const openAddModal = () => {
-  resetForm()
-  modalMode.value = 'add'
+  modalMode.value  = 'add'
+  editTarget.value = null
   showFormModal.value = true
 }
 
 const openEditModal = (cat) => {
-  resetForm()
-  form.id = cat.id
-  form.name = cat.name
-  form.slug = cat.slug
-  form.description = cat.description ?? ''
-  form.parent_id = cat.parent_id ?? null
-  modalMode.value = 'edit'
+  modalMode.value  = 'edit'
+  editTarget.value = cat
   showFormModal.value = true
 }
 
-const closeFormModal = () => {
-  if (formSubmitting.value) return
+const onSaved = () => {
+  fetchFilterParents()
   showFormModal.value = false
-}
-
-const autoSlug = () => {
-  if (modalMode.value === 'add') {
-    form.slug = generateSlug(form.name)
-  }
-}
-
-const submitForm = async () => {
-  formServerError.value = ''
-  Object.keys(formErrors).forEach(k => delete formErrors[k])
-
-  // Client-side validation cơ bản
-  if (!form.name.trim()) { formErrors.name = ['Tên danh mục không được để trống.']; return }
-  if (!form.slug.trim()) { formErrors.slug = ['Slug không được để trống.']; return }
-
-  formSubmitting.value = true
-  try {
-    const payload = {
-      name: form.name.trim(),
-      slug: form.slug.trim(),
-      description: form.description?.trim() || null,
-      parent_id: form.parent_id || null,
-    }
-
-    if (modalMode.value === 'add') {
-      await categoryStore.createCategory(payload)
-    } else {
-      await categoryStore.updateCategory(form.id, payload)
-    }
-
-    fetchFilterParents()
-    showFormModal.value = false
-  } catch (e) {
-    // Lỗi validation từ backend (422): e.errors = { name: [...], slug: [...] }
-    if (e.errors) {
-      Object.assign(formErrors, e.errors)
-    } else {
-      formServerError.value = e.message
-    }
-  } finally {
-    formSubmitting.value = false
-  }
 }
 
 // ─── View Modal ──────────────────────────────────────────────────────────────
 const showViewModal = ref(false)
 const viewTarget = ref(null)
 const openViewModal = (cat) => { viewTarget.value = cat; showViewModal.value = true }
+
+// Khi bấm "Chỉnh sửa" từ bên trong CategoryViewModal
+const onViewModalEdit = (cat) => {
+  showViewModal.value = false
+  openEditModal(cat)
+}
 
 // ─── Delete Modal ─────────────────────────────────────────────────────────────
 const showDeleteModal = ref(false)
@@ -640,7 +365,6 @@ const executeDelete = async () => {
     deleteTarget.value = null
   } catch (e) {
     showDeleteModal.value = false
-    // Lỗi xóa sẽ hiển thị qua categoryStore.error (banner ở đầu trang)
   }
 }
 </script>

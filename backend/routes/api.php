@@ -10,6 +10,9 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\GoodReceiptController;
+use App\Models\Supplier;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,31 +25,18 @@ Route::prefix('admin')->group(function () {
     // ── Catalog ───────────────────────────────────────────────────────────────
     Route::apiResource('attributes', AttributeController::class);
     Route::get('categories/parents', [CategoryController::class, 'parents']);
+
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
-
-    // ── Upload ────────────────────────────────────────────────────────────────
-    Route::post('upload-image',   [UploadController::class, 'upload']);
-    Route::delete('upload-image', [UploadController::class, 'delete']);
-
-    // ── Customers & Coupons ───────────────────────────────────────────────────
     Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('coupons',   CouponController::class);
-
-    // ── Staff ─────────────────────────────────────────────────────────────────
+    Route::apiResource('coupons', CouponController::class);
     Route::apiResource('staffs', StaffController::class);
-
-    // ── RBAC: Roles ───────────────────────────────────────────────────────────
-    // GET  /admin/roles/all              — toàn bộ roles (dùng dropdown)
-    // POST /admin/roles/{role}/sync-permissions — sync quyền riêng
-    // Khai báo trước apiResource để tránh conflict với route {role}
-    Route::get('roles/all', [RoleController::class, 'all']);
-    Route::post('roles/{role}/sync-permissions', [RoleController::class, 'syncPermissions']);
     Route::apiResource('roles', RoleController::class);
+    Route::apiResource('permissions', PermissionController::class);
+    Route::apiResource('suppliers', SupplierController::class);
+    Route::apiResource('goods-receipts', GoodReceiptController::class);
 
-    // ── RBAC: Permissions ─────────────────────────────────────────────────────
-    // GET /admin/permissions/all — toàn bộ permissions (dùng form gán quyền)
-    // Khai báo trước apiResource để tránh bị route {permission} capture
-    Route::get('permissions/all', [PermissionController::class, 'getAll']);
-    Route::apiResource('permissions', PermissionController::class)->only(['index']);
+    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
+    Route::post('upload-image',    [UploadController::class, 'upload']);
+    Route::delete('upload-image',  [UploadController::class, 'delete']);
 });

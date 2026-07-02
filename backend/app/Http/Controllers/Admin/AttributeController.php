@@ -75,7 +75,6 @@ class AttributeController extends Controller
                 required: ['name'],
                 properties: [
                     new OA\Property(property: 'name', type: 'string', example: 'Màu sắc', description: 'Tên thuộc tính'),
-                    new OA\Property(property: 'type', type: 'string', example: 'color', description: 'Loại thuộc tính (nếu có)'),
                 ]
             )
         ),
@@ -141,7 +140,6 @@ class AttributeController extends Controller
             required: true,
             content: new OA\JsonContent(properties: [
                 new OA\Property(property: 'name', type: 'string', example: 'Kích thước', description: 'Tên thuộc tính mới'),
-                new OA\Property(property: 'type', type: 'string', example: 'size'),
             ])
         ),
         responses: [

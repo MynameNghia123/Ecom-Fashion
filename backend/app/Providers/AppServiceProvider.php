@@ -14,6 +14,9 @@ use App\Repositories\Admin\Implements\ProductRepository;
 use App\Repositories\Admin\Implements\ProductVariantRepository;
 use App\Repositories\Admin\Implements\RoleRepository;
 use App\Repositories\Admin\Implements\StaffRepository;
+use App\Repositories\Admin\Implements\SupplierRepository;
+use App\Repositories\Admin\Implements\GoodReceiptRepo;
+use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
 
 use App\Repositories\Admin\Interfaces\AttributeRepositoryInterface;
 use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
@@ -26,6 +29,9 @@ use App\Repositories\Admin\Interfaces\ProductRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
 use App\Repositories\Admin\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
+use App\Repositories\Admin\Interfaces\SupplierRepositoryInterface;
+use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
+use App\Repositories\Admin\Interfaces\GoodReceiptDetailRepoInterface;
 
 // ── Services ──────────────────────────────────────────────────────────────────
 use App\Services\Admin\Implements\AttributeService;
@@ -39,6 +45,9 @@ use App\Services\Admin\Implements\ProductService;
 use App\Services\Admin\Implements\ProductVariantService;
 use App\Services\Admin\Implements\RoleService;
 use App\Services\Admin\Implements\StaffService;
+use App\Services\Admin\Implements\SupplierService;
+use App\Services\Admin\Implements\GoodReceiptService;
+use App\Services\Admin\Implements\GoodReceiptDetailService;
 
 use App\Services\Admin\Interfaces\AttributeServiceInterface;
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
@@ -51,6 +60,9 @@ use App\Services\Admin\Interfaces\ProductServiceInterface;
 use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use App\Services\Admin\Interfaces\RoleServiceInterface;
 use App\Services\Admin\Interfaces\StaffServiceInterface;
+use App\Services\Admin\Interfaces\SupplierServiceInterface;
+use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
+use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -58,7 +70,6 @@ class AppServiceProvider extends ServiceProvider
 {
     /**
      * Bind Interface → Implementation.
-     * Khi Laravel Container cần Interface, nó resolve thành class cụ thể.
      */
     public function register(): void
     {
@@ -74,6 +85,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductVariantRepositoryInterface::class,  ProductVariantRepository::class);
         $this->app->bind(RoleRepositoryInterface::class,            RoleRepository::class);
         $this->app->bind(StaffRepositoryInterface::class,           StaffRepository::class);
+        $this->app->bind(SupplierRepositoryInterface::class,        SupplierRepository::class);
+        $this->app->bind(GoodReceiptRepoInterface::class,           GoodReceiptRepo::class);
+        $this->app->bind(GoodReceiptDetailRepoInterface::class,     GoodReceiptDetailRepo::class);
 
         // ── Services ──────────────────────────────────────────────────────────
         $this->app->bind(AttributeServiceInterface::class,          AttributeService::class);
@@ -87,10 +101,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ProductVariantServiceInterface::class,     ProductVariantService::class);
         $this->app->bind(RoleServiceInterface::class,               RoleService::class);
         $this->app->bind(StaffServiceInterface::class,              StaffService::class);
+        $this->app->bind(SupplierServiceInterface::class,           SupplierService::class);
+        $this->app->bind(GoodReceiptServiceInterface::class,        GoodReceiptService::class);
+        $this->app->bind(GoodReceiptDetailServiceInterface::class,  GoodReceiptDetailService::class);
     }
 
     public function boot(): void
     {
-        //
+        // Will be overwritten/merged when popping stash
     }
 }

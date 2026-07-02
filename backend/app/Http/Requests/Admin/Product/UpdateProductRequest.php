@@ -14,10 +14,7 @@ class UpdateProductRequest extends FormRequest
 
     public function rules(): array
     {
-        // Lấy ID của sản phẩm đang được update từ URL (ví dụ: route /products/{product})
-        // Tùy thuộc vào cách bạn đặt tên tham số trên Route, thường là 'product'
         $productId = $this->route('product'); 
-        // Nếu route model binding trả về Object, ta lấy ID:
         if (is_object($productId)) {
             $productId = $productId->id;
         }

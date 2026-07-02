@@ -122,6 +122,7 @@ import { useProductStore } from '@/stores/admin/productStore'
 import { useCategoryStore } from '@/stores/admin/categoryStore'
 import ProductImageUploader from '@/components/admin/product/ProductImageUploader.vue'
 import ProductVariantsUploader from '@/components/admin/product/ProductVariantsUploader.vue'
+import { useProductValidation } from '@/composables/admin/validation/useProductValidation'
 
 const categoryStore = useCategoryStore()
 const productStore = useProductStore()
@@ -142,7 +143,7 @@ const props = defineProps({
 
 // ─── State ────────────────────────────────────────────────────────────────────
 const isSaving = ref(false)
-const apiErrors = ref([])
+const { apiErrors, validate, clearErrors, applyBackendErrors } = useProductValidation()
 
 const formProduct = reactive({
   name: '',
@@ -159,7 +160,7 @@ const formProduct = reactive({
 
 // ─── Khi mở modal edit: nạp dữ liệu sản phẩm hiện tại vào form ──────────────
 watch(() => props.product, (newProduct) => {
-  apiErrors.value = []
+  clearErrors()
   if (newProduct && props.action === 'edit') {
     formProduct.name        = newProduct.name        ?? ''
     formProduct.category_id = newProduct.category_id ?? ''
@@ -285,31 +286,8 @@ const buildPayload = () => {
 
 // ─── Lưu sản phẩm ─────────────────────────────────────────────────────────────
 const handleSave = async () => {
-  apiErrors.value = []
-
-  // Guard: validate cơ bản trước khi gọi API
-  if (!formProduct.name.trim()) {
-    apiErrors.value = ['Tên sản phẩm không được để trống.']
-    return
-  }
-  if (!formProduct.slug.trim()) {
-    apiErrors.value = ['Slug không được để trống.']
-    return
-  }
-  if (!formProduct.category_id) {
-    apiErrors.value = ['Vui lòng chọn danh mục.']
-    return
-  }
-  if (formProduct.variants.length === 0) {
-    apiErrors.value = ['Sản phẩm phải có ít nhất 1 biến thể.']
-    return
-  }
-  // Kiểm tra tất cả variants đã có sku và giá bán
-  const missingSkuOrPrice = formProduct.variants.some(v => !v.sku?.trim() || (v.price === null || v.price === undefined))
-  if (missingSkuOrPrice) {
-    apiErrors.value = ['Mỗi biến thể phải có SKU và Giá bán.']
-    return
-  }
+  // Client-side validation qua composable
+  if (!validate(formProduct)) return
 
   isSaving.value = true
 
@@ -325,13 +303,7 @@ const handleSave = async () => {
 
     emit('save')
   } catch (error) {
-    // Bắt lỗi validation 422 từ Laravel
-    const responseErrors = error.response?.data?.errors
-    if (responseErrors) {
-      apiErrors.value = Object.values(responseErrors).flat()
-    } else {
-      apiErrors.value = [error.response?.data?.message || error.message || 'Có lỗi xảy ra khi lưu sản phẩm.']
-    }
+    applyBackendErrors(error)
     console.error('[ProductFormModal] Lỗi khi lưu:', error.response?.data ?? error)
   } finally {
     isSaving.value = false

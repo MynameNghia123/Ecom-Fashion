@@ -105,11 +105,6 @@
                                         "description": "Tên thuộc tính",
                                         "type": "string",
                                         "example": "Màu sắc"
-                                    },
-                                    "type": {
-                                        "description": "Loại thuộc tính (nếu có)",
-                                        "type": "string",
-                                        "example": "color"
                                     }
                                 },
                                 "type": "object"
@@ -217,10 +212,6 @@
                                         "description": "Tên thuộc tính mới",
                                         "type": "string",
                                         "example": "Kích thước"
-                                    },
-                                    "type": {
-                                        "type": "string",
-                                        "example": "size"
                                     }
                                 },
                                 "type": "object"
@@ -1459,6 +1450,234 @@
                     },
                     "404": {
                         "description": "Không tìm thấy khách hàng"
+                    }
+                }
+            }
+        },
+        "/api/admin/good-receipts": {
+            "get": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Lấy danh sách phiếu nhập hàng",
+                "operationId": "86317c2fdec7cba8c1f2ff085118fde9",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng trên 1 trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 4
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Danh sách phiếu nhập"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Tạo mới phiếu nhập hàng",
+                "operationId": "2d8808d3279836f7fb17017500d08198",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "receipt_code",
+                                    "supplier_id",
+                                    "total_amount_price",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "receipt_code": {
+                                        "type": "string",
+                                        "example": "GR20231001"
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "staff_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "total_amount_price": {
+                                        "type": "number",
+                                        "example": 100000
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "good_receipt_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "import_price": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo mới thành công"
+                    }
+                }
+            }
+        },
+        "/api/admin/good-receipts/{id}": {
+            "get": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Lấy chi tiết phiếu nhập hàng",
+                "operationId": "bcffd5895ac7aa0148081944e69c5d09",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Chi tiết phiếu nhập"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Cập nhật phiếu nhập hàng",
+                "operationId": "80eecb0841822ccfe071197bd733b560",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "receipt_code": {
+                                        "type": "string",
+                                        "example": "GR20231001"
+                                    },
+                                    "supplier_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "staff_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "total_amount_price": {
+                                        "type": "number",
+                                        "example": 100000
+                                    },
+                                    "status": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "good_receipt_details": {
+                                        "type": "array",
+                                        "items": {
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "import_price": {
+                                                    "type": "number",
+                                                    "example": 50000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Good Receipt"
+                ],
+                "summary": "Xóa phiếu nhập hàng",
+                "operationId": "ef60d14ebf90ca6acc37c5990075af8b",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID phiếu nhập",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Xóa thành công"
                     }
                 }
             }
@@ -2726,6 +2945,392 @@
                 }
             }
         },
+        "/api/admin/suppliers": {
+            "get": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Lấy danh sách nhà cung cấp (có phân trang)",
+                "operationId": "getSuppliersList",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm (tên, sđt, email)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Trạng thái (ví dụ: active, paused)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng item trên 1 trang (Mặc định: 4)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 4
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Trang hiện tại",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Công ty TNHH ABC"
+                                                    },
+                                                    "phone": {
+                                                        "type": "string",
+                                                        "example": "0123456789"
+                                                    },
+                                                    "email": {
+                                                        "type": "string",
+                                                        "example": "contact@abc.com"
+                                                    },
+                                                    "address": {
+                                                        "type": "string",
+                                                        "example": "123 Đường XYZ, TP HCM"
+                                                    },
+                                                    "is_active": {
+                                                        "type": "boolean",
+                                                        "example": true
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Thêm mới nhà cung cấp",
+                "operationId": "storeSupplier",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "phone",
+                                    "email",
+                                    "address",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Công ty TNHH ABC"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0123456789"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "contact@abc.com"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "123 Đường XYZ, TP HCM"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Thêm mới thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "Công ty TNHH ABC",
+                                                "email": "contact@abc.com"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thêm nhà cung cấp mới thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/suppliers/{supplier}": {
+            "get": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Lấy thông tin chi tiết một nhà cung cấp",
+                "operationId": "showSupplier",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "ID của nhà cung cấp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "Công ty TNHH ABC",
+                                                "email": "contact@abc.com"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy nhà cung cấp"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Cập nhật nhà cung cấp",
+                "operationId": "updateSupplier",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "ID của nhà cung cấp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "phone",
+                                    "email",
+                                    "address",
+                                    "is_active"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Công ty TNHH Cập Nhật"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "updated@abc.com"
+                                    },
+                                    "address": {
+                                        "type": "string",
+                                        "example": "456 Đường Mới, TP HCM"
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": 1,
+                                                "name": "Công ty TNHH Cập Nhật",
+                                                "email": "updated@abc.com"
+                                            }
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cập nhập dữ liệu mới cho nhà cung cấp thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy nhà cung cấp"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Xóa nhà cung cấp",
+                "operationId": "destroySupplier",
+                "parameters": [
+                    {
+                        "name": "supplier",
+                        "in": "path",
+                        "description": "ID của nhà cung cấp",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Xóa nhà cung cấp mới thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy nhà cung cấp"
+                    }
+                }
+            }
+        },
         "/api/admin/upload-image": {
             "post": {
                 "tags": [
@@ -2901,6 +3506,14 @@
         {
             "name": "Upload",
             "description": "Upload / xóa ảnh lên server storage. Ảnh được upload trước khi lưu sản phẩm."
+        },
+        {
+            "name": "Admin - Good Receipt",
+            "description": "Admin - Good Receipt"
+        },
+        {
+            "name": "Admin - Suppliers",
+            "description": "Admin - Suppliers"
         }
     ]
 }
