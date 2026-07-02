@@ -28,6 +28,13 @@ class StaffResource extends JsonResource
                     'description' => $r->description,
                 ]);
             }),
+            'permissions' => $this->whenLoaded('permissions', function () {
+                return $this->permissions->map(fn($p) => [
+                    'id' => $p->id,
+                    'module' => $p->module,
+                    'action' => $p->action,
+                ]);
+            }),
             'last_login_at' => $this->last_login_at?->format('d/m/Y H:i') ?? null,
             'created_at' => $this->created_at?->format('d/m/Y') ?? null,
             'updated_at' => $this->updated_at?->format('d/m/Y H:i') ?? null,

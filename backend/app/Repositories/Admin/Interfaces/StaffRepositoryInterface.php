@@ -13,5 +13,6 @@ interface StaffRepositoryInterface extends BaseRepositoryInterface
     public function create(array $data): Staff;
     public function update(Model $model, array $data): Model;
     public function delete(Model $model): void;
-    public function getAll();
+    public function syncRoles(Staff $staff, array $roleIds): void;
+    public function syncPermissions(Staff $staff, array $permissionIds): void;
 }

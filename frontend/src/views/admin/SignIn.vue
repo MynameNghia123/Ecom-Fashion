@@ -1,10 +1,12 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/admin/authStore'
 
 const router = useRouter()
+const authStore = useAuthStore()
 
-const username = ref('admin@bfd.com')
+const email = ref('admin@ecomfashion.com')
 const password = ref('password123')
 const rememberMe = ref(false)
 const showPassword = ref(false)
@@ -19,11 +21,11 @@ const triggerShake = () => {
   }, 500)
 }
 
-const handleSignIn = () => {
+const handleSignIn = async () => {
   errorMessage.value = ''
   
-  if (!username.value.trim()) {
-    errorMessage.value = 'Vui lòng nhập Email hoặc Tên đăng nhập.'
+  if (!email.value.trim()) {
+    errorMessage.value = 'Vui lòng nhập Email.'
     triggerShake()
     return
   }
@@ -36,25 +38,19 @@ const handleSignIn = () => {
   
   isLoading.value = true
   
-  // Simulate api response
-  setTimeout(() => {
-    isLoading.value = false
+  try {
+    await authStore.login({
+      email: email.value.trim(),
+      password: password.value.trim()
+    })
     
-    // Very simple check for mock demo: allow any non-empty credential
-    if (username.value.trim() && password.value.trim()) {
-      localStorage.setItem('admin_token', 'mocked-admin-jwt-token-abcdef')
-      localStorage.setItem('admin_user', JSON.stringify({
-        name: 'Trần Nghĩa',
-        email: username.value,
-        role: 'Administrator'
-      }))
-      
-      router.push('/admin/dashboard')
-    } else {
-      errorMessage.value = 'Tên đăng nhập hoặc mật khẩu không chính xác.'
-      triggerShake()
-    }
-  }, 1200)
+    router.push('/admin/dashboard')
+  } catch (e) {
+    errorMessage.value = authStore.error || 'Tên đăng nhập hoặc mật khẩu không chính xác.'
+    triggerShake()
+  } finally {
+    isLoading.value = false
+  }
 }
 </script>
 
@@ -109,9 +105,9 @@ const handleSignIn = () => {
             </span>
             <input 
               id="username"
-              v-model="username"
+              v-model="email"
               type="text"
-              placeholder="admin@bfd.com"
+              placeholder="admin@ecomfashion.com"
               class="w-full pl-12 pr-4 py-3.5 bg-[#f0f2fa]/85 text-slate-800 placeholder-slate-400/80 border border-transparent rounded-xl focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-medium text-sm"
               :disabled="isLoading"
             />

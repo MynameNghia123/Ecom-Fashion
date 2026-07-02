@@ -14,7 +14,7 @@ class StoreStaffRequest extends FormRequest
     {
         return [
             'full_name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', 'unique:users,email'],
+            'email' => ['required', 'email', 'max:255', 'unique:staff,email'],
             'password' => ['required', 'string', 'min:6', 'max:255'],
             'phone_number' => ['required', 'string', 'max:255'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],

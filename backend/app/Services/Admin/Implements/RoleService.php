@@ -45,12 +45,10 @@ class RoleService implements RoleServiceInterface
 
             $permissionIds = $data['permission_ids'] ?? [];
             if (!empty($permissionIds)) {
-                // syncPermissions — đúng tên method trong RoleRepository
                 $this->roleRepo->syncPermissions($role, $permissionIds);
             }
 
             DB::commit();
-            // Load lại với eager loading permissions để trả về đầy đủ
             return $role->load('permissions');
         } catch (Exception $e) {
             DB::rollBack();

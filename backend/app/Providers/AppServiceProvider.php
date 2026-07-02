@@ -108,6 +108,19 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Will be overwritten/merged when popping stash
+        \Illuminate\Support\Facades\Gate::before(function ($user, $ability) {
+            // $ability expected format: "module.action"
+            $parts = explode('.', $ability);
+            if (count($parts) === 2) {
+                [$module, $action] = $parts;
+
+                // Super admin check is already inside hasPermission,
+                // but we can rely entirely on the model's method
+                if (method_exists($user, 'hasPermission') && $user->hasPermission($module, $action)) {
+                    return true;
+                }
+            }
+            return null; // Let other gates run if this doesn't match
+        });
     }
 }

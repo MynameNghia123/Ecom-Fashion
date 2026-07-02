@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services\Admin\Implements;
 
@@ -12,7 +12,8 @@ class CouponService implements CouponServiceInterface
 {
     public function __construct(
         private readonly CouponRepositoryInterface $couponRepositoryInterface
-    ) {}
+    ) {
+    }
 
     public function getList(array $filters): LengthAwarePaginator
     {

@@ -69,7 +69,7 @@ class PermissionSeeder extends Seeder
             ['email' => 'admin@ecomfashion.com'],
             [
                 'full_name' => 'System Administrator',
-                'password' => 'password123', // Staff model has casts password => 'hashed' in modern Laravel or is_active casts
+                'password' => 'password123',
                 'phone_number' => '0123456789',
                 'is_active' => true,
             ]
@@ -78,6 +78,22 @@ class PermissionSeeder extends Seeder
         // Attach Admin Role to Admin Staff if not already attached
         if (!$adminStaff->roles()->where('role_id', $adminRole->id)->exists()) {
             $adminStaff->roles()->attach($adminRole->id);
+        }
+
+        // Create a default manager staff
+        $managerStaff = Staff::updateOrCreate(
+            ['email' => 'manager@ecomfashion.com'],
+            [
+                'full_name' => 'Store Manager',
+                'password' => 'password123',
+                'phone_number' => '0987654321',
+                'is_active' => true,
+            ]
+        );
+
+        // Attach Manager Role to Manager Staff if not already attached
+        if (!$managerStaff->roles()->where('role_id', $managerRole->id)->exists()) {
+            $managerStaff->roles()->attach($managerRole->id);
         }
     }
 }

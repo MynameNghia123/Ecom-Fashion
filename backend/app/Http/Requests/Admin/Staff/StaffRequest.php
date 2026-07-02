@@ -26,6 +26,8 @@ class StaffRequest extends FormRequest
             'is_active' => ['required', 'boolean'],
             'role_ids' => ['nullable', 'array'],
             'role_ids.*' => ['integer', 'exists:roles,id'],
+            'permission_ids' => ['nullable', 'array'],
+            'permission_ids.*' => ['integer', 'exists:permissions,id'],
         ];
     }
 

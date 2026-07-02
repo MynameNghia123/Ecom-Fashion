@@ -14,29 +14,54 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Models\Supplier;
 
+use App\Http\Controllers\Admin\AuthController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('admin')->group(function () {
+// ── Public Auth Endpoint ─────────────────────────────────────────────────────
+Route::post('admin/auth/login', [AuthController::class, 'login']);
+
+// ── Protected Admin Routes ───────────────────────────────────────────────────
+Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
+
+    // ── Auth Info ────────────────────────────────────────────────────────────
+    Route::post('auth/logout', [AuthController::class, 'logout']);
+    Route::get('auth/me',      [AuthController::class, 'me']);
 
     // ── Catalog ───────────────────────────────────────────────────────────────
-    Route::apiResource('attributes', AttributeController::class);
-    Route::get('categories/parents', [CategoryController::class, 'parents']);
+    Route::apiResource('attributes', AttributeController::class)->middleware('permission:attributes');
+    
+    Route::get('categories/parents', [CategoryController::class, 'parents'])->middleware('permission:categories');
+    Route::apiResource('categories', CategoryController::class)->middleware('permission:categories');
+    
+    Route::apiResource('products', ProductController::class)->middleware('permission:products');
 
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('products', ProductController::class);
-    Route::apiResource('customers', CustomerController::class);
-    Route::apiResource('coupons', CouponController::class);
-    Route::apiResource('staffs', StaffController::class);
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('permissions', PermissionController::class);
-    Route::apiResource('suppliers', SupplierController::class);
-    Route::apiResource('goods-receipts', GoodReceiptController::class);
+    // ── Upload ────────────────────────────────────────────────────────────────
+    // Upload image doesn't require a strict RBAC module check, but requires being an authenticated staff
+    Route::post('upload-image',   [UploadController::class, 'upload']);
+    Route::delete('upload-image', [UploadController::class, 'delete']);
 
-    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
-    Route::post('upload-image',    [UploadController::class, 'upload']);
-    Route::delete('upload-image',  [UploadController::class, 'delete']);
+    // ── Customers & Coupons ───────────────────────────────────────────────────
+    Route::apiResource('customers', CustomerController::class)->middleware('permission:customers');
+    Route::apiResource('coupons',   CouponController::class)->middleware('permission:coupons');
+
+    // ── Staff ─────────────────────────────────────────────────────────────────
+    Route::apiResource('staffs', StaffController::class)->middleware('permission:staff');
+
+    // ── RBAC: Roles ───────────────────────────────────────────────────────────
+    Route::get('roles/all', [RoleController::class, 'all'])->middleware('permission:roles');
+    Route::post('roles/{role}/sync-permissions', [RoleController::class, 'syncPermissions'])->middleware('permission:roles');
+    Route::apiResource('roles', RoleController::class)->middleware('permission:roles');
+
+    // ── RBAC: Permissions ─────────────────────────────────────────────────────
+    Route::get('permissions/all', [PermissionController::class, 'getAll'])->middleware('permission:permissions');
+    Route::apiResource('permissions', PermissionController::class)->only(['index'])->middleware('permission:permissions');
+
+    // ── Supplier & Good Receipts (Upstream Code) ────────────────────────────────
+    Route::apiResource('suppliers', SupplierController::class)->middleware('permission:suppliers');
+    Route::apiResource('goods-receipts', GoodReceiptController::class)->middleware('permission:goods_receipts');
 });

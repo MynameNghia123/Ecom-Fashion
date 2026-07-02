@@ -18,6 +18,6 @@ class Permission extends Model
     }
     public function staff():BelongsToMany 
     {
-        return $this ->belongsTomany(Staff::class, 'staff_permissions', 'permission_id', 'staff_id');
+        return $this->belongsToMany(Staff::class, 'staff_permissions', 'permission_id', 'staff_id');
     }
 }

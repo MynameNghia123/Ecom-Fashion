@@ -25,7 +25,6 @@ class ProductService implements ProductServiceInterface
 
     public function create(array $data): Product
     {
-        // return $this->productRepo->create($data);
         return DB::transaction(function () use ($data){
             $images = $data['images'] ?? [];
             $variants = $data['variants'] ?? [];
