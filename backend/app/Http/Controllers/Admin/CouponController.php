@@ -128,7 +128,21 @@ class CouponController extends Controller
     )]
     public function store(StoreCouponRequest $request)
     {
-        $coupon = $this->couponService->create($request->validated());
+        $data = $request->validated();
+        $data['created_by_staff_id'] = $request->user()->id;
+
+        // Fallbacks for NOT NULL database columns if they are null
+        if (!isset($data['price_min_order_value']) || $data['price_min_order_value'] === null) {
+            $data['price_min_order_value'] = 0;
+        }
+        if (!isset($data['max_usage']) || $data['max_usage'] === null) {
+            $data['max_usage'] = 999999; // Represents unlimited usage
+        }
+        if (!isset($data['expiry_date']) || $data['expiry_date'] === null) {
+            $data['expiry_date'] = '2037-12-31 23:59:59'; // Represents no expiry date (safe under Year 2038 TIMESTAMP limit)
+        }
+
+        $coupon = $this->couponService->create($data);
         return response()->json([
             'success' => true,
             'data'    => new CouponResource($coupon),
@@ -201,7 +215,20 @@ class CouponController extends Controller
     )]
     public function update(UpdateCouponRequest $request, Coupon $coupon)
     {
-        $updatedCoupon = $this->couponService->update($coupon, $request->validated());
+        $data = $request->validated();
+
+        // Fallbacks for NOT NULL database columns if they are null
+        if (array_key_exists('price_min_order_value', $data) && $data['price_min_order_value'] === null) {
+            $data['price_min_order_value'] = 0;
+        }
+        if (array_key_exists('max_usage', $data) && $data['max_usage'] === null) {
+            $data['max_usage'] = 999999;
+        }
+        if (array_key_exists('expiry_date', $data) && $data['expiry_date'] === null) {
+            $data['expiry_date'] = '2037-12-31 23:59:59';
+        }
+
+        $updatedCoupon = $this->couponService->update($coupon, $data);
 
         return response()->json([
             'success' => true,

@@ -295,6 +295,115 @@
                 }
             }
         },
+        "/api/admin/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Đăng nhập hệ thống Admin",
+                "operationId": "b8098605e389c86dcb60db12b1b4dfe2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "email",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "admin@ecomfashion.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Đăng nhập thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abcdef123456..."
+                                        },
+                                        "user": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Sai email hoặc mật khẩu"
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    }
+                }
+            }
+        },
+        "/api/admin/auth/logout": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Đăng xuất khỏi hệ thống",
+                "operationId": "59a49d30177042d9f58b1de69afbc903",
+                "responses": {
+                    "200": {
+                        "description": "Đăng xuất thành công"
+                    },
+                    "401": {
+                        "description": "Chưa đăng nhập"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/admin/auth/me": {
+            "get": {
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Lấy thông tin tài khoản hiện tại",
+                "operationId": "32d4c5e06f41a66aa79f29758662f1c1",
+                "responses": {
+                    "200": {
+                        "description": "Thành công"
+                    },
+                    "401": {
+                        "description": "Chưa đăng nhập"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
         "/api/admin/categories": {
             "get": {
                 "tags": [
@@ -2725,6 +2834,28 @@
                                     "is_active": {
                                         "type": "boolean",
                                         "example": true
+                                    },
+                                    "role_ids": {
+                                        "description": "Danh sách ID vai trò",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "permission_ids": {
+                                        "description": "Danh sách ID quyền đặc cách",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            3
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -2862,6 +2993,28 @@
                                     "is_active": {
                                         "type": "boolean",
                                         "example": true
+                                    },
+                                    "role_ids": {
+                                        "description": "Danh sách ID vai trò",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2
+                                        ]
+                                    },
+                                    "permission_ids": {
+                                        "description": "Danh sách ID quyền đặc cách",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            3
+                                        ]
                                     }
                                 },
                                 "type": "object"
@@ -3474,6 +3627,10 @@
         {
             "name": "Attributes",
             "description": "Quản lý các thuộc tính sản phẩm (VD: Màu sắc, Kích thước...)"
+        },
+        {
+            "name": "Auth",
+            "description": "Đăng nhập & Xác thực hệ thống Admin"
         },
         {
             "name": "Categories",

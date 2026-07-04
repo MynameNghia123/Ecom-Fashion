@@ -33,6 +33,8 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+    image: ecom-fashion-backend:latest
     container_name: ecom-fashion-backend
     env_file:
       - ./backend/.env
@@ -58,6 +60,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    image: ecom-fashion-frontend:latest
     container_name: ecom-fashion-frontend
     user: "root"
     env_file:

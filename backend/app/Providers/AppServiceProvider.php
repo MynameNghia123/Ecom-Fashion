@@ -5,6 +5,8 @@ namespace App\Providers;
 // ── Repositories ──────────────────────────────────────────────────────────────
 use App\Repositories\Admin\Implements\AttributeRepository;
 use App\Repositories\Admin\Implements\AttributeValueRepository;
+use App\Repositories\Admin\Implements\BannerRepository;
+use App\Repositories\Admin\Implements\BlogRepository;
 use App\Repositories\Admin\Implements\CategoryRepository;
 use App\Repositories\Admin\Implements\CouponRepository;
 use App\Repositories\Admin\Implements\CustomerRepository;
@@ -20,6 +22,8 @@ use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
 
 use App\Repositories\Admin\Interfaces\AttributeRepositoryInterface;
 use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
+use App\Repositories\Admin\Interfaces\BannerRepositoryInterface;
+use App\Repositories\Admin\Interfaces\BlogRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CouponRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CustomerRepositoryInterface;
@@ -36,6 +40,8 @@ use App\Repositories\Admin\Interfaces\GoodReceiptDetailRepoInterface;
 // ── Services ──────────────────────────────────────────────────────────────────
 use App\Services\Admin\Implements\AttributeService;
 use App\Services\Admin\Implements\AttributeValueService;
+use App\Services\Admin\Implements\BannerService;
+use App\Services\Admin\Implements\BlogService;
 use App\Services\Admin\Implements\CategoryService;
 use App\Services\Admin\Implements\CouponService;
 use App\Services\Admin\Implements\CustomerService;
@@ -51,6 +57,8 @@ use App\Services\Admin\Implements\GoodReceiptDetailService;
 
 use App\Services\Admin\Interfaces\AttributeServiceInterface;
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
+use App\Services\Admin\Interfaces\BannerServiceInterface;
+use App\Services\Admin\Interfaces\BlogServiceInterface;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
 use App\Services\Admin\Interfaces\CouponServiceInterface;
 use App\Services\Admin\Interfaces\CustomerServiceInterface;
@@ -76,6 +84,8 @@ class AppServiceProvider extends ServiceProvider
         // ── Repositories ──────────────────────────────────────────────────────
         $this->app->bind(AttributeRepositoryInterface::class,       AttributeRepository::class);
         $this->app->bind(AttributeValueRepositoryInterface::class,  AttributeValueRepository::class);
+        $this->app->bind(BannerRepositoryInterface::class,          BannerRepository::class);
+        $this->app->bind(BlogRepositoryInterface::class,            BlogRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class,        CategoryRepository::class);
         $this->app->bind(CouponRepositoryInterface::class,          CouponRepository::class);
         $this->app->bind(CustomerRepositoryInterface::class,        CustomerRepository::class);
@@ -92,6 +102,8 @@ class AppServiceProvider extends ServiceProvider
         // ── Services ──────────────────────────────────────────────────────────
         $this->app->bind(AttributeServiceInterface::class,          AttributeService::class);
         $this->app->bind(AttributeValueServiceInterface::class,     AttributeValueService::class);
+        $this->app->bind(BannerServiceInterface::class,             BannerService::class);
+        $this->app->bind(BlogServiceInterface::class,               BlogService::class);
         $this->app->bind(CategoryServiceInterface::class,           CategoryService::class);
         $this->app->bind(CouponServiceInterface::class,             CouponService::class);
         $this->app->bind(CustomerServiceInterface::class,           CustomerService::class);

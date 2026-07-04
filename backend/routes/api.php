@@ -15,6 +15,10 @@ use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Models\Supplier;
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\BLogController;
+use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\BannerController as ClientBannerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -64,4 +68,17 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     // ── Supplier & Good Receipts (Upstream Code) ────────────────────────────────
     Route::apiResource('suppliers', SupplierController::class)->middleware('permission:suppliers');
     Route::apiResource('goods-receipts', GoodReceiptController::class)->middleware('permission:goods_receipts');
+
+    // ── Content: Blog ─────────────────────────────────────────────────────────
+    Route::apiResource('blogs', BLogController::class)->middleware('permission:blogs');
+
+    // ── Marketing: Banners ───────────────────────────────────────────────────
+    Route::apiResource('banners', BannerController::class)->middleware('permission:banners');
+});
+
+// ── Public Client Routes (không yêu cầu xác thực) ───────────────────────────
+Route::prefix('client')->group(function () {
+    Route::get('blogs', [ClientBlogController::class, 'index']);
+    Route::get('blogs/{slug}', [ClientBlogController::class, 'show']);
+    Route::get('banners', [ClientBannerController::class, 'index']);
 });

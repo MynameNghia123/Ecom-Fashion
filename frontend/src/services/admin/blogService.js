@@ -1,18 +1,18 @@
 import http from '@/services/shared/http'
 
-const BASE = '/admin/banners'
+const BASE = '/admin/blogs'
 
-export const bannerService = {
+export const blogService = {
   /**
-   * Lấy danh sách banner (phân trang + lọc)
-   * @param {Object} params - { search?, position?, page?, per_page? }
+   * Lấy danh sách bài viết blog (phân trang + lọc)
+   * @param {Object} params - { search?, status?, page?, per_page? }
    */
   getAll(params = {}) {
     return http.get(BASE, { params })
   },
 
   /**
-   * Lấy chi tiết một banner
+   * Lấy chi tiết một bài viết
    * @param {number} id
    */
   getById(id) {
@@ -20,23 +20,24 @@ export const bannerService = {
   },
 
   /**
-   * Tạo banner mới
-   * @param {{ title, image_url, target_url?, position, display_order?, is_active, start_date?, end_date? }} data
+   * Tạo bài viết mới
+   * @param {{ name, slug, description, image, status }} data
    */
   create(data) {
     return http.post(BASE, data)
   },
 
   /**
-   * Cập nhật banner
+   * Cập nhật bài viết
    * @param {number} id
+   * @param {{ name?, slug?, description?, image?, status? }} data
    */
   update(id, data) {
     return http.put(`${BASE}/${id}`, data)
   },
 
   /**
-   * Xóa banner
+   * Xóa bài viết
    * @param {number} id
    */
   delete(id) {
