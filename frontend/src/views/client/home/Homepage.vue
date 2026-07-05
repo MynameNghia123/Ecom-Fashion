@@ -158,6 +158,47 @@
         />
       </div>
     </div>
+
+    <!-- Testimonial Section -->
+    <div class="bg-[#f5f5f5] py-20 px-5 border-t border-b border-neutral-100 flex justify-center items-center mb-[50px]">
+      <div class="max-w-[1200px] w-full flex items-center justify-between gap-4 md:gap-8">
+        <!-- Prev Button -->
+        <button 
+          class="flex-shrink-0 w-10 h-10 rounded-full border border-neutral-300 bg-white/80 backdrop-blur-sm flex items-center justify-center text-neutral-500 hover:text-black hover:border-neutral-500 transition-all duration-300 cursor-pointer shadow-sm"
+          aria-label="Previous testimonial"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+        </button>
+
+        <!-- Slide content -->
+        <div class="flex-grow max-w-[850px] text-center flex flex-col justify-center items-center">
+          <div class="flex flex-col items-center">
+            <p class="font-text text-[15px] sm:text-[18px] md:text-[20px] text-[#222] font-normal leading-[1.8] tracking-[0.2px] max-w-[750px] mb-6">
+              Chúng tôi tập trung vào những trang phục chất lượng, được thiết kế đẹp mắt, phù hợp với lối sống của bạn. Được làm ra một cách tỉ mỉ để mang lại sự thoải mái, tính linh hoạt và khả năng mặc hàng ngày.
+            </p>
+            <div class="w-[60px] h-[60px] border border-neutral-200 shadow-sm overflow-hidden bg-white">
+              <img 
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=200&auto=format&fit=crop" 
+                alt="Designer Portrait" 
+                class="w-full h-full object-cover grayscale contrast-[1.1]"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Next Button -->
+        <button 
+          class="flex-shrink-0 w-10 h-10 rounded-full border border-neutral-300 bg-white/80 backdrop-blur-sm flex items-center justify-center text-neutral-500 hover:text-black hover:border-neutral-500 transition-all duration-300 cursor-pointer shadow-sm"
+          aria-label="Next testimonial"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -271,3 +312,4 @@ const blogs = ref([
   }
 ]);
 </script>
+

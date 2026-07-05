@@ -4,6 +4,11 @@ import ProductDetail from '../views/client/products/ProductDetail.vue'
 import BlogList from '../views/client/blog/BlogList.vue'
 import Contact from '../views/client/contact/Contact.vue'
 import AboutUs from '../views/client/about/AboutUs.vue'
+import Profile from '../views/client/profile/Profile.vue'
+import CheckoutSuccess from '../views/client/checkout/CheckoutSuccess.vue'
+import Checkout from '../views/client/checkout/Checkout.vue'
+import Cart from '../views/client/cart/Cart.vue'
+import CategoryPage from '../views/client/category/CategoryPage.vue'
 import adminRoutes from './adminRoutes'
 
 const routes = [
@@ -36,6 +41,33 @@ const routes = [
     path: '/about',
     name: 'AboutUs',
     component: AboutUs
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
+  },
+  {
+    path: '/checkout/success',
+    name: 'CheckoutSuccess',
+    component: CheckoutSuccess
+  },
+  {
+    path: '/checkout',
+    name: 'Checkout',
+    component: Checkout
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: Cart
+  },
+  {
+    // :slug để sau này lọc theo từng category qua API
+    // Ví dụ: /category/ao-khoac, /category/quan-jean
+    path: '/category/:slug?',
+    name: 'Category',
+    component: CategoryPage
   },
   ...adminRoutes
 ]
