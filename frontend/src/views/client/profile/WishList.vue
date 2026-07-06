@@ -14,24 +14,24 @@ import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
       <div class="flex-grow bg-white space-y-10 animate-fade-in text-[#111111]">
         
         <div>
-          <h1 class="text-3xl font-bold tracking-tight text-gray-900">Chào bạn, Anh Tuấn!</h1>
-          <p class="text-sm text-gray-400 mt-1 font-normal">Chào mừng bạn quay lại</p>
+          <h1 class="text-3xl font-bold tracking-tight text-gray-900">Danh sách yêu thích</h1>
+          <p class="text-sm text-gray-400 mt-1 font-normal">Danh sách sản phẩm bạn yêu thích</p>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div class="border border-gray-900 bg-[#FBFBFB] p-6 min-h-[140px] flex flex-col justify-between">
-            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Đơn đặt gần đây</p>
+            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Sản phẩm yêu thích</p>
             <div class="mt-4">
-              <span class="text-4xl font-medium tracking-tight">12</span>
-              <p class="text-xs text-gray-400 mt-1">Tổng số đơn đã hoàn thành</p>
+              <span class="text-4xl font-medium tracking-tight">6</span>
+              <p class="text-xs text-gray-400 mt-1">Tổng số sản phẩm yêu thích</p>
             </div>
           </div>
 
           <div class="border border-gray-200 bg-white p-6 min-h-[140px] flex flex-col justify-between">
-            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Voucher</p>
+            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Danh mục yêu thích</p>
             <div class="mt-4">
-              <span class="text-4xl font-medium tracking-tight">03</span>
-              <p class="text-xs text-gray-400 mt-1">Sẵn sàng cho thanh toán</p>
+              <span class="text-4xl font-medium tracking-tight">2</span>
+              <p class="text-xs text-gray-400 mt-1">Tổng số danh mục yêu thích</p>
             </div>
           </div>
         </div>
@@ -40,7 +40,7 @@ import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
           <div class="border border-gray-200 p-6 bg-[#FBFBFB] flex flex-col justify-between min-h-[260px]">
             <div>
               <div class="flex items-center justify-between mb-6">
-                <h3 class="text-sm font-bold uppercase tracking-wider">Thông tin cá nhân</h3>
+                <h3 class="text-sm font-bold uppercase tracking-wider">Sản phẩm yêu thích</h3>
                 <button class="text-xs font-bold uppercase tracking-wider underline hover:text-gray-600 transition-colors">
                   EDIT
                 </button>
@@ -49,15 +49,19 @@ import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
               <div class="space-y-4">
                 <div>
                   <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Tên</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">Anh Tuấn Nguyễn</p>
+                  <p class="text-sm font-normal text-gray-800 mt-0.5">Áo khoác</p>
                 </div>
                 <div>
                   <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Email</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">anhtuan.n@luxury-mail.com</p>
+                  <p class="text-sm font-normal text-gray-800 mt-0.5">Quần jean</p>
                 </div>
                 <div>
                   <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Số điện thoại</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">+84 90 123 4567</p>
+                  <p class="text-sm font-normal text-gray-800 mt-0.5">Váy</p>
+                </div>
+                <div>
+                  <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Số điện thoại</p>
+                  <p class="text-sm font-normal text-gray-800 mt-0.5">Đầm</p>
                 </div>
               </div>
             </div>
