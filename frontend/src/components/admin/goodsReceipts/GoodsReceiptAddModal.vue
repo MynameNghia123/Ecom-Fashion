@@ -38,6 +38,7 @@
               placeholder="RC20260807"
               class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-400 bg-slate-50 font-mono"
             />
+            <span v-if="errors.receipt_code" class="text-xs text-red-500 mt-1 block">{{ errors.receipt_code }}</span>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">
@@ -48,12 +49,11 @@
               class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
             >
               <option class="cursor-not-allowed" value="">Chọn nhà cung cấp</option>
-              <option 
-                v-for="supplier in supplierList" 
-                :key="supplier.id" 
-                :value="supplier.id"
-                >{{  supplier.name }}</option>
+              <option v-for="supplier in supplierList" :key="supplier.id" :value="supplier.id">
+                {{ supplier.name }}
+              </option>
             </select>
+            <span v-if="errors.supplier_id" class="text-xs text-red-500 mt-1 block">{{ errors.supplier_id }}</span>
           </div>
         </div>
 
@@ -155,7 +155,10 @@
           </div>
 
           <!-- Totals -->
-          <div class="mt-4 flex justify-end">
+          <div class="mt-4 flex justify-between items-start">
+            <div>
+              <span v-if="errors.good_receipt_details" class="text-xs text-red-500 block">{{ errors.good_receipt_details }}</span>
+            </div>
             <div class="w-64 space-y-2">
               <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
                 <span class="text-sm font-bold text-slate-700">Tổng cộng:</span>
@@ -189,10 +192,12 @@
   </div>
 </template>
 <script setup>
-  import { ref, watch, defineProps} from 'vue';
+  import { ref, watch, defineProps, defineEmits } from 'vue';
   import { useProductVariantStore } from '@/stores/admin/productVariantStore'
+  import { useGoodsReceiptValidation } from '@/composables/admin/validation/useGoodsReceiptValidation';
   
   const productVariantStore = useProductVariantStore();
+  const { errors, validate, applyBackendErrors } = useGoodsReceiptValidation();
   const props = defineProps({
     isShowAdd: {
       type: Boolean,
@@ -228,6 +233,7 @@
     },
   ]);
   
+  // Thêm 1 hàng để nhập chi tiết phiếu nhập hàng
   const addGoodsReceiptDetails = function(){
     goodsReceiptDetails.value.push({
       id: Date.now(),
@@ -242,6 +248,7 @@
   const activeRowIndex = ref(null);
 
   let searchTimeout = null;
+  // Tìm kiếm sản phẩm theo tên hoặc SKU
   const handleSearch = (detail) => {
     if (searchTimeout) clearTimeout(searchTimeout);
     searchTimeout = setTimeout(async () => {
@@ -263,6 +270,7 @@
     productVariantStore.clearSearch();
   };
 
+  // khi search sẽ bật tắt các option để chọn product variant 
   const hideDropdown = () => {
     setTimeout(() => {
       activeRowIndex.value = null;
@@ -297,31 +305,23 @@
   };
 
   const handleSave = async () => {
-    if (!newReceipt.value.receipt_code) {
-      alert("Vui lòng nhập mã phiếu");
-      return;
-    }
-    if (!newReceipt.value.supplier_id) {
-      alert("Vui lòng chọn nhà cung cấp");
-      return;
-    }
     const validDetails = goodsReceiptDetails.value.filter(d => d.product_variant_id);
-    if (validDetails.length === 0) {
-      alert("Vui lòng thêm ít nhất 1 sản phẩm");
+    
+    newReceipt.value.good_receipt_details = validDetails.map(d => ({
+      product_variant_id: d.product_variant_id,
+      quantity: d.quantity,
+      import_price: d.import_price
+    }));
+
+    if (!validate(newReceipt.value)) {
       return;
     }
 
     isSubmitting.value = true;
     try {
-      newReceipt.value.good_receipt_details = validDetails.map(d => ({
-        product_variant_id: d.product_variant_id,
-        quantity: d.quantity,
-        import_price: d.import_price
-      }));
-      
       // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
-      emit('onHandleSave', JSON.parse(JSON.stringify(newReceipt.value)));
+      emit('onHandleSave', newReceipt.value, applyBackendErrors);
       resetForm();
     } finally {
       isSubmitting.value = false;

@@ -285,14 +285,18 @@ onMounted(async () => {
   suppliers.value = await supplierStore.getSupplierDropdown();
 });
 
+// tính tổng giá trị nhập của 1 phiếu nhập hàng 
 const totalImportValue = computed(() => {
   return goodsReceiptStore.goodsReceipts.reduce((sum, receipt) => sum + Number(receipt.total_amount_price), 0);
 });
 
+// tính tổng phiếu nhập hàng chờ duyệt
 const totalPendingReceipts = computed(() => {
   return goodsReceiptStore.goodsReceipts.filter(receipt => receipt.status === 'pending').length;
 });
 
+
+// xử lý filter phiếu nhập hàng
 let filterTimeout = null;
 const handleFilter = () => {
   if (filterTimeout) clearTimeout(filterTimeout);
@@ -305,6 +309,7 @@ const handleFilter = () => {
   }, 400);
 };
 
+// format tiền tệ
 const helperFormatCurrency = (value) => {
   const numericValue = Number(value);
   if (isNaN(numericValue)) {
@@ -316,10 +321,13 @@ const helperFormatCurrency = (value) => {
   }).format(numericValue);
 };
 
+// format ngày tháng
 const helperFomatDate = (dateString) => {
   if (!dateString) return '';
   return dateString.split(' ')[0];
 };
+
+// tìm tên nhà cung cấp theo id
 const findSupplierNameById = (supplierId) => {
   const supplier = supplierStore.suppliers.find(s => s.id === supplierId);
   return supplier ? supplier.name : 'Unknown Supplier';
@@ -328,17 +336,35 @@ const findSupplierNameById = (supplierId) => {
 const selectedReceipt = ref(null);
 const isShowView = ref(false);
 const isShowAdd = ref(false);
-const handleSave = async (receiptData) => {
-  await goodsReceiptStore.createGoodsReceipt(receiptData);
-  isShowAdd.value = false;
-  handleFilter(); // refresh list
+const handleSave = async (receiptData, applyBackendErrors) => {
+  try {
+    await goodsReceiptStore.createGoodsReceipt(receiptData);
+    isShowAdd.value = false;
+    handleFilter(); // refresh list
+  } catch (e) {
+    if (applyBackendErrors) {
+      applyBackendErrors(e);
+    } else {
+      console.error(e);
+    }
+  }
 }
+
 const isShowUpdate = ref(false);
-const handleUpdate = async (id, receiptData) => {
-  await goodsReceiptStore.updateGoodsReceipt(receiptData, id);
-  isShowUpdate.value = false;
-  handleFilter(); // refresh list
+const handleUpdate = async (id, receiptData, applyBackendErrors) => {
+  try {
+    await goodsReceiptStore.updateGoodsReceipt(receiptData, id);
+    isShowUpdate.value = false;
+    handleFilter(); // refresh list
+  } catch (e) {
+    if (applyBackendErrors) {
+      applyBackendErrors(e);
+    } else {
+      console.error(e);
+    }
+  }
 }
+
 const isShowDelete = ref(false);
 const confirmDelete = async () => {
   if (selectedReceipt.value) {

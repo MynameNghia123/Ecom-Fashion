@@ -43,6 +43,7 @@
                 </option>
               </select>
             </div>
+            <span v-if="errors.supplier_id" class="text-xs text-red-500 mt-1 block">{{ errors.supplier_id }}</span>
           </div>
           <div>
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Trạng thái phiếu</label>
@@ -54,6 +55,7 @@
               <option value="completed">Đã hoàn thành</option>
               <option value="cancel">Đã huỷ</option>
             </select>
+            <span v-if="errors.status" class="text-xs text-red-500 mt-1 block">{{ errors.status }}</span>
           </div>
         </div>
 
@@ -153,7 +155,10 @@
           </div>
 
           <!-- Totals -->
-          <div class="mt-4 flex justify-end">
+          <div class="mt-4 flex justify-between items-start">
+            <div>
+              <span v-if="errors.good_receipt_details" class="text-xs text-red-500 block">{{ errors.good_receipt_details }}</span>
+            </div>
             <div class="w-64 space-y-2">
               <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
                 <span class="text-sm font-bold text-slate-700">Tổng cộng:</span>
@@ -187,10 +192,12 @@
 </template>
 
 <script setup>
-  import { ref, watch, onMounted } from 'vue';
+  import { ref, watch, onMounted, defineProps, defineEmits } from 'vue';
   import { useProductVariantStore } from '@/stores/admin/productVariantStore'
+  import { useGoodsReceiptValidation } from '@/composables/admin/validation/useGoodsReceiptValidation';
 
   const productVariantStore = useProductVariantStore();
+  const { errors, validate, applyBackendErrors } = useGoodsReceiptValidation();
 
   const props = defineProps({
     isShowUpdate: {
@@ -293,30 +300,23 @@
   };
 
   const handleUpdate = async () => {
-    if (!updatedReceipt.value.receipt_code) {
-      alert("Vui lòng nhập mã phiếu");
-      return;
-    }
-    if (!updatedReceipt.value.supplier_id) {
-      alert("Vui lòng chọn nhà cung cấp");
-      return;
-    }
     const validDetails = goodsReceiptDetails.value.filter(d => d.product_variant_id);
-    if (validDetails.length === 0) {
-      alert("Vui lòng thêm ít nhất 1 sản phẩm");
+    
+    updatedReceipt.value.good_receipt_details = validDetails.map(d => ({
+      product_variant_id: d.product_variant_id,
+      quantity: d.quantity,
+      import_price: d.import_price
+    }));
+
+    if (!validate(updatedReceipt.value)) {
       return;
     }
 
     isSubmitting.value = true;
     try {
-      updatedReceipt.value.good_receipt_details = validDetails.map(d => ({
-        product_variant_id: d.product_variant_id,
-        quantity: d.quantity,
-        import_price: d.import_price
-      }));
-      
+      // Simulate API delay for better UX
       await new Promise(resolve => setTimeout(resolve, 500));
-      emit('onHandleUpdate', props.receipt.id, JSON.parse(JSON.stringify(updatedReceipt.value)));
+      emit('onHandleUpdate', props.receipt.id, updatedReceipt.value, applyBackendErrors);
     } finally {
       isSubmitting.value = false;
     }
