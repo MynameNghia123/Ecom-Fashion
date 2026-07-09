@@ -24,4 +24,9 @@ interface ProductVariantServiceInterface
 
     public function delete(Model $model): void;
     
+    /**
+     * Search product variants by SKU or ID
+     */
+    public function searchBySkuOrId(string $query);
+    
 }

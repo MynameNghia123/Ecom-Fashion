@@ -27,12 +27,12 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
             });
         }
 
-        return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 4);
+        return $query->with('goodReceiptDetail.productVariant.product')->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 4);
     }
 
     public function findById(int $id): ?GoodReceipt
     {
-        return $this->model->find($id);
+        return $this->model->with('goodReceiptDetail.productVariant.product')->find($id);
     }
 
 

@@ -12,3 +12,10 @@ storage/framework/views/*
 .phpunit.cache
 .vscode
 .idea
+.git
+.gitignore
+.gitattributes
+.editorconfig
+*.md
+tests
+docker-compose*.yml

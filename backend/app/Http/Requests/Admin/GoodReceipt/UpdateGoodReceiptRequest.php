@@ -11,9 +11,23 @@ class UpdateGoodReceiptRequest extends FormRequest
         return true;
     }
 
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $receipt = $this->route('goods_receipt') ?? $this->route('good_receipt');
+            if ($receipt instanceof \App\Models\GoodReceipt) {
+                if (in_array($receipt->status, ['cancel', 'completed'])) {
+                    $validator->errors()->add('status', 'Không thể cập nhật phiếu nhập đã bị hủy hoặc đã hoàn thành.');
+                }
+            }
+        });
+    }
+
     public function rules(): array
     {
-        $receiptId = $this->route('good_receipt'); 
+        $receipt = $this->route('goods_receipt') ?? $this->route('good_receipt');
+        $receiptId = $receipt instanceof \App\Models\GoodReceipt ? $receipt->id : $receipt;
+
         return [
             'receipt_code' => [
                 'required', 
@@ -25,7 +39,7 @@ class UpdateGoodReceiptRequest extends FormRequest
             'supplier_id'        => ['required', 'integer', 'exists:suppliers,id'],
             'staff_id'           => ['nullable', 'integer', 'exists:staff,id'], 
             'total_amount_price' => ['required', 'numeric', 'min:0'],
-            'status'             => ['required', 'integer', 'in:0,1,2'], 
+            'status'             => ['required', 'string', 'in:pending,approved,cancel,completed'], 
             'good_receipt_details'                      => ['nullable', 'array'],
             'good_receipt_details.*.product_variant_id' => ['required_with:good_receipt_details', 'integer', 'exists:product_variants,id'],
             'good_receipt_details.*.quantity'           => ['required_with:good_receipt_details', 'integer', 'min:1'],
@@ -41,7 +55,7 @@ class UpdateGoodReceiptRequest extends FormRequest
             'supplier_id.exists'    => 'Nhà cung cấp không tồn tại.',
             'staff_id.exists'       => 'Nhân viên không tồn tại.',
             'total_amount_price.min'=> 'Tổng tiền không được là số âm.',
-            'status.in'             => 'Trạng thái phiếu nhập không hợp lệ.',
+            'status.in'             => 'Trạng thái phiếu nhập phải là pending, approved, cancel hoặc completed.',
             'good_receipt_details.array'                               => 'Chi tiết phiếu nhập phải là một mảng.',
             'good_receipt_details.*.product_variant_id.required_with'  => 'Biến thể sản phẩm không được để trống.',
             'good_receipt_details.*.product_variant_id.exists'         => 'Biến thể sản phẩm không tồn tại.',

@@ -72,24 +72,21 @@
         <input
           id="search-supplier"
           type="text"
+          v-model="searchQuery"
+          @input="handleSearch"
           placeholder="Tìm tên, SĐT, email..."
           class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
         />
       </div>
       <select
+        v-model="statusFilter"
+        @change="handleFilter"
         class="px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
       >
         <option value="">Tất cả trạng thái</option>
-        <option value="active">Đang hợp tác</option>
-        <option value="paused">Tạm dừng</option>
+        <option value="1">Đang hợp tác</option>
+        <option value="0">Tạm dừng</option>
       </select>
-      <button class="inline-flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-slate-600 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-150">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-          <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
-        </svg>
-        Xuất file
-      </button>
     </div>
 
     <div class="overflow-x-auto">
@@ -281,13 +278,37 @@ const deleteSupplier = async () => {
 }
 
 // ─── Phân trang ──────────────────────────────────────────────────────────────
-const handleCurrentPage = async (page) => {
-  if (page === supplierStore.meta.current_page) return
-  await supplierStore.fetchSuppliers({ page, per_page: supplierStore.meta.per_page })
+const handleCurrentPage = (page) => {
+  const params = { page };
+  if (searchQuery.value) params.search = searchQuery.value;
+  if (statusFilter.value !== '') params.is_active = statusFilter.value;
+  supplierStore.fetchSuppliers(params);
 }
-const handlePerPageChange = async (perPage) => {
-  await supplierStore.fetchSuppliers({ page: 1, per_page: perPage })
+const handlePerPageChange = (perPage) => {
+  const params = { per_page: perPage, page: 1 };
+  if (searchQuery.value) params.search = searchQuery.value;
+  if (statusFilter.value !== '') params.is_active = statusFilter.value;
+  supplierStore.fetchSuppliers(params);
 }
+
+const searchQuery = ref('');
+const statusFilter = ref('');
+let searchTimeout = null;
+
+const handleFilter = () => {
+  const params = { page: 1 };
+  if (searchQuery.value) params.search = searchQuery.value;
+  if (statusFilter.value !== '') params.is_active = statusFilter.value;
+  supplierStore.fetchSuppliers(params);
+};
+
+const handleSearch = () => {
+  if (searchTimeout) clearTimeout(searchTimeout);
+  searchTimeout = setTimeout(() => {
+    handleFilter();
+  }, 400);
+};
+
 </script>
 
 <style scoped>

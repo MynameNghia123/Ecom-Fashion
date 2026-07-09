@@ -18,7 +18,7 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
 
   async function fetchGoodsReceipt(params = {}) {
     loading.value = true;
-    errors = null;
+    errors.value = null;
     try {
       const res = await goodsReceiptService.getAll({
         per_page: meta.value.per_page,
@@ -56,15 +56,15 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
       ? meta.value.current_page - 1
       : meta.value.current_page
     await fetchGoodsReceipt({ page: newPage })
-    return res.data
+    return res.data;
   }
-
+  
     return {
     // State
     goodsReceipts,
     meta,
     loading,
-    error,
+    errors,
     // Actions
     fetchGoodsReceipt,
     initialFetch,

@@ -91,4 +91,9 @@ class ProductVariantService implements ProductVariantServiceInterface
             }
         }
     }
+
+    public function searchBySkuOrId(string $query)
+    {
+        return $this->repo->searchBySkuOrId($query);
+    }
 }

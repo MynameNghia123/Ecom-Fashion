@@ -30,11 +30,71 @@ tags:
     description: Quản lý quyền hạn (RBAC)
   - name: Upload
     description: Upload / xóa ảnh lên storage
+  - name: Product Variants
+    description: Quản lý biến thể sản phẩm
 
 # ============================================================
 # PATHS
 # ============================================================
 paths:
+  /admin/product-variants/search:
+    get:
+      tags: [Product Variants]
+      summary: Tìm kiếm biến thể sản phẩm theo SKU hoặc ID
+      operationId: productVariants.search
+      parameters:
+        - name: q
+          in: query
+          description: Từ khóa tìm kiếm (SKU hoặc ID)
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: Tìm kiếm thành công.
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                          example: 1
+                        sku:
+                          type: string
+                          example: PROD-VAR-1
+                        product_id:
+                          type: integer
+                          example: 10
+        '400':
+          description: Lỗi Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Vui lòng cung cấp từ khóa tìm kiếm.
+                  data:
+                    type: array
+                    items:
+                      type: object
+
 
   # ──────────────────────────────────────────────────────────
   # CATEGORIES

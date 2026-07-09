@@ -1,7 +1,11 @@
 services:
+  # ═══════════════════════════════════════════════════════════════════
+  # MySQL 8.4
+  # ═══════════════════════════════════════════════════════════════════
   mysql:
     image: mysql:8.4
     container_name: ecom-fashion-mysql
+    restart: unless-stopped
     environment:
       MYSQL_DATABASE: ecom_fashion
       MYSQL_USER: ecom_user
@@ -11,15 +15,26 @@ services:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --innodb-buffer-pool-size=256M
+      - --max-connections=200
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h localhost -u root -p$${MYSQL_ROOT_PASSWORD} || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 10
+    networks:
+      - ecom-network
 
+  # ═══════════════════════════════════════════════════════════════════
+  # phpMyAdmin
+  # ═══════════════════════════════════════════════════════════════════
   phpmyadmin:
     image: phpmyadmin:5.2
     container_name: ecom-fashion-phpmyadmin
+    restart: unless-stopped
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
@@ -29,11 +44,17 @@ services:
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - ecom-network
 
+  # ═══════════════════════════════════════════════════════════════════
+  # Laravel Backend
+  # ═══════════════════════════════════════════════════════════════════
   backend:
     build:
       context: ./backend
     container_name: ecom-fashion-backend
+    restart: unless-stopped
     env_file:
       - ./backend/.env
     ports:
@@ -41,25 +62,21 @@ services:
     volumes:
       - ./backend:/var/www/html
       - backend_vendor:/var/www/html/vendor
-      # - backend_storage:/var/www/html/storage
       - backend_bootstrap_cache:/var/www/html/bootstrap/cache
-    command: >
-      sh -c "mkdir -p database storage/logs bootstrap/cache
-      && chmod -R 777 storage bootstrap/cache
-      && composer install --no-interaction --prefer-dist
-      && (php artisan storage:link || true)
-      && (php artisan l5-swagger:generate || true)
-      && php artisan migrate --force
-      && php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:
       mysql:
         condition: service_healthy
+    networks:
+      - ecom-network
 
+  # ═══════════════════════════════════════════════════════════════════
+  # Vue.js Frontend
+  # ═══════════════════════════════════════════════════════════════════
   frontend:
     build:
       context: ./frontend
     container_name: ecom-fashion-frontend
-    user: "root"
+    restart: unless-stopped
     env_file:
       - ./frontend/.env
     ports:
@@ -67,14 +84,23 @@ services:
     volumes:
       - ./frontend:/app
       - frontend_node_modules:/app/node_modules
-    command: >
-      sh -c "npm run dev -- --host 0.0.0.0 --port 5173"
     depends_on:
       - backend
+    networks:
+      - ecom-network
 
+# ═══════════════════════════════════════════════════════════════════
+# Volumes
+# ═══════════════════════════════════════════════════════════════════
 volumes:
   mysql_data:
   backend_vendor:
-  # backend_storage:
   backend_bootstrap_cache:
   frontend_node_modules:
+
+# ═══════════════════════════════════════════════════════════════════
+# Networks
+# ═══════════════════════════════════════════════════════════════════
+networks:
+  ecom-network:
+    driver: bridge

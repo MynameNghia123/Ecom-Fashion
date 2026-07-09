@@ -1,6 +1,6 @@
 <template>
   <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
-  :class="formView?.isShowView ? '' : 'hidden'"
+  :class="formView?.show ? '' : 'hidden'"
   >
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
     <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-[680px] animate-modal-in flex flex-col max-h-[90vh]">
@@ -62,7 +62,7 @@
                 <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
                 Email
               </p>
-              <p class="text-sm font-semibold text-slate-700">{{ supplierData?.emal }}</p>
+              <p class="text-sm font-semibold text-slate-700">{{ supplierData?.email }}</p>
             </div>
             <div>
               <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
@@ -81,7 +81,7 @@
           </div>
         </div>
 
-        <div>
+        <div v-if="false">
           <div class="flex items-center justify-between mb-3">
             <p class="text-sm font-bold text-slate-700">Sản phẩm cung cấp</p>
             <span class="px-2.5 py-1 bg-blue-50 text-[#0258cb] text-xs font-bold rounded-lg border border-blue-100">
@@ -148,7 +148,7 @@
 import { defineProps, defineEmits } from 'vue';
 const emit = defineEmits(['close', 'edit']);
 const formView = defineProps({
-  isShowView: {
+  show: {
     type: Boolean,
     default: false
   },

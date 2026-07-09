@@ -27,6 +27,10 @@ class SupplierRepository implements SupplierRepositoryInterface
             });
         }
 
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', $filters['is_active']);
+        }
+
         return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 4);
     }
 

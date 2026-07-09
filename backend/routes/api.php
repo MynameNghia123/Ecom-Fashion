@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Models\Supplier;
 
 /*
@@ -27,13 +28,20 @@ Route::prefix('admin')->group(function () {
 
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
+    
+    // Product Variant search
+    Route::get('product-variants/search', [ProductVariantController::class, 'search']);
+    
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('staffs', StaffController::class);
     Route::apiResource('roles', RoleController::class);
     Route::apiResource('permissions', PermissionController::class);
-    Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('goods-receipts', GoodReceiptController::class);
+    
+    // field supplier drop down — phải đặt TRƯỚC apiResource để tránh bị route {supplier} override
+    Route::get('/suppliers/dropdown', [SupplierController::class, 'getSupplierForDropDown']);
+    Route::apiResource('suppliers', SupplierController::class);
 
     // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
     Route::post('upload-image',    [UploadController::class, 'upload']);

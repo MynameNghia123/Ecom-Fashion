@@ -43,6 +43,22 @@ class ProductVariantRepository implements ProductVariantRepositoryInterface
     {
         $model->delete();
     }
+
+    /**
+     * Search product variants by SKU or ID
+     */
+    public function searchBySkuOrId(string $query)
+    {
+        return $this->model
+            ->with(['product:id,name'])
+            ->where('sku', 'like', '%' . $query . '%')
+            ->orWhere('id', $query)
+            ->orWhereHas('product', function($q) use ($query) {
+                $q->where('name', 'like', '%' . $query . '%');
+            })
+            ->limit(20)
+            ->get();
+    }
 }
 
 ?>

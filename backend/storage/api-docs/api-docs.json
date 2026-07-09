@@ -1523,8 +1523,14 @@
                                         "example": 100000
                                     },
                                     "status": {
-                                        "type": "integer",
-                                        "example": 1
+                                        "type": "string",
+                                        "example": "pending",
+                                        "enum": [
+                                            "pending",
+                                            "approved",
+                                            "cancel",
+                                            "completed"
+                                        ]
                                     },
                                     "good_receipt_details": {
                                         "type": "array",
@@ -1623,8 +1629,14 @@
                                         "example": 100000
                                     },
                                     "status": {
-                                        "type": "integer",
-                                        "example": 1
+                                        "type": "string",
+                                        "example": "pending",
+                                        "enum": [
+                                            "pending",
+                                            "approved",
+                                            "cancel",
+                                            "completed"
+                                        ]
                                     },
                                     "good_receipt_details": {
                                         "type": "array",
@@ -2356,6 +2368,34 @@
                     },
                     "404": {
                         "description": "Không tìm thấy sản phẩm"
+                    }
+                }
+            }
+        },
+        "/api/admin/product-variants/search": {
+            "get": {
+                "tags": [
+                    "Admin - Product Variant"
+                ],
+                "summary": "Tìm kiếm biến thể sản phẩm theo SKU, tên sản phẩm hoặc ID",
+                "operationId": "7ddefdb02b78721b4c4d31ee6f1187b1",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm (SKU, tên sản phẩm hoặc ID)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tìm kiếm thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi thiếu tham số tìm kiếm"
                     }
                 }
             }
@@ -3525,6 +3565,49 @@
                 }
             }
         },
+        "/api/admin/supplier/dropdown": {
+            "get": {
+                "tags": [
+                    "Admin - Suppliers"
+                ],
+                "summary": "Lấy danh sách nhà cung cấp cho dropdown",
+                "operationId": "getSupplierForDropDown",
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách nhà cung cấp cho dropdown thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Công ty TNHH ABC"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/upload-image": {
             "post": {
                 "tags": [
@@ -3704,6 +3787,10 @@
         {
             "name": "Admin - Good Receipt",
             "description": "Admin - Good Receipt"
+        },
+        {
+            "name": "Admin - Product Variant",
+            "description": "Admin - Product Variant"
         },
         {
             "name": "Admin - Suppliers",

@@ -63,7 +63,7 @@ class GoodReceiptController extends Controller
                     new OA\Property(property: 'supplier_id', type: 'integer', example: 1),
                     new OA\Property(property: 'staff_id', type: 'integer', example: 1),
                     new OA\Property(property: 'total_amount_price', type: 'number', example: 100000),
-                    new OA\Property(property: 'status', type: 'integer', example: 1),
+                    new OA\Property(property: 'status', type: 'string', enum: ['pending', 'approved', 'cancel', 'completed'], example: 'pending'),
                     new OA\Property(
                         property: 'good_receipt_details', 
                         type: 'array',
@@ -104,11 +104,11 @@ class GoodReceiptController extends Controller
             new OA\Response(response: 200, description: 'Chi tiết phiếu nhập')
         ]
     )]
-    public function show(GoodReceipt $goodReceipt): JsonResponse
+    public function show(GoodReceipt $goods_receipt): JsonResponse
     {
         return response()->json([
             'success'   => true,
-            'data'      => new GoodReceiptResource($goodReceipt),
+            'data'      => new GoodReceiptResource($goods_receipt),
         ], 200);
     }
 
@@ -127,7 +127,7 @@ class GoodReceiptController extends Controller
                     new OA\Property(property: 'supplier_id', type: 'integer', example: 1),
                     new OA\Property(property: 'staff_id', type: 'integer', example: 1),
                     new OA\Property(property: 'total_amount_price', type: 'number', example: 100000),
-                    new OA\Property(property: 'status', type: 'integer', example: 1),
+                    new OA\Property(property: 'status', type: 'string', enum: ['pending', 'approved', 'cancel', 'completed'], example: 'pending'),
                     new OA\Property(
                         property: 'good_receipt_details', 
                         type: 'array',
@@ -146,9 +146,9 @@ class GoodReceiptController extends Controller
             new OA\Response(response: 200, description: 'Cập nhật thành công')
         ]
     )]
-    public function update(UpdateGoodReceiptRequest $request, GoodReceipt $goodReceipt): JsonResponse
+    public function update(UpdateGoodReceiptRequest $request, GoodReceipt $goods_receipt): JsonResponse
     {
-        $updated = $this->service->update($goodReceipt, $request->validated());
+        $updated = $this->service->update($goods_receipt, $request->validated());
 
         return response()->json([
             'success'   => true,
@@ -168,9 +168,16 @@ class GoodReceiptController extends Controller
             new OA\Response(response: 204, description: 'Xóa thành công')
         ]
     )]
-    public function destroy(GoodReceipt $goodReceipt): JsonResponse
+    public function destroy(GoodReceipt $goods_receipt): JsonResponse
     {
-       $this->service->delete($goodReceipt);
+       if (in_array($goods_receipt->status, ['cancel', 'completed'])) {
+           return response()->json([
+               'message' => 'Không thể xóa phiếu nhập đã bị hủy hoặc đã hoàn thành.',
+               'errors'  => ['status' => ['Không thể xóa phiếu nhập đã bị hủy hoặc đã hoàn thành.']]
+           ], 422);
+       }
+
+       $this->service->delete($goods_receipt);
 
        return response()->json([
             'success' => true,

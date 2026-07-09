@@ -219,4 +219,40 @@ class SupplierController extends Controller
             'message'   => 'Xóa nhà cung cấp mưới thành công' // Giữ nguyên theo text của bạn
        ]);
     }
+
+    #[OA\Get(
+        path: '/api/admin/supplier/dropdown',
+        operationId: 'getSupplierForDropDown',
+        summary: 'Lấy danh sách nhà cung cấp cho dropdown',
+        tags: ['Admin - Suppliers'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Lấy danh sách nhà cung cấp cho dropdown thành công',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'success', type: 'boolean', example: true),
+                        new OA\Property(
+                            property: 'data',
+                            type: 'array',
+                            items: new OA\Items(
+                                properties: [
+                                    new OA\Property(property: 'id', type: 'integer', example: 1),
+                                    new OA\Property(property: 'name', type: 'string', example: 'Công ty TNHH ABC'),
+                                ]
+                            )
+                        )
+                    ]
+                )
+            )
+        ]
+    )]
+    public function getSupplierForDropDown(){
+        $supplier = Supplier::select('id', 'name')->get();
+
+        return response()->json([
+            'success'   => true,
+            'data'      => $supplier,
+        ]);
+    }
 }

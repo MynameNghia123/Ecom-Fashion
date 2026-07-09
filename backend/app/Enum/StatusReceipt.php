@@ -1,10 +1,10 @@
 <?php
 namespace App\Enums;
 
-enum StatusEnum: int
+enum StatusEnum: string
 {
-    case PENDING = 0;   // Đang chờ
-    case APPROVED = 1;  // Đã duyệt
-    case CANCEL = 2;    // Bị từ chối
-    case COMPLETED = 3; // đã hoàn thành
+    case PENDING = 'pending';
+    case APPROVED = 'approved';
+    case CANCEL = 'cancel';
+    case COMPLETED = 'completed';
 }
