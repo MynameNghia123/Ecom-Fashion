@@ -290,6 +290,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
+
 import ProductCard from '@/components/client/ui/ProductCard.vue'
 import SizeCalculator from '@/components/client/ui/SizeCalculator.vue'
 import ProductReviews from '@/components/client/ui/ProductReviews.vue'

@@ -16,7 +16,8 @@ class AttributeService implements AttributeServiceInterface
      */
     public function __construct(
         private readonly AttributeRepositoryInterface $attributeRepository
-    ) {}
+    ) {
+    }
 
     /**
      * Lấy danh sách thuộc tính có filter + phân trang.

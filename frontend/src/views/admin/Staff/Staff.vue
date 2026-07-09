@@ -72,7 +72,7 @@
       </div>
     </div>
 
-    <!-- Error Banner (TODO: bind error từ store) -->
+    <!-- Error Banner -->
     <div
       v-if="errorMessage"
       class="flex items-center gap-3 px-5 py-3.5 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700"
@@ -81,6 +81,17 @@
         <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       {{ errorMessage }}
+    </div>
+
+    <!-- Success Message -->
+    <div
+      v-if="successMessage"
+      class="flex items-center gap-3 px-5 py-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700"
+    >
+      <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      {{ successMessage }}
     </div>
 
     <!-- Table Card -->
@@ -128,7 +139,7 @@
               <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[70px]">ID</th>
               <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Nhân viên</th>
               <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Email</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Số điện thoại</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[150px]">Số điện thoại</th>
               <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Trạng thái</th>
               <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[140px]">Đăng nhập cuối</th>
               <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Ngày tạo</th>
@@ -137,17 +148,17 @@
           </thead>
           <tbody class="divide-y divide-slate-50">
 
-            <!-- Loading skeleton (TODO: bind loading từ store) -->
+            <!-- Loading skeleton -->
             <tr v-if="loading" v-for="i in paginationMeta.per_page" :key="'sk-' + i">
               <td colspan="8" class="py-4 px-5">
                 <div class="h-5 bg-slate-100 rounded-lg animate-pulse w-full"></div>
               </td>
             </tr>
 
-            <!-- Rows (TODO: thay mockStaffList bằng data từ store) -->
+            <!-- Rows -->
             <tr
               v-else
-              v-for="staff in mockStaffList"
+              v-for="staff in staffList"
               :key="staff.id"
               class="hover:bg-blue-50/40 transition-colors duration-100 group"
             >
@@ -159,7 +170,18 @@
                     <img v-if="staff.avatar" :src="staff.avatar" :alt="staff.full_name" class="w-full h-full object-cover" />
                     <span v-else>{{ getInitials(staff.full_name) }}</span>
                   </div>
-                  <p class="font-semibold text-slate-800 leading-tight">{{ staff.full_name }}</p>
+                  <div>
+                    <p class="font-semibold text-slate-800 leading-tight">{{ staff.full_name }}</p>
+                    <div v-if="staff.roles && staff.roles.length" class="flex flex-wrap gap-1 mt-1">
+                      <span
+                        v-for="role in staff.roles"
+                        :key="role.id"
+                        class="inline-flex items-center px-1.5 py-0.5 rounded-md text-[9px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase"
+                      >
+                        {{ role.name }}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </td>
 
@@ -223,7 +245,7 @@
             </tr>
 
             <!-- Empty state -->
-            <tr v-if="!loading && mockStaffList.length === 0">
+            <tr v-if="!loading && staffList.length === 0">
               <td colspan="8" class="py-16 text-center">
                 <div class="flex flex-col items-center gap-3 text-slate-400">
                   <svg class="w-12 h-12 opacity-40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
@@ -357,6 +379,50 @@
                 </div>
               </div>
 
+              <!-- Vai trò -->
+              <div>
+                <label class="block text-sm font-semibold text-slate-600 mb-1.5">Vai trò (Roles)</label>
+                <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                  <div
+                    v-for="role in dropdownRoles"
+                    :key="role.id"
+                    class="flex items-center gap-2"
+                  >
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer"
+                        :value="role.id"
+                        v-model="form.role_ids"
+                      />
+                      <span class="font-medium text-slate-700">{{ role.name }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quyền đặc cách -->
+              <div>
+                <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quyền đặc cách (Permissions)</label>
+                <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50 max-h-40 overflow-y-auto">
+                  <div
+                    v-for="perm in allPermissions"
+                    :key="perm.id"
+                    class="flex items-center gap-2"
+                  >
+                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer"
+                        :value="perm.id"
+                        v-model="form.permission_ids"
+                      />
+                      <span class="font-medium text-slate-700">{{ perm.module }}.{{ perm.action }}</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
               <!-- Trạng thái -->
               <div>
                 <label class="block text-sm font-semibold text-slate-600 mb-1.5">Trạng thái</label>
@@ -472,6 +538,19 @@
                   <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Đã xóa</p>
                   <p class="text-xs text-slate-600">{{ viewTarget?.deleted_at || '—' }}</p>
                 </div>
+                <div class="bg-slate-50 rounded-xl px-4 py-3 col-span-2">
+                  <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Vai trò (Roles)</p>
+                  <div v-if="viewTarget?.roles && viewTarget.roles.length" class="flex flex-wrap gap-1 mt-1">
+                    <span
+                      v-for="role in viewTarget.roles"
+                      :key="role.id"
+                      class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 uppercase"
+                    >
+                      {{ role.name }}
+                    </span>
+                  </div>
+                  <p v-else class="text-xs text-slate-500">—</p>
+                </div>
               </div>
             </div>
 
@@ -510,16 +589,30 @@
 <script setup>
 import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useStaffStore } from '@/stores/admin/staffStore'
+import { useRoleStore } from '@/stores/admin/roleStore'
+import { usePermissionStore } from '@/stores/admin/permissionStore'
 import Pagination from '@/components/admin/Pagination.vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 
 const staffStore = useStaffStore()
+const roleStore = useRoleStore()
+const permissionStore = usePermissionStore()
 
 // State liên kết Store
-const mockStaffList = computed(() => staffStore.staffList)
-const loading = computed(() => staffStore.loading)
-const errorMessage = computed(() => staffStore.error)
+const staffList = computed(() => staffStore.staffList)
+const dropdownRoles = computed(() => roleStore.dropdownRoles)
+const allPermissions = computed(() => permissionStore.allPermissions)
+const loading = computed(() => staffStore.loading || roleStore.loading || permissionStore.loading)
+const errorMessage = computed(() => staffStore.error || roleStore.error || permissionStore.error)
 const paginationMeta = computed(() => staffStore.meta)
+
+const successMessage = ref(null)
+const showSuccess = (msg) => {
+  successMessage.value = msg
+  setTimeout(() => {
+    successMessage.value = null
+  }, 4000)
+}
 
 // Thống kê động (Stats)
 const stats = computed(() => {
@@ -546,6 +639,8 @@ watch([searchQuery, filterStatus], () => {
 
 onMounted(() => {
   staffStore.fetchStaffs()
+  roleStore.fetchDropdownRoles()
+  permissionStore.fetchAllPermissions()
 })
 
 const goToPage = (page) => {
@@ -577,6 +672,8 @@ const form = reactive({
   password: '',
   avatar: '',
   is_active: true,
+  role_ids: [],
+  permission_ids: [],
 })
 
 const getInitials = (name) => {
@@ -594,6 +691,8 @@ const resetForm = () => {
   form.password = ''
   form.avatar = ''
   form.is_active = true
+  form.role_ids = []
+  form.permission_ids = []
 }
 
 const openAddModal = () => {
@@ -611,6 +710,8 @@ const openEditModal = (staff) => {
   form.password = ''
   form.avatar = staff.avatar || ''
   form.is_active = staff.is_active
+  form.role_ids = staff.roles ? staff.roles.map(r => r.id) : []
+  form.permission_ids = staff.permissions ? staff.permissions.map(p => p.id) : []
   modalMode.value = 'edit'
   showFormModal.value = true
 }
@@ -634,8 +735,10 @@ const submitForm = async () => {
     const payload = { ...form }
     if (modalMode.value === 'add') {
       await staffStore.createStaff(payload)
+      showSuccess("Đã thêm tài khoản nhân viên mới thành công.")
     } else {
       await staffStore.updateStaff(form.id, payload)
+      showSuccess("Đã cập nhật thông tin nhân viên thành công.")
     }
     showFormModal.value = false
   } catch (err) {
@@ -646,6 +749,7 @@ const submitForm = async () => {
 const onDeleteConfirm = async () => {
   if (deleteTarget.value) {
     await staffStore.deleteStaff(deleteTarget.value.id)
+    showSuccess("Đã xóa nhân viên thành công.")
   }
   showDeleteModal.value = false
 }

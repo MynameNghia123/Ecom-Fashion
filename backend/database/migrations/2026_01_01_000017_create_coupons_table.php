@@ -12,11 +12,11 @@ return new class extends Migration {
             $table->string('code')->unique();
             $table->string('type');
             $table->decimal('discount_value', 12, 2);
-            $table->decimal('price_min_order_value', 12, 2)->default(0);
-            $table->integer('max_usage');
+            $table->decimal('price_min_order_value', 12, 2)->nullable()->default(0);
+            $table->integer('max_usage')->nullable();
             $table->integer('used_count')->default(0);
             $table->boolean('is_active')->default(true);
-            $table->timestamp('expiry_date');
+            $table->timestamp('expiry_date')->nullable();
             $table->foreignId('created_by_staff_id')->constrained('staff');
             $table->timestamps();
         });

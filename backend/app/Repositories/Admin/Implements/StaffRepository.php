@@ -15,7 +15,7 @@ class StaffRepository implements StaffRepositoryInterface
     
     public function paginate(array $filters): LengthAwarePaginator
     {
-        $query = $this->model->newQuery();
+        $query = $this->model->newQuery()->with(['roles', 'permissions']);
 
         if (!empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
@@ -34,7 +34,7 @@ class StaffRepository implements StaffRepositoryInterface
 
     public function findById(int $id): ?Staff
     {
-        return $this->model->find($id);
+        return $this->model->with(['roles', 'permissions'])->find($id);
     }
 
     public function create(array $data): Staff
@@ -60,11 +60,23 @@ class StaffRepository implements StaffRepositoryInterface
 
     public function delete(Model $model): void
     {
+        $model->roles()->detach();
+        $model->permissions()->detach();
         $model->delete();
     }
 
     public function getAll()
     {
-        return $this->model->orderBy('id', 'desc')->get();
+        return $this->model->with(['roles', 'permissions'])->orderBy('id', 'desc')->get();
+    }
+
+    public function syncRoles(Staff $staff, array $roleIds): void
+    {
+        $staff->roles()->sync($roleIds);
+    }
+
+    public function syncPermissions(Staff $staff, array $permissionIds): void
+    {
+        $staff->permissions()->sync($permissionIds);
     }
 }

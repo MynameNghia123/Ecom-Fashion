@@ -37,91 +37,91 @@ const adminRoutes = [
     path: '/admin/categories',
     name: 'AdminCategory',
     component: Category,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'categories.view' }
   },
   {
     path: '/admin/products',
     name: 'AdminProduct',
     component: Product,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'products.view' }
   },
   {
     path: '/admin/product-attributes',
     name: 'AdminProductAttribute',
     component: AttributeProduct,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'attributes.view' }
   },
   {
     path: '/admin/orders',
     name: 'AdminOrder',
     component: Order,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'orders.view' }
   },
   {
     path: '/admin/return-requests',
     name: 'AdminReturnRequire',
     component: ReturnRequire,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'orders.view' }
   },
   {
     path: '/admin/suppliers',
     name: 'AdminSupplier',
     component: Supplier,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'suppliers.view' }
   },
   {
     path: '/admin/warehouse-receipts',
     name: 'AdminWarehouseReceipt',
     component: WarehouseReceipt,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'goods_receipts.view' }
   },
   {
     path: '/admin/customers',
     name: 'AdminCustomer',
     component: Customer,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'customers.view' }
   },
   {
     path: '/admin/reviews',
     name: 'AdminReviewManagement',
     component: ReviewManagement,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'reviews.view' }
   },
   {
     path: '/admin/discounts',
     name: 'AdminDiscountCode',
     component: DiscountCode,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'coupons.view' }
   },
   {
     path: '/admin/banners',
     name: 'AdminAdvertisementBanner',
     component: AdvertisementBanner,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'banners.view' }
   },
   {
     path: '/admin/blog',
     name: 'AdminBlog',
     component: Blog,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'blogs.view' }
   },
   {
     path: '/admin/staff-accounts',
     name: 'AdminStaff',
     component: Staff,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'staff.view' }
   },
   {
     path: '/admin/roles-permissions',
     name: 'AdminRole',
     component: Role,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'roles.view' }
   },
   {
     path: '/admin/settings',
     name: 'AdminConfig',
     component: Config,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', permission: 'system_settings.view' }
   }
 ]
 

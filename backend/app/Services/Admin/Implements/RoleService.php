@@ -13,55 +13,43 @@ use Exception;
 
 /**
  * Class RoleService
- * * Xử lý logic nghiệp vụ cho thực thể Vai trò (Role).
- * Đóng vai trò trung gian phối hợp giữa Controller và Repository.
- * * @package App\Services\Admin\Implements
+ * Xử lý logic nghiệp vụ cho thực thể Vai trò (Role).
+ * Schema: roles(id, name, description, created_at, updated_at)
+ * Bảng trung gian: role_permissions(role_id, permission_id)
+ *                  staff_roles(staff_id, role_id)
  */
 class RoleService implements RoleServiceInterface
 {
-    /**
-     * Tiêm lớp Interface của Repository thông qua Constructor.
-     * * @param RoleRepositoryInterface $roleRepo
-     */
     public function __construct(
         private readonly RoleRepositoryInterface $roleRepo
-    ){}
+    ) {}
 
-    /**
-     * Ủy quyền (Delegate) cho Repository xử lý lấy danh sách phân trang.
-     */
     public function getList(array $filters): LengthAwarePaginator
     {
         return $this->roleRepo->paginate($filters);
     }
 
-    /**
-     * Ủy quyền cho Repository lấy toàn bộ danh sách vai trò.
-     */
     public function getAll(): Collection
     {
         return $this->roleRepo->getAll();
     }
 
     /**
-     * Xử lý nghiệp vụ tạo mới vai trò.
-     * Sử dụng Database Transaction để đảm bảo tính toàn vẹn dữ liệu khi ghi vào nhiều bảng.
+     * Tạo mới role và đồng bộ permission_ids vào role_permissions.
      */
     public function create(array $data): Role
     {
         DB::beginTransaction();
         try {
-            // 1. Tạo bản ghi vai trò chính trong bảng 'roles'
             $role = $this->roleRepo->create($data);
 
-            // 2. Nếu có mảng ID quyền gửi lên, tiến hành đồng bộ vào bảng trung gian 'role_permissions'
             $permissionIds = $data['permission_ids'] ?? [];
             if (!empty($permissionIds)) {
                 $this->roleRepo->syncPermissions($role, $permissionIds);
             }
 
             DB::commit();
-            return $role;
+            return $role->load('permissions');
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -69,22 +57,20 @@ class RoleService implements RoleServiceInterface
     }
 
     /**
-     * Xử lý nghiệp vụ cập nhật thông tin vai trò và làm mới quyền hạn.
+     * Cập nhật thông tin role và làm mới danh sách quyền hạn.
      */
     public function update(Model $model, array $data): Role
     {
         DB::beginTransaction();
         try {
-            // 1. Cập nhật các thông tin cơ bản (name, description)
             $updatedRole = $this->roleRepo->update($model, $data);
 
-            // 2. Làm mới danh sách quyền hạn nếu phía Front-end có truyền mảng này lên
-            if ($updatedRole instanceof Role && isset($data['permission_ids'])) {
+            if (isset($data['permission_ids'])) {
                 $this->roleRepo->syncPermissions($updatedRole, $data['permission_ids']);
             }
 
             DB::commit();
-            return $updatedRole;
+            return $updatedRole->load('permissions');
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
@@ -92,10 +78,21 @@ class RoleService implements RoleServiceInterface
     }
 
     /**
-     * Ủy quyền cho Repository xóa vai trò khỏi hệ thống.
+     * Xóa role. Laravel tự xóa các bản ghi trong role_permissions và staff_roles
+     * nếu đã cấu hình onDelete cascade trong migration.
      */
     public function delete(Model $model): void
     {
         $this->roleRepo->delete($model);
+    }
+
+    /**
+     * Đồng bộ riêng danh sách quyền cho role (endpoint POST /roles/{role}/sync-permissions).
+     */
+    public function syncPermissions(Role $role, array $data): Role
+    {
+        $permissionIds = $data['permission_ids'] ?? [];
+        $this->roleRepo->syncPermissions($role, $permissionIds);
+        return $role->fresh()->load('permissions');
     }
 }

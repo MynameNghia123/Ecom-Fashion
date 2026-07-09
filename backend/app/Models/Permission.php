@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Permission extends Model
 {
     protected $table = 'permissions';
+    public $timestamps = false;
     protected $fillable = [
        'module',
        'action'
@@ -17,6 +18,6 @@ class Permission extends Model
     }
     public function staff():BelongsToMany 
     {
-        return $this ->belongsTomany(Staff::class, 'staff_permissions', 'permission_id', 'staff_id');
+        return $this->belongsToMany(Staff::class, 'staff_permissions', 'permission_id', 'staff_id');
     }
 }

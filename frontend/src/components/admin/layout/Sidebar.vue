@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-[260px] min-h-screen bg-white border-r border-[#eef2f7] flex flex-col shrink-0 select-none">
+  <aside class="w-[260px] h-screen sticky top-0 bg-white border-r border-[#eef2f7] flex flex-col shrink-0 select-none">
     
     <!-- Logo Header -->
     <div class="h-16 px-6 flex items-center border-b border-[#eef2f7] shrink-0">
@@ -217,18 +217,18 @@
         </div>
       </div>
 
-      <!-- 9. Cấu hình hệ thống Link -->
-      <router-link 
-        to="/admin/settings" 
-        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 border-l-[3px] border-transparent rounded-r-lg transition-all no-underline"
-        active-class="!bg-[#eff6ff] !text-[#0258cb] !font-semibold !border-l-[#0258cb] [&_svg]:!text-[#0258cb]"
+      <!-- 9. Quay lại website -->
+      <router-link
+        to="/"
+        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold text-rose-500 hover:text-rose-600 hover:bg-rose-50 border-l-[3px] border-transparent hover:border-l-rose-400 rounded-r-lg transition-all no-underline"
       >
-        <!-- Gear Settings Icon -->
-        <svg class="w-5 h-5 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="12" cy="12" r="3"/>
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        <!-- Arrow Left Circle Icon (red) -->
+        <svg class="w-5 h-5 text-rose-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 8 8 12 12 16"/>
+          <line x1="16" y1="12" x2="8" y2="12"/>
         </svg>
-        <span>Cấu hình hệ thống</span>
+        <span>Quay lại website</span>
       </router-link>
 
     </nav>

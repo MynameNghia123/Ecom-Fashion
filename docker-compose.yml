@@ -53,6 +53,8 @@ services:
   backend:
     build:
       context: ./backend
+      dockerfile: Dockerfile
+    image: ecom-fashion-backend:latest
     container_name: ecom-fashion-backend
     restart: unless-stopped
     env_file:
@@ -63,6 +65,17 @@ services:
       - ./backend:/var/www/html
       - backend_vendor:/var/www/html/vendor
       - backend_bootstrap_cache:/var/www/html/bootstrap/cache
+<<<<<<< HEAD
+=======
+    command: >
+      sh -c "mkdir -p database storage/logs bootstrap/cache
+      && (chmod -R 777 storage bootstrap/cache || true)
+      && composer install --no-interaction --prefer-dist
+      && (php artisan storage:link || true)
+      && (php artisan l5-swagger:generate || true)
+      && php artisan migrate --force
+      && php artisan serve --host=0.0.0.0 --port=8000"
+>>>>>>> e82172561f6186cf7af7551e7837ad9be09039bf
     depends_on:
       mysql:
         condition: service_healthy
@@ -75,6 +88,8 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    image: ecom-fashion-frontend:latest
     container_name: ecom-fashion-frontend
     restart: unless-stopped
     env_file:

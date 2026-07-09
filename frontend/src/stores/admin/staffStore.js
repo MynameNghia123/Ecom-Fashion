@@ -31,24 +31,51 @@ export const useStaffStore = defineStore('staff', () => {
   }
 
   async function createStaff(data) {
-    const res = await staffService.create(data)
-    await fetchStaffs({ page: meta.value.current_page })
-    return res.data
+    loading.value = true
+    error.value = null
+    try {
+      const res = await staffService.create(data)
+      await fetchStaffs({ page: meta.value.current_page })
+      return res.data
+    } catch (e) {
+      error.value = e.response?.data?.message || e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
   }
 
   async function updateStaff(id, data) {
-    const res = await staffService.update(id, data)
-    await fetchStaffs({ page: meta.value.current_page })
-    return res.data
+    loading.value = true
+    error.value = null
+    try {
+      const res = await staffService.update(id, data)
+      await fetchStaffs({ page: meta.value.current_page })
+      return res.data
+    } catch (e) {
+      error.value = e.response?.data?.message || e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
   }
 
   async function deleteStaff(id) {
-    const res = await staffService.delete(id)
-    const newPage = staffList.value.length === 1 && meta.value.current_page > 1
-      ? meta.value.current_page - 1
-      : meta.value.current_page
-    await fetchStaffs({ page: newPage })
-    return res.data
+    loading.value = true
+    error.value = null
+    try {
+      const res = await staffService.delete(id)
+      const newPage = staffList.value.length === 1 && meta.value.current_page > 1
+        ? meta.value.current_page - 1
+        : meta.value.current_page
+      await fetchStaffs({ page: newPage })
+      return res.data
+    } catch (e) {
+      error.value = e.response?.data?.message || e.message
+      throw e
+    } finally {
+      loading.value = false
+    }
   }
 
   return {

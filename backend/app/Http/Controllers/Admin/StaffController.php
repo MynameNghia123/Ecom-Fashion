@@ -82,6 +82,8 @@ class StaffController extends Controller
                     new OA\Property(property: 'password', type: 'string', example: 'secret123', description: 'Bắt buộc khi tạo mới. Tối thiểu 6 ký tự.'),
                     new OA\Property(property: 'avatar', type: 'string', nullable: true, example: 'http://localhost/storage/images/avatars/uuid.jpg', description: 'URL ảnh đại diện nhân viên'),
                     new OA\Property(property: 'is_active', type: 'boolean', example: true),
+                    new OA\Property(property: 'role_ids', type: 'array', items: new OA\Items(type: 'integer'), example: [1, 2], description: 'Danh sách ID vai trò'),
+                    new OA\Property(property: 'permission_ids', type: 'array', items: new OA\Items(type: 'integer'), example: [1, 3], description: 'Danh sách ID quyền đặc cách'),
                 ]
             )
         ),
@@ -153,6 +155,8 @@ class StaffController extends Controller
                     new OA\Property(property: 'password', type: 'string', nullable: true, example: null, description: 'Nullable khi update'),
                     new OA\Property(property: 'avatar', type: 'string', nullable: true, example: 'http://localhost/storage/images/avatars/new-uuid.jpg'),
                     new OA\Property(property: 'is_active', type: 'boolean', example: true),
+                    new OA\Property(property: 'role_ids', type: 'array', items: new OA\Items(type: 'integer'), example: [1, 2], description: 'Danh sách ID vai trò'),
+                    new OA\Property(property: 'permission_ids', type: 'array', items: new OA\Items(type: 'integer'), example: [1, 3], description: 'Danh sách ID quyền đặc cách'),
                 ]
             )
         ),
