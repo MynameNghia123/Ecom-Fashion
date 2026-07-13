@@ -7,7 +7,7 @@
     >
       <div class="flex gap-5 items-center">
         <a href="#" class="text-white no-underline font-semibold cursor-pointer">THEO DÕI ĐƠN HÀNG</a>
-        <a href="#" @click.prevent="openLoginModal" class="text-white no-underline font-semibold cursor-pointer">TÀI KHOẢN CỦA TÔI</a>
+        <a href="#" @click.prevent="handleAccountClick" class="text-white no-underline font-semibold cursor-pointer">TÀI KHOẢN CỦA TÔI</a>
         <router-link to="/about" class="text-white no-underline font-semibold cursor-pointer">VỀ CHÚNG TÔI</router-link>
       </div>
       <div class="text-center max-lg:order-first">
@@ -79,7 +79,7 @@
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
           <span class="absolute -top-0.5 -right-1.25 bg-black text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
         </button>
-        <button @click="openLoginModal" class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="Tài khoản">
+        <button @click="handleAccountClick" class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="Tài khoản">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </button>
         <button class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="So sánh">
@@ -109,9 +109,13 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useClientAuthStore } from '@/stores/client/authStore'
 import AuthModal from '@/views/client/auth/AuthModal.vue'
 import MiniCart from '@/components/client/cart/MiniCart.vue'
 
+const router = useRouter()
+const authStore = useClientAuthStore()
 const isAuthModalOpen = ref(false)
 const authModalMode = ref('login')
 const isMiniCartOpen = ref(false)
@@ -124,6 +128,14 @@ const openLoginModal = () => {
 const openRegisterModal = () => {
   authModalMode.value = 'register'
   isAuthModalOpen.value = true
+}
+
+const handleAccountClick = () => {
+  if (authStore.isAuthenticated) {
+    router.push('/profile')
+  } else {
+    openLoginModal()
+  }
 }
 
 const openMiniCart = () => {

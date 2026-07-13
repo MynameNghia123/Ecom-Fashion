@@ -33,7 +33,7 @@ class GoodReceiptService implements GoodReceiptServiceInterface
                 $this->good_receipt_detail_service->insertMany($details, $created->id);
             }
 
-            return $created->load(['goodReceiptDetail']);
+            return $created->load(['goodReceiptDetail.productVariant.product']);
         });
     }
 
@@ -50,7 +50,7 @@ class GoodReceiptService implements GoodReceiptServiceInterface
                 $this->good_receipt_detail_service->syncDetail($model, $details);
             }
 
-            return $updated->load(['goodReceiptDetail']);
+            return $updated->load(['goodReceiptDetail.productVariant.product']);
         });
     }
 

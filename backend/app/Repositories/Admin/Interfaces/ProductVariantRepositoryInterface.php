@@ -28,4 +28,9 @@ interface ProductVariantRepositoryInterface
     public function update(\Illuminate\Database\Eloquent\Model $model, array $data): ProductVariant;
 
     public function delete(\Illuminate\Database\Eloquent\Model $model): void;
+    
+    /**
+     * Search product variants by SKU or ID
+     */
+    public function searchBySkuOrId(string $query);
 }   

@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
+use App\Http\Controllers\Admin\ProductVariantController;
 use App\Models\Supplier;
 
 use App\Http\Controllers\Admin\AuthController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\BLogController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\BannerController as ClientBannerController;
+use App\Http\Controllers\Client\AuthController as ClientAuthController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,15 +28,19 @@ use App\Http\Controllers\Client\BannerController as ClientBannerController;
 |--------------------------------------------------------------------------
 */
 
-// ── Public Auth Endpoint ─────────────────────────────────────────────────────
+
+// ── Public Admin Auth (không cần token) ─────────────────────────────────────
 Route::post('admin/auth/login', [AuthController::class, 'login']);
 
 // ── Protected Admin Routes ───────────────────────────────────────────────────
 Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
-
+    
+    Route::get('product-variants/search', [ProductVariantController::class, 'search']);
+    Route::get('/suppliers/dropdown', [SupplierController::class, 'getSupplierForDropDown']);
     // ── Auth Info ────────────────────────────────────────────────────────────
     Route::post('auth/logout', [AuthController::class, 'logout']);
     Route::get('auth/me',      [AuthController::class, 'me']);
+
 
     // ── Catalog ───────────────────────────────────────────────────────────────
     Route::apiResource('attributes', AttributeController::class)->middleware('permission:attributes');
@@ -81,4 +87,18 @@ Route::prefix('client')->group(function () {
     Route::get('blogs', [ClientBlogController::class, 'index']);
     Route::get('blogs/{slug}', [ClientBlogController::class, 'show']);
     Route::get('banners', [ClientBannerController::class, 'index']);
+    // public client auth 
+    Route::prefix('auth')->group(function () {
+        Route::post('register',        [ClientAuthController::class, 'register']);
+        Route::post('login',           [ClientAuthController::class, 'login']);
+        Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword']);
+        Route::post('verify-otp',      [ClientAuthController::class, 'verifyOtp']);
+        Route::post('reset-password',  [ClientAuthController::class, 'resetPassword']);
+    });
+
+    Route::prefix('auth')->middleware(['auth:sanctum'])->group(function () {
+        Route::post('logout', [ClientAuthController::class, 'logout']);
+        Route::get('me', [ClientAuthController::class, 'me']);
+    });
+
 });

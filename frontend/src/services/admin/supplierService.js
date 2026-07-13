@@ -17,5 +17,8 @@ export const supplierService = {
     },
     delete(id){
         return http.delete(`${BASE}/${id}`);
+    },
+    getSupplierDropdown(){
+        return http.get(`${BASE}/dropdown`);
     }
 }

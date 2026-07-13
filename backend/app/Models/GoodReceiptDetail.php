@@ -14,6 +14,8 @@ class GoodReceiptDetail extends Model
         'import_price',
     ];
 
+    public $timestamps = false;
+
     protected function casts(): array
     {
         return [

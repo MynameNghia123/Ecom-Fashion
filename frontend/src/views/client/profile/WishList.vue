@@ -1,167 +1,112 @@
-<script setup>
-import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
-</script>
-
 <template>
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 select-none">
-    
-    <div class="flex flex-col md:flex-row gap-8">
-      
-      <div class="w-full md:w-64 flex-shrink-0">
-        <ProfileSidebar />
+  <div class="space-y-10 animate-fade-in text-[#111111]">
+    <!-- Header -->
+    <div class="border-b border-neutral-100 pb-6 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div>
+        <h1 class="text-[32px] font-bold tracking-tight text-neutral-900 uppercase font-title leading-tight">Danh sách yêu thích</h1>
+        <p class="text-xs text-neutral-400 mt-1 font-text uppercase tracking-wider font-semibold">Quản lý bộ sưu tập cá nhân của bạn.</p>
+      </div>
+      <div class="flex items-center gap-6">
+        <span class="text-[11px] font-text text-neutral-500 uppercase tracking-widest font-semibold">
+          {{ wishlistItems.length }} sản phẩm được lưu
+        </span>
+        <button
+          v-if="wishlistItems.length > 0"
+          class="border border-neutral-900 bg-white hover:bg-neutral-900 hover:text-white px-5 py-2.5 text-[11px] font-bold tracking-widest uppercase transition-colors duration-300 font-text cursor-pointer"
+        >
+          Thêm tất cả vào giỏ hàng
+        </button>
+      </div>
+    </div>
+
+    <!-- Empty State -->
+    <div v-if="wishlistItems.length === 0" class="text-center py-20 border border-dashed border-neutral-200">
+      <p class="text-neutral-500 font-text text-sm">Danh sách yêu thích trống.</p>
+      <button
+        class="mt-4 bg-black text-white hover:bg-neutral-800 px-6 py-3 text-[11px] font-bold tracking-widest uppercase transition-colors font-text cursor-pointer border-none"
+      >
+        Khám phá sản phẩm
+      </button>
+    </div>
+
+    <!-- Product Grid -->
+    <div v-else class="space-y-12">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+        <ProductCard
+          v-for="product in wishlistItems"
+          :key="product.id"
+          :image="product.image"
+          :name="product.name"
+          :currentPrice="product.currentPrice"
+          :description="product.description"
+          :is-wishlist="true"
+          @remove="removeItem(product.id)"
+        />
       </div>
 
-      <div class="flex-grow bg-white space-y-10 animate-fade-in text-[#111111]">
-        
-        <div>
-          <h1 class="text-3xl font-bold tracking-tight text-gray-900">Danh sách yêu thích</h1>
-          <p class="text-sm text-gray-400 mt-1 font-normal">Danh sách sản phẩm bạn yêu thích</p>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div class="border border-gray-900 bg-[#FBFBFB] p-6 min-h-[140px] flex flex-col justify-between">
-            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Sản phẩm yêu thích</p>
-            <div class="mt-4">
-              <span class="text-4xl font-medium tracking-tight">6</span>
-              <p class="text-xs text-gray-400 mt-1">Tổng số sản phẩm yêu thích</p>
-            </div>
-          </div>
-
-          <div class="border border-gray-200 bg-white p-6 min-h-[140px] flex flex-col justify-between">
-            <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Danh mục yêu thích</p>
-            <div class="mt-4">
-              <span class="text-4xl font-medium tracking-tight">2</span>
-              <p class="text-xs text-gray-400 mt-1">Tổng số danh mục yêu thích</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="border border-gray-200 p-6 bg-[#FBFBFB] flex flex-col justify-between min-h-[260px]">
-            <div>
-              <div class="flex items-center justify-between mb-6">
-                <h3 class="text-sm font-bold uppercase tracking-wider">Sản phẩm yêu thích</h3>
-                <button class="text-xs font-bold uppercase tracking-wider underline hover:text-gray-600 transition-colors">
-                  EDIT
-                </button>
-              </div>
-              
-              <div class="space-y-4">
-                <div>
-                  <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Tên</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">Áo khoác</p>
-                </div>
-                <div>
-                  <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Email</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">Quần jean</p>
-                </div>
-                <div>
-                  <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Số điện thoại</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">Váy</p>
-                </div>
-                <div>
-                  <p class="text-[10px] uppercase tracking-widest text-gray-400 font-bold">Số điện thoại</p>
-                  <p class="text-sm font-normal text-gray-800 mt-0.5">Đầm</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="relative overflow-hidden bg-black min-h-[260px] flex items-center justify-center p-8 group">
-            <img 
-              src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop" 
-              alt="New Collection" 
-              class="absolute inset-0 w-full h-full object-cover opacity-50 grayscale group-hover:scale-105 transition-transform duration-700"
-            />
-            <div class="absolute inset-0 bg-black/20"></div>
-            
-            <div class="relative z-10 text-center space-y-4 w-full">
-              <div>
-                <span class="inline-block bg-white text-[9px] font-bold uppercase tracking-[0.2em] text-gray-900 px-3 py-1">
-                  New Collection
-                </span>
-              </div>
-              <h4 class="text-2xl font-bold tracking-[0.15em] text-white uppercase leading-tight">
-                Essentials<br>Autumn '24
-              </h4>
-              <div>
-                <button class="inline-block border border-white text-white text-[10px] font-bold uppercase tracking-widest px-6 py-2.5 hover:bg-white hover:text-gray-900 transition-all duration-300">
-                  Shop Now
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="space-y-4 pt-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-sm font-bold uppercase tracking-wider">Đơn đã đặt</h3>
-            <router-link to="/profile/orders" class="text-xs font-bold uppercase tracking-wider underline hover:text-gray-600 transition-colors">
-              XEM TẤT CẢ
-            </router-link>
-          </div>
-
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse min-w-[650px]">
-              <thead>
-                <tr class="border-b-2 border-gray-900">
-                  <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Order ID</th>
-                  <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Date</th>
-                  <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Status</th>
-                  <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Total</th>
-                  <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5 text-right">Action</th>
-                </tr>
-              </thead>
-              <tbody class="divide-y divide-gray-100 text-xs font-medium">
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4 font-bold tracking-wide">#NF-882941</td>
-                  <td class="py-4 text-gray-500 font-normal">Oct 12, 2023</td>
-                  <td class="py-4">
-                    <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                      DELIVERED
-                    </span>
-                  </td>
-                  <td class="py-4 font-normal text-gray-800">$1,250.00</td>
-                  <td class="py-4 text-right">
-                    <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4 font-bold tracking-wide">#NF-871032</td>
-                  <td class="py-4 text-gray-500 font-normal">Sep 28, 2023</td>
-                  <td class="py-4">
-                    <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                      IN TRANSIT
-                    </span>
-                  </td>
-                  <td class="py-4 font-normal text-gray-800">$420.00</td>
-                  <td class="py-4 text-right">
-                    <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
-                  </td>
-                </tr>
-                <tr class="hover:bg-gray-50/50 transition-colors">
-                  <td class="py-4 font-bold tracking-wide">#NF-865510</td>
-                  <td class="py-4 text-gray-500 font-normal">Sep 15, 2023</td>
-                  <td class="py-4">
-                    <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                      DELIVERED
-                    </span>
-                  </td>
-                  <td class="py-4 font-normal text-gray-800">$2,100.00</td>
-                  <td class="py-4 text-right">
-                    <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
+      <!-- Load More -->
+      <div class="text-center pt-6 border-t border-neutral-100">
+        <button class="inline-block text-black text-[11px] font-bold uppercase tracking-widest pb-1 border-b border-black hover:text-neutral-500 hover:border-neutral-500 transition-colors bg-transparent border-x-0 border-t-0 cursor-pointer">
+          Xem thêm
+        </button>
       </div>
     </div>
   </div>
 </template>
 
+<script setup>
+import { ref } from 'vue'
+import ProductCard from '@/components/client/ui/ProductCard.vue'
+
+const wishlistItems = ref([
+  {
+    id: 1,
+    name: 'Structured Wool Overcoat',
+    currentPrice: '$1,250',
+    description: 'Midnight Black • Pure Merino Wool',
+    image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    id: 2,
+    name: 'Asymmetric Silk Drape',
+    currentPrice: '$890',
+    description: 'Optic White • 100% Charmeuse',
+    image: 'https://images.unsplash.com/photo-1596783074918-c84cb06531ca?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    id: 3,
+    name: 'Geometric Leather Tote',
+    currentPrice: '$1,100',
+    description: 'Matte Obsidian • Calfskin Leather',
+    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    id: 4,
+    name: 'Sculptural Sneaker 01',
+    currentPrice: '$450',
+    description: 'Bone White • Tech Knit & Leather',
+    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    id: 5,
+    name: 'Heavy Texture Knit',
+    currentPrice: '$620',
+    description: 'Charcoal Marl • Brushed Alpaca',
+    image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop'
+  },
+  {
+    id: 6,
+    name: 'Wide-Leg Architect Trouser',
+    currentPrice: '$550',
+    description: 'Slate Grey • Italian Gabardine',
+    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=600&auto=format&fit=crop'
+  }
+])
+
+const removeItem = (id) => {
+  wishlistItems.value = wishlistItems.value.filter(item => item.id !== id)
+}
+</script>
 
 <style scoped>
 .animate-fade-in {

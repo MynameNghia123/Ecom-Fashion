@@ -55,6 +55,10 @@ export const useSupplierStore = defineStore('supplier', () => {
         return res.data
     }
 
+    async function getSupplierDropdown() {
+        const res = await supplierService.getSupplierDropdown();
+        return res.data.data;
+    }
     return {
         suppliers,
         meta,
@@ -66,5 +70,6 @@ export const useSupplierStore = defineStore('supplier', () => {
         createSupplier,
         updateSupplier,
         deleteSupplier,
+        getSupplierDropdown,
     }
 })

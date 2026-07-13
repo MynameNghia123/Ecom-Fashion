@@ -18,7 +18,6 @@ class GoodReceipt extends Model
     protected function casts(): array
     {
         return [
-            'status' => 'integer',
             'total_amount_price' => 'decimal:2',
         ];
     }

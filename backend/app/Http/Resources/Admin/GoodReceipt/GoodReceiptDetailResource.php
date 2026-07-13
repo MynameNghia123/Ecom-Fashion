@@ -3,6 +3,7 @@ namespace App\Http\Resources\Admin\GoodReceipt;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Admin\Product\ProductVariantResource;
 
 class GoodReceiptDetailResource extends JsonResource
 {
@@ -19,6 +20,7 @@ class GoodReceiptDetailResource extends JsonResource
             'product_variant_id' => $this->product_variant_id,
             'quantity' => $this->quantity,
             'import_price' => $this->import_price,
+            'product_variant' => new ProductVariantResource($this->whenLoaded('productVariant')),
         ];
     }
 }

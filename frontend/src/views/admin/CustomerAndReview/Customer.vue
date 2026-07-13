@@ -540,12 +540,10 @@ onMounted(() => {
 })
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
-const activeCount = computed(() => customerStore.customers.filter(c => c.status === 1).length)
-const bannedCount = computed(() => customerStore.customers.filter(c => c.status === 0).length)
-const newTodayCount = computed(() => {
-  const today = new Date().toISOString().slice(0, 10)
-  return customerStore.customers.filter(c => c.created_at?.startsWith(today)).length
-})
+// Dùng số liệu từ meta (tính toàn bộ DB phía backend, không bị ảnh hưởng bởi phân trang)
+const activeCount    = computed(() => customerStore.meta.total_active)
+const bannedCount    = computed(() => customerStore.meta.total_banned)
+const newTodayCount  = computed(() => customerStore.meta.new_today)
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 const getFullName = (customer) => {
