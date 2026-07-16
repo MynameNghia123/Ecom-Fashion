@@ -7,9 +7,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\CouponController;
-use App\Http\Controllers\Admin\StaffController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\PermissionController;
+
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Http\Controllers\Admin\ProductVariantController;
@@ -34,9 +32,7 @@ Route::prefix('admin')->group(function () {
     
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('coupons', CouponController::class);
-    Route::apiResource('staffs', StaffController::class);
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('permissions', PermissionController::class);
+
     Route::apiResource('goods-receipts', GoodReceiptController::class);
     
     // field supplier drop down — phải đặt TRƯỚC apiResource để tránh bị route {supplier} override

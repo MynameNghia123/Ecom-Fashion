@@ -20,14 +20,8 @@ use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CustomerRepositoryInterface;
 use App\Repositories\Admin\Implements\CustomerRepository;
 use App\Repositories\Admin\Interfaces\CouponRepositoryInterface;
-use App\Repositories\Admin\Implements\StaffRepository;
-use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
-use App\Repositories\Admin\Implements\RoleRepository;
-use App\Repositories\Admin\Interfaces\RoleRepositoryInterface;
-use App\Repositories\Admin\Implements\PermissionRepository;
 use App\Repositories\Admin\Implements\SupplierRepository;
 use App\Repositories\Admin\Interfaces\SupplierRepositoryInterface;
-use App\Repositories\Admin\Interfaces\PermissionRepositoryInterface;
 
 use App\Services\Admin\Implements\AttributeValueService;
 use App\Services\Admin\Implements\CategoryService;
@@ -36,9 +30,6 @@ use App\Services\Admin\Implements\ProductService;
 use App\Services\Admin\Implements\ProductVariantService;
 use App\Services\Admin\Implements\CustomerService;
 use App\Services\Admin\Implements\CouponService;
-use App\Services\Admin\Implements\StaffService;
-use App\Services\Admin\Implements\RoleService;
-use App\Services\Admin\Implements\PermissionService;
 use App\Services\Admin\Implements\SupplierService;
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
@@ -47,9 +38,6 @@ use App\Services\Admin\Interfaces\ProductServiceInterface;
 use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use App\Services\Admin\Interfaces\CustomerServiceInterface;
 use App\Services\Admin\Interfaces\CouponServiceInterface;
-use App\Services\Admin\Interfaces\StaffServiceInterface;
-use App\Services\Admin\Interfaces\RoleServiceInterface;
-use App\Services\Admin\Interfaces\PermissionServiceInterface;
 use App\Services\Admin\Interfaces\SupplierServiceInterface;
 
 use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
@@ -137,10 +125,6 @@ class AppServiceProvider extends ServiceProvider
         //     CouponRepository::class,
         // );
         // Staff
-        $this->app->bind(
-            StaffRepositoryInterface::class,
-            StaffRepository::class,
-        );
 
         // ── Services ──────────────────────────────────────────────────────
         // Attribute
@@ -188,16 +172,6 @@ class AppServiceProvider extends ServiceProvider
         //     CouponRepository::class,
         // );
         // Staff 
-        $this->app->bind(
-            StaffServiceInterface::class,
-            StaffService::class,
-        );
-        // Role
-        $this->app->bind(
-            RoleServiceInterface::class,
-            RoleService::class,
-        ); 
-       
     }
 
     public function boot(): void
