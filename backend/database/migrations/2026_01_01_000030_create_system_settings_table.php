@@ -13,7 +13,7 @@ return new class extends Migration
             $table->text('value');
             $table->string('data_type');
             $table->string('description')->nullable();
-            $table->foreignId('updated_by_staff_id')->nullable()->constrained('staff');
+            $table->foreignId('updated_by_staff_id')->nullable()->constrained('staffs');
             $table->timestamp('updated_at')->useCurrentOnUpdate();
         });
     }

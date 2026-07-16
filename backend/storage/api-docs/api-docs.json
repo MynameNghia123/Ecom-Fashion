@@ -1694,129 +1694,6 @@
                 }
             }
         },
-        "/api/admin/permissions": {
-            "get": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Lấy danh sách quyền hạn (có phân trang & tìm kiếm)",
-                "operationId": "b5ad6110f861914da76a5b7534135c59",
-                "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Từ khóa tìm kiếm theo tên quyền",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lấy danh sách thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "meta": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 30
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 3
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/api/admin/permissions/all": {
-            "get": {
-                "tags": [
-                    "Permissions"
-                ],
-                "summary": "Lấy tất cả quyền hạn (không phân trang, dùng cho form gán quyền cho vai trò)",
-                "operationId": "f22ce5103bbabb2f3212512154a38a65",
-                "responses": {
-                    "200": {
-                        "description": "Thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "properties": {
-                                                    "id": {
-                                                        "type": "integer",
-                                                        "example": 1
-                                                    },
-                                                    "name": {
-                                                        "type": "string",
-                                                        "example": "products.view"
-                                                    },
-                                                    "description": {
-                                                        "type": "string",
-                                                        "example": "Xem danh sách sản phẩm",
-                                                        "nullable": true
-                                                    }
-                                                },
-                                                "type": "object"
-                                            }
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
         "/api/admin/products": {
             "get": {
                 "tags": [
@@ -2400,25 +2277,25 @@
                 }
             }
         },
-        "/api/admin/roles": {
+        "/api/admin/staffs": {
             "get": {
                 "tags": [
-                    "Roles"
+                    "Staffs"
                 ],
-                "summary": "Lấy danh sách vai trò (có phân trang & lọc)",
-                "operationId": "2bb27e1762596951f562458056beb02e",
+                "summary": "Lấy danh sách nhân viên (có phân trang & lọc)",
+                "operationId": "6a5af052868c6979572d0dd2b59f7dd1",
                 "parameters": [
                     {
                         "name": "search",
                         "in": "query",
-                        "description": "Từ khóa tìm kiếm theo tên vai trò",
+                        "description": "Từ khóa tìm kiếm (tên, email, số điện thoại)",
                         "required": false,
                         "schema": {
                             "type": "string"
                         }
                     },
                     {
-                        "name": "status",
+                        "name": "is_active",
                         "in": "query",
                         "description": "Lọc theo trạng thái (1=active, 0=inactive)",
                         "required": false,
@@ -2433,11 +2310,11 @@
                     {
                         "name": "per_page",
                         "in": "query",
-                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
+                        "description": "Số bản ghi mỗi trang (mặc định: 4)",
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "default": 10
+                            "default": 4
                         }
                     }
                 ],
@@ -2466,15 +2343,15 @@
                                                 },
                                                 "per_page": {
                                                     "type": "integer",
-                                                    "example": 10
+                                                    "example": 4
                                                 },
                                                 "total": {
                                                     "type": "integer",
-                                                    "example": 20
+                                                    "example": 10
                                                 },
                                                 "last_page": {
                                                     "type": "integer",
-                                                    "example": 2
+                                                    "example": 3
                                                 }
                                             },
                                             "type": "object"
@@ -2489,430 +2366,7 @@
             },
             "post": {
                 "tags": [
-                    "Roles"
-                ],
-                "summary": "Tạo vai trò mới",
-                "operationId": "9961f633b3e53fc423ceed4d55560b22",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "permissions",
-                                    "status"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "description": "Tên vai trò",
-                                        "type": "string",
-                                        "example": "Manager"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Quản lý cửa hàng",
-                                        "nullable": true
-                                    },
-                                    "permissions": {
-                                        "description": "Danh sách ID quyền hạn",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            1,
-                                            2,
-                                            3
-                                        ]
-                                    },
-                                    "status": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Tạo thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vai trò đã được thêm thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Lỗi validate dữ liệu"
-                    }
-                }
-            }
-        },
-        "/api/admin/roles/{role}": {
-            "get": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Xem chi tiết vai trò (kèm danh sách quyền)",
-                "operationId": "86ee0fcfc6ce4a83377f1e5723125f30",
-                "parameters": [
-                    {
-                        "name": "role",
-                        "in": "path",
-                        "description": "ID của vai trò",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy vai trò"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Cập nhật vai trò",
-                "operationId": "e7289b4be945ea66ecb7850eb1d77619",
-                "parameters": [
-                    {
-                        "name": "role",
-                        "in": "path",
-                        "description": "ID của vai trò cần cập nhật",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "permissions",
-                                    "status"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Senior Manager"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Quản lý cấp cao",
-                                        "nullable": true
-                                    },
-                                    "permissions": {
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            1,
-                                            2,
-                                            3,
-                                            4
-                                        ]
-                                    },
-                                    "status": {
-                                        "type": "boolean",
-                                        "example": true
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Cập nhật thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vai trò đã được cập nhật thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy vai trò"
-                    },
-                    "422": {
-                        "description": "Lỗi validate dữ liệu"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Xóa vai trò",
-                "operationId": "fab5a46dc0b85366dffaa7e43c9d0261",
-                "parameters": [
-                    {
-                        "name": "role",
-                        "in": "path",
-                        "description": "ID của vai trò cần xóa",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Xóa thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vai trò đã được xóa thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy vai trò"
-                    }
-                }
-            }
-        },
-        "/api/admin/roles/{role}/sync-permissions": {
-            "post": {
-                "tags": [
-                    "Roles"
-                ],
-                "summary": "Đồng bộ danh sách quyền cho vai trò",
-                "description": "Gán toàn bộ quyền mới vào vai trò, xóa các quyền cũ không có trong danh sách.",
-                "operationId": "e74656343cfc46a3a904e02c246a4b0c",
-                "parameters": [
-                    {
-                        "name": "role",
-                        "in": "path",
-                        "description": "ID của vai trò",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "permission_ids"
-                                ],
-                                "properties": {
-                                    "permission_ids": {
-                                        "description": "Danh sách ID quyền muốn gán",
-                                        "type": "array",
-                                        "items": {
-                                            "type": "integer"
-                                        },
-                                        "example": [
-                                            1,
-                                            2,
-                                            5
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Đồng bộ quyền thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Vai trò đã được cập nhật quyền thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy vai trò"
-                    },
-                    "422": {
-                        "description": "Lỗi validate dữ liệu"
-                    }
-                }
-            }
-        },
-        "/api/admin/staffs": {
-            "get": {
-                "tags": [
-                    "Staff"
-                ],
-                "summary": "Lấy danh sách nhân viên (có phân trang & lọc)",
-                "operationId": "6a5af052868c6979572d0dd2b59f7dd1",
-                "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Từ khóa tìm kiếm theo tên hoặc email nhân viên",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Lọc theo trạng thái hoạt động (1=active, 0=inactive)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "enum": [
-                                0,
-                                1
-                            ]
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lấy danh sách thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "meta": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 20
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 2
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Staff"
+                    "Staffs"
                 ],
                 "summary": "Tạo nhân viên mới",
                 "operationId": "dfe185496e7d6f652e84ae34a54bf6ec",
@@ -2923,40 +2377,39 @@
                             "schema": {
                                 "required": [
                                     "full_name",
+                                    "phone_number",
                                     "email",
                                     "password",
                                     "is_active"
                                 ],
                                 "properties": {
                                     "full_name": {
-                                        "description": "Họ và tên nhân viên",
+                                        "description": "Tên nhân viên",
                                         "type": "string",
                                         "example": "Nguyễn Văn Admin"
                                     },
+                                    "phone_number": {
+                                        "type": "string",
+                                        "example": "0901234567"
+                                    },
                                     "email": {
-                                        "description": "Email, unique",
+                                        "description": "Email duy nhất",
                                         "type": "string",
                                         "format": "email",
-                                        "example": "admin@ecomfashion.vn"
-                                    },
-                                    "phone_number": {
-                                        "description": "Tối đa 20 ký tự",
-                                        "type": "string",
-                                        "example": "0909123456",
-                                        "nullable": true
+                                        "example": "admin@example.com"
                                     },
                                     "password": {
-                                        "description": "Bắt buộc khi tạo mới. Tối thiểu 6 ký tự.",
+                                        "description": "Mật khẩu (ít nhất 6 ký tự)",
                                         "type": "string",
                                         "example": "secret123"
                                     },
                                     "avatar": {
-                                        "description": "URL ảnh đại diện nhân viên",
                                         "type": "string",
-                                        "example": "http://localhost/storage/images/avatars/uuid.jpg",
+                                        "example": "https://example.com/avatar.jpg",
                                         "nullable": true
                                     },
                                     "is_active": {
+                                        "description": "Trạng thái hoạt động",
                                         "type": "boolean",
                                         "example": true
                                     }
@@ -2982,7 +2435,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Nhân viên đã được thêm thành công."
+                                            "example": "Thêm mới nhân viên thành công"
                                         }
                                     },
                                     "type": "object"
@@ -2999,7 +2452,7 @@
         "/api/admin/staffs/{staff}": {
             "get": {
                 "tags": [
-                    "Staff"
+                    "Staffs"
                 ],
                 "summary": "Xem chi tiết nhân viên",
                 "operationId": "b445f0320e8290578185e6c478b8c26b",
@@ -3041,7 +2494,7 @@
             },
             "put": {
                 "tags": [
-                    "Staff"
+                    "Staffs"
                 ],
                 "summary": "Cập nhật thông tin nhân viên",
                 "operationId": "4ef35ac60b21235b3a04e01a8de943bd",
@@ -3063,6 +2516,7 @@
                             "schema": {
                                 "required": [
                                     "full_name",
+                                    "phone_number",
                                     "email",
                                     "is_active"
                                 ],
@@ -3071,26 +2525,25 @@
                                         "type": "string",
                                         "example": "Nguyễn Văn B"
                                     },
-                                    "email": {
-                                        "description": "Unique, bỏ qua nhân viên hiện tại",
-                                        "type": "string",
-                                        "format": "email",
-                                        "example": "newmail@ecomfashion.vn"
-                                    },
                                     "phone_number": {
                                         "type": "string",
-                                        "example": "0912345678",
-                                        "nullable": true
+                                        "example": "0987654321"
+                                    },
+                                    "email": {
+                                        "description": "Email (ngoại trừ nhân viên hiện tại)",
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "new@example.com"
                                     },
                                     "password": {
-                                        "description": "Nullable khi update",
+                                        "description": "Nullable, chỉ điền khi muốn đổi mật khẩu",
                                         "type": "string",
                                         "example": null,
                                         "nullable": true
                                     },
                                     "avatar": {
                                         "type": "string",
-                                        "example": "http://localhost/storage/images/avatars/new-uuid.jpg",
+                                        "example": "https://example.com/new_avatar.jpg",
                                         "nullable": true
                                     },
                                     "is_active": {
@@ -3119,7 +2572,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Nhân viên đã được cập nhật thành công."
+                                            "example": "Cập nhật thông tin nhân viên thành công"
                                         }
                                     },
                                     "type": "object"
@@ -3137,7 +2590,7 @@
             },
             "delete": {
                 "tags": [
-                    "Staff"
+                    "Staffs"
                 ],
                 "summary": "Xóa nhân viên",
                 "operationId": "77cbf7b461badf5b6198e5f54bf7b136",
@@ -3165,7 +2618,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "Nhân viên đã được xóa thành công."
+                                            "example": "Xóa nhân viên thành công"
                                         }
                                     },
                                     "type": "object"
@@ -3765,20 +3218,12 @@
             "description": "Quản lý khách hàng"
         },
         {
-            "name": "Permissions",
-            "description": "Quản lý quyền hạn trong hệ thống RBAC"
-        },
-        {
             "name": "Products",
             "description": "Quản lý sản phẩm, bao gồm ảnh và biến thể"
         },
         {
-            "name": "Roles",
-            "description": "Quản lý vai trò trong hệ thống RBAC"
-        },
-        {
-            "name": "Staff",
-            "description": "Quản lý nhân viên quản trị hệ thống"
+            "name": "Staffs",
+            "description": "Quản lý nhân viên"
         },
         {
             "name": "Upload",

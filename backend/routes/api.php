@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\StaffController;
 
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
@@ -39,6 +40,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/suppliers/dropdown', [SupplierController::class, 'getSupplierForDropDown']);
     Route::apiResource('suppliers', SupplierController::class);
 
+    //Staff & permission
+    Route::apiResource('staffs', StaffController::class); 
     // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
     Route::post('upload-image',    [UploadController::class, 'upload']);
     Route::delete('upload-image',  [UploadController::class, 'delete']);

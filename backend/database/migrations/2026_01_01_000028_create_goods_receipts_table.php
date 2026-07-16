@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('receipt_code')->unique();
             $table->foreignId('supplier_id')->constrained('suppliers');
-            $table->foreignId('staff_id')->constrained('staff');
+            $table->foreignId('staff_id')->constrained('staffs');
             $table->decimal('total_amount_price', 12, 2);
             $table->string('status')->default('pending');
             $table->timestamps();

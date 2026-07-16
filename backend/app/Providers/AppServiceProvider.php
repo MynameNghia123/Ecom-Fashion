@@ -51,6 +51,10 @@ use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
 
 use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
 use App\Repositories\Admin\Implements\GoodReceiptRepo;
+use App\Repositories\Admin\Implements\StaffRepo;
+use App\Repositories\Admin\Interfaces\StaffRepoInterface;
+use App\Services\Admin\Implements\StaffService;
+use App\Services\Admin\Interfaces\StaffServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -119,6 +123,10 @@ class AppServiceProvider extends ServiceProvider
             CustomerRepositoryInterface::class,
             CustomerRepository::class,
         );
+        $this->app->bind(
+            StaffRepoInterface::class,
+            StaffRepo::class,
+        );
         // Coupon
         // $this->app->bind(
         //     CouponRepositoryInterface::class,
@@ -172,6 +180,10 @@ class AppServiceProvider extends ServiceProvider
         //     CouponRepository::class,
         // );
         // Staff 
+        $this->app->bind(
+            StaffServiceInterface::class,
+            StaffService::class,
+        );
     }
 
     public function boot(): void

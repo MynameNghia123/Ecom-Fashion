@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->integer('used_count')->default(0);
             $table->boolean('is_active')->default(true);
             $table->timestamp('expiry_date');
-            $table->foreignId('created_by_staff_id')->constrained('staff');
+            $table->foreignId('created_by_staff_id')->constrained('staffs');
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->json('evidence_images')->nullable();
             $table->string('status')->default('pending');
             $table->decimal('refund_amount', 12, 2)->nullable();
-            $table->foreignId('processed_by_staff_id')->nullable()->constrained('staff');
+            $table->foreignId('processed_by_staff_id')->nullable()->constrained('staffs');
             $table->timestamps();
         });
     }
