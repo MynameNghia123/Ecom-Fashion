@@ -92,6 +92,26 @@ class RoleController extends Controller
         ]);
     }
 
+    #[OA\Get(
+        path: '/api/admin/roles/all',
+        summary: 'Lấy tất cả danh sách vai trò (không phân trang)',
+        tags: ['Roles'],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Thành công',
+            )
+        ]
+    )]
+    public function getAll(): JsonResponse
+    {
+        $roles = $this->roleService->getAll();
+        return response()->json([
+            'success' => true,
+            'data'    => $roles,
+        ]);
+    }
+
     #[OA\Post(
         path: '/api/admin/roles',
         summary: 'Tạo vai trò mới',

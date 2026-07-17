@@ -30,12 +30,12 @@ class StaffRepo implements StaffRepoInterface
             $query->where('is_active', $filters['is_active']);
         }
 
-        return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 4);
+        return $query->with(['StaffRoles', 'StaffPermissions'])->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 4);
     }
 
     public function findById(int $id): ?Staff
     {
-        return $this->model->find($id);
+        return $this->model->with(['StaffRoles', 'StaffPermissions'])->find($id);
     }
 
 

@@ -69,6 +69,17 @@ use App\Repositories\Admin\Implements\RolePermissionRepository;
 use App\Repositories\Admin\Interfaces\RolePermissionRepositoryInterface;
 use App\Services\Admin\Implements\RolePermissionService;
 use App\Services\Admin\Interfaces\RolePermissionServiceInterface;
+
+use App\Repositories\Admin\Interfaces\StaffRoleRepoInterface;
+use App\Repositories\Admin\Implements\StaffRoleRepo;
+use App\Services\Admin\Interfaces\StaffRoleServiceInterface;
+use App\Services\Admin\Implements\StaffRoleService;
+
+use App\Repositories\Admin\Interfaces\StaffPermissionRepoInterface;
+use App\Repositories\Admin\Implements\StaffPermissionRepo;
+use App\Services\Admin\Interfaces\StaffPermissionServiceInterface;
+use App\Services\Admin\Implements\StaffPermissionService;
+
 use Illuminate\Support\ServiceProvider;
 
 
@@ -156,6 +167,16 @@ class AppServiceProvider extends ServiceProvider
             RolePermissionRepositoryInterface::class,
             RolePermissionRepository::class,
         );
+
+        $this->app->bind(
+            StaffRoleRepoInterface::class,
+            StaffRoleRepo::class,
+        );
+
+        $this->app->bind(
+            StaffPermissionRepoInterface::class,
+            StaffPermissionRepo::class,
+        );
         // Coupon
         // $this->app->bind(
         //     CouponRepositoryInterface::class,
@@ -227,6 +248,16 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             RolePermissionServiceInterface::class,
             RolePermissionService::class,
+        );
+
+        $this->app->bind(
+            StaffRoleServiceInterface::class,
+            StaffRoleService::class,
+        );
+
+        $this->app->bind(
+            StaffPermissionServiceInterface::class,
+            StaffPermissionService::class,
         );
     }
 

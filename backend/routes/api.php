@@ -46,6 +46,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('staffs', StaffController::class);
 
     // Roles & Permissions
+    Route::get('roles/all', [RoleController::class, 'getAll']);
     Route::apiResource('roles', RoleController::class);
     Route::get('permissions', [PermissionController::class, 'index']); // chỉ GET all, nhóm theo module
     // Upload ảnh — trả về URL storage, không lưu ảnh vào DB

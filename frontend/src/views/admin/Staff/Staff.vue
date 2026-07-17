@@ -222,11 +222,11 @@
       </div>
     </div>
 
-    <!-- StaffForm Modal (Add / Edit) -->
     <StaffForm
       :show="showFormModal"
       :typeOfAction="modalMode"
       :staffData="formTarget"
+      :allRoles="allRoles"
       @submit="onFormSubmit"
       @cancel="showFormModal = false"
     />
@@ -261,6 +261,7 @@ import Pagination from '@/components/admin/Pagination.vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 import StaffForm from '@/components/admin/staff/StaffForm.vue'
 import StaffView from '@/components/admin/staff/StaffView.vue'
+import { roleService } from '@/services/admin/roleService'
 
 const staffStore = useStaffStore()
 
@@ -290,7 +291,18 @@ const filterStatus = ref('')
 
 watch([searchQuery, filterStatus], () => goToPage(1))
 
-onMounted(() => staffStore.fetchStaffs())
+const allRoles = ref([])
+
+onMounted(async () => {
+  staffStore.fetchStaffs()
+  try {
+    const res = await roleService.getAllNoPaginate()
+    const payload = res.data?.data !== undefined ? res.data : res
+    allRoles.value = payload.data || []
+  } catch (error) {
+    console.error('Lỗi tải vai trò:', error)
+  }
+})
 
 const goToPage = (page) => {
   staffStore.fetchStaffs({

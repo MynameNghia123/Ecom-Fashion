@@ -25,6 +25,11 @@ class RoleRepo implements RoleRepositoryInterface{
         return $query->with('rolePermissions.permission')->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 15);
     }
 
+    public function getAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->model->all();
+    }
+
     public function findById(int $id): ?Role
     {
         return $this->model->find($id);

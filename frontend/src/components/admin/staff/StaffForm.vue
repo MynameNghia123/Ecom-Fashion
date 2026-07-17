@@ -102,6 +102,66 @@
           />
           <p v-if="fieldError('full_name')" class="text-xs text-red-500 mt-1">{{ fieldError('full_name') }}</p>
         </div>
+        <!-- Vai trò (Roles) -->
+        <div class="border-t border-slate-100 pt-4 relative">
+          <label class="block text-xs font-bold text-slate-700 mb-2">Vai trò (Roles)</label>
+          
+          <!-- Trigger Button -->
+          <div 
+            class="w-full px-3.5 py-2.5 text-sm border rounded-xl flex items-center justify-between cursor-pointer select-none transition-all duration-200"
+            :class="showRoleDropdown 
+              ? 'border-[#0258cb] ring-4 ring-[#0258cb]/10 bg-white shadow-sm' 
+              : 'border-slate-200 bg-slate-50 hover:bg-white hover:border-slate-300'"
+            @click="showRoleDropdown = !showRoleDropdown"
+          >
+            <div class="flex items-center gap-2 flex-1 min-w-0">
+              <template v-if="form.role_ids.length > 0">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 shrink-0"></span>
+                <span class="text-slate-800 font-medium truncate">
+                  {{ allRoles.find(r => r.id === form.role_ids[0])?.name }}
+                </span>
+              </template>
+              <span v-else class="text-slate-400">Chọn vai trò cho nhân viên...</span>
+            </div>
+            <svg 
+              class="w-4 h-4 text-slate-400 ml-2 shrink-0 transition-transform duration-200" 
+              :class="{ 'rotate-180': showRoleDropdown }" 
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9"/>
+            </svg>
+          </div>
+
+          <!-- Backdrop -->
+          <div v-if="showRoleDropdown" class="fixed inset-0 z-[100]" @click="showRoleDropdown = false"></div>
+
+          <!-- Dropdown Panel -->
+          <div 
+            v-if="showRoleDropdown" 
+            class="absolute left-0 right-0 z-[101] mt-1.5 bg-white border border-slate-200 rounded-xl shadow-xl overflow-hidden"
+          >
+            <div class="max-h-52 overflow-y-auto p-1.5 space-y-0.5">
+              <div 
+                v-for="role in allRoles" 
+                :key="role.id" 
+                class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg cursor-pointer text-sm transition-all duration-150"
+                :class="form.role_ids.includes(role.id) 
+                  ? 'bg-[#0258cb] text-white' 
+                  : 'text-slate-700 hover:bg-slate-50'"
+                @click="selectRole(role.id)"
+              >
+                <span class="flex-1 font-medium truncate">{{ role.name }}</span>
+                <svg v-if="form.role_ids.includes(role.id)" class="w-4 h-4 shrink-0 opacity-90" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              
+              <div v-if="allRoles.length === 0" class="px-4 py-6 text-center">
+                <p class="text-xs text-slate-400 font-medium">Không có vai trò nào.</p>
+              </div>
+            </div>
+          </div>
+        </div>
 
         <!-- Email -->
         <div>
@@ -167,6 +227,7 @@
           <p v-if="fieldError('password')" class="text-xs text-red-500 mt-1">{{ fieldError('password') }}</p>
         </div>
 
+
         <!-- Trạng thái (Toggle) -->
         <div class="flex items-center justify-between py-3 px-4 bg-slate-50 rounded-xl border border-slate-100">
           <div>
@@ -225,6 +286,7 @@ const props = defineProps({
   show: { type: Boolean, default: false },
   typeOfAction: { type: String, default: 'add' },
   staffData: { type: Object, default: () => ({}) },
+  allRoles: { type: Array, default: () => [] }
 })
 
 const { formErrors, validate, clearErrors, fieldError, applyBackendErrors } = useStaffValidation()
@@ -237,6 +299,7 @@ const form = reactive({
   password: '',
   avatar: '',
   is_active: true,
+  role_ids: []
 })
 
 // ─── Avatar upload state ─────────────────────────────────────────────────────
@@ -249,12 +312,20 @@ const pendingDeletePath = ref('')  // đường dẫn ảnh cũ cần xóa khi s
 // ─── Toggle show password ────────────────────────────────────────────────────
 const showPassword = ref(false)
 
+// ─── Dropdown state ──────────────────────────────────────────────────────────
+const showRoleDropdown = ref(false)
+
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const getInitials = (name) => {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/)
   if (parts.length === 1) return parts[0][0].toUpperCase()
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+}
+
+const selectRole = (id) => {
+  form.role_ids = [id]
+  showRoleDropdown.value = false
 }
 
 // ─── Watch: khi modal mở, đổ dữ liệu vào form ────────────────────────────────
@@ -274,6 +345,7 @@ watch(
       form.password = ''
       form.avatar = props.staffData.avatar || ''
       form.is_active = props.staffData.is_active ?? true
+      form.role_ids = props.staffData.role_ids || []
       avatarPreview.value = props.staffData.avatar || ''
     } else {
       form.full_name = ''
@@ -282,6 +354,7 @@ watch(
       form.password = ''
       form.avatar = ''
       form.is_active = true
+      form.role_ids = []
       avatarPreview.value = ''
     }
   }

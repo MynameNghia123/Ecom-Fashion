@@ -21,6 +21,11 @@ class RoleService implements RoleServiceInterface
         return $this->repo->paginate($filters);
     }
 
+    public function getAll(): \Illuminate\Database\Eloquent\Collection
+    {
+        return $this->repo->getAll();
+    }
+
     /**
      * Tạo Role mới.
      * Nếu $data có key 'permission_ids', tự động gán permissions sau khi tạo.

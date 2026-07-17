@@ -24,6 +24,12 @@ class StaffResource extends JsonResource
             'last_login_at' => $this->last_login_at ? $this->last_login_at->toDateTimeString() : null,
             'created_at' => $this->created_at ? $this->created_at->toDateTimeString() : null,
             'updated_at' => $this->updated_at ? $this->updated_at->toDateTimeString() : null,
+            'role_ids' => $this->whenLoaded('StaffRoles', function () {
+                return $this->StaffRoles->pluck('role_id');
+            }),
+            'permission_ids' => $this->whenLoaded('StaffPermissions', function () {
+                return $this->StaffPermissions->pluck('permission_id');
+            }),
         ];
     }
 }
