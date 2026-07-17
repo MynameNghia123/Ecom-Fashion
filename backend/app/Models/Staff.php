@@ -31,4 +31,14 @@ class Staff extends Model
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
     ];
+
+    public function StaffPermissions() : HasMany
+    {
+        return $this->hasMany(StaffPermissions::class);
+    }
+
+    public function StaffRoles() : HasMany
+    {
+        return $this->hasMany(StaffRoles::class);
+    }
 }

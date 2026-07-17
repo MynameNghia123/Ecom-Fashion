@@ -19,7 +19,9 @@ export const useStaffStore = defineStore('staff', () => {
     try {
       const res = await staffService.getAll({
         per_page: meta.value.per_page,
-        ...params,
+        is_active: params.is_active,
+        search: params.search,
+        page: params.page,
       })
       staffList.value = res.data.data
       meta.value = res.data.meta

@@ -40,6 +40,11 @@ use App\Services\Admin\Interfaces\CustomerServiceInterface;
 use App\Services\Admin\Interfaces\CouponServiceInterface;
 use App\Services\Admin\Interfaces\SupplierServiceInterface;
 
+use App\Services\Admin\Interfaces\RoleServiceInterface;
+use App\Services\Admin\Implements\RoleService;
+use App\Services\Admin\Interfaces\PermissionServiceInterface;
+
+
 use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
 use App\Services\Admin\Implements\GoodReceiptService;
 
@@ -51,10 +56,19 @@ use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
 
 use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
 use App\Repositories\Admin\Implements\GoodReceiptRepo;
+use App\Repositories\Admin\Implements\PermissionRepo;
+use App\Repositories\Admin\Implements\RoleRepo;
 use App\Repositories\Admin\Implements\StaffRepo;
+use App\Repositories\Admin\Interfaces\PermissionRepositoryInterface;
+use App\Repositories\Admin\Interfaces\RoleRepositoryInterface;
 use App\Repositories\Admin\Interfaces\StaffRepoInterface;
+use App\Services\Admin\Implements\PermissionService;
 use App\Services\Admin\Implements\StaffService;
 use App\Services\Admin\Interfaces\StaffServiceInterface;
+use App\Repositories\Admin\Implements\RolePermissionRepository;
+use App\Repositories\Admin\Interfaces\RolePermissionRepositoryInterface;
+use App\Services\Admin\Implements\RolePermissionService;
+use App\Services\Admin\Interfaces\RolePermissionServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -127,6 +141,21 @@ class AppServiceProvider extends ServiceProvider
             StaffRepoInterface::class,
             StaffRepo::class,
         );
+
+        $this->app->bind(
+            RoleRepositoryInterface::class,
+            RoleRepo::class,
+        );
+
+        $this->app->bind(
+            PermissionRepositoryInterface::class,
+            PermissionRepo::class,  
+        );
+
+        $this->app->bind(
+            RolePermissionRepositoryInterface::class,
+            RolePermissionRepository::class,
+        );
         // Coupon
         // $this->app->bind(
         //     CouponRepositoryInterface::class,
@@ -183,6 +212,21 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StaffServiceInterface::class,
             StaffService::class,
+        );
+
+        $this->app->bind(
+            RoleServiceInterface::class,
+            RoleService::class,
+        );
+
+        $this->app->bind(
+            PermissionServiceInterface::class,
+            PermissionService::class,
+        );
+
+        $this->app->bind(
+            RolePermissionServiceInterface::class,
+            RolePermissionService::class,
         );
     }
 

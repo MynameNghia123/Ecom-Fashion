@@ -1694,6 +1694,59 @@
                 }
             }
         },
+        "/api/admin/permissions": {
+            "get": {
+                "tags": [
+                    "Permissions"
+                ],
+                "summary": "Lấy toàn bộ quyền hạn, nhóm theo module",
+                "description": "Trả về danh sách permissions nhóm theo module để FE render bảng phân quyền khi tạo/sửa Role.",
+                "operationId": "b5ad6110f861914da76a5b7534135c59",
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Object key = module, value = mảng các permission của module đó",
+                                            "type": "object",
+                                            "example": {
+                                                "products": [
+                                                    {
+                                                        "id": 1,
+                                                        "module": "products",
+                                                        "action": "read"
+                                                    },
+                                                    {
+                                                        "id": 2,
+                                                        "module": "products",
+                                                        "action": "create"
+                                                    }
+                                                ],
+                                                "orders": [
+                                                    {
+                                                        "id": 5,
+                                                        "module": "orders",
+                                                        "action": "read"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/admin/products": {
             "get": {
                 "tags": [
@@ -2273,6 +2326,501 @@
                     },
                     "400": {
                         "description": "Lỗi khi thiếu tham số tìm kiếm"
+                    }
+                }
+            }
+        },
+        "/api/admin/roles": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Lấy danh sách vai trò (có phân trang & lọc)",
+                "operationId": "2bb27e1762596951f562458056beb02e",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên vai trò",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang (mặc định: 15)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 15
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "name": {
+                                                        "type": "string",
+                                                        "example": "Admin"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "example": "Quản trị viên",
+                                                        "nullable": true
+                                                    },
+                                                    "permissions": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "properties": {
+                                                                "id": {
+                                                                    "type": "integer",
+                                                                    "example": 1
+                                                                },
+                                                                "module": {
+                                                                    "type": "string",
+                                                                    "example": "products"
+                                                                },
+                                                                "action": {
+                                                                    "type": "string",
+                                                                    "example": "read"
+                                                                }
+                                                            },
+                                                            "type": "object"
+                                                        },
+                                                        "nullable": true
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 15
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Tạo vai trò mới",
+                "operationId": "9961f633b3e53fc423ceed4d55560b22",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "description": "Tên vai trò, duy nhất",
+                                        "type": "string",
+                                        "example": "Manager"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Quản lý cấp trung",
+                                        "nullable": true
+                                    },
+                                    "permission_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            2,
+                                            5
+                                        ],
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Manager"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Quản lý cấp trung",
+                                                    "nullable": true
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "module": {
+                                                                "type": "string",
+                                                                "example": "products"
+                                                            },
+                                                            "action": {
+                                                                "type": "string",
+                                                                "example": "read"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Thêm vai trò thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/roles/{role}": {
+            "get": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Xem chi tiết vai trò (kèm danh sách permissions)",
+                "operationId": "86ee0fcfc6ce4a83377f1e5723125f30",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "ID của vai trò",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Manager"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Quản lý cấp trung",
+                                                    "nullable": true
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "module": {
+                                                                "type": "string",
+                                                                "example": "products"
+                                                            },
+                                                            "action": {
+                                                                "type": "string",
+                                                                "example": "read"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy vai trò"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Cập nhật vai trò",
+                "operationId": "e7289b4be945ea66ecb7850eb1d77619",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "ID của vai trò cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Manager"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Quản lý cấp trung",
+                                        "nullable": true
+                                    },
+                                    "permission_ids": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        },
+                                        "example": [
+                                            1,
+                                            3,
+                                            7
+                                        ],
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "name": {
+                                                    "type": "string",
+                                                    "example": "Manager"
+                                                },
+                                                "description": {
+                                                    "type": "string",
+                                                    "example": "Quản lý cấp trung",
+                                                    "nullable": true
+                                                },
+                                                "permissions": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "properties": {
+                                                            "id": {
+                                                                "type": "integer",
+                                                                "example": 1
+                                                            },
+                                                            "module": {
+                                                                "type": "string",
+                                                                "example": "products"
+                                                            },
+                                                            "action": {
+                                                                "type": "string",
+                                                                "example": "read"
+                                                            }
+                                                        },
+                                                        "type": "object"
+                                                    },
+                                                    "nullable": true
+                                                },
+                                                "created_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                },
+                                                "updated_at": {
+                                                    "type": "string",
+                                                    "format": "date-time"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Cập nhật vai trò thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy vai trò"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "Xóa vai trò",
+                "operationId": "fab5a46dc0b85366dffaa7e43c9d0261",
+                "parameters": [
+                    {
+                        "name": "role",
+                        "in": "path",
+                        "description": "ID của vai trò cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Xóa vai trò thành công"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy vai trò"
                     }
                 }
             }
@@ -3218,8 +3766,16 @@
             "description": "Quản lý khách hàng"
         },
         {
+            "name": "Permissions",
+            "description": "Quyền hạn — chỉ đọc, dùng để render form phân quyền cho Role"
+        },
+        {
             "name": "Products",
             "description": "Quản lý sản phẩm, bao gồm ảnh và biến thể"
+        },
+        {
+            "name": "Roles",
+            "description": "Quản lý vai trò trong hệ thống"
         },
         {
             "name": "Staffs",

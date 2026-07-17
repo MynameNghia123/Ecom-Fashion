@@ -1,7 +1,7 @@
 
 import http from '@/services/shared/http'
 
-const BASE = '/admin/staff'
+const BASE = '/admin/staffs'
 
 export const staffService = {
   getAll(params = {}) {
