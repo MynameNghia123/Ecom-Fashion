@@ -21,6 +21,7 @@ class StoreCouponRequest extends FormRequest
             'max_usage'             => ['nullable', 'integer', 'min:1'],
             'is_active'             => ['required', 'boolean'],
             'expiry_date'           => ['nullable', 'date', 'after:today'],
+            'created_by_staff_id'   => ['nullable', 'integer', 'exists:staffs,id'],
         ];
     }
 

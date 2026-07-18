@@ -12,6 +12,7 @@ use App\Repositories\Admin\Implements\ProductImageRepository;
 use App\Repositories\Admin\Implements\ProductRepository;
 use App\Repositories\Admin\Implements\ProductVariantRepository;
 use App\Repositories\Admin\Implements\AttributeValueRepository;  // ← fix: Implements, không phải Interfaces
+use App\Repositories\Admin\Implements\BlogRepository;
 use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CategoryRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ProductImageRepositoryInterface;
@@ -20,6 +21,7 @@ use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
 use App\Repositories\Admin\Interfaces\CustomerRepositoryInterface;
 use App\Repositories\Admin\Implements\CustomerRepository;
 use App\Repositories\Admin\Interfaces\CouponRepositoryInterface;
+use App\Repositories\Admin\Implements\CouponRepository;
 use App\Repositories\Admin\Implements\SupplierRepository;
 use App\Repositories\Admin\Interfaces\SupplierRepositoryInterface;
 
@@ -77,9 +79,11 @@ use App\Services\Admin\Implements\StaffRoleService;
 
 use App\Repositories\Admin\Interfaces\StaffPermissionRepoInterface;
 use App\Repositories\Admin\Implements\StaffPermissionRepo;
+use App\Repositories\Admin\Interfaces\BlogRepositoryInterface;
+use App\Services\Admin\Implements\BlogService;
 use App\Services\Admin\Interfaces\StaffPermissionServiceInterface;
 use App\Services\Admin\Implements\StaffPermissionService;
-
+use App\Services\Admin\Interfaces\BlogServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -178,13 +182,24 @@ class AppServiceProvider extends ServiceProvider
             StaffPermissionRepo::class,
         );
         // Coupon
-        // $this->app->bind(
-        //     CouponRepositoryInterface::class,
-        //     CouponRepository::class,
-        // );
+        $this->app->bind(
+            CouponRepositoryInterface::class,
+            CouponRepository::class,
+        );
+        //Blog
+        $this->app->bind(
+            BlogRepositoryInterface::class,
+            BlogRepository::class,
+        );
         // Staff
 
-        // ── Services ──────────────────────────────────────────────────────
+        // ── Services ──────────────────────────────────────────────────────]
+        // Blog
+        $this->app->bind(
+            BlogServiceInterface::class,
+            BlogService::class,
+        );
+        
         // Attribute
         $this->app->bind(
             AttributeServiceInterface::class,
@@ -225,10 +240,10 @@ class AppServiceProvider extends ServiceProvider
             CustomerService::class,
         );
         // Coupon
-        // $this->app->bind(
-        //     CouponRepositoryInterface::class,
-        //     CouponRepository::class,
-        // );
+        $this->app->bind(
+            CouponServiceInterface::class,
+            CouponService::class,
+        );
         // Staff 
         $this->app->bind(
             StaffServiceInterface::class,
