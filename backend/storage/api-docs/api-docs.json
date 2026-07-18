@@ -295,6 +295,382 @@
                 }
             }
         },
+        "/api/admin/banners": {
+            "get": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Lấy danh sách banner (có phân trang & lọc)",
+                "operationId": "281d42a28df6c8a4ed7010b6cb156534",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tiêu đề banner",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "position",
+                        "in": "query",
+                        "description": "Lọc theo vị trí hiển thị",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "is_active",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái (1=active, 0=inactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "enum": [
+                                0,
+                                1
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 25
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Tạo banner mới",
+                "operationId": "9ac3718de173d6cd37207087ccc2d7e0",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "image_url",
+                                    "position"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Banner Khuyến Mãi Hè 2026"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://example.com/banner.jpg"
+                                    },
+                                    "target_url": {
+                                        "type": "string",
+                                        "example": "https://example.com/khuyen-mai",
+                                        "nullable": true
+                                    },
+                                    "position": {
+                                        "type": "string",
+                                        "example": "home_slider"
+                                    },
+                                    "display_order": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-01 00:00:00",
+                                        "nullable": true
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-08-31 23:59:59",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo banner thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner đã được tạo thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/banners/{banner}": {
+            "get": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Xem chi tiết một banner",
+                "operationId": "99c2b2546307a303daf64d43993c264d",
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "description": "ID của banner",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy banner"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Cập nhật banner",
+                "operationId": "e8f8ebfdaf8ad5b171e466a4914e79f4",
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "description": "ID của banner cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "image_url",
+                                    "position"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Banner Khuyến Mãi Hè 2026 (Cập nhật)"
+                                    },
+                                    "image_url": {
+                                        "type": "string",
+                                        "example": "https://example.com/banner-updated.jpg"
+                                    },
+                                    "target_url": {
+                                        "type": "string",
+                                        "example": "https://example.com/khuyen-mai-moi",
+                                        "nullable": true
+                                    },
+                                    "position": {
+                                        "type": "string",
+                                        "example": "home_slider"
+                                    },
+                                    "display_order": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "is_active": {
+                                        "type": "boolean",
+                                        "example": true
+                                    },
+                                    "start_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-06-01 00:00:00",
+                                        "nullable": true
+                                    },
+                                    "end_date": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2026-08-31 23:59:59",
+                                        "nullable": true
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner đã được cập nhật thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy banner"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Banners"
+                ],
+                "summary": "Xóa banner",
+                "operationId": "3d7b6cdb4816ff0f7e0f9cce1a70c09d",
+                "parameters": [
+                    {
+                        "name": "banner",
+                        "in": "path",
+                        "description": "ID của banner cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Banner đã được xóa thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy banner"
+                    }
+                }
+            }
+        },
         "/api/admin/blogs": {
             "get": {
                 "tags": [
@@ -4091,6 +4467,10 @@
         {
             "name": "Attributes",
             "description": "Quản lý các thuộc tính sản phẩm (VD: Màu sắc, Kích thước...)"
+        },
+        {
+            "name": "Banners",
+            "description": "Quản lý banner quảng cáo"
         },
         {
             "name": "Blogs",

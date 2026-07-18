@@ -80,10 +80,14 @@ use App\Services\Admin\Implements\StaffRoleService;
 use App\Repositories\Admin\Interfaces\StaffPermissionRepoInterface;
 use App\Repositories\Admin\Implements\StaffPermissionRepo;
 use App\Repositories\Admin\Interfaces\BlogRepositoryInterface;
-use App\Services\Admin\Implements\BlogService;
-use App\Services\Admin\Interfaces\StaffPermissionServiceInterface;
-use App\Services\Admin\Implements\StaffPermissionService;
 use App\Services\Admin\Interfaces\BlogServiceInterface;
+use App\Services\Admin\Implements\BlogService;
+use App\Repositories\Admin\Interfaces\BannerRepositoryInterface;
+use App\Repositories\Admin\Implements\BannerRepository;
+use App\Services\Admin\Interfaces\BannerServiceInterface;
+use App\Services\Admin\Implements\BannerService;
+use App\Services\Admin\Implements\StaffPermissionService;
+use App\Services\Admin\Interfaces\StaffPermissionServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 
@@ -190,6 +194,15 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             BlogRepositoryInterface::class,
             BlogRepository::class,
+        );
+        // Banner
+        $this->app->bind(
+            BannerRepositoryInterface::class,
+            BannerRepository::class,
+        );
+        $this->app->bind(
+            BannerServiceInterface::class,
+            BannerService::class,
         );
         // Staff
 

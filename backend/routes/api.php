@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UploadController;
 use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StaffController;
@@ -37,6 +38,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('customers', CustomerController::class);
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('blogs', BlogController::class);
+    Route::apiResource('banners', BannerController::class);
 
     Route::apiResource('goods-receipts', GoodReceiptController::class);
     
