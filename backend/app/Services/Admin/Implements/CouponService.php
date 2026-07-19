@@ -38,4 +38,9 @@ class CouponService implements CouponServiceInterface
     {
         return $this->couponRepositoryInterface->getAll();
     }
+
+    public function findById(int $id): ?Coupon
+    {
+        return $this->couponRepositoryInterface->findById($id);
+    }
 }

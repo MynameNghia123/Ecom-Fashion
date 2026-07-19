@@ -2395,6 +2395,540 @@
                 }
             }
         },
+        "/api/admin/orders": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Lấy danh sách đơn hàng (có phân trang & lọc)",
+                "operationId": "f954f3dfa0d14a0dbea3336954f7bace",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo mã đơn hàng, tên người nhận hoặc SĐT",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái đơn hàng (pending, processing, shipping, completed, cancelled)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "payment_status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái thanh toán (unpaid, paid, refunded)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "customer_id",
+                        "in": "query",
+                        "description": "Lọc theo ID khách hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "order_code": {
+                                                        "type": "string",
+                                                        "example": "ORD-20260719-001"
+                                                    },
+                                                    "customer_id": {
+                                                        "type": "integer",
+                                                        "example": 1
+                                                    },
+                                                    "customer_name": {
+                                                        "type": "string",
+                                                        "example": "Nguyễn Văn A"
+                                                    },
+                                                    "shipping_name": {
+                                                        "type": "string",
+                                                        "example": "Nguyễn Văn A"
+                                                    },
+                                                    "shipping_phone": {
+                                                        "type": "string",
+                                                        "example": "0987654321"
+                                                    },
+                                                    "shipping_address": {
+                                                        "type": "string",
+                                                        "example": "123 Đường ABC, Q1, TP.HCM"
+                                                    },
+                                                    "sub_total_amount": {
+                                                        "type": "number",
+                                                        "example": 500000
+                                                    },
+                                                    "coupon_discount_amount": {
+                                                        "type": "number",
+                                                        "example": 50000
+                                                    },
+                                                    "shipping_fee": {
+                                                        "type": "number",
+                                                        "example": 30000
+                                                    },
+                                                    "final_amount": {
+                                                        "type": "number",
+                                                        "example": 480000
+                                                    },
+                                                    "status": {
+                                                        "type": "string",
+                                                        "example": "pending"
+                                                    },
+                                                    "payment_method": {
+                                                        "type": "string",
+                                                        "example": "cod"
+                                                    },
+                                                    "payment_status": {
+                                                        "type": "string",
+                                                        "example": "unpaid"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "example": "19/07/2026 15:30"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 50
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Tạo đơn hàng mới (kèm mảng sản phẩm order_details)",
+                "operationId": "ac9de7f6338d9523f477427635b5280e",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_code",
+                                    "customer_id",
+                                    "shipping_name",
+                                    "shipping_phone",
+                                    "shipping_address",
+                                    "payment_method"
+                                ],
+                                "properties": {
+                                    "order_code": {
+                                        "description": "Mã đơn hàng (duy nhất)",
+                                        "type": "string",
+                                        "example": "ORD-20260719-001"
+                                    },
+                                    "customer_id": {
+                                        "description": "ID khách hàng mua hàng",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "coupon_id": {
+                                        "description": "ID mã giảm giá (tự động tính discount trên Server)",
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "shipping_name": {
+                                        "description": "Tên người nhận hàng",
+                                        "type": "string",
+                                        "example": "Nguyễn Văn A"
+                                    },
+                                    "shipping_phone": {
+                                        "description": "Số điện thoại nhận hàng",
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
+                                    "shipping_address": {
+                                        "description": "Địa chỉ nhận hàng",
+                                        "type": "string",
+                                        "example": "123 Đường ABC, Quận 1, TP.HCM"
+                                    },
+                                    "shipping_fee": {
+                                        "description": "Phí vận chuyển",
+                                        "type": "number",
+                                        "example": 30000
+                                    },
+                                    "payment_method": {
+                                        "description": "Phương thức thanh toán (cod, vnpay, momo...)",
+                                        "type": "string",
+                                        "example": "cod"
+                                    },
+                                    "status": {
+                                        "description": "Trạng thái đơn hàng",
+                                        "type": "string",
+                                        "example": "pending"
+                                    },
+                                    "payment_status": {
+                                        "description": "Trạng thái thanh toán",
+                                        "type": "string",
+                                        "example": "unpaid"
+                                    },
+                                    "order_details": {
+                                        "description": "Danh sách sản phẩm thuộc đơn hàng",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_variant_id",
+                                                "quantity",
+                                                "unit_price"
+                                            ],
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "description": "ID biến thể sản phẩm",
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "quantity": {
+                                                    "description": "Số lượng mua",
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "unit_price": {
+                                                    "description": "Đơn giá bán",
+                                                    "type": "number",
+                                                    "example": 250000
+                                                },
+                                                "cost_price": {
+                                                    "description": "Giá vốn sản phẩm",
+                                                    "type": "number",
+                                                    "example": 180000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo đơn hàng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Chi tiết đơn hàng vừa tạo kèm mảng order_details",
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Đơn hàng đã được tạo thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu đầu vào"
+                    }
+                }
+            }
+        },
+        "/api/admin/orders/{order}": {
+            "get": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Xem chi tiết một đơn hàng",
+                "operationId": "43e4b8b5d30354ab07c87ba451ec3bcb",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID của đơn hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy thông tin thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "description": "Thông tin chi tiết đơn hàng kèm danh sách sản phẩm order_details",
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy đơn hàng"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Cập nhật đơn hàng (đồng bộ mảng sản phẩm order_details)",
+                "operationId": "41887b9d537396e265b252c9cdd1b385",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID của đơn hàng cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_code",
+                                    "customer_id",
+                                    "shipping_name",
+                                    "shipping_phone",
+                                    "shipping_address",
+                                    "payment_method"
+                                ],
+                                "properties": {
+                                    "order_code": {
+                                        "type": "string",
+                                        "example": "ORD-20260719-001"
+                                    },
+                                    "customer_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "coupon_id": {
+                                        "type": "integer",
+                                        "example": 2,
+                                        "nullable": true
+                                    },
+                                    "shipping_name": {
+                                        "type": "string",
+                                        "example": "Nguyễn Văn A"
+                                    },
+                                    "shipping_phone": {
+                                        "type": "string",
+                                        "example": "0987654321"
+                                    },
+                                    "shipping_address": {
+                                        "type": "string",
+                                        "example": "123 Đường ABC, Quận 1, TP.HCM"
+                                    },
+                                    "shipping_fee": {
+                                        "type": "number",
+                                        "example": 30000
+                                    },
+                                    "status": {
+                                        "description": "Trạng thái đơn hàng (pending, processing, shipping, completed, cancelled)",
+                                        "type": "string",
+                                        "example": "processing"
+                                    },
+                                    "payment_method": {
+                                        "type": "string",
+                                        "example": "cod"
+                                    },
+                                    "payment_status": {
+                                        "type": "string",
+                                        "example": "paid"
+                                    },
+                                    "order_details": {
+                                        "description": "Danh sách sản phẩm chi tiết cập nhật",
+                                        "type": "array",
+                                        "items": {
+                                            "required": [
+                                                "product_variant_id",
+                                                "quantity",
+                                                "unit_price"
+                                            ],
+                                            "properties": {
+                                                "product_variant_id": {
+                                                    "type": "integer",
+                                                    "example": 5
+                                                },
+                                                "quantity": {
+                                                    "type": "integer",
+                                                    "example": 2
+                                                },
+                                                "unit_price": {
+                                                    "type": "number",
+                                                    "example": 250000
+                                                },
+                                                "cost_price": {
+                                                    "type": "number",
+                                                    "example": 180000
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Đơn hàng đã được cập nhật thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy đơn hàng"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu đầu vào"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Orders"
+                ],
+                "summary": "Xóa đơn hàng",
+                "operationId": "c98a5bf56aec53e82912b64b3171e541",
+                "parameters": [
+                    {
+                        "name": "order",
+                        "in": "path",
+                        "description": "ID của đơn hàng cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Đơn hàng đã được xóa thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy đơn hàng"
+                    }
+                }
+            }
+        },
         "/api/admin/permissions": {
             "get": {
                 "tags": [
@@ -3027,6 +3561,354 @@
                     },
                     "400": {
                         "description": "Lỗi khi thiếu tham số tìm kiếm"
+                    }
+                }
+            }
+        },
+        "/api/admin/return-requests": {
+            "get": {
+                "tags": [
+                    "ReturnRequests"
+                ],
+                "summary": "Lấy danh sách yêu cầu trả hàng (có phân trang & lọc)",
+                "operationId": "f92fe1a70afe4a977598f965e2091fa7",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo mã đơn hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái (pending, approved, rejected, completed)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "pending",
+                                "approved",
+                                "rejected",
+                                "completed"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang (mặc định: 4)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 4
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 4
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 12
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 3
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "ReturnRequests"
+                ],
+                "summary": "Tạo yêu cầu trả hàng mới",
+                "operationId": "e63566896ba3fe1f48a2b9df04ebb4d2",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "order_id",
+                                    "reason"
+                                ],
+                                "properties": {
+                                    "order_id": {
+                                        "description": "ID đơn hàng",
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "reason": {
+                                        "description": "Lý do trả hàng",
+                                        "type": "string",
+                                        "example": "Sản phẩm không vừa size, bị lỗi chỉ may"
+                                    },
+                                    "evidence_images": {
+                                        "description": "Ảnh minh chứng",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string"
+                                        },
+                                        "example": [
+                                            "https://example.com/evidence1.jpg"
+                                        ]
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "pending",
+                                        "enum": [
+                                            "pending",
+                                            "approved",
+                                            "rejected",
+                                            "completed"
+                                        ]
+                                    },
+                                    "refund_amount": {
+                                        "description": "Số tiền đề xuất hoàn trả",
+                                        "type": "number",
+                                        "example": 350000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo yêu cầu trả hàng thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Yêu cầu trả hàng đã được gửi thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/return-requests/{returnRequest}": {
+            "get": {
+                "tags": [
+                    "ReturnRequests"
+                ],
+                "summary": "Xem chi tiết một yêu cầu trả hàng",
+                "operationId": "8c3e3da026487a2c9936f3db321fbba6",
+                "parameters": [
+                    {
+                        "name": "returnRequest",
+                        "in": "path",
+                        "description": "ID của yêu cầu trả hàng",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy yêu cầu trả hàng"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "ReturnRequests"
+                ],
+                "summary": "Cập nhật/Duyệt yêu cầu trả hàng",
+                "operationId": "e19c41cde3a80496a1703da69cc836a7",
+                "parameters": [
+                    {
+                        "name": "returnRequest",
+                        "in": "path",
+                        "description": "ID yêu cầu trả hàng cần cập nhật",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "status"
+                                ],
+                                "properties": {
+                                    "status": {
+                                        "description": "Trạng thái mới",
+                                        "type": "string",
+                                        "example": "approved",
+                                        "enum": [
+                                            "pending",
+                                            "approved",
+                                            "rejected",
+                                            "completed"
+                                        ]
+                                    },
+                                    "refund_amount": {
+                                        "description": "Số tiền hoàn trả chính thức",
+                                        "type": "number",
+                                        "example": 350000
+                                    },
+                                    "processed_by_staff_id": {
+                                        "description": "ID nhân viên xử lý",
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Yêu cầu trả hàng đã được cập nhật."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "ReturnRequests"
+                ],
+                "summary": "Xóa yêu cầu trả hàng",
+                "operationId": "96128f07f27efef5e04df58115b880f6",
+                "parameters": [
+                    {
+                        "name": "returnRequest",
+                        "in": "path",
+                        "description": "ID của yêu cầu trả hàng cần xóa",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Yêu cầu trả hàng đã được xóa thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
                     }
                 }
             }
@@ -4489,12 +5371,20 @@
             "description": "Quản lý khách hàng"
         },
         {
+            "name": "Orders",
+            "description": "Quản lý đơn hàng bán"
+        },
+        {
             "name": "Permissions",
             "description": "Quyền hạn — chỉ đọc, dùng để render form phân quyền cho Role"
         },
         {
             "name": "Products",
             "description": "Quản lý sản phẩm, bao gồm ảnh và biến thể"
+        },
+        {
+            "name": "ReturnRequests",
+            "description": "Quản lý yêu cầu trả hàng & hoàn tiền"
         },
         {
             "name": "Roles",

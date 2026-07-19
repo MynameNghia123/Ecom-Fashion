@@ -88,6 +88,22 @@ use App\Services\Admin\Interfaces\BannerServiceInterface;
 use App\Services\Admin\Implements\BannerService;
 use App\Services\Admin\Implements\StaffPermissionService;
 use App\Services\Admin\Interfaces\StaffPermissionServiceInterface;
+
+use App\Repositories\Admin\Interfaces\OrderRepositoryInterface;
+use App\Repositories\Admin\Implements\OrderRepository;
+use App\Services\Admin\Interfaces\OrderServiceInterface;
+use App\Services\Admin\Implements\OrderService;
+
+use App\Repositories\Admin\Interfaces\OrderDetailRepositoryInterface;
+use App\Repositories\Admin\Implements\OrderDetailRepository;
+use App\Services\Admin\Interfaces\OrderDetailServiceInterface;
+use App\Services\Admin\Implements\OrderDetailService;
+
+use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
+use App\Repositories\Admin\Implements\ReturnRequestRepository;
+use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
+use App\Services\Admin\Implements\ReturnRequestService;
+
 use Illuminate\Support\ServiceProvider;
 
 
@@ -204,6 +220,16 @@ class AppServiceProvider extends ServiceProvider
             BannerServiceInterface::class,
             BannerService::class,
         );
+
+        // Order, OrderDetail & ReturnRequest
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(OrderServiceInterface::class, OrderService::class);
+
+        $this->app->bind(OrderDetailRepositoryInterface::class, OrderDetailRepository::class);
+        $this->app->bind(OrderDetailServiceInterface::class, OrderDetailService::class);
+
+        $this->app->bind(ReturnRequestRepositoryInterface::class, ReturnRequestRepository::class);
+        $this->app->bind(ReturnRequestServiceInterface::class, ReturnRequestService::class);
         // Staff
 
         // ── Services ──────────────────────────────────────────────────────]
