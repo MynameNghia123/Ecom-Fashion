@@ -12,99 +12,77 @@
         </span>
         <button
           v-if="wishlistItems.length > 0"
-          class="border border-neutral-900 bg-white hover:bg-neutral-900 hover:text-white px-5 py-2.5 text-[11px] font-bold tracking-widest uppercase transition-colors duration-300 font-text cursor-pointer"
+          @click="clearAll"
+          class="border border-neutral-300 hover:border-neutral-900 hover:bg-neutral-900 hover:text-white px-5 py-2.5 text-[11px] font-bold tracking-widest uppercase transition-colors duration-300 font-text cursor-pointer text-neutral-700 bg-white"
         >
-          Thêm tất cả vào giỏ hàng
+          Xóa tất cả
         </button>
       </div>
     </div>
 
     <!-- Empty State -->
     <div v-if="wishlistItems.length === 0" class="text-center py-20 border border-dashed border-neutral-200">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto text-neutral-300 mb-4">
+        <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+      </svg>
       <p class="text-neutral-500 font-text text-sm">Danh sách yêu thích trống.</p>
-      <button
-        class="mt-4 bg-black text-white hover:bg-neutral-800 px-6 py-3 text-[11px] font-bold tracking-widest uppercase transition-colors font-text cursor-pointer border-none"
-      >
+      <router-link to="/" class="mt-4 inline-block bg-black text-white hover:bg-neutral-800 px-6 py-3 text-[11px] font-bold tracking-widest uppercase transition-colors font-text">
         Khám phá sản phẩm
-      </button>
+      </router-link>
     </div>
 
     <!-- Product Grid -->
     <div v-else class="space-y-12">
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-        <ProductCard
+        <div
           v-for="product in wishlistItems"
           :key="product.id"
-          :image="product.image"
-          :name="product.name"
-          :currentPrice="product.currentPrice"
-          :description="product.description"
-          :is-wishlist="true"
-          @remove="removeItem(product.id)"
-        />
-      </div>
+          class="group relative"
+        >
+          <!-- Image -->
+          <div class="relative overflow-hidden bg-neutral-100 aspect-[3/4]">
+            <img
+              :src="product.image"
+              :alt="product.name"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+            <!-- Remove btn -->
+            <button
+              @click="removeItem(product.id)"
+              class="absolute top-3 right-3 w-8 h-8 bg-white border border-neutral-200 flex items-center justify-center hover:bg-rose-50 hover:border-rose-300 transition-colors cursor-pointer"
+              title="Xóa khỏi yêu thích"
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-rose-500">
+                <path d="M18 6L6 18M6 6l12 12"/>
+              </svg>
+            </button>
+          </div>
 
-      <!-- Load More -->
-      <div class="text-center pt-6 border-t border-neutral-100">
-        <button class="inline-block text-black text-[11px] font-bold uppercase tracking-widest pb-1 border-b border-black hover:text-neutral-500 hover:border-neutral-500 transition-colors bg-transparent border-x-0 border-t-0 cursor-pointer">
-          Xem thêm
-        </button>
+          <!-- Info -->
+          <div class="mt-3 space-y-1">
+            <p class="text-[11px] uppercase tracking-widest text-neutral-400 font-bold">{{ product.description }}</p>
+            <p class="text-sm font-bold text-neutral-900 font-title">{{ product.name }}</p>
+            <p class="text-sm text-neutral-700 font-mono">{{ product.currentPrice }}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ProductCard from '@/components/client/ui/ProductCard.vue'
+import { computed } from 'vue'
+import { useWishlistStore } from '@/stores/client/wishlistStore'
 
-const wishlistItems = ref([
-  {
-    id: 1,
-    name: 'Structured Wool Overcoat',
-    currentPrice: '$1,250',
-    description: 'Midnight Black • Pure Merino Wool',
-    image: 'https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 2,
-    name: 'Asymmetric Silk Drape',
-    currentPrice: '$890',
-    description: 'Optic White • 100% Charmeuse',
-    image: 'https://images.unsplash.com/photo-1596783074918-c84cb06531ca?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 3,
-    name: 'Geometric Leather Tote',
-    currentPrice: '$1,100',
-    description: 'Matte Obsidian • Calfskin Leather',
-    image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 4,
-    name: 'Sculptural Sneaker 01',
-    currentPrice: '$450',
-    description: 'Bone White • Tech Knit & Leather',
-    image: 'https://images.unsplash.com/photo-1608231387042-66d1773070a5?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 5,
-    name: 'Heavy Texture Knit',
-    currentPrice: '$620',
-    description: 'Charcoal Marl • Brushed Alpaca',
-    image: 'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 6,
-    name: 'Wide-Leg Architect Trouser',
-    currentPrice: '$550',
-    description: 'Slate Grey • Italian Gabardine',
-    image: 'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?q=80&w=600&auto=format&fit=crop'
-  }
-])
+const wishlistStore = useWishlistStore()
+const wishlistItems = computed(() => wishlistStore.items)
 
 const removeItem = (id) => {
-  wishlistItems.value = wishlistItems.value.filter(item => item.id !== id)
+  wishlistStore.removeItem(id)
+}
+
+const clearAll = () => {
+  wishlistStore.clearAll()
 }
 </script>
 
@@ -114,6 +92,6 @@ const removeItem = (id) => {
 }
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 </style>

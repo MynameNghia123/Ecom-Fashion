@@ -261,4 +261,77 @@ class AuthController extends Controller
             'message' => 'Mật khẩu của bạn đã được cập nhật thành công.'
         ], 200);
     }
+
+    /**
+     * PUT /client/auth/profile — Cập nhật thông tin cá nhân.
+     */
+    public function updateProfile(Request $request)
+    {
+        $customer = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'first_name'   => 'required|string|max:255',
+            'last_name'    => 'required|string|max:255',
+            'phone_number' => 'nullable|string|max:15',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $customer->update([
+            'first_name'   => $request->first_name,
+            'last_name'    => $request->last_name,
+            'phone_number' => $request->phone_number,
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Cập nhật thông tin thành công.',
+            'user'    => $customer->fresh(),
+        ]);
+    }
+
+    /**
+     * PUT /client/auth/change-password — Đổi mật khẩu khi đã đăng nhập.
+     */
+    public function changePassword(Request $request)
+    {
+        $customer = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'current_password'      => 'required|string',
+            'password'              => 'required|string|min:8|confirmed',
+        ], [
+            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
+            'password.min'              => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+            'password.confirmed'        => 'Xác nhận mật khẩu không khớp.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors()->first(),
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        if (!Hash::check($request->current_password, $customer->password)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Mật khẩu hiện tại không chính xác.',
+            ], 422);
+        }
+
+        $customer->update(['password' => $request->password]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Đổi mật khẩu thành công.',
+        ]);
+    }
 }

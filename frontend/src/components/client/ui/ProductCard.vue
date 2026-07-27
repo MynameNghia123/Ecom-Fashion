@@ -19,8 +19,16 @@
 
       <!-- Standard Hover Actions -->
       <div v-else class="absolute top-[15px] right-[15px] flex flex-col gap-2.5 opacity-0 translate-x-[10px] transition-all duration-300 ease-in-out group-hover:opacity-100 group-hover:translate-x-0 z-[2]">
-        <button class="bg-white border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer text-black transition-all duration-300 shadow-[0_2px_5px_rgba(0,0,0,0.1)] hover:bg-black hover:text-white" aria-label="Yêu thích">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+        <button 
+          @click.stop="handleToggleWishlist"
+          class="bg-white border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 shadow-[0_2px_5px_rgba(0,0,0,0.1)] hover:scale-110"
+          :class="isWishlisted ? 'text-rose-500 bg-rose-50' : 'text-black hover:bg-black hover:text-white'"
+          :title="isWishlisted ? 'Bỏ khỏi yêu thích' : 'Thêm vào yêu thích'"
+          aria-label="Yêu thích"
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" :fill="isWishlisted ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
         </button>
         <button class="bg-white border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer text-black transition-all duration-300 shadow-[0_2px_5px_rgba(0,0,0,0.1)] hover:bg-black hover:text-white" aria-label="Xem nhanh">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
@@ -57,7 +65,11 @@
 </template>
 
 <script setup>
-defineProps({
+import { computed } from 'vue'
+import { useWishlistStore } from '@/stores/client/wishlistStore'
+
+const props = defineProps({
+  id: { type: [Number, String], default: null },
   image: { type: String, required: true },
   name: { type: String, required: true },
   currentPrice: { type: String, required: true },
@@ -69,4 +81,22 @@ defineProps({
 });
 
 const emit = defineEmits(['remove']);
+const wishlistStore = useWishlistStore()
+
+const isWishlisted = computed(() => {
+  if (!props.id) return false
+  return wishlistStore.isInWishlist(props.id)
+})
+
+const handleToggleWishlist = () => {
+  if (!props.id) return
+  wishlistStore.toggleWishlist({
+    id: props.id,
+    name: props.name,
+    currentPrice: props.currentPrice,
+    originalPrice: props.originalPrice,
+    image: props.image,
+    description: props.description
+  })
+}
 </script>

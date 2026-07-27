@@ -2513,6 +2513,85 @@
                 }
             }
         },
+        "/api/admin/orders": {
+            "get": {
+                "tags": [
+                    "Admin - Orders"
+                ],
+                "summary": "Lấy danh sách đơn hàng (có phân trang & lọc)",
+                "operationId": "f954f3dfa0d14a0dbea3336954f7bace",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm (mã đơn hàng, tên khách hàng, SĐT)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái đơn hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "payment_status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái thanh toán",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số lượng bản ghi trên một trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công"
+                    }
+                }
+            }
+        },
+        "/api/admin/orders/{id}": {
+            "get": {
+                "tags": [
+                    "Admin - Orders"
+                ],
+                "summary": "Lấy thông tin chi tiết một đơn hàng",
+                "operationId": "e7e6d283779bcb33a966e6b60dc73b87",
+                "responses": {
+                    "200": {
+                        "description": "Lấy chi tiết thành công"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Admin - Orders"
+                ],
+                "summary": "Cập nhật trạng thái đơn hàng và thông tin vận chuyển",
+                "operationId": "6a871b138ad8f7767d5b5031385ce402",
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật đơn hàng thành công"
+                    }
+                }
+            }
+        },
         "/api/admin/permissions": {
             "get": {
                 "tags": [
@@ -4295,7 +4374,7 @@
                                 ],
                                 "properties": {
                                     "file": {
-                                        "description": "File ảnh (jpeg, png, webp, gif). Tối đa 5MB.",
+                                        "description": "File ảnh (jpeg, png, webp, gif). Tối đa 10MB.",
                                         "type": "string",
                                         "format": "binary"
                                     },
@@ -4468,6 +4547,10 @@
         {
             "name": "Admin - Good Receipt",
             "description": "Admin - Good Receipt"
+        },
+        {
+            "name": "Admin - Orders",
+            "description": "Admin - Orders"
         },
         {
             "name": "Admin - Product Variant",

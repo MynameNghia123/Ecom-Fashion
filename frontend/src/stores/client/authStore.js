@@ -18,7 +18,7 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
   // ═══════════════════════════════════════════════════════════════════
   // Getters (Computed)
   // ═══════════════════════════════════════════════════════════════════
-  const isAuthenticated = computed(() => !!token.value && !!user.value)
+  const isAuthenticated = computed(() => !!token.value)
 
   // ═══════════════════════════════════════════════════════════════════
   // Actions
@@ -183,6 +183,25 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
     }
   }
 
+  /**
+   * Cập nhật thông tin cá nhân
+   */
+  const updateProfile = async (formData) => {
+    loading.value = true
+    clearError()
+    try {
+      const { profileService } = await import('@/services/client/profileService')
+      const response = await profileService.updateProfile(formData)
+      user.value = response.data.user
+      return { success: true, message: response.data.message }
+    } catch (err) {
+      error.value = err.response?.data?.message || 'Cập nhật thông tin thất bại!'
+      return { success: false, message: error.value }
+    } finally {
+      loading.value = false
+    }
+  }
+
   return {
     user,
     token,
@@ -199,6 +218,7 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
     forgotPassword,
     verifyOtp,
     resetPassword,
-    clearError
+    clearError,
+    updateProfile,
   }
 })

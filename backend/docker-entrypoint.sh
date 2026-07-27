@@ -4,10 +4,17 @@ set -e
 echo "🚀 [entrypoint] Starting backend setup..."
 
 # ── Ensure required directories exist ────────────────────────────────
-mkdir -p database storage/logs storage/framework/{cache,sessions,views} bootstrap/cache
+mkdir -p database \
+         storage/logs \
+         storage/framework/{cache,sessions,views} \
+         storage/app/public/images/products \
+         storage/app/public/images/banners \
+         storage/app/public/images/blogs \
+         storage/api-docs \
+         bootstrap/cache
 
 # ── Fix permissions (bỏ qua lỗi trên Windows Docker volume mounts) ───
-chmod -R 775 storage bootstrap/cache 2>/dev/null || true
+chmod -R 777 storage bootstrap/cache 2>/dev/null || true
 
 # ── Composer install: chỉ chạy khi vendor trống ─────────────────────
 if [ ! -f "vendor/autoload.php" ]; then

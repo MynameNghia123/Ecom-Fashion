@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class Customer extends Authenticatable
 {
     use HasApiTokens;
@@ -28,5 +30,10 @@ class Customer extends Authenticatable
             'password' => 'hashed',
             'status' => 'integer',
         ];
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(CustomerAddress::class);
     }
 }

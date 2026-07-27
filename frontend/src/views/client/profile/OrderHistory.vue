@@ -5,17 +5,17 @@
     <div>
       <h1 class="text-[32px] font-bold tracking-tight text-neutral-900 uppercase font-title leading-tight">Lịch sử đơn hàng</h1>
       <p class="text-sm text-neutral-400 mt-2 font-text leading-relaxed max-w-md">
-        Xem lại và theo dõi các đơn hàng đã mua và đang mua. Bạn có thể xem chi tiết đơn hàng hoặc bắt đầu trả hàng bên dưới.
+        Xem lại và theo dõi các đơn hàng đã mua và đang mua.
       </p>
     </div>
 
     <!-- Tabs -->
     <div class="border-b border-neutral-200">
-      <div class="flex gap-0">
+      <div class="flex gap-0 flex-wrap">
         <button
           v-for="tab in tabs"
           :key="tab.key"
-          @click="activeTab = tab.key"
+          @click="switchTab(tab.key)"
           :class="[
             'px-0 py-3 mr-8 text-[11px] font-bold uppercase tracking-widest transition-colors font-text cursor-pointer bg-transparent border-none',
             activeTab === tab.key
@@ -33,40 +33,62 @@
       <table class="w-full text-left border-collapse min-w-[600px]">
         <thead>
           <tr class="border-b border-neutral-200">
-            <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[20%]">Mã đơn hàng</th>
+            <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[25%]">Mã đơn hàng</th>
             <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[20%]">Ngày đặt</th>
             <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[20%]">Trạng thái</th>
             <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[20%]">Tổng tiền</th>
-            <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[20%] text-right">Thao tác</th>
+            <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-neutral-400 w-[15%] text-right">Thao tác</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-neutral-100">
+          <!-- Loading -->
+          <tr v-if="loading">
+            <td colspan="5" class="py-10 text-center text-sm text-neutral-400">
+              <span class="inline-flex items-center gap-2">
+                <svg class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
+                </svg>
+                Đang tải danh sách đơn hàng...
+              </span>
+            </td>
+          </tr>
+          <!-- Error -->
+          <tr v-else-if="error">
+            <td colspan="5" class="py-10 text-center text-sm text-rose-500">{{ error }}</td>
+          </tr>
+          <!-- Empty -->
+          <tr v-else-if="filteredOrders.length === 0">
+            <td colspan="5" class="py-12 text-center">
+              <p class="text-sm text-neutral-400">Bạn chưa có đơn hàng nào trong mục này.</p>
+              <router-link to="/" class="mt-3 inline-block text-[11px] font-bold uppercase tracking-widest underline text-neutral-700">
+                Tiếp tục mua sắm
+              </router-link>
+            </td>
+          </tr>
+          <!-- Data rows -->
           <tr
+            v-else
             v-for="order in paginatedOrders"
             :key="order.id"
             class="hover:bg-neutral-50/50 transition-colors"
           >
-            <td class="py-4 text-[13px] font-bold tracking-wide text-neutral-800">{{ order.id }}</td>
-            <td class="py-4 text-[13px] text-neutral-500 font-normal">{{ order.date }}</td>
+            <td class="py-4 text-[13px] font-bold tracking-wide text-neutral-800 font-mono">{{ order.order_code }}</td>
+            <td class="py-4 text-[13px] text-neutral-500 font-normal">{{ formatDate(order.created_at) }}</td>
             <td class="py-4">
-              <span
-                :class="[
-                  'inline-block text-[9px] font-bold tracking-wider uppercase px-2.5 py-1 border',
-                  order.status === 'ĐÃ GIAO'     ? 'border-neutral-400 text-neutral-700 bg-white' :
-                  order.status === 'ĐANG VẬN CHUYỂN' ? 'border-black bg-black text-white' :
-                  order.status === 'ĐÃ HỦY'      ? 'border-red-500 text-red-600 bg-white' :
-                  order.status === 'ĐANG XỬ LÝ'  ? 'border-amber-500 text-amber-600 bg-white' :
-                  'border-neutral-400 text-neutral-600 bg-white'
-                ]"
-              >
-                {{ order.status }}
+              <span :class="statusClass(order.status)">
+                {{ statusText(order.status) }}
               </span>
             </td>
-            <td class="py-4 text-[13px] font-medium text-neutral-800">{{ order.total }}</td>
+            <td class="py-4 text-[13px] font-medium text-neutral-800 font-mono">{{ formatPrice(order.final_amount) }}</td>
             <td class="py-4 text-right">
-              <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-neutral-500 transition-colors bg-transparent border-none cursor-pointer">
+              <router-link
+                :to="{ name: 'CheckoutSuccess', query: { code: order.order_code } }"
+                class="text-[10px] font-bold uppercase tracking-wider hover:text-neutral-500 transition-colors text-neutral-900"
+                style="text-decoration: underline"
+              >
                 Xem chi tiết
-              </button>
+              </router-link>
             </td>
           </tr>
         </tbody>
@@ -74,15 +96,15 @@
     </div>
 
     <!-- Footer: Count + Pagination -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-neutral-100">
+    <div v-if="filteredOrders.length > 0" class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-4 border-t border-neutral-100">
       <p class="text-[11px] text-neutral-400 font-text">
-        hiện thị {{ (currentPage - 1) * pageSize + 1 }} đến {{ Math.min(currentPage * pageSize, filteredOrders.length) }} trong tổng số {{ filteredOrders.length }} đơn hàng
+        Hiển thị {{ rangeStart }} - {{ rangeEnd }} trong tổng số {{ filteredOrders.length }} đơn hàng
       </p>
 
       <!-- Pagination -->
       <div class="flex items-center gap-1">
         <button
-          @click="currentPage = Math.max(1, currentPage - 1)"
+          @click="currentPage--"
           :disabled="currentPage === 1"
           class="w-8 h-8 flex items-center justify-center border border-neutral-200 hover:border-neutral-900 text-neutral-500 hover:text-neutral-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors bg-transparent cursor-pointer"
         >
@@ -104,7 +126,7 @@
         </button>
 
         <button
-          @click="currentPage = Math.min(totalPages, currentPage + 1)"
+          @click="currentPage++"
           :disabled="currentPage === totalPages"
           class="w-8 h-8 flex items-center justify-center border border-neutral-200 hover:border-neutral-900 text-neutral-500 hover:text-neutral-900 disabled:opacity-30 disabled:cursor-not-allowed transition-colors bg-transparent cursor-pointer"
         >
@@ -117,54 +139,86 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
+import { orderService } from '@/services/client/orderService'
 
 const tabs = [
-  { key: 'all',        label: 'Tất cả đơn hàng' },
+  { key: 'all',        label: 'Tất cả' },
   { key: 'processing', label: 'Đang xử lý' },
-  { key: 'completed',  label: 'Hoàn thành' }
+  { key: 'shipping',   label: 'Đang giao' },
+  { key: 'completed',  label: 'Hoàn thành' },
+  { key: 'cancelled',  label: 'Đã hủy' },
 ]
 
-const activeTab  = ref('all')
+const activeTab   = ref('all')
 const currentPage = ref(1)
-const pageSize    = 5
+const PAGE_SIZE   = 8
 
-// Mock data
-const orders = ref([
-  { id: '#NF-829103', date: '24/10/2023', status: 'ĐÃ GIAO',           total: '$1,240.00' },
-  { id: '#NF-718293', date: '12/10/2023', status: 'ĐANG VẬN CHUYỂN',  total: '$450.00'   },
-  { id: '#NF-625419', date: '30/09/2023', status: 'ĐÃ HỦY',            total: '$89.00'    },
-  { id: '#NF-552190', date: '15/09/2023', status: 'ĐÃ GIAO',           total: '$3,120.50' },
-  { id: '#NF-411209', date: '28/08/2023', status: 'ĐÃ GIAO',           total: '$210.00'   },
-  { id: '#NF-398120', date: '10/08/2023', status: 'ĐANG XỬ LÝ',       total: '$680.00'   },
-  { id: '#NF-374521', date: '02/08/2023', status: 'ĐÃ GIAO',           total: '$540.00'   },
-  { id: '#NF-351008', date: '20/07/2023', status: 'ĐÃ GIAO',           total: '$920.00'   },
-  { id: '#NF-330045', date: '05/07/2023', status: 'ĐANG XỬ LÝ',       total: '$155.00'   },
-  { id: '#NF-299817', date: '18/06/2023', status: 'ĐÃ GIAO',           total: '$2,450.00' },
-  { id: '#NF-278234', date: '01/06/2023', status: 'ĐÃ HỦY',            total: '$360.00'   },
-  { id: '#NF-255511', date: '14/05/2023', status: 'ĐÃ GIAO',           total: '$780.00'   },
-])
+const orders  = ref([])
+const loading = ref(false)
+const error   = ref(null)
+
+const fetchOrders = async () => {
+  loading.value = true
+  error.value   = null
+  try {
+    const res = await orderService.getOrders()
+    if (res.data?.success) orders.value = res.data.data
+  } catch (e) {
+    error.value = e.response?.data?.message || 'Không thể tải đơn hàng. Vui lòng thử lại.'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(fetchOrders)
+
+const switchTab = (key) => {
+  activeTab.value   = key
+  currentPage.value = 1
+}
 
 const filteredOrders = computed(() => {
-  if (activeTab.value === 'processing') {
-    return orders.value.filter(o => o.status === 'ĐANG XỬ LÝ' || o.status === 'ĐANG VẬN CHUYỂN')
-  }
-  if (activeTab.value === 'completed') {
-    return orders.value.filter(o => o.status === 'ĐÃ GIAO')
-  }
-  return orders.value
+  if (activeTab.value === 'all') return orders.value
+  if (activeTab.value === 'processing') return orders.value.filter(o => ['pending', 'confirmed'].includes(o.status))
+  return orders.value.filter(o => o.status === activeTab.value)
 })
 
-const totalPages = computed(() => Math.ceil(filteredOrders.value.length / pageSize))
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredOrders.value.length / PAGE_SIZE)))
 
 const paginatedOrders = computed(() => {
-  const start = (currentPage.value - 1) * pageSize
-  return filteredOrders.value.slice(start, start + pageSize)
+  const start = (currentPage.value - 1) * PAGE_SIZE
+  return filteredOrders.value.slice(start, start + PAGE_SIZE)
 })
 
-// Reset to page 1 when changing tabs
-import { watch } from 'vue'
+const rangeStart = computed(() => (currentPage.value - 1) * PAGE_SIZE + 1)
+const rangeEnd   = computed(() => Math.min(currentPage.value * PAGE_SIZE, filteredOrders.value.length))
+
 watch(activeTab, () => { currentPage.value = 1 })
+
+const formatDate = (d) => {
+  if (!d) return ''
+  return new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+const formatPrice = (v) => {
+  if (v == null) return '0 \u0111'
+  return Number(v).toLocaleString('vi-VN') + ' \u0111'
+}
+
+const STATUS_MAP = {
+  pending:   { text: 'ĐANG XỬ LÝ',      cls: 'border-amber-500 text-amber-600 bg-white' },
+  confirmed: { text: 'ĐÃ XÁC NHẬN',     cls: 'border-blue-500 text-blue-600 bg-white' },
+  shipping:  { text: 'ĐANG VẬN CHUYỂN', cls: 'border-black bg-black text-white' },
+  completed: { text: 'ĐÃ GIAO',          cls: 'border-neutral-400 text-neutral-700 bg-white' },
+  cancelled: { text: 'ĐÃ HỦY',          cls: 'border-red-500 text-red-600 bg-white' },
+}
+
+const statusText  = (s) => STATUS_MAP[s]?.text  || (s || '').toUpperCase()
+const statusClass = (s) => [
+  'inline-block text-[9px] font-bold tracking-wider uppercase px-2.5 py-1 border',
+  STATUS_MAP[s]?.cls || 'border-neutral-400 text-neutral-600 bg-white'
+]
 </script>
 
 <style scoped>

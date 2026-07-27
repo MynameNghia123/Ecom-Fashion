@@ -41,26 +41,27 @@
         <ul class="flex list-none m-0 p-0 gap-[30px]">
           <li class="relative">
             <router-link to="/" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
-              TRANG CHỦ <i class="border-solid border-r border-b inline-block p-[2.5px] rotate-45 ml-2 mb-[2px]" :class="arrowClass"></i>
+              TRANG CHỦ
             </router-link>
           </li>
           <li class="relative">
-            <router-link to="/product/AB258041NTR26" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
-              SẢN PHẨM <i class="border-solid border-r border-b inline-block p-[2.5px] rotate-45 ml-2 mb-[2px]" :class="arrowClass"></i>
+            <router-link to="/category" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
+              SẢN PHẨM
             </router-link>
           </li>
+          <li class="relative">
+            <router-link to="/category" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
+              DANH MỤC
+            </router-link>
+          </li>
+
           <li class="relative">
             <router-link to="/" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
-              DANH MỤC <i class="border-solid border-r border-b inline-block p-[2.5px] rotate-45 ml-2 mb-[2px]" :class="arrowClass"></i>
-            </router-link>
-          </li>
-          <li class="relative">
-            <router-link to="/" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">
-              NỮ <i class="border-solid border-r border-b inline-block p-[2.5px] rotate-45 ml-2 mb-[2px]" :class="arrowClass"></i>
+              Áo <i class="border-solid border-r border-b inline-block p-[2.5px] rotate-45 ml-2 mb-[2px]" :class="arrowClass"></i>
             </router-link>
           </li>
           <li>
-            <router-link to="/" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">NAM</router-link>
+            <router-link to="/" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">QUẦN </router-link>
           </li>
           <li>
             <router-link to="/blog" class="no-underline font-text text-[13px] font-semibold flex items-center uppercase transition-all duration-300" :class="navLinkClass">TIN TỨC</router-link>
@@ -75,9 +76,14 @@
         <button class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="Tìm kiếm">
            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
         </button>
-        <button class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="Yêu thích">
+        <button 
+          @click="router.push('/profile/wishlist')" 
+          class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" 
+          :class="actionBtnClass" 
+          aria-label="Yêu thích"
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
-          <span class="absolute -top-0.5 -right-1.25 bg-black text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+          <span v-if="wishlistStore.count > 0" class="absolute -top-0.5 -right-1.25 bg-rose-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">{{ wishlistStore.count }}</span>
         </button>
         <button @click="handleAccountClick" class="bg-transparent border-none cursor-pointer relative flex items-center justify-center p-1.25 transition-transform duration-300 hover:scale-110" :class="actionBtnClass" aria-label="Tài khoản">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
@@ -111,11 +117,13 @@
 import { computed, ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
+import { useWishlistStore } from '@/stores/client/wishlistStore'
 import AuthModal from '@/views/client/auth/AuthModal.vue'
 import MiniCart from '@/components/client/cart/MiniCart.vue'
 
 const router = useRouter()
 const authStore = useClientAuthStore()
+const wishlistStore = useWishlistStore()
 const isAuthModalOpen = ref(false)
 const authModalMode = ref('login')
 const isMiniCartOpen = ref(false)

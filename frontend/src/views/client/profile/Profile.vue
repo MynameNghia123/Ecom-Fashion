@@ -1,18 +1,33 @@
 <script setup>
-import { computed, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRoute, RouterView } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
-import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
+import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue'
+import { orderService } from '@/services/client/orderService'
 
 const route = useRoute()
 const authStore = useClientAuthStore()
 
+const orders = ref([])
+const loadingOrders = ref(false)
+
+const fetchOrders = async () => {
+  loadingOrders.value = true
+  try {
+    const res = await orderService.getOrders()
+    if (res.data?.success) orders.value = res.data.data
+  } catch (e) {
+    console.error('Lỗi tải đơn hàng:', e)
+  } finally {
+    loadingOrders.value = false
+  }
+}
+
 onMounted(() => {
   authStore.fetchMe()
+  fetchOrders()
 })
 
-// Kiểm tra xem người dùng có đang ở đúng trang gốc "/profile" hay không
-// Nếu route.path === '/profile' hoặc '/profile/', biến này sẽ là true
 const isDashboard = computed(() => route.path === '/profile' || route.path === '/profile/')
 
 const userFullName = computed(() => {
@@ -21,9 +36,34 @@ const userFullName = computed(() => {
 })
 
 const userFirstName = computed(() => {
-  if (!authStore.user) return 'Dino'
+  if (!authStore.user) return ''
   return authStore.user.first_name
 })
+
+const completedCount = computed(() => orders.value.filter(o => o.status === 'completed').length)
+const recentOrders   = computed(() => orders.value.slice(0, 3))
+
+const STATUS_MAP = {
+  pending:   { text: 'ĐANG XỬ LÝ',      cls: 'border-amber-400 text-amber-600 bg-white' },
+  confirmed: { text: 'ĐÃ XÁC NHẬN',     cls: 'border-blue-400 text-blue-600 bg-white' },
+  shipping:  { text: 'ĐANG VẬN CHUYỂN', cls: 'border-black bg-black text-white' },
+  completed: { text: 'ĐÃ GIAO',          cls: 'border-gray-400 text-gray-700 bg-white' },
+  cancelled: { text: 'ĐÃ HỦY',          cls: 'border-red-400 text-red-600 bg-white' },
+}
+const statusText  = (s) => STATUS_MAP[s]?.text  || (s || '').toUpperCase()
+const statusClass = (s) => [
+  'inline-block text-[9px] font-bold tracking-wider uppercase border px-2 py-0.5 rounded-none',
+  STATUS_MAP[s]?.cls || 'border-gray-400 text-gray-700 bg-white'
+]
+
+const formatDate = (d) => {
+  if (!d) return ''
+  return new Date(d).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+const formatPrice = (v) => {
+  if (v == null) return '0 đ'
+  return Number(v).toLocaleString('vi-VN') + ' đ'
+}
 </script>
 
 <template>
@@ -45,18 +85,18 @@ const userFirstName = computed(() => {
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div class="border border-gray-900 bg-[#FBFBFB] p-6 min-h-[140px] flex flex-col justify-between">
-              <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Đơn đặt gần đây</p>
+              <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Đơn hàng của tôi</p>
               <div class="mt-4">
-                <span class="text-4xl font-medium tracking-tight">12</span>
-                <p class="text-xs text-gray-400 mt-1">Tổng số đơn đã hoàn thành</p>
+                <span class="text-4xl font-medium tracking-tight">{{ orders.length }}</span>
+                <p class="text-xs text-gray-400 mt-1">Tổng số đơn hàng</p>
               </div>
             </div>
 
             <div class="border border-gray-200 bg-white p-6 min-h-[140px] flex flex-col justify-between">
-              <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Voucher</p>
+              <p class="text-[11px] uppercase tracking-wider text-gray-500 font-semibold">Hoàn thành</p>
               <div class="mt-4">
-                <span class="text-4xl font-medium tracking-tight">03</span>
-                <p class="text-xs text-gray-400 mt-1">Sẵn sàng cho thanh toán</p>
+                <span class="text-4xl font-medium tracking-tight">{{ completedCount }}</span>
+                <p class="text-xs text-gray-400 mt-1">Đơn hàng đã giao thành công</p>
               </div>
             </div>
           </div>
@@ -134,43 +174,34 @@ const userFirstName = computed(() => {
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-xs font-medium">
-                  <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="py-4 font-bold tracking-wide">#NF-882941</td>
-                    <td class="py-4 text-gray-500 font-normal">Oct 12, 2023</td>
-                    <td class="py-4">
-                      <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                        DELIVERED
-                      </span>
-                    </td>
-                    <td class="py-4 font-normal text-gray-800">$1,250.00</td>
-                    <td class="py-4 text-right">
-                      <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
-                    </td>
+                  <!-- Loading -->
+                  <tr v-if="loadingOrders">
+                    <td colspan="5" class="py-6 text-center text-xs text-gray-400">Đang tải...</td>
                   </tr>
-                  <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="py-4 font-bold tracking-wide">#NF-871032</td>
-                    <td class="py-4 text-gray-500 font-normal">Sep 28, 2023</td>
-                    <td class="py-4">
-                      <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                        IN TRANSIT
-                      </span>
-                    </td>
-                    <td class="py-4 font-normal text-gray-800">$420.00</td>
-                    <td class="py-4 text-right">
-                      <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
-                    </td>
+                  <!-- Empty -->
+                  <tr v-else-if="recentOrders.length === 0">
+                    <td colspan="5" class="py-6 text-center text-xs text-gray-400">Chưa có đơn hàng nào.</td>
                   </tr>
-                  <tr class="hover:bg-gray-50/50 transition-colors">
-                    <td class="py-4 font-bold tracking-wide">#NF-865510</td>
-                    <td class="py-4 text-gray-500 font-normal">Sep 15, 2023</td>
+                  <!-- Rows -->
+                  <tr
+                    v-else
+                    v-for="order in recentOrders"
+                    :key="order.id"
+                    class="hover:bg-gray-50/50 transition-colors"
+                  >
+                    <td class="py-4 font-bold tracking-wide font-mono">{{ order.order_code }}</td>
+                    <td class="py-4 text-gray-500 font-normal">{{ formatDate(order.created_at) }}</td>
                     <td class="py-4">
-                      <span class="inline-block text-[9px] font-bold tracking-wider uppercase border border-gray-400 text-gray-700 bg-white px-2 py-0.5 rounded-none scale-95 origin-left">
-                        DELIVERED
+                      <span :class="statusClass(order.status)">
+                        {{ statusText(order.status) }}
                       </span>
                     </td>
-                    <td class="py-4 font-normal text-gray-800">$2,100.00</td>
+                    <td class="py-4 font-normal text-gray-800 font-mono">{{ formatPrice(order.final_amount) }}</td>
                     <td class="py-4 text-right">
-                      <button class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500">DETAILS</button>
+                      <router-link
+                        :to="{ name: 'CheckoutSuccess', query: { code: order.order_code } }"
+                        class="text-[10px] font-bold uppercase tracking-wider underline hover:text-gray-500 text-gray-800"
+                      >CHI TIẾT</router-link>
                     </td>
                   </tr>
                 </tbody>

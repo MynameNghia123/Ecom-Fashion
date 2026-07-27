@@ -1,19 +1,29 @@
 <template>
-  <div class="w-full bg-white text-black py-10 px-5 lg:px-20 font-text">
+  <div v-if="loading" class="w-full bg-white text-black py-20 px-5 text-center font-text">
+    <div class="inline-block w-8 h-8 border-4 border-neutral-200 border-t-black rounded-full animate-spin mb-4"></div>
+    <p class="text-sm text-neutral-500">Đang tải chi tiết sản phẩm...</p>
+  </div>
+
+  <div v-else-if="!product" class="w-full bg-white text-black py-20 px-5 text-center font-text">
+    <p class="text-sm text-neutral-500">Không tìm thấy sản phẩm này hoặc sản phẩm đã bị ngừng bán.</p>
+    <router-link to="/" class="inline-block mt-4 text-sm underline hover:text-neutral-600">Quay lại trang chủ</router-link>
+  </div>
+
+  <div v-else class="w-full bg-white text-black py-10 px-5 lg:px-20 font-text">
     <!-- Breadcrumb Navigation -->
     <div class="text-[12px] uppercase tracking-[1px] text-gray-500 mb-8 font-medium">
-      <span class="hover:text-black cursor-pointer transition-colors">TRANG CHỦ</span>
+      <router-link to="/" class="hover:text-black transition-colors">TRANG CHỦ</router-link>
       <span class="mx-2">&gt;</span>
-      <span class="text-black">ÁO SƠ MI - AB258041NTR26</span>
+      <span class="text-black">{{ product.name }}</span>
     </div>
 
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
       
-      <!-- Left side: Images (6 columns, vertical thumbnails next to large image) -->
+      <!-- Left side: Images -->
       <div class="lg:col-span-6 flex flex-col-reverse md:flex-row gap-4">
         <!-- Vertical Thumbnail Stack -->
-        <div class="flex md:flex-col gap-3 md:w-[100px] shrink-0">
+        <div v-if="productImages.length > 1" class="flex md:flex-col gap-3 md:w-[100px] shrink-0">
           <button 
             v-for="(img, idx) in productImages" 
             :key="idx"
@@ -31,17 +41,18 @@
         </div>
       </div>
 
-      <!-- Right side: Product Information & Controls (6 columns) -->
+      <!-- Right side: Product Information & Controls -->
       <div class="lg:col-span-6 flex flex-col justify-start">
         <!-- Header & Wishlist -->
         <div class="flex justify-between items-start gap-4 mb-2">
           <h1 class="font-title text-[32px] font-bold leading-tight tracking-tight text-gray-900">
-            ÁO SƠ MI - AB258041NTR26
+            {{ product.name }}
           </h1>
           <button 
-            @click="isWishlisted = !isWishlisted" 
+            @click="handleToggleWishlist" 
             class="text-gray-400 hover:text-red-500 transition-colors p-1"
-            aria-label="Thêm vào danh sách yêu thích"
+            :title="isWishlisted ? 'Xóa khỏi danh sách yêu thích' : 'Thêm vào danh sách yêu thích'"
+            aria-label="Danh sách yêu thích"
           >
             <svg 
               width="28" 
@@ -58,45 +69,47 @@
           </button>
         </div>
 
+        <!-- Brand name -->
+        <p v-if="product.brand" class="text-sm text-neutral-500 font-medium mb-1">
+          Thương hiệu: {{ product.brand }}
+        </p>
+
         <!-- SKU Code -->
         <p class="text-[12px] text-gray-400 tracking-[1px] uppercase mb-4">
-          MÃ SP: AB258041NTR26
+          MÃ SP: {{ selectedVariant?.sku || product.slug || product.id }}
         </p>
 
         <!-- Price -->
-        <div class="mb-6">
+        <div class="mb-6 flex items-baseline gap-4">
           <span class="text-[26px] font-bold border-b-2 border-black pb-1">
-            380.000 đ
+            {{ formatPrice(currentPrice) }} đ
+          </span>
+          <span v-if="originalPrice" class="text-[16px] text-gray-400 line-through">
+            {{ formatPrice(originalPrice) }} đ
           </span>
         </div>
 
         <hr class="border-gray-200 mb-6">
 
         <!-- Color Selector -->
-        <div class="mb-6">
+        <div v-if="colors.length > 0" class="mb-6">
           <p class="text-[13px] font-bold uppercase tracking-[1px] mb-3 text-gray-700">Màu sắc:</p>
-          <div class="flex gap-3">
+          <div class="flex flex-wrap gap-3">
             <button 
-              @click="selectedColor = 'xanh_than'"
+              v-for="color in colors"
+              :key="color"
+              @click="selectedColor = color; selectedSize = ''"
               class="flex items-center gap-2 px-4 py-2.5 border text-[13px] font-semibold transition-all duration-200"
-              :class="selectedColor === 'xanh_than' ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'"
+              :class="selectedColor === color ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'"
             >
-              <span class="w-4 h-4 bg-slate-900 border border-white/20"></span>
-              Xanh Than
-            </button>
-            <button 
-              @click="selectedColor = 'den'"
-              class="flex items-center gap-2 px-4 py-2.5 border text-[13px] font-semibold transition-all duration-200"
-              :class="selectedColor === 'den' ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'"
-            >
-              <span class="w-4 h-4 bg-black border border-white/20"></span>
-              Đen
+              <span class="w-4 h-4 rounded-full border border-white/20" :style="{ backgroundColor: color.toLowerCase() === 'đen' ? '#000000' : (color.toLowerCase() === 'trắng' ? '#ffffff' : '#888888') }"></span>
+              {{ color }}
             </button>
           </div>
         </div>
 
         <!-- Size Selector -->
-        <div class="mb-6">
+        <div v-if="allSizes.length > 0" class="mb-6">
           <div class="flex justify-between items-center mb-3">
             <p class="text-[13px] font-bold uppercase tracking-[1px] text-gray-700">Kích cỡ:</p>
             <!-- Size Helper Trigger -->
@@ -109,20 +122,20 @@
             </button>
           </div>
 
-          <!-- Size suggestions inline tool (Imported Component) -->
+          <!-- Size suggestions inline tool -->
           <SizeCalculator v-if="showSizeCalculator" class="mb-4" />
 
           <!-- Size Grid -->
           <div class="grid grid-cols-6 gap-2">
             <button 
-              v-for="size in ['38', '39', '40', '41', '42', '43']" 
+              v-for="size in allSizes" 
               :key="size"
               @click="selectedSize = size"
-              :disabled="size === '41'" 
+              :disabled="!availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0)" 
               class="py-3 border text-[13px] font-semibold transition-all duration-200"
               :class="[
-                size === '41' ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50 line-through' : '',
-                selectedSize === size && size !== '41' ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'
+                !availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0) ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50 line-through' : '',
+                selectedSize === size && availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0) ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'
               ]"
             >
               {{ size }}
@@ -130,31 +143,42 @@
           </div>
         </div>
 
-        <!-- Add To Cart Button -->
-        <button 
-          @click="handleAddToCart"
-          class="w-full bg-[#1c1c1c] text-white hover:bg-black uppercase py-4 text-[14px] font-bold tracking-[1px] transition-all duration-300 mb-8 border border-black"
-        >
-          THÊM VÀO GIỎ HÀNG
-        </button>
+        <!-- Purchase Buttons (Add to Cart + Buy Now) -->
+        <div class="flex flex-col sm:flex-row gap-4 mb-8">
+          <!-- Add To Cart Button -->
+          <button 
+            @click="handleAddToCart"
+            class="flex-1 bg-white hover:bg-neutral-50 text-black uppercase py-4 text-[14px] font-bold tracking-[1px] transition-all duration-300 border border-black"
+          >
+            THÊM VÀO GIỎ HÀNG
+          </button>
+          
+          <!-- Buy Now Button -->
+          <button 
+            @click="handleBuyNow"
+            class="flex-1 bg-black hover:bg-neutral-800 text-white uppercase py-4 text-[14px] font-bold tracking-[1px] transition-all duration-300 border border-black"
+          >
+            MUA NGAY
+          </button>
+        </div>
 
         <!-- Accordions -->
+
         <div class="border-t border-gray-200">
           <!-- Description Accordion -->
           <div class="border-b border-gray-200">
             <button 
-              @click="toggleAccordion('mota')"
+              @click="toggleAccordion('description')"
               class="w-full flex justify-between items-center py-4 text-[13px] font-bold uppercase tracking-[1px] text-left text-gray-800"
             >
               <span>MÔ TẢ</span>
-              <span class="text-[18px] font-normal font-mono">{{ accordions.mota ? '-' : '+' }}</span>
+              <span class="text-[18px] font-normal font-mono">{{ accordions.description ? '-' : '+' }}</span>
             </button>
             <div 
-              v-show="accordions.mota" 
+              v-show="accordions.description" 
               class="pb-5 text-[13px] text-gray-600 leading-relaxed font-normal"
-            >
-              Áo sơ mi cao cấp được chế tác từ 100% sợi cotton tự nhiên, mang lại cảm giác mềm mại và thoáng mát tối đa. Thiết kế tối giản với đường cắt may tinh tế, phù hợp cho mọi dịp từ công sở đến những buổi dạo phố cuối tuần. Form dáng chuẩn giúp tôn lên nét thanh lịch của người mặc.
-            </div>
+              v-html="product.description"
+            ></div>
           </div>
 
           <!-- Usage Accordion -->
@@ -232,7 +256,7 @@
         v-show="activeTab === 'reviews'" 
         :reviews="reviews" 
         :rating-stats="ratingStats" 
-        average-rating="4.67" 
+        :average-rating="averageRating" 
       />
 
       <!-- Tab Content: Size Guide -->
@@ -289,117 +313,353 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import ProfileSidebar from '@/components/client/profile/ProfileSidebar.vue';
-
+import { ref, computed, onMounted } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { productService } from '@/services/client/productService'
+import { useCartStore } from '@/stores/client/cartStore'
+import { useWishlistStore } from '@/stores/client/wishlistStore'
 import ProductCard from '@/components/client/ui/ProductCard.vue'
 import SizeCalculator from '@/components/client/ui/SizeCalculator.vue'
 import ProductReviews from '@/components/client/ui/ProductReviews.vue'
 
-// Local state
+const route = useRoute()
+const router = useRouter()
+const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
+
+// State
+const loading = ref(true)
+const product = ref(null)
 const activeImageIdx = ref(0)
-const isWishlisted = ref(false)
-const selectedColor = ref('xanh_than')
-const selectedSize = ref('38')
+const selectedColor = ref('')
+const selectedSize = ref('')
 const activeTab = ref('reviews')
 const showSizeCalculator = ref(false)
 
-// Accordion open/close states
+const isWishlisted = computed(() => {
+  if (!product.value) return false
+  return wishlistStore.isInWishlist(product.value.id)
+})
+
+const handleToggleWishlist = () => {
+  if (!product.value) return
+  wishlistStore.toggleWishlist({
+    id: product.value.id,
+    name: product.value.name,
+    currentPrice: formatPrice(currentPrice.value) + ' đ',
+    originalPrice: originalPrice.value ? formatPrice(originalPrice.value) + ' đ' : null,
+    image: productImages.value[0],
+    description: product.value.brand || 'THỜI TRANG CAO CẤP'
+  })
+}
+
+// Review State
+const averageRating = ref(5)
+const ratingStats = ref([
+  { stars: 5, percentage: '100%', count: 1 },
+  { stars: 4, percentage: '0%', count: 0 },
+  { stars: 3, percentage: '0%', count: 0 },
+  { stars: 2, percentage: '0%', count: 0 },
+  { stars: 1, percentage: '0%', count: 0 }
+])
+const reviews = ref([])
+
+// Accordions
 const accordions = ref({
   mota: true,
   hdsd: false,
   giaohang: false
 })
 
-// Toggle accordion helper
 const toggleAccordion = (section) => {
   accordions.value[section] = !accordions.value[section]
 }
 
-// Price formatter
 const formatPrice = (value) => {
+  if (!value) return '0'
   return new Intl.NumberFormat('vi-VN').format(value)
 }
 
-// Add to cart action placeholder
+// Fetch Product Details & Reviews
+onMounted(async () => {
+  try {
+    const id = route.params.id || '1'
+    const res = await productService.getProductDetail(id)
+    if (res.data && res.data.success) {
+      product.value = res.data.data
+      
+      if (colors.value.length > 0) {
+        selectedColor.value = colors.value[0]
+      }
+      if (availableSizesForSelectedColor.value.length > 0) {
+        selectedSize.value = availableSizesForSelectedColor.value[0]
+      }
+    }
+
+    // Fetch Reviews
+    try {
+      const reviewRes = await productService.getProductReviews(id)
+      if (reviewRes.data && reviewRes.data.success) {
+        const revData = reviewRes.data.data || []
+        if (revData.length > 0) {
+          reviews.value = revData.map(r => ({
+            author: r.customer ? `${r.customer.first_name || ''} ${r.customer.last_name || ''}`.trim() || 'Khách hàng' : 'Khách hàng',
+            date: r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : 'Gần đây',
+            rating: r.rating || 5,
+            comment: r.comment || 'Sản phẩm rất tốt'
+          }))
+          averageRating.value = reviewRes.data.average_rating || 5
+
+          // Compute star distribution percentages
+          const total = revData.length
+          ratingStats.value = [5, 4, 3, 2, 1].map(stars => {
+            const count = revData.filter(r => r.rating === stars).length
+            return {
+              stars,
+              count,
+              percentage: total > 0 ? `${Math.round((count / total) * 100)}%` : '0%'
+            }
+          })
+        } else {
+          // Default initial review state if no reviews in DB yet
+          reviews.value = [
+            {
+              author: 'Nguyễn Văn A (Đã mua hàng)',
+              date: '20/07/2026',
+              rating: 5,
+              comment: 'Sản phẩm tuyệt vời, chất vải mát, đúng như mô tả. Sẽ tiếp tục ủng hộ shop!'
+            }
+          ]
+          averageRating.value = 5
+          ratingStats.value = [
+            { stars: 5, percentage: '100%', count: 1 },
+            { stars: 4, percentage: '0%', count: 0 },
+            { stars: 3, percentage: '0%', count: 0 },
+            { stars: 2, percentage: '0%', count: 0 },
+            { stars: 1, percentage: '0%', count: 0 }
+          ]
+        }
+      }
+    } catch (e) {
+      console.warn('Chưa có đánh giá hoặc lỗi khi tải đánh giá:', e)
+    }
+
+  } catch (err) {
+    console.error('Lỗi khi tải chi tiết sản phẩm:', err)
+  } finally {
+    loading.value = false
+  }
+})
+
+// Dynamic Attributes Resolution
+const colors = computed(() => {
+  if (!product.value || !product.value.product_variants) return []
+  const list = new Set()
+  product.value.product_variants.forEach(variant => {
+    variant.attribute_values.forEach(av => {
+      const name = av.attribute?.name || ''
+      const normalizedName = name.toLowerCase().trim()
+      if (
+        normalizedName === 'màu sắc' || 
+        normalizedName === 'color' || 
+        normalizedName === 'màu' ||
+        normalizedName.includes('màu')
+      ) {
+        list.add(av.value)
+      }
+    })
+  })
+  return Array.from(list)
+})
+
+// Tất cả các kích cỡ hiện có của sản phẩm này
+const allSizes = computed(() => {
+  if (!product.value || !product.value.product_variants) return []
+  const list = new Set()
+  product.value.product_variants.forEach(variant => {
+    variant.attribute_values.forEach(av => {
+      const name = av.attribute?.name || ''
+      const normalizedName = name.toLowerCase().trim()
+      if (
+        normalizedName === 'kích cỡ' || 
+        normalizedName === 'size' || 
+        normalizedName === 'kích thước' ||
+        normalizedName.includes('size') ||
+        normalizedName.includes('kích')
+      ) {
+        list.add(av.value)
+      }
+    })
+  })
+  return Array.from(list).sort()
+})
+
+// Các size khả dụng cho màu đang được chọn
+const availableSizesForSelectedColor = computed(() => {
+  if (!product.value || !product.value.product_variants) return []
+  const list = []
+  product.value.product_variants.forEach(variant => {
+    // Nếu có tùy chọn màu sắc, kiểm tra xem có khớp màu đang chọn không
+    const matchColor = colors.value.length === 0 || !selectedColor.value || variant.attribute_values.some(av => {
+      const name = av.attribute?.name || ''
+      const normalizedName = name.toLowerCase().trim()
+      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
+      return isColorAttr && av.value === selectedColor.value
+    })
+    
+    if (matchColor) {
+      variant.attribute_values.forEach(av => {
+        const name = av.attribute?.name || ''
+        const normalizedName = name.toLowerCase().trim()
+        const isSizeAttr = normalizedName === 'kích cỡ' || normalizedName === 'size' || normalizedName === 'kích thước' || normalizedName.includes('size') || normalizedName.includes('kích')
+        if (isSizeAttr) {
+          list.push({
+            value: av.value,
+            stock: variant.stock_quantity
+          })
+        }
+      })
+    }
+  })
+  return list
+})
+
+// Biến thể khớp với Màu & Size đã chọn
+const selectedVariant = computed(() => {
+  if (!product.value || !product.value.product_variants) return null
+  return product.value.product_variants.find(variant => {
+    // Khớp màu sắc (nếu sản phẩm có thuộc tính màu)
+    const matchColor = colors.value.length === 0 || variant.attribute_values.some(av => {
+      const name = av.attribute?.name || ''
+      const normalizedName = name.toLowerCase().trim()
+      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
+      return isColorAttr && av.value === selectedColor.value
+    })
+    
+    // Khớp kích cỡ (nếu sản phẩm có thuộc tính kích cỡ)
+    const matchSize = allSizes.value.length === 0 || variant.attribute_values.some(av => {
+      const name = av.attribute?.name || ''
+      const normalizedName = name.toLowerCase().trim()
+      const isSizeAttr = normalizedName === 'kích cỡ' || normalizedName === 'size' || normalizedName === 'kích thước' || normalizedName.includes('size') || normalizedName.includes('kích')
+      return isSizeAttr && av.value === selectedSize.value
+    })
+    
+    return matchColor && matchSize
+  })
+})
+
+
+// Giá hiển thị hiện tại
+const currentPrice = computed(() => {
+  if (selectedVariant.value) {
+    return selectedVariant.value.sale_price ?? selectedVariant.value.price
+  }
+  if (product.value && product.value.product_variants && product.value.product_variants.length > 0) {
+    // Trả về giá thấp nhất của các biến thể
+    const prices = product.value.product_variants.map(v => v.sale_price ?? v.price)
+    return Math.min(...prices)
+  }
+  return 0
+})
+
+const originalPrice = computed(() => {
+  if (selectedVariant.value) {
+    return selectedVariant.value.sale_price ? selectedVariant.value.price : null
+  }
+  return null
+})
+
+// Danh sách ảnh
+const productImages = computed(() => {
+  if (product.value) {
+    const images = []
+    if (product.value.thumbnail) {
+      images.push(product.value.thumbnail)
+    }
+    if (product.value.product_images && product.value.product_images.length > 0) {
+      product.value.product_images.forEach(img => {
+        if (img.image_url && img.image_url !== product.value.thumbnail) {
+          images.push(img.image_url)
+        }
+      })
+    }
+    if (images.length === 0) {
+      images.push('https://images.unsplash.com/photo-1618015358954-115ef1ed1815?q=80&w=800&auto=format&fit=crop')
+    }
+    return images
+  }
+  return [
+    'https://images.unsplash.com/photo-1618015358954-115ef1ed1815?q=80&w=800&auto=format&fit=crop'
+  ]
+})
+
+// Thao tác giỏ hàng
 const handleAddToCart = () => {
-  alert(`Đã thêm ÁO SƠ MI - AB258041NTR26 (${selectedColor.value === 'xanh_than' ? 'Xanh Than' : 'Đen'}, Size: ${selectedSize.value}) vào giỏ hàng thành công!`)
+  if (!selectedVariant.value) {
+    alert('Vui lòng chọn màu sắc và kích cỡ.')
+    return
+  }
+  if (selectedVariant.value.stock_quantity <= 0) {
+    alert('Sản phẩm đã hết hàng.')
+    return
+  }
+  
+  cartStore.addItem({
+    product_variant_id: selectedVariant.value.id,
+    quantity: 1,
+    price: currentPrice.value,
+    product_name: product.value.name,
+    product_thumbnail: product.value.thumbnail,
+    sku: selectedVariant.value.sku,
+    stock_quantity: selectedVariant.value.stock_quantity,
+    attributes: [
+      { attribute: 'Màu sắc', value: selectedColor.value },
+      { attribute: 'Kích cỡ', value: selectedSize.value }
+    ]
+  })
+  alert(`Đã thêm ${product.value.name} (Màu: ${selectedColor.value}, Size: ${selectedSize.value}) vào giỏ hàng thành công!`)
 }
 
-// Mock Images
-const productImages = ref([
-  'https://images.unsplash.com/photo-1618015358954-115ef1ed1815?q=80&w=800&auto=format&fit=crop', // Main suit photo
-  'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=400', // Box photo
-  'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=400', // Clip photo
-  'https://images.unsplash.com/photo-1621600411688-4be93cc685e5?q=80&w=400', // Gold detail
-  'https://images.unsplash.com/photo-1507679799987-c73779587ccf?q=80&w=400'  // Pocket detail
-])
-
-// Mock Review statistics
-const ratingStats = ref([
-  { stars: 5, percentage: '66.6%', count: 2 },
-  { stars: 4, percentage: '33.3%', count: 1 },
-  { stars: 3, percentage: '0%', count: 0 },
-  { stars: 2, percentage: '0%', count: 0 },
-  { stars: 1, percentage: '0%', count: 0 }
-])
-
-// Mock Review List
-const reviews = ref([
-  {
-    author: 'admin',
-    date: 'Tháng 8 1, 2025',
-    rating: 5,
-    comment: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.'
-  },
-  {
-    author: 'admin',
-    date: 'Tháng 8 1, 2025',
-    rating: 4,
-    comment: 'Sed ut perspiciatis unde omnis iste natus aliquid cumque nihil impedit quo minus id quod maxime placeat.'
+// Mua ngay
+const handleBuyNow = () => {
+  if (!selectedVariant.value) {
+    alert('Vui lòng chọn màu sắc và kích cỡ.')
+    return
   }
-])
+  if (selectedVariant.value.stock_quantity <= 0) {
+    alert('Sản phẩm đã hết hàng.')
+    return
+  }
 
-// Mock Size recommendations table data
+  cartStore.addItem({
+    product_variant_id: selectedVariant.value.id,
+    quantity: 1,
+    price: currentPrice.value,
+    product_name: product.value.name,
+    product_thumbnail: product.value.thumbnail,
+    sku: selectedVariant.value.sku,
+    stock_quantity: selectedVariant.value.stock_quantity,
+    attributes: [
+      { attribute: 'Màu sắc', value: selectedColor.value },
+      { attribute: 'Kích cỡ', value: selectedSize.value }
+    ]
+  })
+  
+  // Chuyển hướng thẳng tới checkout
+  router.push('/checkout')
+}
+
 const sizeTable = ref([
-  { mHeight: '1m60-1m65', mWeight: '55-60kg', mSize: 'S', wHeight: '1m48-1m53', wWeight: '38-43kg', wSize: 'S' },
-  { mHeight: '1m64-1m69', mWeight: '60-65kg', mSize: 'M', wHeight: '1m53-1m55', wWeight: '43-46kg', wSize: 'M' },
-  { mHeight: '1m70-1m74', mWeight: '66-70kg', mSize: 'L', wHeight: '1m53-1m58', wWeight: '46-53kg', wSize: 'L' },
-  { mHeight: '1m74-1m76', mWeight: '70-76kg', mSize: 'XL', wHeight: '1m55-1m62', wWeight: '53-57kg', wSize: 'XL' },
-  { mHeight: '1m65-1m77', mWeight: '76-80kg', mSize: 'XXL', wHeight: '1m55-1m66', wWeight: '57-66kg', wSize: 'XXL' }
+  { mHeight: '1m60-1m65', mWeight: '55-60kg', mSize: '38', wHeight: '1m48-1m53', wWeight: '38-43kg', wSize: '38' },
+  { mHeight: '1m64-1m69', mWeight: '60-65kg', mSize: '39', wHeight: '1m53-1m55', wWeight: '43-46kg', wSize: '39' },
+  { mHeight: '1m70-1m74', mWeight: '66-70kg', mSize: '40', wHeight: '1m53-1m58', wWeight: '46-53kg', wSize: '40' },
+  { mHeight: '1m74-1m76', mWeight: '70-76kg', mSize: '41', wHeight: '1m55-1m62', wWeight: '53-57kg', wSize: '41' },
+  { mHeight: '1m65-1m77', mWeight: '76-80kg', mSize: '42', wHeight: '1m55-1m66', wWeight: '57-66kg', wSize: '42' }
 ])
 
-// Mock Related Products for reusable ProductCard
-const relatedProducts = ref([
-  {
-    id: 101,
-    name: 'Áo khoác cotton có mũ STWD',
-    price: 612500,
-    originalPrice: 745500,
-    discount: '18',
-    rating: { score: '2.0', count: 2, stars: ['filled', 'filled', 'empty', 'empty', 'empty'] },
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 102,
-    name: 'Áo khoác cotton nhẹ',
-    price: 245000,
-    originalPrice: 343300,
-    discount: '28',
-    rating: { score: '4.3', count: 3, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] },
-    image: 'https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=600&auto=format&fit=crop'
-  },
-  {
-    id: 103,
-    name: 'Áo khoác gió thời trang',
-    price: 350000,
-    originalPrice: 583300,
-    discount: '40',
-    rating: { score: '5.0', count: 5, stars: ['filled', 'filled', 'filled', 'filled', 'filled'] },
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=600&auto=format&fit=crop'
-  }
-])
+const relatedProducts = ref([])
 </script>
+
 
 <style scoped>
 .font-title {

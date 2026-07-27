@@ -60,12 +60,15 @@ services:
     user: root
     env_file:
       - ./backend/.env
+    environment:
+      PHP_INI_SCAN_DIR: "/usr/local/etc/php/conf.d"
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/var/www/html
       - backend_vendor:/var/www/html/vendor
       - backend_bootstrap_cache:/var/www/html/bootstrap/cache
+      - ./backend/php-upload.ini:/usr/local/etc/php/conf.d/upload.ini:ro
     depends_on:
       mysql:
         condition: service_healthy

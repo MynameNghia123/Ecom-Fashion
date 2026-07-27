@@ -15,6 +15,7 @@ import WishList from '../views/client/profile/WishList.vue'
 import Settings from '../views/client/profile/Settings.vue'
 import CheckoutSuccess from '../views/client/checkout/CheckoutSuccess.vue'
 import Checkout from '../views/client/checkout/Checkout.vue'
+import VNPayReturn from '../views/client/checkout/VNPayReturn.vue'
 import adminRoutes from './adminRoutes'
 
 const routes = [
@@ -100,6 +101,11 @@ const routes = [
     path: '/checkout/success',
     name: 'CheckoutSuccess',
     component: CheckoutSuccess
+  },
+  {
+    path: '/checkout/vnpay-return',
+    name: 'VNPayReturn',
+    component: VNPayReturn
   },
   {
     path: '/checkout',

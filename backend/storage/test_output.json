@@ -1,0 +1,151 @@
+{
+    "attributes": [
+        {
+            "id": 1,
+            "name": "Màu",
+            "created_at": "2026-07-13T11:19:41.000000Z",
+            "updated_at": "2026-07-13T11:19:41.000000Z"
+        },
+        {
+            "id": 2,
+            "name": "Size",
+            "created_at": "2026-07-13T11:19:48.000000Z",
+            "updated_at": "2026-07-13T11:19:48.000000Z"
+        }
+    ],
+    "product": {
+        "id": 2,
+        "category_id": 1,
+        "name": "Áo sơ mi - AR258043DR26",
+        "slug": "Áo-sơ-mi - AR258043DR26",
+        "description": "Áo sơ mi dài tay, kiểu dáng Regular Fit dễ mặc, hợp form dáng, áo tà bầu.\nMàu sắc và kiểu dáng trẻ trung, kiểu dáng hiện đại, dễ phối đồ.\nChất liệu: 87% Polyester 13% Rayon",
+        "brand": "Brand",
+        "thumbnail": null,
+        "user_manual": null,
+        "is_active": true,
+        "created_by_staff_id": null,
+        "updated_by_staff_id": null,
+        "created_at": "2026-07-15T06:45:51.000000Z",
+        "updated_at": "2026-07-15T06:45:51.000000Z",
+        "deleted_at": null,
+        "product_variants": [
+            {
+                "id": 2,
+                "product_id": 2,
+                "sku": "SKU-S-XANH",
+                "price": "550000.00",
+                "sale_price": null,
+                "cost_price": "500000.00",
+                "stock_quantity": 20,
+                "thumbnail": null,
+                "is_active": 1,
+                "created_at": "2026-07-15T06:45:51.000000Z",
+                "updated_at": "2026-07-15T06:45:51.000000Z",
+                "attribute_values": [
+                    {
+                        "id": 2,
+                        "attribute_id": 2,
+                        "product_variant_id": 2,
+                        "value": "S",
+                        "attribute": {
+                            "id": 2,
+                            "name": "Size",
+                            "created_at": "2026-07-13T11:19:48.000000Z",
+                            "updated_at": "2026-07-13T11:19:48.000000Z"
+                        }
+                    },
+                    {
+                        "id": 3,
+                        "attribute_id": 1,
+                        "product_variant_id": 2,
+                        "value": "Xanh",
+                        "attribute": {
+                            "id": 1,
+                            "name": "Màu",
+                            "created_at": "2026-07-13T11:19:41.000000Z",
+                            "updated_at": "2026-07-13T11:19:41.000000Z"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 3,
+                "product_id": 2,
+                "sku": "SKU-L-XANH",
+                "price": "560000.00",
+                "sale_price": null,
+                "cost_price": "510000.00",
+                "stock_quantity": 18,
+                "thumbnail": null,
+                "is_active": 1,
+                "created_at": "2026-07-15T06:45:51.000000Z",
+                "updated_at": "2026-07-15T08:06:18.000000Z",
+                "attribute_values": [
+                    {
+                        "id": 4,
+                        "attribute_id": 2,
+                        "product_variant_id": 3,
+                        "value": "L",
+                        "attribute": {
+                            "id": 2,
+                            "name": "Size",
+                            "created_at": "2026-07-13T11:19:48.000000Z",
+                            "updated_at": "2026-07-13T11:19:48.000000Z"
+                        }
+                    },
+                    {
+                        "id": 5,
+                        "attribute_id": 1,
+                        "product_variant_id": 3,
+                        "value": "Xanh",
+                        "attribute": {
+                            "id": 1,
+                            "name": "Màu",
+                            "created_at": "2026-07-13T11:19:41.000000Z",
+                            "updated_at": "2026-07-13T11:19:41.000000Z"
+                        }
+                    }
+                ]
+            },
+            {
+                "id": 4,
+                "product_id": 2,
+                "sku": "SKU-M-XANH",
+                "price": "570000.00",
+                "sale_price": null,
+                "cost_price": "520000.00",
+                "stock_quantity": 20,
+                "thumbnail": null,
+                "is_active": 1,
+                "created_at": "2026-07-15T06:45:51.000000Z",
+                "updated_at": "2026-07-15T06:45:51.000000Z",
+                "attribute_values": [
+                    {
+                        "id": 6,
+                        "attribute_id": 2,
+                        "product_variant_id": 4,
+                        "value": "M",
+                        "attribute": {
+                            "id": 2,
+                            "name": "Size",
+                            "created_at": "2026-07-13T11:19:48.000000Z",
+                            "updated_at": "2026-07-13T11:19:48.000000Z"
+                        }
+                    },
+                    {
+                        "id": 7,
+                        "attribute_id": 1,
+                        "product_variant_id": 4,
+                        "value": "Xanh",
+                        "attribute": {
+                            "id": 1,
+                            "name": "Màu",
+                            "created_at": "2026-07-13T11:19:41.000000Z",
+                            "updated_at": "2026-07-13T11:19:41.000000Z"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+}
