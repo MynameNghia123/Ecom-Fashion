@@ -10,12 +10,20 @@ return new class extends Migration
     {
         Schema::create('return_requests', function (Blueprint $table) {
             $table->id();
+            $table->string('ticket_code')->unique(); // #RET-XXXX
             $table->foreignId('order_id')->constrained('orders')->cascadeOnDelete();
-            $table->text('reason');
+            $table->foreignId('order_detail_id')->nullable()->constrained('order_details')->nullOnDelete();
+            // Lý do trả: defective | wrong_size | wrong_item | change_mind | other
+            $table->string('reason');
+            $table->text('customer_note')->nullable();
             $table->json('evidence_images')->nullable();
-            $table->string('status')->default('pending');
+            $table->integer('quantity')->default(1);
             $table->decimal('refund_amount', 12, 2)->nullable();
-            $table->foreignId('processed_by_staff_id')->nullable()->constrained('staff');
+            // Status flow: pending → approved → received → refunded | rejected
+            $table->string('status')->default('pending');
+            $table->text('admin_note')->nullable();
+            $table->foreignId('processed_by_staff_id')->nullable()->constrained('staff')->nullOnDelete();
+            $table->timestamp('processed_at')->nullable();
             $table->timestamps();
         });
     }

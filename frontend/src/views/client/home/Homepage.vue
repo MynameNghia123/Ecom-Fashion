@@ -2,39 +2,96 @@
   <div class="w-full">
     <!-- Hero Section -->
     <div class="relative h-[90vh] min-h-[700px] flex flex-col text-white overflow-hidden">
-      <!-- Background placeholder since user will add banner later -->
-      <div class="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.4)] to-[rgba(0,0,0,0.3)] bg-[url('https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop')] bg-center bg-cover bg-no-repeat -z-10"></div>
+      <!-- Slide Backgrounds with smooth opacity transition -->
+      <div 
+        v-for="(slide, index) in slides" 
+        :key="index"
+        :style="{ backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.3)), url(${slide.image})` }"
+        :class="[
+          'absolute inset-0 bg-center bg-cover bg-no-repeat -z-10 transition-opacity duration-1000 ease-in-out',
+          currentSlide === index ? 'opacity-100' : 'opacity-0'
+        ]"
+      ></div>
       <!-- Hero Content -->
-      <div class="grow flex flex-col justify-center items-center text-center px-5 -mt-[50px]">
-        <h2 class="font-title text-[36px] max-md:text-[24px] font-bold mb-0 tracking-[-0.5px]">Xu Hướng Mùa Hè Này</h2>
-        <h1 class="font-title text-[180px] max-lg:text-[120px] max-md:text-[80px] m-[-10px_0_20px_0] font-bold leading-none tracking-[5px] drop-shadow-[2px_4px_10px_rgba(0,0,0,0.1)]">Luxury</h1>
-        <p class="font-text text-[16px] max-md:text-[14px] leading-[1.6] max-w-[650px] mx-auto mb-10 font-normal drop-shadow-[1px_1px_3px_rgba(0,0,0,0.3)]">
-          Được thiết kế cho những ai trân trọng sự tối giản và mạnh mẽ. Hình dáng đương đại, chi tiết cân đối
-          <br>và phong thái tự tin trong mùa hè.
-        </p>
-        <button class="bg-white text-black border-none py-4 px-9 text-[13px] font-bold uppercase tracking-[1px] cursor-pointer transition-all duration-300 hover:bg-black hover:text-white">XEM BỘ SƯU TẬP</button>
+      <div class="grow flex flex-col justify-center items-center text-center px-5 -mt-[50px] relative w-full select-none">
+        <div 
+          v-for="(slide, index) in slides"
+          :key="index"
+          class="absolute inset-0 flex flex-col justify-center items-center text-center px-5 transition-all duration-700 ease-in-out"
+          :class="[
+            currentSlide === index ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95 pointer-events-none'
+          ]"
+        >
+          <h2 class="font-title text-[36px] max-md:text-[24px] font-bold mb-0 tracking-[-0.5px]">
+            {{ slide.subtitle }}
+          </h2>
+          <h1 class="font-title text-[180px] max-lg:text-[120px] max-md:text-[80px] m-[-10px_0_20px_0] font-bold leading-none tracking-[5px] drop-shadow-[2px_4px_10px_rgba(0,0,0,0.1)]">
+            {{ slide.title }}
+          </h1>
+        </div>
       </div>
 
-      <!-- Slider Controls (Mockup) -->
+      <!-- Slider Controls -->
       <div>
-        <button class="absolute top-1/2 -translate-y-1/2 left-5 bg-transparent border-none text-white cursor-pointer p-5 opacity-70 transition-all duration-300 hover:opacity-100 hover:scale-110">
+        <button 
+          @click="prevSlide"
+          class="absolute top-1/2 -translate-y-1/2 left-5 bg-transparent border-none text-white cursor-pointer p-5 opacity-70 transition-all duration-300 hover:opacity-100 hover:scale-110 z-10"
+        >
            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
-        <button class="absolute top-1/2 -translate-y-1/2 right-5 bg-transparent border-none text-white cursor-pointer p-5 opacity-70 transition-all duration-300 hover:opacity-100 hover:scale-110">
+        <button 
+          @click="nextSlide"
+          class="absolute top-1/2 -translate-y-1/2 right-5 bg-transparent border-none text-white cursor-pointer p-5 opacity-70 transition-all duration-300 hover:opacity-100 hover:scale-110 z-10"
+        >
            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
       </div>
       
-      <div class="absolute bottom-[30px] left-1/2 -translate-x-1/2 flex gap-2.5">
-        <span class="w-1.5 h-1.5 bg-white rounded-full cursor-pointer transition-colors duration-300"></span>
-        <span class="w-1.5 h-1.5 bg-white/50 rounded-full cursor-pointer transition-colors duration-300"></span>
+      <div class="absolute bottom-[30px] left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+        <span 
+          v-for="(slide, index) in slides"
+          :key="index"
+          @click="setSlide(index)"
+          class="w-1.5 h-1.5 rounded-full cursor-pointer transition-colors duration-300"
+          :class="currentSlide === index ? 'bg-white' : 'bg-white/50'"
+        ></span>
+      </div>
+    </div>
+
+    <!-- Brand Logos Section (Infinite Marquee) -->
+    <div class="py-8 bg-neutral-50/50 border-b border-neutral-100/50 overflow-hidden select-none relative">
+      <!-- Gradient Fade Overlays for Premium Look -->
+      <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#fbfbfb] to-transparent z-10 pointer-events-none max-md:w-8"></div>
+      <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#fbfbfb] to-transparent z-10 pointer-events-none max-md:w-8"></div>
+
+      <div class="marquee-wrapper overflow-hidden w-full flex">
+        <div class="marquee-track flex gap-8 items-center">
+          <div 
+            v-for="(brand, idx) in duplicatedBrands" 
+            :key="brand.domain + '-' + idx"
+            class="flex-shrink-0 w-20 h-20 rounded-full bg-white border border-neutral-200/60 shadow-sm flex items-center justify-center p-4 transition-all duration-300 hover:shadow-md hover:scale-105 cursor-pointer"
+          >
+            <img 
+              v-if="brand.logoUrl" 
+              :src="brand.logoUrl" 
+              :alt="brand.name"
+              class="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+            />
+            <span 
+              v-else 
+              class="font-title text-[9px] tracking-[1.5px] font-bold text-neutral-400 hover:text-neutral-900 transition-colors duration-300 uppercase text-center"
+            >
+              {{ brand.name }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
 
     <!-- Redefine Your Wardrobe Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
       <div class="flex justify-between items-center mb-10 max-md:flex-col max-md:items-start max-md:gap-[15px]">
-        <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Định Hình Lại Tủ Đồ Của Bạn</h2>
+        <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Hàng mới về</h2>
         <div class="flex gap-6">
           <a href="#" class="no-underline text-black font-text text-[14px] font-medium transition-colors duration-300">Váy</a>
           <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Nam</a>
@@ -44,43 +101,26 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-        <ProductCard 
+        <div 
           v-for="product in newArrivals" 
           :key="product.id"
-          :image="product.image"
-          :name="product.name"
-          :currentPrice="product.currentPrice"
-          :originalPrice="product.originalPrice"
-          :discount="product.discount"
-        />
-      </div>
-    </div>
-
-    <!-- Category Banners Section -->
-    <div class="flex w-full h-[600px] max-md:flex-col max-md:h-auto">
-      <div class="flex-1 relative flex items-end justify-center pb-[50px] bg-cover bg-center bg-no-repeat text-center text-white transition-[flex] duration-500 ease-in-out overflow-hidden max-md:h-[400px] before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/60 before:to-transparent before:z-10 before:transition-opacity before:duration-300 hover:before:opacity-80 bg-[url('https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=1200&auto=format&fit=crop')]">
-        <div class="relative z-20 max-w-[400px] px-5">
-          <h3 class="font-title text-[32px] font-normal tracking-[2px] m-[0_0_15px_0]">NỮ</h3>
-          <p class="font-text text-[13px] leading-[1.6] opacity-90 m-0">Sức mạnh mềm mại, chi tiết tinh tế, và hình dáng tự tin được định hình cho phong cách đương đại.</p>
-        </div>
-      </div>
-      <div class="flex-1 relative flex items-end justify-center pb-[50px] bg-cover bg-center bg-no-repeat text-center text-white transition-[flex] duration-500 ease-in-out overflow-hidden max-md:h-[400px] before:content-[''] before:absolute before:inset-0 before:bg-gradient-to-t before:from-black/60 before:to-transparent before:z-10 before:transition-opacity before:duration-300 hover:before:opacity-80 bg-[url('https://images.unsplash.com/photo-1617137968427-85924c800a22?q=80&w=1200&auto=format&fit=crop')]">
-        <div class="relative z-20 max-w-[400px] px-5">
-          <h3 class="font-title text-[32px] font-normal tracking-[2px] m-[0_0_15px_0]">NAM</h3>
-          <p class="font-text text-[13px] leading-[1.6] opacity-90 m-0">Cấu trúc rõ ràng, phong thái hiện đại, và những thiết kế thoải mái dành cho sự tự tin mỗi ngày.</p>
+          @click="goToDetail(product.id)"
+          class="cursor-pointer"
+        >
+          <ProductCard 
+            :image="product.image"
+            :name="product.name"
+            :currentPrice="product.currentPrice"
+            :originalPrice="product.originalPrice"
+            :discount="product.discount"
+          />
         </div>
       </div>
     </div>
 
-    <!-- Elegant Quote Section -->
-    <div class="py-[100px] px-5 lg:px-20 bg-transparent flex justify-center items-center text-center max-md:py-[60px] max-md:px-5">
-      <div class="max-w-[900px] relative">
-        <h2 class="font-title text-[42px] max-md:text-[28px] font-medium leading-[1.4] text-[#111] m-0 tracking-[0.5px] italic drop-shadow-[1px_1px_2px_rgba(0,0,0,0.05)]">
-          "Nâng tầm phong cách của bạn với vẻ thanh lịch vượt thời gian trong bộ sưu tập mới."
-        </h2>
-        <div class="w-20 h-[3px] bg-black mx-auto mt-10"></div>
-      </div>
-    </div>
+  
+
+  
 
     <!-- Featured Products Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
@@ -101,16 +141,21 @@
         
         <div class="w-full overflow-hidden">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-            <ProductCard 
+            <div 
               v-for="product in featuredProducts" 
               :key="product.id"
-              :image="product.image"
-              :name="product.name"
-              :currentPrice="product.currentPrice"
-              :originalPrice="product.originalPrice"
-              :discount="product.discount"
-              :rating="product.rating"
-            />
+              @click="goToDetail(product.id)"
+              class="cursor-pointer"
+            >
+              <ProductCard 
+                :image="product.image"
+                :name="product.name"
+                :currentPrice="product.currentPrice"
+                :originalPrice="product.originalPrice"
+                :discount="product.discount"
+                :rating="product.rating"
+              />
+            </div>
           </div>
         </div>
         
@@ -126,6 +171,17 @@
         <span class="w-1.5 h-1.5 bg-[#ccc] rounded-full cursor-pointer transition-colors duration-300"></span>
       </div>
     </div>
+
+        <!-- Elegant Quote Section -->
+    <div class="py-[100px] px-5 lg:px-20 bg-transparent flex justify-center items-center text-center max-md:py-[60px] max-md:px-5">
+      <div class="max-w-[900px] relative">
+        <h2 class="font-title text-[42px] max-md:text-[28px] font-medium leading-[1.4] text-[#111] m-0 tracking-[0.5px] italic drop-shadow-[1px_1px_2px_rgba(0,0,0,0.05)]">
+          "Nâng tầm phong cách của bạn với vẻ thanh lịch vượt thời gian trong bộ sưu tập mới."
+        </h2>
+        <div class="w-20 h-[3px] bg-black mx-auto mt-10"></div>
+      </div>
+    </div>
+
 
     <!-- Eco Fashion Section -->
     <div class="flex py-[100px] px-5 lg:px-20 gap-[50px] items-center bg-white max-lg:flex-col max-lg:py-[60px]">
@@ -143,6 +199,7 @@
         </div>
       </div>
     </div>
+   
 
     <!-- Blog Section -->
     <div class="pt-[60px] pb-[100px] px-5 lg:px-20 bg-white">
@@ -158,7 +215,7 @@
         />
       </div>
     </div>
-
+   
     <!-- Testimonial Section -->
     <div class="bg-[#f5f5f5] py-20 px-5 border-t border-b border-neutral-100 flex justify-center items-center mb-[50px]">
       <div class="max-w-[1200px] w-full flex items-center justify-between gap-4 md:gap-8">
@@ -203,79 +260,280 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { useRouter } from 'vue-router';
 import ProductCard from '@/components/client/ui/ProductCard.vue';
 import BlogCard from '@/components/client/ui/BlogCard.vue';
+import { productService } from '@/services/client/productService';
+import api from '@/plugins/axios';
 
-const newArrivals = ref([
+const slides = [
   {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi tulle bất đối xứng',
-    currentPrice: '$30.00',
-    originalPrice: '$50.00',
-    discount: '40%'
+    image: '/img/banner/banner1.jpg',
+    subtitle: 'Xu Hướng Mùa Hè Này',
+    title: 'Luxury'
+    
   },
   {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi hiệu ứng nhăn',
-    currentPrice: '$34.11',
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1515347619253-122e1b1d403f?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy quây xếp nếp',
-    currentPrice: '$54.33',
-    originalPrice: '$66.99',
-    discount: '19%'
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi crepe họa tiết hoa',
-    currentPrice: '$61.32',
-    originalPrice: '$78.33',
-    discount: '22%'
+    image: '/img/banner/banner2.jpg',
+    subtitle: 'Độc Đáo & Tinh Tế',
+    title: 'Luxury'
+    
   }
+];
+
+const currentSlide = ref(0);
+let slideInterval = null;
+
+// Brand Logos state
+const brandLogos = ref([
+  { name: 'Gucci', domain: 'gucci.com', logoUrl: null },
+  { name: 'Balenciaga', domain: 'balenciaga.com', logoUrl: null },
+  { name: 'Louis Vuitton', domain: 'louisvuitton.com', logoUrl: null },
+  { name: 'Dior', domain: 'dior.com', logoUrl: null },
+  { name: 'Chanel', domain: 'chanel.com', logoUrl: null }
 ]);
 
-const featuredProducts = ref([
+// Nhân bản danh sách thương hiệu nhiều lần để cuộn vô hạn mượt mà
+const duplicatedBrands = computed(() => {
+  return [
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value,
+    ...brandLogos.value
+  ];
+});
+
+const nextSlide = () => {
+  currentSlide.value = (currentSlide.value + 1) % slides.length;
+};
+
+const prevSlide = () => {
+  currentSlide.value = (currentSlide.value - 1 + slides.length) % slides.length;
+};
+
+const setSlide = (index) => {
+  currentSlide.value = index;
+};
+
+const startSlideTimer = () => {
+  if (slideInterval) clearInterval(slideInterval);
+  slideInterval = setInterval(nextSlide, 10000);
+};
+
+// Trích xuất logo phù hợp cho giao diện nền sáng (tránh logo màu trắng chỉ hiển thị trên nền tối)
+const extractLogoUrl = (brandData) => {
+  if (!brandData || !brandData.logos) return null;
+
+  // 1. Ưu tiên logo chuẩn thiết kế cho nền sáng (hoặc không quy định theme tối)
+  const logo = brandData.logos.find(l => l.type === 'logo' && l.theme !== 'dark');
+  if (logo && logo.formats && logo.formats[0]) {
+    return logo.formats[0].src;
+  }
+
+  // 2. Tiếp theo, ưu tiên biểu tượng (symbol) thiết kế cho nền sáng
+  const symbol = brandData.logos.find(l => l.type === 'symbol' && l.theme !== 'dark');
+  if (symbol && symbol.formats && symbol.formats[0]) {
+    return symbol.formats[0].src;
+  }
+
+  // 3. Tiếp theo, ưu tiên icon thiết kế cho nền sáng
+  const icon = brandData.logos.find(l => l.type === 'icon' && l.theme !== 'dark');
+  if (icon && icon.formats && icon.formats[0]) {
+    return icon.formats[0].src;
+  }
+
+  // 4. Nếu không có logo nền sáng, lấy logo bất kỳ đầu tiên có sẵn làm fallback
+  const fallback = brandData.logos.find(l => l.formats && l.formats[0]);
+  if (fallback) {
+    return fallback.formats[0].src;
+  }
+
+  return null;
+}
+
+// Fetch logos từ Brandfetch
+const fetchBrandLogos = async () => {
+  brandLogos.value.forEach(async (brand) => {
+    try {
+      const response = await api.get(`/client/brands/${brand.domain}`)
+      if (response.data) {
+        const logoUrl = extractLogoUrl(response.data)
+        if (logoUrl) {
+          brand.logoUrl = logoUrl;
+        }
+      }
+    } catch (e) {
+      console.warn(`Không thể lấy logo cho thương hiệu ${brand.name}:`, e.message)
+    }
+  })
+}
+
+onMounted(() => {
+  startSlideTimer();
+  fetchBrandLogos();
+});
+
+onUnmounted(() => {
+  if (slideInterval) clearInterval(slideInterval);
+});
+
+
+const mockArrivals = [
   {
-    id: 1,
+    id: 'mock-1',
+    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop',
+    name: 'Váy midi tulle bất đối xứng',
+    currentPrice: '750.000 đ',
+    originalPrice: '1.250.000 đ',
+    discount: '-40%'
+  },
+  {
+    id: 'mock-2',
+    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800&auto=format&fit=crop',
+    name: 'Váy midi hiệu ứng nhăn',
+    currentPrice: '850.000 đ',
+  },
+  {
+    id: 'mock-3',
+    image: 'https://images.unsplash.com/photo-1515347619253-122e1b1d403f?q=80&w=800&auto=format&fit=crop',
+    name: 'Váy quây xếp nếp',
+    currentPrice: '1.350.000 đ',
+    originalPrice: '1.670.000 đ',
+    discount: '-19%'
+  },
+  {
+    id: 'mock-4',
+    image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=800&auto=format&fit=crop',
+    name: 'Váy midi crepe họa tiết hoa',
+    currentPrice: '1.530.000 đ',
+    originalPrice: '1.960.000 đ',
+    discount: '-22%'
+  }
+];
+
+const mockFeatured = [
+  {
+    id: 'mock-f1',
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop',
     name: "Áo hoodie 'Run & Brunch'",
-    currentPrice: '$59.99',
-    originalPrice: '$79.99',
-    discount: '26%',
+    currentPrice: '1.490.000 đ',
+    originalPrice: '1.990.000 đ',
+    discount: '-26%',
     rating: { score: '4.67', count: 3, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
   },
   {
-    id: 2,
+    id: 'mock-f2',
     image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop',
     name: 'Áo khoác cotton siêu nhẹ',
-    currentPrice: '$24.90',
-    originalPrice: '$34.33',
-    discount: '28%',
+    currentPrice: '620.000 đ',
+    originalPrice: '850.000 đ',
+    discount: '-28%',
     rating: { score: '4.33', count: 3, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
   },
   {
-    id: 3,
+    id: 'mock-f3',
     image: 'https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=800&auto=format&fit=crop',
     name: 'Áo khoác denim',
-    currentPrice: '$44.96',
-    originalPrice: '$74.93',
-    discount: '40%',
+    currentPrice: '1.120.000 đ',
+    originalPrice: '1.870.000 đ',
+    discount: '-40%',
     rating: { score: '3.67', count: 5, stars: ['filled', 'filled', 'filled', 'half-filled', 'empty'] }
   },
   {
-    id: 4,
+    id: 'mock-f4',
     image: 'https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=800&auto=format&fit=crop',
     name: 'Áo khoác bomber 100% linen',
-    currentPrice: '$34.76 - $19.66',
+    currentPrice: '860.000 đ',
     rating: { score: '4.33', count: 6, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
   }
-]);
+];
+
+const newArrivals = ref([...mockArrivals]);
+const featuredProducts = ref([...mockFeatured]);
+
+const router = useRouter();
+
+const formatPrice = (value) => {
+  if (!value) return '0 đ'
+  return Number(value).toLocaleString('vi-VN') + ' đ'
+}
+
+const getImageUrl = (path) => {
+  if (!path) return 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop'
+  if (path.startsWith('http')) return path
+  return `http://localhost:8000/storage/${path}`
+}
+
+const mapProduct = (item) => {
+  const variants = item.product_variants || item.productVariants || []
+  const firstVariant = variants[0]
+  const currentPriceVal = firstVariant 
+    ? (firstVariant.sale_price || firstVariant.price) 
+    : 0
+  const originalPriceVal = firstVariant && firstVariant.sale_price 
+    ? firstVariant.price 
+    : null
+
+  let discount = null
+  if (firstVariant && firstVariant.sale_price && firstVariant.price > 0) {
+    const pct = Math.round((1 - (firstVariant.sale_price / firstVariant.price)) * 100)
+    if (pct > 0) {
+      discount = `-${pct}%`
+    }
+  }
+
+  let rawImage = item.thumbnail
+  if (!rawImage && item.product_images && item.product_images.length > 0) {
+    rawImage = item.product_images[0].image_url
+  }
+  const image = getImageUrl(rawImage)
+
+  return {
+    id: item.id,
+    image: image,
+    name: item.name,
+    currentPrice: formatPrice(currentPriceVal),
+    originalPrice: originalPriceVal ? formatPrice(originalPriceVal) : null,
+    discount: discount,
+    rating: { score: '5.0', count: 1, stars: ['filled', 'filled', 'filled', 'filled', 'filled'] }
+  }
+}
+
+const goToDetail = (id) => {
+  if (String(id).startsWith('mock-')) {
+    // Trỏ về sản phẩm mock detail tĩnh nếu click vào sản phẩm mock
+    router.push('/product/AB258041NTR26')
+  } else {
+    router.push({ name: 'ProductDetail', params: { id } })
+  }
+}
+
+onMounted(async () => {
+  try {
+    const response = await productService.getProducts({ per_page: 8 })
+    if (response.data && response.data.success && response.data.data.length > 0) {
+      const realProducts = response.data.data.map(mapProduct)
+      
+      newArrivals.value = [
+        ...realProducts,
+        ...mockArrivals.slice(realProducts.length)
+      ].slice(0, 4)
+
+      featuredProducts.value = [
+        ...realProducts,
+        ...mockFeatured.slice(realProducts.length)
+      ].slice(0, 4)
+    }
+  } catch (err) {
+    console.error('Lỗi khi tải sản phẩm cho trang chủ:', err)
+  }
+});
+
 
 const blogs = ref([
   {
@@ -312,4 +570,29 @@ const blogs = ref([
   }
 ]);
 </script>
+
+<style scoped>
+.marquee-wrapper {
+  width: 100%;
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+/* Tự động dừng nhẹ khi hover chuột để tăng trải nghiệm */
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    /* Cuộn một nửa chiều rộng danh sách nhân bản để lặp vô hạn mượt mà */
+    transform: translateX(-50%);
+  }
+}
+</style>
 

@@ -55,6 +55,11 @@ class CustomerController extends Controller
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
+        // Stats toàn bộ DB (không bị ảnh hưởng bởi filter/pagination)
+        $totalActive  = Customer::where('status', 1)->count();
+        $totalBanned  = Customer::where('status', 0)->count();
+        $newToday     = Customer::whereDate('created_at', today())->count();
+
         return response()->json([
             'success' => true,
             'data'    => CustomerResource::collection($paginator->items()),
@@ -63,6 +68,9 @@ class CustomerController extends Controller
                 'per_page'     => $paginator->perPage(),
                 'total'        => $paginator->total(),
                 'last_page'    => $paginator->lastPage(),
+                'total_active' => $totalActive,
+                'total_banned' => $totalBanned,
+                'new_today'    => $newToday,
             ],
         ]);
     }

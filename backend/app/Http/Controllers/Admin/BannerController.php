@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Banner\BannerRequest;
+use App\Http\Requests\Admin\Banner\StoreBannerRequest;
 use App\Http\Resources\Admin\Banner\BannerResource;
 use App\Services\Admin\Interfaces\BannerServiceInterface;
 use Illuminate\Http\JsonResponse;

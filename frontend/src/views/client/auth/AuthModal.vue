@@ -27,6 +27,19 @@
           <div class="absolute inset-0 bg-neutral-900/5"></div>
         </div>
 
+        <!-- Success Toast (hiển thị ở góc dưới modal) -->
+        <Transition name="toast-fade">
+          <div
+            v-if="successMessage"
+            class="absolute bottom-6 left-1/2 -translate-x-1/2 z-50 bg-black text-white text-[12px] font-text px-5 py-3 rounded shadow-lg whitespace-nowrap flex items-center gap-2"
+          >
+            <svg class="w-4 h-4 text-emerald-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            {{ successMessage }}
+          </div>
+        </Transition>
+
         <!-- Right Panel: Forms -->
         <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-between bg-white relative overflow-hidden">
           <!-- Form Header & Fields (Scrollable area) -->
@@ -35,9 +48,25 @@
               v-if="mode === 'register'" 
               @success="handleAuthSuccess" 
             />
+            <ForgotPasswordForm
+              v-else-if="mode === 'forgot-password'"
+              @submit="handleForgotPasswordSubmit"
+              @back="mode = 'login'"
+            />
+            <OtpForm
+              v-else-if="mode === 'otp'"
+              @verify-success="handleOtpSuccess"
+              @back="mode = 'forgot-password'"
+            />
+            <ResetPasswordForm
+              v-else-if="mode === 'reset-password'"
+              @submit="handleResetPasswordSubmit"
+              @back="mode = 'login'"
+            />
             <LoginForm 
               v-else 
               @success="handleAuthSuccess" 
+              @forgot-password="mode = 'forgot-password'"
             />
           </div>
 
@@ -45,6 +74,12 @@
           <div class="h-[70px] border-t border-neutral-100 flex items-center justify-center bg-[#fafafa] shrink-0">
             <p v-if="mode === 'register'" class="text-[13px] font-text text-neutral-600">
               Bạn đã có tài khoản? 
+              <button @click="mode = 'login'" class="text-black font-semibold underline hover:no-underline ml-1 bg-transparent border-none cursor-pointer">
+                Đăng nhập ngay
+              </button>
+            </p>
+            <p v-else-if="mode === 'forgot-password' || mode === 'otp' || mode === 'reset-password'" class="text-[13px] font-text text-neutral-600">
+              Đã nhớ mật khẩu?
               <button @click="mode = 'login'" class="text-black font-semibold underline hover:no-underline ml-1 bg-transparent border-none cursor-pointer">
                 Đăng nhập ngay
               </button>
@@ -68,6 +103,9 @@
 import { ref, watch } from 'vue'
 import LoginForm from './LoginForm.vue'
 import RegisterForm from './RegisterForm.vue'
+import ForgotPasswordForm from './ForgotPasswordForm.vue'
+import OtpForm from './OtpForm.vue'
+import ResetPasswordForm from './ResetPasswordForm.vue'
 
 const props = defineProps({
   isOpen: {
@@ -83,10 +121,12 @@ const props = defineProps({
 const emit = defineEmits(['close'])
 
 const mode = ref(props.initialMode)
+const successMessage = ref('')
 
 watch(() => props.isOpen, (newVal) => {
   if (newVal) {
     mode.value = props.initialMode
+    successMessage.value = ''
   }
 })
 
@@ -96,6 +136,22 @@ const close = () => {
 
 const handleAuthSuccess = (data) => {
   close()
+}
+
+const handleForgotPasswordSubmit = (identifier) => {
+  mode.value = 'otp'
+}
+
+const handleOtpSuccess = (code) => {
+  mode.value = 'reset-password'
+}
+
+const handleResetPasswordSubmit = () => {
+  successMessage.value = 'Mật khẩu đã được đặt lại thành công!'
+  setTimeout(() => {
+    successMessage.value = ''
+    mode.value = 'login'
+  }, 2000)
 }
 </script>
 
@@ -138,5 +194,15 @@ const handleAuthSuccess = (data) => {
 }
 .scrollbar-thin::-webkit-scrollbar-thumb:hover {
   background: #ccc;
+}
+
+.toast-fade-enter-active,
+.toast-fade-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.toast-fade-enter-from,
+.toast-fade-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(10px);
 }
 </style>

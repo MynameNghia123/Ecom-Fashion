@@ -37,7 +37,7 @@ class UploadController extends Controller
                 schema: new OA\Schema(
                     required: ['file'],
                     properties: [
-                        new OA\Property(property: 'file', type: 'string', format: 'binary', description: 'File ảnh (jpeg, png, webp, gif). Tối đa 5MB.'),
+                        new OA\Property(property: 'file', type: 'string', format: 'binary', description: 'File ảnh (jpeg, png, webp, gif). Tối đa 10MB.'),
                         new OA\Property(property: 'folder', type: 'string', default: 'products', example: 'products', description: 'Thư mục con trong images/. Tối đa 50 ký tự, chỉ chữ cái, số, dấu gạch.'),
                     ]
                 )
@@ -59,7 +59,7 @@ class UploadController extends Controller
     public function upload(Request $request): JsonResponse
     {
         $request->validate([
-            'file'   => 'required|file|image|mimes:jpeg,png,webp,gif|max:5120', // tối đa 5MB
+            'file'   => 'required|file|image|mimes:jpeg,png,webp,gif|max:10240', // tối đa 10MB
             'folder' => 'nullable|string|max:50|alpha_dash',
         ]);
 
@@ -71,22 +71,34 @@ class UploadController extends Controller
         $extension = $file->getClientOriginalExtension() ?: 'jpg';
         $filename  = Str::uuid() . '.' . $extension;
 
-        // Lưu vào storage/app/public/images/{folder}/{filename}
-        // → Accessible qua /storage/images/{folder}/{filename} (sau khi php artisan storage:link)
-        $path = $file->storeAs(
-            "images/{$folder}",
-            $filename,
-            'public'
-        );
+        try {
+            // Lưu vào storage/app/public/images/{folder}/{filename}
+            // → Accessible qua /storage/images/{folder}/{filename} (sau khi php artisan storage:link)
+            $path = $file->storeAs(
+                "images/{$folder}",
+                $filename,
+                'public'
+            );
 
-        // Xây dựng URL đầy đủ: APP_URL + /storage/ + path
-        $url = rtrim(config('app.url'), '/') . '/storage/' . $path;
+            if (!$path) {
+                throw new \Exception('Không thể ghi file vào storage.');
+            }
 
-        return response()->json([
-            'success' => true,
-            'url'     => $url,
-            'path'    => $path,   // đường dẫn tương đối (để xóa sau nếu cần)
-        ], 201);
+            // Xây dựng URL đầy đủ: APP_URL + /storage/ + path
+            $url = rtrim(config('app.url'), '/') . '/storage/' . $path;
+
+            return response()->json([
+                'success' => true,
+                'url'     => $url,
+                'path'    => $path,   // đường dẫn tương đối (để xóa sau nếu cần)
+            ], 201);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi upload image: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Lỗi lưu trữ hình ảnh: ' . $e->getMessage(),
+            ], 500);
+        }
     }
 
     /**

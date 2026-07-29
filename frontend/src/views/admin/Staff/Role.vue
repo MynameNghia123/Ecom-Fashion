@@ -244,7 +244,7 @@
                 <!-- Module Header -->
                 <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-100">
                   <span class="text-xs font-bold text-slate-700 tracking-wide">
-                    📦 {{ getModuleLabel(moduleName) }}
+                     {{ getModuleLabel(moduleName) }}
                   </span>
                   
                   <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs">

@@ -1,23 +1,42 @@
 /* =========================================
    Admin Dashboard — EcomFashion
-   Design System: Urban Luxe Light Theme
+   Design System: Monochrome (Black & White)
    ========================================= */
 
 /* --- CSS Variables --- */
 :root {
-  --admin-sidebar-bg: #ffffff;
+  /* Sidebar — Dark */
+  --admin-sidebar-bg: #111111;
+  --admin-sidebar-border: rgba(255,255,255,0.07);
   --admin-sidebar-width: 220px;
+
+  /* Topbar — White */
   --admin-topbar-height: 60px;
-  --admin-bg: #f4f6f9;
-  --admin-text: #1e293b;
-  --admin-text-muted: #64748b;
-  --admin-text-label: #94a3b8;
-  --admin-border: #e2e8f0;
-  --admin-blue: #2563eb;
-  --admin-blue-light: #eff6ff;
-  --admin-blue-dark: #1d4ed8;
-  --admin-active-bg: #2563eb;
+  --admin-topbar-bg: #ffffff;
+  --admin-topbar-border: #e8e8e8;
+
+  /* Page body */
+  --admin-bg: #f5f5f5;
+
+  /* Text */
+  --admin-text: #111111;
+  --admin-text-muted: #6b6b6b;
+  --admin-text-label: #a0a0a0;
+
+  /* Borders */
+  --admin-border: #e8e8e8;
+
+  /* Accent — Black */
+  --admin-accent: #111111;
+  --admin-accent-hover: #333333;
+  --admin-accent-light: rgba(17,17,17,0.06);
+
+  /* Active state in sidebar */
+  --admin-active-bg: rgba(255,255,255,0.10);
+  --admin-active-border: #ffffff;
   --admin-active-text: #ffffff;
+
+  /* Cards */
   --admin-card-bg: #ffffff;
   --admin-card-radius: 10px;
   --admin-card-shadow: 0 1px 4px rgba(0,0,0,0.06);
@@ -36,22 +55,25 @@
   background: transparent;
 }
 .admin-sidebar-nav::-webkit-scrollbar-thumb {
-  background: #e2e8f0;
+  background: rgba(255,255,255,0.18);
   border-radius: 2px;
+}
+.admin-sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.35);
 }
 
 .admin-content::-webkit-scrollbar {
   width: 5px;
 }
 .admin-content::-webkit-scrollbar-track {
-  background: #f4f6f9;
+  background: #f5f5f5;
 }
 .admin-content::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #d0d0d0;
   border-radius: 3px;
 }
 .admin-content::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: #999;
 }
 
 /* --- Shared Card Style --- */

@@ -10,6 +10,9 @@ export const useCustomerStore = defineStore('customer', () => {
     per_page: 10,
     total: 0,
     last_page: 1,
+    total_active: 0,
+    total_banned: 0,
+    new_today: 0,
   })
   const loading = ref(false)
   const error = ref(null)

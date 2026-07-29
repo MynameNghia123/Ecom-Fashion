@@ -56,26 +56,19 @@ services:
       dockerfile: Dockerfile
     image: ecom-fashion-backend:latest
     container_name: ecom-fashion-backend
-    restart: unless-stopped
+    restart: on-failure:3
+    user: root
     env_file:
       - ./backend/.env
+    environment:
+      PHP_INI_SCAN_DIR: "/usr/local/etc/php/conf.d"
     ports:
       - "8000:8000"
     volumes:
       - ./backend:/var/www/html
       - backend_vendor:/var/www/html/vendor
       - backend_bootstrap_cache:/var/www/html/bootstrap/cache
-<<<<<<< HEAD
-=======
-    command: >
-      sh -c "mkdir -p database storage/logs bootstrap/cache
-      && (chmod -R 777 storage bootstrap/cache || true)
-      && composer install --no-interaction --prefer-dist
-      && (php artisan storage:link || true)
-      && (php artisan l5-swagger:generate || true)
-      && php artisan migrate --force
-      && php artisan serve --host=0.0.0.0 --port=8000"
->>>>>>> e82172561f6186cf7af7551e7837ad9be09039bf
+      - ./backend/php-upload.ini:/usr/local/etc/php/conf.d/upload.ini:ro
     depends_on:
       mysql:
         condition: service_healthy
@@ -101,6 +94,24 @@ services:
       - frontend_node_modules:/app/node_modules
     depends_on:
       - backend
+    networks:
+      - ecom-network
+
+  # ═══════════════════════════════════════════════════════════════════
+  # Mailpit – SMTP catcher & Web UI (dùng để test gửi email OTP)
+  # Web UI:  http://localhost:8025
+  # SMTP:    host=mailpit  port=1025  (trong Laravel .env)
+  # ═══════════════════════════════════════════════════════════════════
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: ecom-fashion-mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"   # Web UI xem mail
+      - "1025:1025"   # SMTP cho Laravel
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
     networks:
       - ecom-network
 

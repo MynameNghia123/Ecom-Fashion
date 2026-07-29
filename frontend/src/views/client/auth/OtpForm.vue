@@ -39,12 +39,20 @@
         </button>
       </div>
 
+      <!-- Error Message -->
+      <p v-if="authStore.error" class="text-xs text-red-500 font-text text-center mt-2">{{ authStore.error }}</p>
+
       <!-- Submit Button đồng bộ 100% với LoginForm -->
       <button 
         type="submit" 
-        class="w-full bg-[#eaeaea] hover:bg-black hover:text-white text-black font-text text-[12px] font-bold tracking-wider py-4 mt-4 transition-colors duration-300 uppercase cursor-pointer border-none"
+        :disabled="authStore.loading"
+        class="w-full bg-[#eaeaea] hover:bg-black hover:text-white disabled:bg-neutral-100 disabled:text-neutral-450 disabled:cursor-not-allowed text-black font-text text-[12px] font-bold tracking-wider py-4 mt-4 transition-colors duration-300 uppercase cursor-pointer border-none flex items-center justify-center gap-2"
       >
-        Xác nhận mã
+        <svg v-if="authStore.loading" class="animate-spin h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <span>{{ authStore.loading ? 'Đang xác thực...' : 'Xác nhận mã' }}</span>
       </button>
     </form>
 
@@ -55,7 +63,7 @@
         @click="$emit('back')" 
         class="text-[12px] text-neutral-600 hover:text-black font-text underline bg-transparent border-none cursor-pointer"
       >
-        Quay lại đăng nhập
+        Quay lại nhập email
       </button>
     </div>
   </div>
@@ -63,8 +71,10 @@
 
 <script setup>
 import { ref, reactive, onMounted, onUnmounted } from 'vue'
+import { useClientAuthStore } from '@/stores/client/authStore'
 
 const emit = defineEmits(['verify-success', 'back'])
+const authStore = useClientAuthStore()
 
 // Mảng chứa 6 chữ số của OTP
 const otpDigits = reactive(['', '', '', '', '', ''])
@@ -113,24 +123,30 @@ const startCountdown = () => {
 }
 
 // Gửi lại mã OTP
-const handleResendOtp = () => {
-  alert('[Mock Client] Đã gửi lại mã OTP mới!')
-  startCountdown()
+const handleResendOtp = async () => {
+  authStore.clearError()
+  const result = await authStore.forgotPassword(authStore.otpEmail)
+  if (result.success) {
+    startCountdown()
+  }
 }
 
 // Xác nhận mã OTP
-const handleVerifyOtp = () => {
+const handleVerifyOtp = async () => {
   const finalCode = otpDigits.join('')
-  alert(`[Mock Client] Xác thực mã OTP: ${finalCode}`)
-  emit('verify-success', finalCode)
+  const result = await authStore.verifyOtp(authStore.otpEmail, finalCode)
+  if (result.success) {
+    emit('verify-success', finalCode)
+  }
 }
 
 // Vòng đời đếm ngược
 onMounted(() => {
+  authStore.clearError()
   startCountdown()
 })
 
 onUnmounted(() => {
   clearInterval(timerInterval)
 })
-</script>
+</script>

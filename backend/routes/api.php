@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -13,13 +14,22 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Http\Controllers\Admin\ProductVariantController;
-use App\Models\Supplier;
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BLogController;
 use App\Http\Controllers\Admin\BannerController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\ReviewController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\BannerController as ClientBannerController;
+use App\Http\Controllers\Client\AuthController as ClientAuthController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\CartController as ClientCartController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
+use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -27,31 +37,34 @@ use App\Http\Controllers\Client\BannerController as ClientBannerController;
 |--------------------------------------------------------------------------
 */
 
+// ── Public Admin Auth (không cần token) ─────────────────────────────────────
+Route::post('admin/auth/login', [AuthController::class, 'login']);
+
 // ── Protected Admin Routes ───────────────────────────────────────────────────
 Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
-    
+
     Route::get('product-variants/search', [ProductVariantController::class, 'search']);
     Route::get('/suppliers/dropdown', [SupplierController::class, 'getSupplierForDropDown']);
+
     // ── Auth Info ────────────────────────────────────────────────────────────
     Route::post('auth/logout', [AuthController::class, 'logout']);
-    Route::get('auth/me',      [AuthController::class, 'me']);
+    Route::get('auth/me', [AuthController::class, 'me']);
 
     // ── Catalog ───────────────────────────────────────────────────────────────
     Route::apiResource('attributes', AttributeController::class)->middleware('permission:attributes');
-    
+
     Route::get('categories/parents', [CategoryController::class, 'parents'])->middleware('permission:categories');
     Route::apiResource('categories', CategoryController::class)->middleware('permission:categories');
-    
+
     Route::apiResource('products', ProductController::class)->middleware('permission:products');
 
     // ── Upload ────────────────────────────────────────────────────────────────
-    // Upload image doesn't require a strict RBAC module check, but requires being an authenticated staff
-    Route::post('upload-image',   [UploadController::class, 'upload']);
+    Route::post('upload-image', [UploadController::class, 'upload']);
     Route::delete('upload-image', [UploadController::class, 'delete']);
 
     // ── Customers & Coupons ───────────────────────────────────────────────────
     Route::apiResource('customers', CustomerController::class)->middleware('permission:customers');
-    Route::apiResource('coupons',   CouponController::class)->middleware('permission:coupons');
+    Route::apiResource('coupons', CouponController::class)->middleware('permission:coupons');
 
     // ── Staff ─────────────────────────────────────────────────────────────────
     Route::apiResource('staffs', StaffController::class)->middleware('permission:staff');
@@ -65,7 +78,7 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     Route::get('permissions/all', [PermissionController::class, 'getAll'])->middleware('permission:permissions');
     Route::apiResource('permissions', PermissionController::class)->only(['index'])->middleware('permission:permissions');
 
-    // ── Supplier & Good Receipts (Upstream Code) ────────────────────────────────
+    // ── Supplier & Good Receipts ──────────────────────────────────────────────
     Route::apiResource('suppliers', SupplierController::class)->middleware('permission:suppliers');
     Route::apiResource('goods-receipts', GoodReceiptController::class)->middleware('permission:goods_receipts');
 
@@ -74,11 +87,108 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
 
     // ── Marketing: Banners ───────────────────────────────────────────────────
     Route::apiResource('banners', BannerController::class)->middleware('permission:banners');
+
+    // ── Orders ────────────────────────────────────────────────────────────────
+    Route::apiResource('orders', OrderController::class)->only(['index', 'show', 'update'])->middleware('permission:orders');
+
+    // ── Reviews ───────────────────────────────────────────────────────────────
+    Route::apiResource('reviews', ReviewController::class)->only(['index', 'destroy'])->middleware('permission:reviews');
+
+    // ── Return Requests ───────────────────────────────────────────────────────
+    Route::get('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'index']);
+    Route::post('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'store']);
+    Route::get('return-requests/{returnRequest}', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'show']);
+    Route::patch('return-requests/{returnRequest}/status', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'updateStatus']);
 });
 
 // ── Public Client Routes (không yêu cầu xác thực) ───────────────────────────
 Route::prefix('client')->group(function () {
+
     Route::get('blogs', [ClientBlogController::class, 'index']);
     Route::get('blogs/{slug}', [ClientBlogController::class, 'show']);
     Route::get('banners', [ClientBannerController::class, 'index']);
+
+    // Products & Brands
+    Route::get('products', [ClientProductController::class, 'index']);
+    Route::get('products/brands', [ClientProductController::class, 'brands']);
+    Route::get('products/{id}', [ClientProductController::class, 'show']);
+    Route::get('products/{id}/reviews', [\App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+
+    // Categories (public — for filter sidebar & mega menu)
+    Route::get('categories/tree', function () {
+        $roots = \App\Models\Category::whereNull('parent_id')
+            ->with(['children.children'])
+            ->orderBy('name')
+            ->get();
+        return response()->json(['success' => true, 'data' => $roots]);
+    });
+    Route::get('categories', [AdminCategoryController::class, 'index']);
+
+    // AI Chat proxy
+    Route::post('ai/chat', [ClientAiChatController::class, 'chat']);
+    Route::get('brands/{domain}', function ($domain) {
+        $apiKey = config('services.brandfetch.key');
+        $response = Http::withToken($apiKey)->get("https://api.brandfetch.io/v2/brands/domain/{$domain}");
+        if ($response->failed()) {
+            return response()->json(['message' => 'Brand not found'], 404);
+        }
+        return $response->json();
+    });
+
+    // ── Public Client Auth ───────────────────────────────────────────────────
+    Route::prefix('auth')->group(function () {
+        Route::post('register', [ClientAuthController::class, 'register']);
+        Route::post('login', [ClientAuthController::class, 'login']);
+        Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword']);
+        Route::post('verify-otp', [ClientAuthController::class, 'verifyOtp']);
+        Route::post('reset-password', [ClientAuthController::class, 'resetPassword']);
+    });
+
+    Route::prefix('auth')->middleware(['auth:sanctum'])->group(function () {
+        Route::post('logout',           [ClientAuthController::class, 'logout']);
+        Route::get('me',                [ClientAuthController::class, 'me']);
+        Route::put('profile',           [ClientAuthController::class, 'updateProfile']);
+        Route::put('change-password',   [ClientAuthController::class, 'changePassword']);
+    });
+
+    // ── VNPAY (public - VNPAY server gọi không có token) ────────────────────
+    Route::get('vnpay/return', [ClientVNPayController::class, 'verifyReturn']);
+    Route::post('vnpay/ipn', [ClientVNPayController::class, 'ipn']);
+
+    // ── Protected Client Routes (yêu cầu đăng nhập customer) ────────────────
+    Route::middleware(['auth:sanctum'])->group(function () {
+
+        // Cart
+        Route::get('cart', [ClientCartController::class, 'index']);
+        Route::post('cart/items', [ClientCartController::class, 'addItem']);
+        Route::put('cart/items/{id}', [ClientCartController::class, 'updateItem']);
+        Route::delete('cart/items/{id}', [ClientCartController::class, 'removeItem']);
+
+        // Orders
+        Route::get('orders',             [ClientOrderController::class, 'index']);
+        Route::post('orders',            [ClientOrderController::class, 'store']);
+        Route::get('orders/{code}',      [ClientOrderController::class, 'show']);
+
+        // Coupons
+        Route::get('coupons',            [\App\Http\Controllers\Client\CouponController::class, 'index']);
+        Route::post('coupons/apply',     [\App\Http\Controllers\Client\CouponController::class, 'apply']);
+
+        // Addresses
+        Route::get('addresses',               [\App\Http\Controllers\Client\CustomerAddressController::class, 'index']);
+        Route::post('addresses',              [\App\Http\Controllers\Client\CustomerAddressController::class, 'store']);
+        Route::put('addresses/{id}',          [\App\Http\Controllers\Client\CustomerAddressController::class, 'update']);
+        Route::delete('addresses/{id}',       [\App\Http\Controllers\Client\CustomerAddressController::class, 'destroy']);
+        // Reviews
+        Route::get('reviews',                 [\App\Http\Controllers\Client\ReviewController::class, 'index']);
+        Route::post('reviews',                [\App\Http\Controllers\Client\ReviewController::class, 'store']);
+
+        // Wishlist
+        Route::get('wishlist',                [\App\Http\Controllers\Client\WishlistController::class, 'index']);
+        Route::post('wishlist/toggle',        [\App\Http\Controllers\Client\WishlistController::class, 'toggle']);
+        Route::delete('wishlist/{productId}', [\App\Http\Controllers\Client\WishlistController::class, 'destroy']);
+
+        // AI Chat History & Sync
+        Route::get('ai/history',             [ClientAiChatController::class, 'history']);
+        Route::post('ai/sync-guest-history', [ClientAiChatController::class, 'syncGuestHistory']);
+    });
 });

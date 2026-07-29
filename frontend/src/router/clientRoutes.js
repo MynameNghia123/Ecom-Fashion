@@ -6,7 +6,7 @@ import Contact from '../views/client/contact/Contact.vue'
 import AboutUs from '../views/client/about/AboutUs.vue'
 import Profile from '../views/client/profile/Profile.vue'
 import Address from '../views/client/profile/Address.vue'
-import Information from '../views/client/profile/Information.vue'
+import Information from '../views/client/profile/Informations.vue'
 import Notification from '../views/client/profile/Notifications.vue'
 import OrderHistory from '../views/client/profile/OrderHistory.vue'
 import Reviews from '../views/client/profile/Reviews.vue'
@@ -15,6 +15,7 @@ import WishList from '../views/client/profile/WishList.vue'
 import Settings from '../views/client/profile/Settings.vue'
 import CheckoutSuccess from '../views/client/checkout/CheckoutSuccess.vue'
 import Checkout from '../views/client/checkout/Checkout.vue'
+import VNPayReturn from '../views/client/checkout/VNPayReturn.vue'
 import adminRoutes from './adminRoutes'
 
 const routes = [
@@ -38,6 +39,7 @@ const routes = [
     name: 'Blog',
     component: BlogList
   },
+
   {
     path: '/contact',
     name: 'Contact',
@@ -53,22 +55,18 @@ const routes = [
     component: Profile,
     children: [
       {
-        path: "",
-        redirect: "/profile/information"
-      },
-      {
         path: 'address',
         name: 'Address',
         component: Address
       },
       {
         path: 'information',
-        name: 'Information',
+        name: 'Informations',
         component: Information
       },
       {
         path: 'notification',
-        name: 'Notification',
+        name: 'Notifications',
         component: Notification
       },
       {
@@ -88,7 +86,7 @@ const routes = [
       },
       {
         path: 'wishlist',
-        name: 'WishList',
+        name: 'WishLists',
         component: WishList
       },
       {
@@ -103,6 +101,11 @@ const routes = [
     path: '/checkout/success',
     name: 'CheckoutSuccess',
     component: CheckoutSuccess
+  },
+  {
+    path: '/checkout/vnpay-return',
+    name: 'VNPayReturn',
+    component: VNPayReturn
   },
   {
     path: '/checkout',

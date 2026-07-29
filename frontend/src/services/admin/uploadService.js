@@ -16,11 +16,13 @@ export const uploadService = {
     formData.append('file', file)
     formData.append('folder', folder)
 
+    // Ghi đè Content-Type mặc định từ application/json sang multipart/form-data
+    // Axios sẽ tự động loại bỏ để trình duyệt tự điền boundary thích hợp
     const res = await http.post(UPLOAD_URL, formData, {
       headers: {
-        // Bỏ Content-Type để axios tự set multipart/form-data + boundary
-        'Content-Type': 'multipart/form-data',
+        'Content-Type': 'multipart/form-data'
       },
+      timeout: 30000, // 30s cho file lớn
     })
     return res.data  // { success: true, url, path }
   },

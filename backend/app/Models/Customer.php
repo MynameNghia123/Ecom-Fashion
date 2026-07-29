@@ -2,11 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Customer extends Model
+class Customer extends Authenticatable
 {
-    protected $fillable = [
+    use HasApiTokens;
+    protected
+     $fillable = [
         'first_name',
         'last_name',
         'email',
@@ -26,5 +30,10 @@ class Customer extends Model
             'password' => 'hashed',
             'status' => 'integer',
         ];
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(CustomerAddress::class);
     }
 }
