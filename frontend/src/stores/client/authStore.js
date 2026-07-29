@@ -65,6 +65,15 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
       user.value = data.user
       localStorage.setItem('customer_token', data.token)
       
+      // Đồng bộ lịch sử AI Chat từ Cookie vào DB
+      try {
+        const { useAiChatStore } = await import('@/stores/client/aiChatStore')
+        const aiStore = useAiChatStore()
+        aiStore.loadHistory()
+      } catch (e) {
+        console.error('Failed to trigger AI chat sync on login', e)
+      }
+
       return { success: true }
     } catch (err) {
       error.value = err.response?.data?.message || 'Đăng nhập thất bại!'

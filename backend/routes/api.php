@@ -27,6 +27,8 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\CartController as ClientCartController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
+use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
 
 /*
@@ -91,6 +93,12 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
 
     // ── Reviews ───────────────────────────────────────────────────────────────
     Route::apiResource('reviews', ReviewController::class)->only(['index', 'destroy'])->middleware('permission:reviews');
+
+    // ── Return Requests ───────────────────────────────────────────────────────
+    Route::get('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'index']);
+    Route::post('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'store']);
+    Route::get('return-requests/{returnRequest}', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'show']);
+    Route::patch('return-requests/{returnRequest}/status', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'updateStatus']);
 });
 
 // ── Public Client Routes (không yêu cầu xác thực) ───────────────────────────
@@ -99,9 +107,25 @@ Route::prefix('client')->group(function () {
     Route::get('blogs', [ClientBlogController::class, 'index']);
     Route::get('blogs/{slug}', [ClientBlogController::class, 'show']);
     Route::get('banners', [ClientBannerController::class, 'index']);
+
+    // Products & Brands
     Route::get('products', [ClientProductController::class, 'index']);
+    Route::get('products/brands', [ClientProductController::class, 'brands']);
     Route::get('products/{id}', [ClientProductController::class, 'show']);
     Route::get('products/{id}/reviews', [\App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+
+    // Categories (public — for filter sidebar & mega menu)
+    Route::get('categories/tree', function () {
+        $roots = \App\Models\Category::whereNull('parent_id')
+            ->with(['children.children'])
+            ->orderBy('name')
+            ->get();
+        return response()->json(['success' => true, 'data' => $roots]);
+    });
+    Route::get('categories', [AdminCategoryController::class, 'index']);
+
+    // AI Chat proxy
+    Route::post('ai/chat', [ClientAiChatController::class, 'chat']);
     Route::get('brands/{domain}', function ($domain) {
         $apiKey = config('services.brandfetch.key');
         $response = Http::withToken($apiKey)->get("https://api.brandfetch.io/v2/brands/domain/{$domain}");
@@ -154,8 +178,6 @@ Route::prefix('client')->group(function () {
         Route::post('addresses',              [\App\Http\Controllers\Client\CustomerAddressController::class, 'store']);
         Route::put('addresses/{id}',          [\App\Http\Controllers\Client\CustomerAddressController::class, 'update']);
         Route::delete('addresses/{id}',       [\App\Http\Controllers\Client\CustomerAddressController::class, 'destroy']);
-        Route::patch('addresses/{id}/default', [\App\Http\Controllers\Client\CustomerAddressController::class, 'setDefault']);
-
         // Reviews
         Route::get('reviews',                 [\App\Http\Controllers\Client\ReviewController::class, 'index']);
         Route::post('reviews',                [\App\Http\Controllers\Client\ReviewController::class, 'store']);
@@ -164,5 +186,9 @@ Route::prefix('client')->group(function () {
         Route::get('wishlist',                [\App\Http\Controllers\Client\WishlistController::class, 'index']);
         Route::post('wishlist/toggle',        [\App\Http\Controllers\Client\WishlistController::class, 'toggle']);
         Route::delete('wishlist/{productId}', [\App\Http\Controllers\Client\WishlistController::class, 'destroy']);
+
+        // AI Chat History & Sync
+        Route::get('ai/history',             [ClientAiChatController::class, 'history']);
+        Route::post('ai/sync-guest-history', [ClientAiChatController::class, 'syncGuestHistory']);
     });
 });

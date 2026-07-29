@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create('customer_password_otps', function (Blueprint $table) {
             $table->id();
             $table->string('email');
-            $table->string('otp', 6);
+            $table->string('otp');
             $table->timestamp('expires_at');
             $table->boolean('used')->default(false);
             $table->timestamps();

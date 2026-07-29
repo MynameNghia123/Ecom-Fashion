@@ -56,7 +56,7 @@ services:
       dockerfile: Dockerfile
     image: ecom-fashion-backend:latest
     container_name: ecom-fashion-backend
-    restart: unless-stopped
+    restart: on-failure:3
     user: root
     env_file:
       - ./backend/.env

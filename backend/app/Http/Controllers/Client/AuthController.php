@@ -125,8 +125,8 @@ class AuthController extends Controller
             'email' => 'required|email|exists:customers,email',
         ], [
             'email.required' => 'Vui lòng cung cấp email.',
-            'email.email' => 'Email không hợp lệ.',
-            'email.exists' => 'Email này chưa được đăng ký trong hệ thống.'
+            'email.email'    => 'Email không hợp lệ.',
+            'email.exists'   => 'Email này chưa được đăng ký trong hệ thống.'
         ]);
 
         if ($validator->fails()) {
@@ -136,25 +136,37 @@ class AuthController extends Controller
             ], 422);
         }
 
+        // Ensure otp column is VARCHAR(255) — fix for old schema with VARCHAR(6)
+        try {
+            DB::statement("ALTER TABLE customer_password_otps MODIFY COLUMN otp VARCHAR(255) NOT NULL");
+        } catch (\Exception $e) {
+            // Already correct type — ignore
+        }
+
         // Generate 6 digit OTP
         $otp = sprintf("%06d", mt_rand(1, 999999));
 
-        // Save to DB
-        DB::table('customer_password_otps')->insert([
-            'email' => $request->email,
-            'otp' => $otp,
-            'expires_at' => now()->addMinutes(10),
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        // Send Email
         try {
+            // Xóa OTP cũ của email này (tránh duplicate)
+            DB::table('customer_password_otps')->where('email', $request->email)->delete();
+
+            // Lưu OTP mới vào DB
+            DB::table('customer_password_otps')->insert([
+                'email'      => $request->email,
+                'otp'        => $otp,
+                'expires_at' => now()->addMinutes(10),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Gửi email OTP về Mailpit
             Mail::to($request->email)->send(new OtpMail($otp));
+
         } catch (\Exception $e) {
+            \Log::error('[forgotPassword] ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi gửi email: ' . $e->getMessage()
+                'message' => 'Đã xảy ra lỗi hệ thống, vui lòng thử lại sau.'
             ], 500);
         }
 
@@ -163,6 +175,7 @@ class AuthController extends Controller
             'message' => 'Mã OTP đã được gửi về email của bạn.'
         ], 200);
     }
+
 
     public function verifyOtp(Request $request)
     {

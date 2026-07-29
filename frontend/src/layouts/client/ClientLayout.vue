@@ -5,12 +5,15 @@
       <slot />
     </main>
     <Footer />
+    <!-- AI Assistant Floating Chat Widget -->
+    <AiAssistant />
   </div>
 </template>
 
 <script setup>
 import Header from '@/components/client/Header.vue'
 import Footer from '@/components/client/Footer.vue'
+import AiAssistant from '@/components/client/ai-assistant/AiAssistant.vue'
 
 defineProps({
   isTransparent: {
@@ -32,4 +35,3 @@ defineProps({
   flex: 1;
 }
 </style>
-

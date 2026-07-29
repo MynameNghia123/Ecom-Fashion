@@ -23,166 +23,143 @@
           class="hidden md:block md:w-[45%] lg:w-[50%] bg-cover bg-center relative shrink-0"
           style="background-image: url('https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&auto=format&fit=crop');"
         >
-          <!-- Subtle overlay to make it look premium -->
           <div class="absolute inset-0 bg-neutral-900/5"></div>
         </div>
 
         <!-- Right Panel: Forms -->
         <div class="w-full md:w-[55%] lg:w-[50%] flex flex-col justify-between bg-white relative overflow-hidden">
-          <!-- Form Header & Fields (Scrollable area) -->
+          <!-- Form content (Scrollable) -->
           <div class="grow p-8 lg:p-12 overflow-y-auto max-h-[510px] md:max-h-[550px] scrollbar-thin">
             
-            <!-- REGISTER FORM -->
+            <!-- ── REGISTER FORM ── -->
             <div v-if="mode === 'register'">
               <h2 class="font-title text-[36px] font-normal text-black mb-8 tracking-[0.5px]">Register</h2>
               <form @submit.prevent="handleRegister" class="space-y-6">
-                <!-- Names Grid -->
                 <div class="grid grid-cols-2 gap-6">
-                  <div class="relative">
+                  <div>
                     <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">First Name *</label>
-                    <input 
-                      type="text" 
-                      v-model="registerForm.firstName"
-                      required
-                      class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                    />
+                    <input type="text" v-model="registerForm.firstName" required
+                      class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                   </div>
-                  <div class="relative">
+                  <div>
                     <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Last Name *</label>
-                    <input 
-                      type="text" 
-                      v-model="registerForm.lastName"
-                      required
-                      class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                    />
+                    <input type="text" v-model="registerForm.lastName" required
+                      class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                   </div>
                 </div>
-
-                <!-- Email -->
-                <div class="relative">
+                <div>
                   <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Email address *</label>
-                  <input 
-                    type="email" 
-                    v-model="registerForm.email"
-                    required
-                    class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                  />
+                  <input type="email" v-model="registerForm.email" required
+                    class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                 </div>
-
-                <!-- Phone -->
-                <div class="relative">
+                <div>
                   <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Phone Number</label>
-                  <input 
-                    type="tel" 
-                    v-model="registerForm.phone"
-                    class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                  />
+                  <input type="tel" v-model="registerForm.phone"
+                    class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                 </div>
-
-                <!-- Password -->
-                <div class="relative">
+                <div>
                   <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Password *</label>
-                  <input 
-                    type="password" 
-                    v-model="registerForm.password"
-                    required
-                    class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                  />
+                  <input type="password" v-model="registerForm.password" required
+                    class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                 </div>
-
-                <!-- Submit Button -->
-                <button 
-                  type="submit" 
-                  class="w-full bg-black hover:bg-neutral-800 text-white font-text text-[12px] font-bold tracking-wider py-4 mt-8 transition-colors duration-300 uppercase cursor-pointer border-none"
-                >
-                  Register
+                <p v-if="formError" class="text-xs text-red-500 font-text">{{ formError }}</p>
+                <button type="submit" :disabled="authStore.loading"
+                  class="w-full bg-black hover:bg-neutral-800 disabled:bg-neutral-300 text-white font-text text-[12px] font-bold tracking-wider py-4 mt-8 transition-colors duration-300 uppercase cursor-pointer border-none flex items-center justify-center gap-2">
+                  <svg v-if="authStore.loading" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  {{ authStore.loading ? 'Đang đăng ký...' : 'Register' }}
                 </button>
               </form>
-
-              <!-- Footer Consent -->
-              <p class="text-[11px] text-neutral-450 leading-relaxed text-center mt-6 font-text">
-                By continuing, you accept the Privacy Policy and Terms of Service of NURFIA.
+              <p class="text-[11px] text-neutral-400 leading-relaxed text-center mt-6 font-text">
+                By continuing, you accept the Privacy Policy and Terms of Service.
               </p>
             </div>
 
-            <!-- LOGIN FORM -->
-            <div v-else>
+            <!-- ── LOGIN FORM ── -->
+            <div v-else-if="mode === 'login'">
               <h2 class="font-title text-[36px] font-normal text-black mb-8 tracking-[0.5px]">Log in</h2>
               <form @submit.prevent="handleLogin" class="space-y-6">
-                <!-- Username/Email -->
-                <div class="relative">
-                  <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Username or email address *</label>
-                  <input 
-                    type="text" 
-                    v-model="loginForm.username"
-                    required
-                    class="w-full border border-neutral-200 px-3 py-2.5 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                  />
+                <div>
+                  <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Email address *</label>
+                  <input type="email" v-model="loginForm.email" required
+                    class="w-full border border-neutral-200 px-3 py-2.5 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                 </div>
-
-                <!-- Password -->
-                <div class="relative">
+                <div>
                   <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Password *</label>
-                  <input 
-                    type="password" 
-                    v-model="loginForm.password"
-                    required
-                    class="w-full border border-neutral-200 px-3 py-2.5 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                  />
+                  <input type="password" v-model="loginForm.password" required
+                    class="w-full border border-neutral-200 px-3 py-2.5 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800" />
                 </div>
-
-                <!-- Remember Me -->
                 <div class="flex items-center">
                   <label class="flex items-center text-xs text-neutral-600 font-text cursor-pointer select-none">
-                    <input 
-                      type="checkbox" 
-                      v-model="loginForm.remember"
-                      class="mr-2 accent-black w-4 h-4 border border-neutral-300 rounded-sm"
-                    />
+                    <input type="checkbox" v-model="loginForm.remember" class="mr-2 accent-black w-4 h-4" />
                     Remember me
                   </label>
                 </div>
-
-                <!-- Submit Button -->
-                <button 
-                  type="submit" 
-                  class="w-full bg-[#eaeaea] hover:bg-black hover:text-white text-black font-text text-[12px] font-bold tracking-wider py-4 mt-8 transition-colors duration-300 uppercase cursor-pointer border-none"
-                >
-                  Log in
+                <p v-if="formError" class="text-xs text-red-500 font-text">{{ formError }}</p>
+                <button type="submit" :disabled="authStore.loading"
+                  class="w-full bg-[#eaeaea] hover:bg-black hover:text-white disabled:bg-neutral-200 text-black font-text text-[12px] font-bold tracking-wider py-4 mt-8 transition-colors duration-300 uppercase cursor-pointer border-none flex items-center justify-center gap-2">
+                  <svg v-if="authStore.loading" class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+                  </svg>
+                  {{ authStore.loading ? 'Đang đăng nhập...' : 'Log in' }}
                 </button>
               </form>
-
-              <!-- Lost Password Link -->
               <div class="text-center mt-6">
-                <a href="#" class="text-[12px] text-neutral-600 hover:text-black font-text underline">Lost your password?</a>
+                <button @click="mode = 'forgot'" class="text-[12px] text-neutral-600 hover:text-black font-text underline bg-transparent border-none cursor-pointer">
+                  Quên mật khẩu?
+                </button>
               </div>
-
-              <!-- Footer Consent -->
-              <p class="text-[11px] text-neutral-450 leading-relaxed text-center mt-6 font-text">
-                By continuing, you accept the Website Regulations, Regulations for the sale of alcoholic beverages and the Privacy Policy.
+              <p class="text-[11px] text-neutral-400 leading-relaxed text-center mt-4 font-text">
+                By continuing, you accept the Privacy Policy.
               </p>
+            </div>
+
+            <!-- ── FORGOT PASSWORD FORM ── -->
+            <div v-else-if="mode === 'forgot'">
+              <ForgotPasswordForm @submit="onForgotSubmit" @back="mode = 'login'" />
+            </div>
+
+            <!-- ── OTP FORM ── -->
+            <div v-else-if="mode === 'otp'">
+              <OtpForm @verify-success="onOtpSuccess" @back="mode = 'forgot'" />
+            </div>
+
+            <!-- ── RESET PASSWORD FORM ── -->
+            <div v-else-if="mode === 'reset'">
+              <ResetPasswordForm @submit="onResetSuccess" @back="mode = 'login'" />
             </div>
 
           </div>
 
-          <!-- Bottom bar (Toggle Mode) -->
-          <div class="h-[70px] border-t border-neutral-100 flex items-center justify-center bg-[#fafafa] shrink-0">
+          <!-- Bottom bar (Toggle Login/Register) -->
+          <div v-if="mode === 'login' || mode === 'register'"
+            class="h-[70px] border-t border-neutral-100 flex items-center justify-center bg-[#fafafa] shrink-0">
             <p v-if="mode === 'register'" class="text-[13px] font-text text-neutral-600">
-              Already have an account? 
+              Already have an account?
               <button @click="mode = 'login'" class="text-black font-semibold underline hover:no-underline ml-1 bg-transparent border-none cursor-pointer">
                 Log in instead
               </button>
             </p>
             <p v-else class="text-[13px] font-text text-neutral-600">
-              You don't have an account yet? 
+              Don't have an account yet?
               <button @click="mode = 'register'" class="text-black font-semibold underline hover:no-underline ml-1 bg-transparent border-none cursor-pointer">
                 Register Now
               </button>
             </p>
           </div>
 
-        </div>
+          <!-- Back to login for OTP flow -->
+          <div v-if="mode === 'forgot' || mode === 'otp' || mode === 'reset'"
+            class="h-[70px] border-t border-neutral-100 flex items-center justify-center bg-[#fafafa] shrink-0">
+            <button @click="mode = 'login'" class="text-[13px] font-text text-neutral-600 hover:text-black underline bg-transparent border-none cursor-pointer">
+              ← Quay lại đăng nhập
+            </button>
+          </div>
 
+        </div>
       </div>
     </div>
   </transition>
@@ -190,105 +167,92 @@
 
 <script setup>
 import { ref, reactive, watch } from 'vue'
+import { useClientAuthStore } from '@/stores/client/authStore'
+import ForgotPasswordForm from '@/views/client/auth/ForgotPasswordForm.vue'
+import OtpForm from '@/views/client/auth/OtpForm.vue'
+import ResetPasswordForm from '@/views/client/auth/ResetPasswordForm.vue'
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    default: false
-  },
-  initialMode: {
-    type: String,
-    default: 'login' // 'login' or 'register'
-  }
+  isOpen: { type: Boolean, default: false },
+  initialMode: { type: String, default: 'login' }
 })
+const emit = defineEmits(['close', 'login-success'])
 
-const emit = defineEmits(['close'])
-
+const authStore = useClientAuthStore()
 const mode = ref(props.initialMode)
+const formError = ref('')
 
-const registerForm = reactive({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  password: ''
-})
+const registerForm = reactive({ firstName: '', lastName: '', email: '', phone: '', password: '' })
+const loginForm = reactive({ email: '', password: '', remember: false })
 
-const loginForm = reactive({
-  username: '',
-  password: '',
-  remember: false
-})
-
-watch(() => props.isOpen, (newVal) => {
-  if (newVal) {
+watch(() => props.isOpen, (val) => {
+  if (val) {
     mode.value = props.initialMode
-    // Clear forms when modal opens
-    registerForm.firstName = ''
-    registerForm.lastName = ''
-    registerForm.email = ''
-    registerForm.phone = ''
-    registerForm.password = ''
-    
-    loginForm.username = ''
-    loginForm.password = ''
-    loginForm.remember = false
+    formError.value = ''
+    authStore.clearError()
+    Object.assign(registerForm, { firstName: '', lastName: '', email: '', phone: '', password: '' })
+    Object.assign(loginForm, { email: '', password: '', remember: false })
   }
 })
 
-const close = () => {
-  emit('close')
+const close = () => emit('close')
+
+// ── Handlers ──────────────────────────────────────────────────────────
+
+const handleLogin = async () => {
+  formError.value = ''
+  const result = await authStore.login({ email: loginForm.email, password: loginForm.password })
+  if (result.success) {
+    emit('login-success')
+    close()
+  } else {
+    formError.value = result.message
+  }
 }
 
-const handleLogin = () => {
-  alert(`[Mock Client] Đăng nhập: ${loginForm.username}`)
-  close()
+const handleRegister = async () => {
+  formError.value = ''
+  const result = await authStore.register({
+    first_name: registerForm.firstName,
+    last_name: registerForm.lastName,
+    email: registerForm.email,
+    phone_number: registerForm.phone,
+    password: registerForm.password,
+    password_confirmation: registerForm.password
+  })
+  if (result.success) {
+    emit('login-success')
+    close()
+  } else {
+    formError.value = result.message
+  }
 }
 
-const handleRegister = () => {
-  alert(`[Mock Client] Đăng ký: ${registerForm.firstName} ${registerForm.lastName} (${registerForm.email})`)
-  close()
+// OTP Flow
+const onForgotSubmit = () => { mode.value = 'otp' }
+const onOtpSuccess = () => { mode.value = 'reset' }
+const onResetSuccess = () => {
+  mode.value = 'login'
+  formError.value = ''
+  // small toast handled by parent or user sees the mode changed
 }
 </script>
 
 <style scoped>
-/* Modal Transition */
-.modal-fade-enter-active,
-.modal-fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.modal-fade-enter-from,
-.modal-fade-leave-to {
-  opacity: 0;
-}
+.modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.3s ease; }
+.modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
 
 @keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: scale(0.96) translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-  }
+  from { opacity: 0; transform: scale(0.96) translateY(8px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
 }
+.animate-modal-in { animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
 
-.animate-modal-in {
-  animation: modalIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
+.scrollbar-thin::-webkit-scrollbar { width: 4px; }
+.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: #e5e5e5; border-radius: 4px; }
+.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #ccc; }
 
-/* Custom minimal scrollbar for inner container */
-.scrollbar-thin::-webkit-scrollbar {
-  width: 4px;
-}
-.scrollbar-thin::-webkit-scrollbar-track {
-  background: transparent;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #e5e5e5;
-  border-radius: 4px;
-}
-.scrollbar-thin::-webkit-scrollbar-thumb:hover {
-  background: #ccc;
-}
+.font-title { font-family: var(--font-title, 'Playfair Display', serif); }
+.font-text  { font-family: var(--font-text,  'Montserrat', sans-serif); }
 </style>

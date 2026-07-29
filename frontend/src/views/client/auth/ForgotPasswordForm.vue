@@ -22,7 +22,9 @@
       </div>
 
       <!-- Error Message -->
-      <p v-if="authStore.error" class="text-xs text-red-500 font-text">{{ authStore.error }}</p>
+      <div v-if="authStore.error" class="p-3 bg-red-50 border border-red-200 rounded text-xs text-red-600 font-text">
+        {{ authStore.error }}
+      </div>
 
       <!-- Submit Button -->
       <button 
@@ -64,6 +66,7 @@ onMounted(() => {
 })
 
 const handleSubmit = async () => {
+  authStore.clearError()
   if (identifier.value.trim()) {
     const result = await authStore.forgotPassword(identifier.value.trim())
     if (result.success) {

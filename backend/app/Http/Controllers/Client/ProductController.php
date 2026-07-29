@@ -9,7 +9,7 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     /**
-     * Lấy danh sách sản phẩm đang active
+     * Lấy danh sách sản phẩm đang active (hỗ trợ lọc nâng cao)
      */
     public function index(Request $request): JsonResponse
     {
@@ -28,23 +28,91 @@ class ProductController extends Controller
             });
         }
 
-        // Tìm kiếm sản phẩm
+        // Tìm kiếm thông minh theo Tên, Thương hiệu, Danh mục hoặc SKU
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $s = trim($request->search);
+            $query->where(function ($q) use ($s) {
+                $q->where('name', 'like', "%{$s}%")
+                  ->orWhere('brand', 'like', "%{$s}%")
+                  ->orWhereHas('category', function ($cq) use ($s) {
+                      $cq->where('name', 'like', "%{$s}%");
+                  })
+                  ->orWhereHas('productVariants', function ($vq) use ($s) {
+                      $vq->where('sku', 'like', "%{$s}%");
+                  });
+            });
         }
 
-        $perPage = (int)$request->query('per_page', 8);
-        $products = $query->latest()->paginate($perPage);
+        // Lọc theo brand
+        if ($request->filled('brand')) {
+            $query->where('brand', $request->brand);
+        }
+
+        // Lọc theo khoảng giá (dựa vào sale_price hoặc price của variants)
+        if ($request->filled('min_price') || $request->filled('max_price')) {
+            $minPrice = $request->filled('min_price') ? (float) $request->min_price : 0;
+            $maxPrice = $request->filled('max_price') ? (float) $request->max_price : PHP_INT_MAX;
+
+            $query->whereHas('productVariants', function ($q) use ($minPrice, $maxPrice) {
+                $q->whereRaw('COALESCE(sale_price, price) >= ?', [$minPrice])
+                  ->whereRaw('COALESCE(sale_price, price) <= ?', [$maxPrice]);
+            });
+        }
+
+        // Sắp xếp
+        $sort = $request->query('sort', 'latest');
+        switch ($sort) {
+            case 'price_asc':
+                // Sắp xếp theo giá nhỏ nhất của variants tăng dần
+                $query->orderByRaw('(
+                    SELECT MIN(COALESCE(sale_price, price))
+                    FROM product_variants
+                    WHERE product_variants.product_id = products.id
+                ) ASC');
+                break;
+            case 'price_desc':
+                $query->orderByRaw('(
+                    SELECT MIN(COALESCE(sale_price, price))
+                    FROM product_variants
+                    WHERE product_variants.product_id = products.id
+                ) DESC');
+                break;
+            default: // 'latest'
+                $query->latest();
+                break;
+        }
+
+        $perPage = (int) $request->query('per_page', 12);
+        $products = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $products->items(),
-            'meta' => [
+            'data'    => $products->items(),
+            'meta'    => [
                 'current_page' => $products->currentPage(),
-                'per_page' => $products->perPage(),
-                'total' => $products->total(),
-                'last_page' => $products->lastPage(),
+                'per_page'     => $products->perPage(),
+                'total'        => $products->total(),
+                'last_page'    => $products->lastPage(),
             ]
+        ]);
+    }
+
+    /**
+     * Lấy danh sách brands (unique) từ sản phẩm đang active
+     */
+    public function brands(): JsonResponse
+    {
+        $brands = Product::where('is_active', true)
+            ->whereNotNull('brand')
+            ->where('brand', '!=', '')
+            ->distinct()
+            ->pluck('brand')
+            ->sort()
+            ->values();
+
+        return response()->json([
+            'success' => true,
+            'data'    => $brands
         ]);
     }
 
@@ -69,7 +137,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $product
+            'data'    => $product
         ]);
     }
 }
