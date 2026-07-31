@@ -49,20 +49,33 @@
           <div class="w-px h-6 bg-neutral-200 mx-1"></div>
 
           <!-- Admin Profile Pill -->
-          <div class="flex items-center gap-2.5 cursor-pointer p-1 rounded-lg transition-colors duration-150 hover:bg-neutral-50">
-            <div class="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-700 overflow-hidden border border-neutral-200 shrink-0">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80"
-                alt="Avatar"
-                class="w-full h-full object-cover"
-                @error="handleAvatarError"
-                v-if="avatarLoaded"
-              />
-              <span v-else>AD</span>
+          <div class="relative group">
+            <div class="flex items-center gap-2.5 cursor-pointer p-1 rounded-lg transition-colors duration-150 hover:bg-neutral-50">
+              <div class="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center text-xs font-bold text-neutral-700 overflow-hidden border border-neutral-200 shrink-0">
+                <img
+                  v-if="authStore.user?.avatar"
+                  :src="authStore.user.avatar"
+                  alt="Avatar"
+                  class="w-full h-full object-cover"
+                />
+                <span v-else>{{ getInitials(authStore.user?.full_name) || 'AD' }}</span>
+              </div>
+              <div class="flex flex-col leading-tight">
+                <span class="text-[13px] font-bold text-slate-800">{{ authStore.user?.full_name || 'Admin' }}</span>
+                <span class="text-[11px] font-medium text-neutral-400">Quản trị</span>
+              </div>
             </div>
-            <div class="flex flex-col leading-tight">
-              <span class="text-[13px] font-bold text-slate-800">Admin</span>
-              <span class="text-[11px] font-medium text-neutral-400">Quản trị</span>
+
+            <!-- Dropdown Menu -->
+            <div class="absolute right-0 top-full mt-1 w-48 bg-white rounded-xl shadow-lg border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right scale-95 group-hover:scale-100 z-50">
+              <div class="p-1.5">
+                <button @click="handleLogout" class="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors text-left">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>
+                  </svg>
+                  Đăng xuất
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -79,11 +92,23 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/admin/authStore'
 import Sidebar from '@/components/admin/layout/Sidebar.vue'
 
-const avatarLoaded = ref(true)
-const handleAvatarError = () => {
-  avatarLoaded.value = false
+const router = useRouter()
+const authStore = useAuthStore()
+
+const handleLogout = async () => {
+  await authStore.logout()
+  router.push('/admin/signin')
+}
+
+const getInitials = (name) => {
+  if (!name) return ''
+  const parts = name.trim().split(/\s+/)
+  if (parts.length === 1) return parts[0][0].toUpperCase()
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
 }
 </script>
 
