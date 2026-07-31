@@ -17,7 +17,7 @@ return new class extends Migration
             $table->decimal('cost_price', 12, 2);
             $table->boolean('is_return')->default(false);
             $table->integer('return_quantity')->default(0);
-            $table->foreignId('return_request_id')->nullable()->constrained('return_requests')->nullOnDelete();
+            $table->foreignId('return_request_id')->nullable();
         });
     }
 
