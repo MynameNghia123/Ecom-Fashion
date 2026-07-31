@@ -28,5 +28,10 @@ interface ProductVariantServiceInterface
      * Search product variants by SKU or ID
      */
     public function searchBySkuOrId(string $query);
+
+    /**
+     * Search product variants by SKU only
+     */
+    public function searchBySku(string $sku);
     
 }

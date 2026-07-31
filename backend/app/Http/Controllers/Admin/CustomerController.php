@@ -68,9 +68,18 @@ class CustomerController extends Controller
     }
 
     #[OA\Get(
-        path: '/api/admin/customers/all',
-        summary: 'Lấy tất cả khách hàng (không phân trang)',
+        path: '/api/admin/customers/search',
+        summary: 'Tìm kiếm khách hàng theo chuỗi ký tự',
         tags: ['Customers'],
+        parameters: [
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                required: true,
+                description: 'Chuỗi tìm kiếm (Tên, Email, SĐT)',
+                schema: new OA\Schema(type: 'string')
+            )
+        ],
         responses: [
             new OA\Response(
                 response: 200,
@@ -82,15 +91,18 @@ class CustomerController extends Controller
             ),
         ]
     )]
-    public function parents() : JsonResponse
+    public function search(Request $request) : JsonResponse
     {
-        $parents = $this->customerService->getAll();
+        $keyword = $request->query('q', '');
+
+        $customers = $this->customerService->searchByString($keyword);
 
         return response()->json([
             'success' => true,
-            'data'    => CustomerResource::collection($parents),
+            'data'    => CustomerResource::collection($customers),
         ]);
     }
+
 
     #[OA\Post(
         path: '/api/admin/customers',

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use App\Models\Staff;
 
 return [
 
@@ -39,8 +40,14 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
+            'driver'   => 'session',
             'provider' => 'users',
+        ],
+
+        // JWT guard cho Admin Staff
+        'staff' => [
+            'driver'   => 'jwt',
+            'provider' => 'staffs',
         ],
     ],
 
@@ -64,13 +71,14 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', User::class),
+            'model'  => env('AUTH_MODEL', User::class),
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        // Provider dùng bảng staffs
+        'staffs' => [
+            'driver' => 'eloquent',
+            'model'  => Staff::class,
+        ],
     ],
 
     /*

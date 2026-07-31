@@ -94,7 +94,7 @@
 
             <ProductImageUploader v-model="formProduct.images" />
 
-            <ProductVariantsUploader v-model="formProduct.variants" />
+            <ProductVariantsUploader v-model="formProduct.variants" :product-data="formProduct" />
 
           </div>
 
@@ -144,6 +144,11 @@ const props = defineProps({
 // ─── State ────────────────────────────────────────────────────────────────────
 const isSaving = ref(false)
 const { apiErrors, validate, clearErrors, applyBackendErrors } = useProductValidation()
+
+const generateSlug = (text) => {
+  if (!text) return '';
+  return text.toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim().replace(/\s+/g, '-').replace(/[^\w-]+/g, '').replace(/--+/g, '-');
+}
 
 const formProduct = reactive({
   name: '',
@@ -217,6 +222,12 @@ watch(() => props.product, (newProduct) => {
     })
   }
 }, { immediate: true })
+
+watch(() => formProduct.name, (newName) => {
+  if (props.action === 'add' || !formProduct.slug) {
+    formProduct.slug = generateSlug(newName);
+  }
+})
 
 // Kiểm tra xem có ảnh sản phẩm hoặc ảnh biến thể nào đang upload hay không
 const isUploadingAny = computed(() => {

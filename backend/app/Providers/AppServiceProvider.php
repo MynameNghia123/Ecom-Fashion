@@ -103,6 +103,8 @@ use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
 use App\Repositories\Admin\Implements\ReturnRequestRepository;
 use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use App\Services\Admin\Implements\ReturnRequestService;
+use App\Services\Admin\Implements\AuthService;
+use App\Services\Admin\Interfaces\AuthServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -171,6 +173,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             CustomerRepositoryInterface::class,
             CustomerRepository::class,
+        );
+        $this->app->bind(
+            \App\Repositories\Admin\Interfaces\CustomerAddressRepositoryInterface::class,
+            \App\Repositories\Admin\Implements\CustomerAddressRepository::class,
         );
         $this->app->bind(
             StaffRepoInterface::class,
@@ -278,6 +284,10 @@ class AppServiceProvider extends ServiceProvider
             CustomerServiceInterface::class,
             CustomerService::class,
         );
+        $this->app->bind(
+            \App\Services\Admin\Interfaces\CustomerAddressServiceInterface::class,
+            \App\Services\Admin\Implements\CustomerAddressService::class,
+        );
         // Coupon
         $this->app->bind(
             CouponServiceInterface::class,
@@ -312,6 +322,11 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(
             StaffPermissionServiceInterface::class,
             StaffPermissionService::class,
+        );
+
+        $this->app->bind(
+            AuthServiceInterface::class,
+            AuthService::class,
         );
     }
 

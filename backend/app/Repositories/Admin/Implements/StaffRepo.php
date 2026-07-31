@@ -55,4 +55,10 @@ class StaffRepo implements StaffRepoInterface
         $model->delete();
     }
 
+    public function findActiveByEmail(string $email): ?Staff
+    {
+        return $this->model->where('email', $email)
+            ->where('is_active', 1)
+            ->first();
+    }
 }

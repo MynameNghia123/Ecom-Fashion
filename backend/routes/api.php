@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\AttributeController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
@@ -14,11 +15,10 @@ use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
-
+use App\Http\Controllers\Admin\CustomerAddressController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Http\Controllers\Admin\ProductVariantController;
-use App\Models\Supplier;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,18 +26,34 @@ use App\Models\Supplier;
 |--------------------------------------------------------------------------
 */
 
-// Admin routes (thêm middleware auth:sanctum khi hoàn thiện auth)
-Route::prefix('admin')->group(function () {
+// ── Admin Auth (không cần middleware) ────────────────────────────────────────
+Route::prefix('admin/auth')->group(function () {
+    Route::post('login',   [AuthController::class, 'login']);
+    Route::post('logout',  [AuthController::class, 'logout'])->middleware('auth:staff');
+    Route::get('me',       [AuthController::class, 'me'])->middleware('auth:staff');
+    Route::post('refresh', [AuthController::class, 'refresh'])->middleware('auth:staff');
+});
+
+// ── Admin routes — yêu cầu JWT token hợp lệ ─────────────────────────────────
+Route::prefix('admin')->middleware('auth:staff')->group(function () {
     Route::apiResource('attributes', AttributeController::class);
     Route::get('categories/parents', [CategoryController::class, 'parents']);
 
     Route::apiResource('categories', CategoryController::class);
     Route::apiResource('products', ProductController::class);
-    
+
+    Route::get('products/variants/search-sku', [ProductController::class, 'searchVariantBySku']);
+
     // Product Variant search
     Route::get('product-variants/search', [ProductVariantController::class, 'search']);
-    
+
+    // Customer search
+    Route::get('customers/search', [CustomerController::class, 'search']);
     Route::apiResource('customers', CustomerController::class);
+    Route::apiResource('customer-addresses', CustomerAddressController::class);
+
+    // Coupon check
+    Route::post('coupons/check', [CouponController::class, 'check']);
     Route::apiResource('coupons', CouponController::class);
     Route::apiResource('blogs', BlogController::class);
     Route::apiResource('banners', BannerController::class);
@@ -45,7 +61,7 @@ Route::prefix('admin')->group(function () {
     Route::apiResource('orders', OrderController::class);
 
     Route::apiResource('goods-receipts', GoodReceiptController::class);
-    
+
     // field supplier drop down — phải đặt TRƯỚC apiResource để tránh bị route {supplier} override
     Route::get('/suppliers/dropdown', [SupplierController::class, 'getSupplierForDropDown']);
     Route::apiResource('suppliers', SupplierController::class);
@@ -56,14 +72,9 @@ Route::prefix('admin')->group(function () {
     // Roles & Permissions
     Route::get('roles/all', [RoleController::class, 'getAll']);
     Route::apiResource('roles', RoleController::class);
-    Route::get('permissions', [PermissionController::class, 'index']); // chỉ GET all, nhóm theo module
-    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
-    Route::post('upload-image',    [UploadController::class, 'upload']);
-    Route::delete('upload-image',  [UploadController::class, 'delete']);
-});
+    Route::get('permissions', [PermissionController::class, 'index']);
 
-//Route::get('/attributes', [AttributeController::class, 'index']);
-//Route::post('/attributes', [AttributeController::class, 'store']);
-//Route::get('/attributes/{attribute}', [AttributeController::class, 'show']);
-//Route::put('/attributes/{attribute}', [AttributeController::class, 'update']);
-//oute::delete('/attributes/{attribute}', [AttributeController::class, 'destroy']
+    // Upload ảnh — trả về URL storage, không lưu ảnh vào DB
+    Route::post('upload-image',   [UploadController::class, 'upload']);
+    Route::delete('upload-image', [UploadController::class, 'delete']);
+});

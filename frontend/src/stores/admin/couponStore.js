@@ -82,6 +82,16 @@ export const useCouponStore = defineStore('coupon', () => {
     return res.data
   }
 
+  /**
+   * Kiểm tra mã giảm giá
+   * @param {Object} data - { code, order_total }
+   * @returns {Promise<any>}
+   */
+  async function checkCoupon(data) {
+    const res = await couponService.check(data)
+    return res.data
+  }
+
   return {
     // State
     coupons,
@@ -94,5 +104,6 @@ export const useCouponStore = defineStore('coupon', () => {
     createCoupon,
     updateCoupon,
     deleteCoupon,
+    checkCoupon,
   }
 })

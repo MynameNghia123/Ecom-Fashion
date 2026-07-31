@@ -38,6 +38,21 @@ export const useCustomerStore = defineStore('customer', () => {
   }
 
   /**
+   * Tìm kiếm khách hàng (chủ yếu dùng cho dropdown/gợi ý)
+   * Không lưu vào state `customers` để không ảnh hưởng phân trang hiện tại.
+   * @param {string} keyword
+   */
+  async function searchCustomers(keyword) {
+    try {
+      const res = await customerService.searchByString(keyword)
+      return res.data.data
+    } catch (e) {
+      console.error('Lỗi khi tìm kiếm khách hàng:', e)
+      return []
+    }
+  }
+
+  /**
    * Fetch lần đầu — chỉ gọi API nếu chưa có data.
    */
   async function initialFetch(params = {}) {
@@ -94,5 +109,6 @@ export const useCustomerStore = defineStore('customer', () => {
     createCustomer,
     updateCustomer,
     deleteCustomer,
+    searchCustomers,
   }
 })

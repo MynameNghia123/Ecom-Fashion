@@ -96,4 +96,9 @@ class ProductVariantService implements ProductVariantServiceInterface
     {
         return $this->repo->searchBySkuOrId($query);
     }
+
+    public function searchBySku(string $sku)
+    {
+        return $this->repo->searchBySku($sku);
+    }
 }

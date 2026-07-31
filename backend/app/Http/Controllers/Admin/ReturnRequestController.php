@@ -75,9 +75,9 @@ class ReturnRequestController extends Controller
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
-                required: ['order_id', 'reason'],
+                required: ['order_code', 'reason'],
                 properties: [
-                    new OA\Property(property: 'order_id', type: 'integer', example: 1, description: 'ID đơn hàng'),
+                    new OA\Property(property: 'order_code', type: 'string', example: 'ORD-2024-001', description: 'Mã đơn hàng (order_code)'),
                     new OA\Property(property: 'reason', type: 'string', example: 'Sản phẩm không vừa size, bị lỗi chỉ may', description: 'Lý do trả hàng'),
                     new OA\Property(property: 'evidence_images', type: 'array', items: new OA\Items(type: 'string'), example: ['https://example.com/evidence1.jpg'], description: 'Ảnh minh chứng'),
                     new OA\Property(property: 'status', type: 'string', enum: ['pending', 'approved', 'rejected', 'completed'], example: 'pending'),

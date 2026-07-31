@@ -238,4 +238,40 @@ class CouponController extends Controller
             'message' => 'Mã giảm giá đã được xóa thành công.',
         ]);
     }
+
+    #[OA\Post(
+        path: '/api/admin/coupons/check',
+        summary: 'Kiểm tra mã giảm giá có hợp lệ hay không',
+        tags: ['Coupons'],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['code', 'order_total'],
+                properties: [
+                    new OA\Property(property: 'code', type: 'string', example: 'SUMMER20'),
+                    new OA\Property(property: 'order_total', type: 'number', example: 500000),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 200, description: 'Trả về trạng thái hợp lệ hoặc không hợp lệ của coupon'),
+        ]
+    )]
+    public function check(Request $request)
+    {
+        $result = $this->couponService->checkValidCoupon($request->all());
+
+        if (!$result['valid']) {
+            return response()->json([
+                'success' => false,
+                'message' => $result['message']
+            ], 400);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => new CouponResource($result['coupon']),
+            'message' => 'Mã giảm giá hợp lệ.'
+        ]);
+    }
 }

@@ -68,6 +68,16 @@ export const useProductStore = defineStore('product', () => {
         return fetchProducts(params)
     }
 
+    async function searchVariantBySku(sku) {
+        try {
+            const res = await productService.searchVariantBySku(sku);
+            return res.data.data; // trả về mảng variants
+        } catch (err) {
+            console.error(err);
+            return [];
+        }
+    }
+
     // SỬA 4: Trả về đầy đủ các state và action
     return {
         products,
@@ -79,6 +89,7 @@ export const useProductStore = defineStore('product', () => {
         initialFetch,
         createProduct,
         updateProduct,
-        deleteProduct
+        deleteProduct,
+        searchVariantBySku
     }
 })

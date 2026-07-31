@@ -59,6 +59,18 @@ class ProductVariantRepository implements ProductVariantRepositoryInterface
             ->limit(20)
             ->get();
     }
+
+    /**
+     * Search product variants by SKU only
+     */
+    public function searchBySku(string $sku)
+    {
+        return $this->model
+            ->with(['product:id,name'])
+            ->where('sku', 'like', '%' . $sku . '%')
+            ->limit(20)
+            ->get();
+    }
 }
 
 ?>

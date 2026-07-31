@@ -55,5 +55,9 @@ class CouponRepository implements CouponRepositoryInterface
         return $this->model->orderBy('id', 'desc')->get();
     }
 
+    public function findByCode(string $code): ?Coupon
+    {
+        return $this->model->where('code', $code)->first();
+    }
 }
 ?>

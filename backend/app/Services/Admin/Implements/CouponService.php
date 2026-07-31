@@ -43,4 +43,39 @@ class CouponService implements CouponServiceInterface
     {
         return $this->couponRepositoryInterface->findById($id);
     }
+
+    public function checkValidCoupon(array $data): array
+    {
+        \Illuminate\Support\Facades\Validator::make($data, [
+            'code' => 'required|string',
+            'order_total' => 'required|numeric|min:0'
+        ])->validate();
+
+        $code = $data['code'];
+        $orderTotal = (float) $data['order_total'];
+
+        $coupon = $this->couponRepositoryInterface->findByCode($code);
+
+        if (!$coupon) {
+            return ['valid' => false, 'message' => 'Mã giảm giá không tồn tại.'];
+        }
+
+        if (!$coupon->is_active) {
+            return ['valid' => false, 'message' => 'Mã giảm giá đã bị vô hiệu hóa.'];
+        }
+
+        if ($coupon->expiry_date && \Carbon\Carbon::parse($coupon->expiry_date)->startOfDay()->isPast()) {
+            return ['valid' => false, 'message' => 'Mã giảm giá đã hết hạn.'];
+        }
+
+        if ($coupon->max_usage > 0 && $coupon->used_count >= $coupon->max_usage) {
+            return ['valid' => false, 'message' => 'Mã giảm giá đã hết lượt sử dụng.'];
+        }
+
+        if ($coupon->price_min_order_value > 0 && $orderTotal < $coupon->price_min_order_value) {
+            return ['valid' => false, 'message' => 'Đơn hàng chưa đạt giá trị tối thiểu để sử dụng mã này.'];
+        }
+
+        return ['valid' => true, 'coupon' => $coupon];
+    }
 }

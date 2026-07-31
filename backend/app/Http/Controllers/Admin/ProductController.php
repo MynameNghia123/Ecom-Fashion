@@ -6,6 +6,7 @@ use App\Http\Requests\Admin\Product\StoreProductRequest;
 use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Http\Resources\Admin\Product\ProductResource;
 use App\Services\Admin\Interfaces\ProductServiceInterface;
+use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\Product;
@@ -19,7 +20,7 @@ class ProductController extends Controller
 {
     public function __construct(
         private readonly ProductServiceInterface $productService,
-
+        private readonly ProductVariantServiceInterface $productVariantService,
     ){}
 
     #[OA\Get(
@@ -288,8 +289,39 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Sản phẩm đã được xóa thành công.',
-        ], 200); 
+            'message' => 'Sản phẩm đã được xóa thành công.'
+        ]);
+    }
+
+    #[OA\Get(
+        path: '/api/admin/products/variants/search-sku',
+        summary: 'Tìm kiếm biến thể sản phẩm theo mã SKU',
+        tags: ['Products'],
+        parameters: [
+            new OA\Parameter(name: 'sku', in: 'query', description: 'Mã SKU cần tìm', required: true, schema: new OA\Schema(type: 'string')),
+        ],
+        responses: [
+            new OA\Response(response: 200, description: 'Tìm kiếm thành công'),
+            new OA\Response(response: 400, description: 'Lỗi khi thiếu mã SKU')
+        ]
+    )]
+    public function searchVariantBySku(Request $request)
+    {
+        $sku = $request->input('sku');
+        if (empty($sku)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Vui lòng cung cấp mã SKU.'
+            ], 400);
+        }
+
+        $variants = $this->productVariantService->searchBySku($sku);
+
+        return response()->json([
+            'success' => true,
+            'data' => $variants,
+            'message' => 'Tìm kiếm thành công.'
+        ]);
     }
 
 }

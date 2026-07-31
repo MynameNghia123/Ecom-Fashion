@@ -38,4 +38,13 @@ class CustomerService implements CustomerServiceInterface
     {
         return $this->customerRepositoryInterface->getAll();
     }
+
+    public function searchByString(string $keyword)
+    {
+        if (empty($keyword)) {
+            return collect([]);
+        }
+
+        return $this->customerRepositoryInterface->searchByString($keyword);
+    }
 }

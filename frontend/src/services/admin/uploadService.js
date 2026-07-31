@@ -18,7 +18,6 @@ export const uploadService = {
 
     const res = await http.post(UPLOAD_URL, formData, {
       headers: {
-        // Bỏ Content-Type để axios tự set multipart/form-data + boundary
         'Content-Type': 'multipart/form-data',
       },
     })

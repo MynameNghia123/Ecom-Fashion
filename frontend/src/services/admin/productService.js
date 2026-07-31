@@ -42,4 +42,13 @@ export const productService = {
     delete(id) {
         return http.delete(`${BASE}/${id}`)
     },
+
+    /**
+     * Tìm kiếm product_variant bằng SKU
+     * @param {string} sku 
+     * @returns 
+     */
+    searchVariantBySku(sku) {
+        return http.get(`${BASE}/variants/search-sku`, { params: { sku } });
+    }
 }

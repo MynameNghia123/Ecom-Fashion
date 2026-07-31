@@ -18,12 +18,13 @@ class UpdateOrderRequest extends FormRequest
         $orderId = is_object($order) ? $order->id : $order;
 
         return [
-            'order_code'                         => ['required', 'string', 'max:255', Rule::unique('orders', 'order_code')->ignore($orderId)],
+            'order_code'                         => ['nullable', 'string', 'max:255', Rule::unique('orders', 'order_code')->ignore($orderId)],
             'customer_id'                        => ['required', 'integer', 'exists:customers,id'],
             'coupon_id'                          => ['nullable', 'integer', 'exists:coupons,id'],
-            'shipping_name'                      => ['required', 'string', 'max:255'],
-            'shipping_phone'                     => ['required', 'string', 'max:255'],
-            'shipping_address'                   => ['required', 'string', 'max:255'],
+            'shipping_name'                      => ['nullable', 'string', 'max:255'],
+            'shipping_phone'                     => ['nullable', 'string', 'max:255'],
+            'shipping_address'                   => ['nullable', 'string', 'max:255'],
+            'customer_address'                   => ['nullable', 'array'],
             'sub_total_amount'                   => ['nullable', 'numeric', 'min:0'],
             'coupon_discount_amount'             => ['nullable', 'numeric', 'min:0'],
             'shipping_fee'                       => ['nullable', 'numeric', 'min:0'],

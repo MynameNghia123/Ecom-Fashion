@@ -12,4 +12,5 @@ interface StaffRepoInterface extends BaseRepositoryInterface
     public function create(array $data): Staff;
     public function update(Model $model, array $data): Staff;
     public function delete(Model $model): void;
+    public function findActiveByEmail(string $email): ?Staff;
 }

@@ -43,4 +43,5 @@ interface CouponRepositoryInterface extends BaseRepositoryInterface
      */
     public function delete(Model $model): void;
     public function getAll();
+    public function findByCode(string $code): ?Coupon;
 }

@@ -1766,6 +1766,274 @@
                 }
             }
         },
+        "/api/admin/coupons/check": {
+            "post": {
+                "tags": [
+                    "Coupons"
+                ],
+                "summary": "Kiểm tra mã giảm giá có hợp lệ hay không",
+                "operationId": "3ddb3ae9a1ec6eb47673c4e20417ae8f",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "code",
+                                    "order_total"
+                                ],
+                                "properties": {
+                                    "code": {
+                                        "type": "string",
+                                        "example": "SUMMER20"
+                                    },
+                                    "order_total": {
+                                        "type": "number",
+                                        "example": 500000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Trả về trạng thái hợp lệ hoặc không hợp lệ của coupon"
+                    }
+                }
+            }
+        },
+        "/api/admin/customer-addresses": {
+            "get": {
+                "tags": [
+                    "CustomerAddresses"
+                ],
+                "summary": "Lấy danh sách địa chỉ khách hàng",
+                "operationId": "54ec4e543fd8d7157854ef51e8ade3e2",
+                "parameters": [
+                    {
+                        "name": "customer_id",
+                        "in": "query",
+                        "description": "Lọc theo ID khách hàng",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Tìm kiếm theo tên người nhận hoặc số điện thoại",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "CustomerAddresses"
+                ],
+                "summary": "Thêm địa chỉ mới",
+                "operationId": "5b08800375082c3893d949d2eaf62cd9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customer_id",
+                                    "receiver_name",
+                                    "receiver_phone",
+                                    "detail_address"
+                                ],
+                                "properties": {
+                                    "customer_id": {
+                                        "type": "integer"
+                                    },
+                                    "receiver_name": {
+                                        "type": "string"
+                                    },
+                                    "receiver_phone": {
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "district": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "ward": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "detail_address": {
+                                        "type": "string"
+                                    },
+                                    "is_default": {
+                                        "type": "boolean",
+                                        "default": false
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/customer-addresses/{customer_address}": {
+            "get": {
+                "tags": [
+                    "CustomerAddresses"
+                ],
+                "summary": "Xem chi tiết địa chỉ",
+                "operationId": "5d4d9e595cd3633e9cdfb18500504630",
+                "parameters": [
+                    {
+                        "name": "customer_address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "CustomerAddresses"
+                ],
+                "summary": "Cập nhật địa chỉ",
+                "operationId": "d227203dd3f553b6de032a6907198d2f",
+                "parameters": [
+                    {
+                        "name": "customer_address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "customer_id",
+                                    "receiver_name",
+                                    "receiver_phone",
+                                    "detail_address"
+                                ],
+                                "properties": {
+                                    "customer_id": {
+                                        "type": "integer"
+                                    },
+                                    "receiver_name": {
+                                        "type": "string"
+                                    },
+                                    "receiver_phone": {
+                                        "type": "string"
+                                    },
+                                    "province": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "district": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "ward": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "detail_address": {
+                                        "type": "string"
+                                    },
+                                    "is_default": {
+                                        "type": "boolean"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    },
+                    "422": {
+                        "description": "Lỗi validate"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CustomerAddresses"
+                ],
+                "summary": "Xóa địa chỉ",
+                "operationId": "2f8ebb1cf529c090345622925f6bd376",
+                "parameters": [
+                    {
+                        "name": "customer_address",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công"
+                    },
+                    "404": {
+                        "description": "Không tìm thấy"
+                    }
+                }
+            }
+        },
         "/api/admin/customers": {
             "get": {
                 "tags": [
@@ -1939,13 +2207,24 @@
                 }
             }
         },
-        "/api/admin/customers/all": {
+        "/api/admin/customers/search": {
             "get": {
                 "tags": [
                     "Customers"
                 ],
-                "summary": "Lấy tất cả khách hàng (không phân trang)",
-                "operationId": "8837063c00448710b0dc2c7268e08dd4",
+                "summary": "Tìm kiếm khách hàng theo chuỗi ký tự",
+                "operationId": "9e0cb0dbc70f4225a86879ddba8442ed",
+                "parameters": [
+                    {
+                        "name": "q",
+                        "in": "query",
+                        "description": "Chuỗi tìm kiếm (Tên, Email, SĐT)",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Thành công",
@@ -3537,6 +3816,34 @@
                 }
             }
         },
+        "/api/admin/products/variants/search-sku": {
+            "get": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Tìm kiếm biến thể sản phẩm theo mã SKU",
+                "operationId": "88229386d5290417139e2eb601284bef",
+                "parameters": [
+                    {
+                        "name": "sku",
+                        "in": "query",
+                        "description": "Mã SKU cần tìm",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Tìm kiếm thành công"
+                    },
+                    "400": {
+                        "description": "Lỗi khi thiếu mã SKU"
+                    }
+                }
+            }
+        },
         "/api/admin/product-variants/search": {
             "get": {
                 "tags": [
@@ -3666,14 +3973,14 @@
                         "application/json": {
                             "schema": {
                                 "required": [
-                                    "order_id",
+                                    "order_code",
                                     "reason"
                                 ],
                                 "properties": {
-                                    "order_id": {
-                                        "description": "ID đơn hàng",
-                                        "type": "integer",
-                                        "example": 1
+                                    "order_code": {
+                                        "description": "Mã đơn hàng (order_code)",
+                                        "type": "string",
+                                        "example": "ORD-2024-001"
                                     },
                                     "reason": {
                                         "description": "Lý do trả hàng",
@@ -5365,6 +5672,10 @@
         {
             "name": "Coupons",
             "description": "Quản lý mã giảm giá"
+        },
+        {
+            "name": "CustomerAddresses",
+            "description": "Quản lý địa chỉ khách hàng"
         },
         {
             "name": "Customers",

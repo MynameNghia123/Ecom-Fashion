@@ -43,4 +43,12 @@ export const couponService = {
   delete(id) {
     return http.delete(`${BASE}/${id}`)
   },
+
+  /**
+   * Kiểm tra mã giảm giá
+   * @param {Object} data - { code, order_total }
+   */
+  check(data) {
+    return http.post(`${BASE}/check`, data)
+  },
 }

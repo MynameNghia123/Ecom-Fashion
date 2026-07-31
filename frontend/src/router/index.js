@@ -45,4 +45,29 @@ const router = createRouter({
   routes
 })
 
+// ── Navigation Guard ─────────────────────────────────────────────────────────
+router.beforeEach((to, _from, next) => {
+  const token       = localStorage.getItem('admin_token')
+  const permissions = JSON.parse(localStorage.getItem('admin_permissions') || '[]')
+
+  // 1. Chưa đăng nhập → về trang signin
+  if (to.meta.requiresAuth && !token) {
+    return next({ name: 'AdminSignIn' })
+  }
+
+  // 2. Đã đăng nhập → không cho vào trang signin nữa
+  if (to.meta.requiresGuest && token) {
+    return next({ name: 'AdminDashboard' })
+  }
+
+  // 3. Kiểm tra permission nếu route có yêu cầu
+  if (to.meta.permission && token) {
+    if (!permissions.includes(to.meta.permission)) {
+      return next({ name: 'AdminForbidden' })
+    }
+  }
+
+  next()
+})
+
 export default router

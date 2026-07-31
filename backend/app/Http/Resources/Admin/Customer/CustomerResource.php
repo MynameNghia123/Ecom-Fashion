@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\Customer;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Admin\CustomerAddress\CustomerAddressResource;
 
 class CustomerResource extends JsonResource
 {
@@ -23,6 +24,7 @@ class CustomerResource extends JsonResource
             'status' => $this->status,
             'created_at' => $this->created_at?->format('d/m/Y H:i'),
             'updated_at' => $this->updated_at?->format('d/m/Y H:i'),
+            'default_address' => new CustomerAddressResource($this->whenLoaded('defaultAddress')),
         ];
     }
 }

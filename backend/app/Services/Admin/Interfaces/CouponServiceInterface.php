@@ -39,4 +39,5 @@ interface CouponServiceInterface extends BaseServiceInterface
     public function delete(Model $model): void;
     public function getAll();
     public function findById(int $id): ?Coupon;
+    public function checkValidCoupon(array $data): array;
 }

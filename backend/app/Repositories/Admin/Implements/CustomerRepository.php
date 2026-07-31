@@ -64,5 +64,15 @@ class CustomerRepository implements CustomerRepositoryInterface
         return $this->model->orderBy('id', 'desc')->get();
     }
 
+    public function searchByString(string $keyword)
+    {
+        return $this->model->where('first_name', 'like', '%' . $keyword . '%')
+            ->orWhere('last_name', 'like', '%' . $keyword . '%')
+            ->orWhere('email', 'like', '%' . $keyword . '%')
+            ->orWhere('phone_number', 'like', '%' . $keyword . '%')
+            ->with('defaultAddress')
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 }
 ?>

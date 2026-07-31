@@ -27,4 +27,14 @@ class Customer extends Model
             'status' => 'integer',
         ];
     }
+
+    public function addresses()
+    {
+        return $this->hasMany(CustomerAddress::class);
+    }
+
+    public function defaultAddress()
+    {
+        return $this->hasOne(CustomerAddress::class)->where('is_default', true);
+    }
 }

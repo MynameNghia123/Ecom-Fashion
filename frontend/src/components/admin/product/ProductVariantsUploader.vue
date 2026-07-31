@@ -2,11 +2,19 @@
   <div class="border border-slate-200 rounded-xl p-5 space-y-4">
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-bold text-slate-700">Phân loại hàng (Biến thể)</h3>
-      <button
-        @click="addInputAttributeValue"    
-        type="button" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 transition-all">
-        + Thêm nhóm thuộc tính
-      </button>
+      <div class="flex gap-2">
+        <button
+          v-if="variants.length > 0"
+          @click="autoGenerateAllSKUs"
+          type="button" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#0258cb] bg-blue-50 hover:bg-blue-100 rounded-xl transition-all">
+          Làm mới SKU
+        </button>
+        <button
+          @click="addInputAttributeValue"    
+          type="button" class="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl border border-slate-200 transition-all">
+          + Thêm nhóm thuộc tính
+        </button>
+      </div>
     </div>
 
     <div class="border border-slate-200 rounded-xl p-4 space-y-3" v-if="InputAttributeGroup.length > 0">
@@ -143,11 +151,56 @@
 import { ref, watch, defineModel, nextTick } from 'vue'
 import { useAttributeStore } from '@/stores/admin/attributeStore'
 import { uploadService } from '@/services/admin/uploadService'
+import { useCategoryStore } from '@/stores/admin/categoryStore'
+
+const props = defineProps({
+  productData: {
+    type: Object,
+    default: () => ({})
+  }
+})
 
 const variants = defineModel({ default: () => [] })
 const InputAttributeGroup = ref([])
 const attributeStore = useAttributeStore()
+const categoryStore = useCategoryStore()
 attributeStore.initialFetch()
+
+const removeAccents = (str) => {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
+const generateSKUHelper = (combo) => {
+  const data = props.productData || {};
+  let brandCode = removeAccents(data.brand || '').replace(/\s+/g, '').substring(0, 3).toUpperCase() || 'XXX';
+  
+  let categoryCode = 'XXX';
+  if (data.category_id && categoryStore.categories) {
+    const cat = categoryStore.categories.find(c => c.id === data.category_id);
+    if (cat) categoryCode = removeAccents(cat.name || '').replace(/\s+/g, '').substring(0, 3).toUpperCase();
+  }
+
+  let nameCode = 'XXX';
+  if (data.name) {
+    const words = removeAccents(data.name).trim().split(/\s+/).filter(w => w);
+    if (words.length === 1) {
+      nameCode = words[0].replace(/\s+/g, '').substring(0, 2).toUpperCase();
+    } else {
+      nameCode = words.map(w => w[0]).join('').replace(/\s+/g, '').substring(0, 3).toUpperCase();
+    }
+  }
+
+  const variantParts = combo.map(c => {
+    const val = removeAccents(String(c.value)).toUpperCase().trim();
+    if (!isNaN(val) || ['S', 'M', 'L', 'XL', 'XXL'].includes(val)) {
+      return val;
+    }
+    return val.substring(0, 3).replace(/\s+/g, '');
+  });
+
+  return [brandCode, categoryCode, nameCode, ...variantParts].join('-');
+}
 
 // ==========================================
 // LOGIC KHU VỰC 1: THUỘC TÍNH (ATTRIBUTES)
@@ -264,6 +317,15 @@ const removeVariantImage = (index) => {
   variant._upload_error = null;
 }
 
+const autoGenerateAllSKUs = () => {
+  variants.value.forEach(v => {
+    if (v.attribute_values) {
+      const combo = v.attribute_values.map(av => ({ value: av.value }));
+      v.sku = generateSKUHelper(combo);
+    }
+  });
+}
+
 // ==========================================
 // LOGIC KHU VỰC 2: TỰ ĐỘNG SINH BIẾN THỂ
 // ==========================================
@@ -294,7 +356,7 @@ const generateVariants = () => {
     // KEY ẩn để nhận diện dòng chính xác kể cả khi bị sửa tên (sắp xếp theo attribute_id)
     const variantKey = [...combo].sort((a, b) => (a.group.attribute_id || 0) - (b.group.attribute_id || 0)).map(c => c.value).join("|||"); 
     const defaultName = combo.map(c => c.value).join(" - ");
-    const skuSuggestion = `SKU-${combo.map(c => c.value).join("-").toUpperCase().replace(/\s+/g, "")}`;
+    const skuSuggestion = generateSKUHelper(combo);
     
     // Tìm variant cũ theo key để giữ lại dữ liệu người dùng đã nhập
     const existingVariant = oldVariants.find(v => v.key === variantKey);

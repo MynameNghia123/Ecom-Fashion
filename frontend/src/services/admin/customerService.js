@@ -12,6 +12,14 @@ export const customerService = {
   },
 
   /**
+   * Tìm kiếm khách hàng theo chuỗi
+   * @param {string} keyword
+   */
+  searchByString(keyword) {
+    return http.get(`${BASE}/search`, { params: { q: keyword } })
+  },
+
+  /**
    * Lấy chi tiết một khách hàng
    * @param {number} id
    */

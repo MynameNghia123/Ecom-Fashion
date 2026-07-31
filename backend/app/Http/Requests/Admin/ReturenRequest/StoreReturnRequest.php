@@ -14,10 +14,10 @@ class StoreReturnRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'order_id'              => ['required', 'integer', 'exists:orders,id'],
+            'order_code'            => ['required', 'string', 'exists:orders,order_code'],
             'reason'                => ['required', 'string'],
             'evidence_images'       => ['nullable', 'array'],
-            'evidence_images.*'     => ['string', 'max:255'],
+            'evidence_images.*'     => ['string', 'max:500'],
             'status'                => ['nullable', 'string', 'in:pending,approved,rejected,completed'],
             'refund_amount'         => ['nullable', 'numeric', 'min:0'],
             'processed_by_staff_id' => ['nullable', 'integer', 'exists:staffs,id'],
@@ -27,14 +27,14 @@ class StoreReturnRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'order_id.required'              => 'Mã đơn hàng không được để trống.',
-            'order_id.integer'               => 'Mã đơn hàng phải là số nguyên.',
-            'order_id.exists'                => 'Đơn hàng không tồn tại trong hệ thống.',
+            'order_code.required'            => 'Mã đơn hàng không được để trống.',
+            'order_code.string'              => 'Mã đơn hàng phải là chuỗi ký tự.',
+            'order_code.exists'              => 'Đơn hàng không tồn tại trong hệ thống.',
             'reason.required'                => 'Lý do trả hàng không được để trống.',
             'reason.string'                  => 'Lý do trả hàng phải là chuỗi ký tự.',
             'evidence_images.array'          => 'Danh sách hình ảnh minh chứng phải là một mảng.',
             'evidence_images.*.string'       => 'Đường dẫn ảnh phải là chuỗi ký tự.',
-            'evidence_images.*.max'          => 'Đường dẫn ảnh không được vượt quá 255 ký tự.',
+            'evidence_images.*.max'          => 'Đường dẫn ảnh không được vượt quá 500 ký tự.',
             'status.in'                      => 'Trạng thái xử lý không hợp lệ (pending, approved, rejected, completed).',
             'refund_amount.numeric'          => 'Số tiền hoàn trả phải là số.',
             'refund_amount.min'              => 'Số tiền hoàn trả không được âm.',

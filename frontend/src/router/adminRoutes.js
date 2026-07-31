@@ -21,7 +21,7 @@ const adminRoutes = [
     path: '/admin/signin',
     name: 'AdminSignIn',
     component: SignIn,
-    meta: { layout: 'BlankLayout' }
+    meta: { layout: 'BlankLayout', requiresGuest: true }
   },
   {
     path: '/admin',
@@ -31,98 +31,106 @@ const adminRoutes = [
     path: '/admin/dashboard',
     name: 'AdminDashboard',
     component: DashBoard,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true }
+    // Dashboard không yêu cầu permission cụ thể
   },
   {
     path: '/admin/categories',
     name: 'AdminCategory',
     component: Category,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'categories:read' }
   },
   {
     path: '/admin/products',
     name: 'AdminProduct',
     component: Product,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'products:read' }
   },
   {
     path: '/admin/product-attributes',
     name: 'AdminProductAttribute',
     component: AttributeProduct,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'attributes:read' }
   },
   {
     path: '/admin/orders',
     name: 'AdminOrder',
     component: Order,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'orders:read' }
   },
   {
     path: '/admin/return-requests',
     name: 'AdminReturnRequire',
     component: ReturnRequire,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'returns:read' }
   },
   {
     path: '/admin/suppliers',
     name: 'AdminSupplier',
     component: Supplier,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'suppliers:read' }
   },
   {
     path: '/admin/warehouse-receipts',
     name: 'AdminWarehouseReceipt',
     component: WarehouseReceipt,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'goods_receipts:read' }
   },
   {
     path: '/admin/customers',
     name: 'AdminCustomer',
     component: Customer,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'customers:read' }
   },
   {
     path: '/admin/reviews',
     name: 'AdminReviewManagement',
     component: ReviewManagement,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'reviews:read' }
   },
   {
     path: '/admin/discounts',
     name: 'AdminDiscountCode',
     component: DiscountCode,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'coupons:read' }
   },
   {
     path: '/admin/banners',
     name: 'AdminAdvertisementBanner',
     component: AdvertisementBanner,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'banners:read' }
   },
   {
     path: '/admin/blog',
     name: 'AdminBlog',
     component: Blog,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'blogs:read' }
   },
   {
     path: '/admin/staff-accounts',
     name: 'AdminStaff',
     component: Staff,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'staffs:read' }
   },
   {
     path: '/admin/roles-permissions',
     name: 'AdminRole',
     component: Role,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true, permission: 'roles:read' }
   },
   {
     path: '/admin/settings',
     name: 'AdminConfig',
     component: Config,
-    meta: { layout: 'AdminLayout' }
+    meta: { layout: 'AdminLayout', requiresAuth: true }
+  },
+  {
+    path: '/admin/403',
+    name: 'AdminForbidden',
+    component: () => import('../views/admin/Forbidden.vue'),
+    meta: { layout: 'AdminLayout', requiresAuth: true }
   }
 ]
 
 export default adminRoutes
+
