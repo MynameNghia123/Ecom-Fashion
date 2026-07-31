@@ -32,4 +32,9 @@ class SupplierService implements SupplierServiceInterface
     {
         $this->repo->delete($model);
     }
+
+    public function getStats(): array
+    {
+        return $this->repo->getStats();
+    }
 }

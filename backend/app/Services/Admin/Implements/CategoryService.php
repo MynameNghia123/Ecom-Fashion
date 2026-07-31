@@ -38,4 +38,9 @@ class CategoryService implements CategoryServiceInterface
     {
         return $this->categoryRepository->getAll();
     }
+
+    public function getStats(): array
+    {
+        return $this->categoryRepository->getStats();
+    }
 }

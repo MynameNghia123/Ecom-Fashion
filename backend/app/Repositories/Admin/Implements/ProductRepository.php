@@ -62,6 +62,27 @@ class ProductRepository implements ProductRepositoryInterface
     {
         $model->delete();
     }
+
+    public function getStats(): array
+    {
+        $total = $this->model->count();
+        $active = $this->model->where('is_active', true)->count();
+        
+        $outOfStock = $this->model->whereDoesntHave('productVariants', function ($q) {
+            $q->where('stock_quantity', '>', 0);
+        })->count();
+
+        $newThisMonth = $this->model->whereMonth('created_at', now()->month)
+                                    ->whereYear('created_at', now()->year)
+                                    ->count();
+
+        return [
+            'total'          => $total,
+            'active'         => $active,
+            'out_of_stock'   => $outOfStock,
+            'new_this_month' => $newThisMonth,
+        ];
+    }
 }
 
 ?>

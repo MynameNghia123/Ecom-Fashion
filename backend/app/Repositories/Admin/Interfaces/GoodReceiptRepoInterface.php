@@ -12,4 +12,5 @@ interface GoodReceiptRepoInterface extends BaseRepositoryInterface
     public function create(array $data): GoodReceipt;
     public function update(Model $model, array $data): GoodReceipt;
     public function delete(Model $model): void;
+    public function getStats(): array;
 }

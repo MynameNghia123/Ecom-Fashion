@@ -51,4 +51,17 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
     {
         $model->delete();
     }
+
+    public function getStats(): array
+    {
+        $total = $this->model->count();
+        $total_import_value = $this->model->sum('total_amount_price');
+        $pending = $this->model->where('status', 'pending')->count();
+
+        return [
+            'total'              => $total,
+            'total_import_value' => $total_import_value,
+            'pending'            => $pending,
+        ];
+    }
 }

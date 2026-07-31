@@ -12,4 +12,5 @@ interface SupplierRepositoryInterface extends BaseRepositoryInterface
     public function create(array $data): Supplier;
     public function update(Model $model, array $data): Supplier;
     public function delete(Model $model): void;
+    public function getStats(): array;
 }

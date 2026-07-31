@@ -67,4 +67,8 @@ class ProductService implements ProductServiceInterface
         $this->productRepo->delete($model);
     }
 
+    public function getStats(): array
+    {
+        return $this->productRepo->getStats();
+    }
 }

@@ -56,4 +56,16 @@ class SupplierRepository implements SupplierRepositoryInterface
         $model->delete();
     }
 
+    public function getStats(): array
+    {
+        $total = $this->model->count();
+        $active = $this->model->where('is_active', true)->count();
+        $inactive = $total - $active;
+
+        return [
+            'total'    => $total,
+            'active'   => $active,
+            'inactive' => $inactive,
+        ];
+    }
 }

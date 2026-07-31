@@ -47,5 +47,14 @@ class CategoryRepository implements CategoryRepositoryInterface
         return $this->model->orderBy('id', 'desc')->get();
     }
 
+    public function getStats(): array
+    {
+        return [
+            'total'  => $this->model->count(),
+            'parent' => $this->model->whereNull('parent_id')->count(),
+            'child'  => $this->model->whereNotNull('parent_id')->count(),
+        ];
+    }
+
 }
 ?>

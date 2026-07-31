@@ -33,4 +33,9 @@ interface ProductRepositoryInterface extends BaseRepositoryInterface
      * @param array{ name: string, description: string, price: float, stock: int } $data
      */
     public function update(\Illuminate\Database\Eloquent\Model $model, array $data): Product;
+
+    /**
+     * Lấy thống kê cho sản phẩm.
+     */
+    public function getStats(): array;
 }

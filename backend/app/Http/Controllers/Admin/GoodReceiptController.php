@@ -48,6 +48,7 @@ class GoodReceiptController extends Controller
                 'total'        => $paginator->total(),
                 'last_page'    => $paginator->lastPage(),
             ],
+            'stats'   => $this->service->getStats(),
         ]);
     }
 

@@ -34,5 +34,10 @@ interface CategoryServiceInterface extends BaseServiceInterface
      * @return \Illuminate\Database\Eloquent\Collection
      */
     public function getAll();
+
+    /**
+     * Lấy thống kê danh mục (tổng, cha, con)
+     */
+    public function getStats(): array;
 }
 ?>

@@ -74,6 +74,7 @@ class SupplierController extends Controller
                 'total'        => $paginator->total(),
                 'last_page'    => $paginator->lastPage(),
             ],
+            'stats'   => $this->supplierService->getStats(),
         ]);
     }
 

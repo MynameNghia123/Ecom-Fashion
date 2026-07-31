@@ -61,6 +61,7 @@ class CategoryController extends Controller
                 'total'        => $paginator->total(),
                 'last_page'    => $paginator->lastPage(),
             ],
+            'stats'   => $this->categoryService->getStats(),
         ]);
     }
 

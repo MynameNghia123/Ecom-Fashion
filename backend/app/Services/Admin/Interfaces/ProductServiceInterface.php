@@ -27,4 +27,9 @@ interface ProductServiceInterface extends BaseServiceInterface
      * @param array{ name?: string, price?: float, description?: string } $data
      */
     public function update(Model $model, array $data): Product;
+
+    /**
+     * Lấy thống kê cho sản phẩm.
+     */
+    public function getStats(): array;
 }
