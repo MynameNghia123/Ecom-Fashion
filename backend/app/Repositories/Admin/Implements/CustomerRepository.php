@@ -64,5 +64,14 @@ class CustomerRepository implements CustomerRepositoryInterface
         return $this->model->orderBy('id', 'desc')->get();
     }
 
+    public function getStats(): array
+    {
+        return [
+            'total_active' => $this->model->where('status', 1)->count(),
+            'total_banned' => $this->model->where('status', 0)->count(),
+            'new_today'    => $this->model->whereDate('created_at', today())->count(),
+        ];
+    }
+
 }
 ?>

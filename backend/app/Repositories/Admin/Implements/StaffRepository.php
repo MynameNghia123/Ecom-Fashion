@@ -37,6 +37,11 @@ class StaffRepository implements StaffRepositoryInterface
         return $this->model->with(['roles', 'permissions'])->find($id);
     }
 
+    public function findByEmail(string $email): ?Staff
+    {
+        return $this->model->where('email', $email)->first();
+    }
+
     public function create(array $data): Staff
     {
         return $this->model->create($data);

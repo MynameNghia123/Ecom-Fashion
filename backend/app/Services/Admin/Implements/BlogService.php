@@ -21,11 +21,17 @@ class BlogService implements BlogServiceInterface
 
     public function create(array $data): Blog
     {
+        if (isset($data['status'])) {
+            $data['status'] = $data['status'] === 'active';
+        }
         return $this->blogRepository->create($data);
     }
 
     public function update(Model $model, array $data): Blog
     {
+        if (isset($data['status'])) {
+            $data['status'] = $data['status'] === 'active';
+        }
         return $this->blogRepository->update($model, $data);
     }
 

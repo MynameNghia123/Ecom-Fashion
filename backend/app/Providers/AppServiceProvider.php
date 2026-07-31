@@ -19,6 +19,9 @@ use App\Repositories\Admin\Implements\StaffRepository;
 use App\Repositories\Admin\Implements\SupplierRepository;
 use App\Repositories\Admin\Implements\GoodReceiptRepo;
 use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
+use App\Repositories\Admin\Implements\OrderRepository;
+use App\Repositories\Admin\Implements\ReturnRequestRepository;
+use App\Repositories\Admin\Implements\ReviewRepository;
 
 use App\Repositories\Admin\Interfaces\AttributeRepositoryInterface;
 use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
@@ -36,8 +39,12 @@ use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
 use App\Repositories\Admin\Interfaces\SupplierRepositoryInterface;
 use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
 use App\Repositories\Admin\Interfaces\GoodReceiptDetailRepoInterface;
+use App\Repositories\Admin\Interfaces\OrderRepositoryInterface;
+use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
+use App\Repositories\Admin\Interfaces\ReviewRepositoryInterface;
 
 // ── Services ──────────────────────────────────────────────────────────────────
+use App\Services\Admin\Implements\AuthService;
 use App\Services\Admin\Implements\AttributeService;
 use App\Services\Admin\Implements\AttributeValueService;
 use App\Services\Admin\Implements\BannerService;
@@ -54,7 +61,11 @@ use App\Services\Admin\Implements\StaffService;
 use App\Services\Admin\Implements\SupplierService;
 use App\Services\Admin\Implements\GoodReceiptService;
 use App\Services\Admin\Implements\GoodReceiptDetailService;
+use App\Services\Admin\Implements\OrderService;
+use App\Services\Admin\Implements\ReturnRequestService;
+use App\Services\Admin\Implements\ReviewService;
 
+use App\Services\Admin\Interfaces\AuthServiceInterface;
 use App\Services\Admin\Interfaces\AttributeServiceInterface;
 use App\Services\Admin\Interfaces\AttributeValueServiceInterface;
 use App\Services\Admin\Interfaces\BannerServiceInterface;
@@ -71,6 +82,9 @@ use App\Services\Admin\Interfaces\StaffServiceInterface;
 use App\Services\Admin\Interfaces\SupplierServiceInterface;
 use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
 use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
+use App\Services\Admin\Interfaces\OrderServiceInterface;
+use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
+use App\Services\Admin\Interfaces\ReviewServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -98,8 +112,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SupplierRepositoryInterface::class,        SupplierRepository::class);
         $this->app->bind(GoodReceiptRepoInterface::class,           GoodReceiptRepo::class);
         $this->app->bind(GoodReceiptDetailRepoInterface::class,     GoodReceiptDetailRepo::class);
+        $this->app->bind(OrderRepositoryInterface::class,           OrderRepository::class);
+        $this->app->bind(ReturnRequestRepositoryInterface::class,   ReturnRequestRepository::class);
+        $this->app->bind(ReviewRepositoryInterface::class,          ReviewRepository::class);
 
         // ── Services ──────────────────────────────────────────────────────────
+        $this->app->bind(AuthServiceInterface::class,               AuthService::class);
         $this->app->bind(AttributeServiceInterface::class,          AttributeService::class);
         $this->app->bind(AttributeValueServiceInterface::class,     AttributeValueService::class);
         $this->app->bind(BannerServiceInterface::class,             BannerService::class);
@@ -116,6 +134,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(SupplierServiceInterface::class,           SupplierService::class);
         $this->app->bind(GoodReceiptServiceInterface::class,        GoodReceiptService::class);
         $this->app->bind(GoodReceiptDetailServiceInterface::class,  GoodReceiptDetailService::class);
+        $this->app->bind(OrderServiceInterface::class,              OrderService::class);
+        $this->app->bind(ReturnRequestServiceInterface::class,      ReturnRequestService::class);
+        $this->app->bind(ReviewServiceInterface::class,             ReviewService::class);
     }
 
     public function boot(): void

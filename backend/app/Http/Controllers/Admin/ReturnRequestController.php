@@ -4,47 +4,30 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ReturnRequest;
-use App\Models\Order;
-use App\Models\OrderDetail;
+use App\Http\Requests\Admin\ReturnRequest\StoreReturnRequestRequest;
+use App\Http\Requests\Admin\ReturnRequest\UpdateReturnRequestStatusRequest;
+use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ReturnRequestController extends Controller
 {
+    public function __construct(
+        private readonly ReturnRequestServiceInterface $service
+    ) {}
     /** GET /admin/return-requests */
     public function index(Request $request): JsonResponse
     {
-        $query = ReturnRequest::with([
-            'order.customer',
-            'orderDetail.productVariant.attributeValues.attribute',
-            'orderDetail.productVariant.product.productImages',
-        ])->latest();
+        $filters = [
+            'status'   => $request->query('status'),
+            'reason'   => $request->query('reason'),
+            'search'   => $request->query('search'),
+            'per_page' => (int) $request->query('per_page', 15),
+        ];
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
-
-        if ($request->filled('reason')) {
-            $query->where('reason', $request->reason);
-        }
-
-        if ($request->filled('search')) {
-            $s = $request->search;
-            $query->where(function ($q) use ($s) {
-                $q->where('ticket_code', 'like', "%{$s}%")
-                  ->orWhereHas('order', fn($oq) => $oq->where('code', 'like', "%{$s}%"))
-                  ->orWhereHas('order.customer', fn($cq) =>
-                      $cq->where('full_name', 'like', "%{$s}%")
-                         ->orWhere('phone', 'like', "%{$s}%")
-                  );
-            });
-        }
-
-        $perPage = (int) $request->query('per_page', 15);
-        $paginator = $query->paginate($perPage);
-
-        $items = $paginator->map(fn($r) => $this->formatItem($r));
+        $paginator = $this->service->getList($filters);
+        $items = array_map(fn($r) => $this->formatItem($r), $paginator->items());
 
         return response()->json([
             'success' => true,
@@ -55,19 +38,21 @@ class ReturnRequestController extends Controller
                 'total'        => $paginator->total(),
                 'last_page'    => $paginator->lastPage(),
             ],
-            'stats'   => $this->buildStats(),
+            'stats'   => $this->service->getStats(),
         ]);
     }
 
     /** GET /admin/return-requests/{id} */
-    public function show(ReturnRequest $returnRequest): JsonResponse
+    public function show(int $id): JsonResponse
     {
-        $returnRequest->load([
-            'order.customer',
-            'orderDetail.productVariant.attributeValues.attribute',
-            'orderDetail.productVariant.product.productImages',
-            'processedBy',
-        ]);
+        $returnRequest = $this->service->getDetail($id);
+
+        if (!$returnRequest) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Không tìm thấy yêu cầu đổi trả.',
+            ], 404);
+        }
 
         return response()->json([
             'success' => true,
@@ -76,59 +61,37 @@ class ReturnRequestController extends Controller
     }
 
     /** PATCH /admin/return-requests/{id}/status */
-    public function updateStatus(Request $request, ReturnRequest $returnRequest): JsonResponse
+    public function updateStatus(UpdateReturnRequestStatusRequest $request, int $id): JsonResponse
     {
-        $request->validate([
-            'status'     => 'required|in:approved,received,refunded,rejected',
-            'admin_note' => 'nullable|string|max:1000',
-        ]);
+        $returnRequest = $this->service->getDetail($id);
 
-        // Kiểm tra luồng hợp lệ
-        $validTransitions = [
-            'pending'  => ['approved', 'rejected'],
-            'approved' => ['received'],
-            'received' => ['refunded'],
-        ];
-
-        $allowed = $validTransitions[$returnRequest->status] ?? [];
-        if (!in_array($request->status, $allowed)) {
+        if (!$returnRequest) {
             return response()->json([
                 'success' => false,
-                'message' => "Không thể chuyển từ '{$returnRequest->status}' sang '{$request->status}'.",
-            ], 422);
+                'message' => 'Không tìm thấy yêu cầu đổi trả.',
+            ], 404);
         }
 
-        $returnRequest->update([
-            'status'                 => $request->status,
-            'admin_note'             => $request->admin_note,
-            'processed_by_staff_id'  => auth()->id(),
-            'processed_at'           => now(),
-        ]);
+        try {
+            $updated = $this->service->updateStatus($returnRequest, $request->validated());
 
-        return response()->json([
-            'success' => true,
-            'data'    => $this->formatItem($returnRequest),
-            'message' => 'Cập nhật trạng thái thành công.',
-        ]);
+            return response()->json([
+                'success' => true,
+                'data'    => $this->formatItem($updated),
+                'message' => 'Cập nhật trạng thái thành công.',
+            ]);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], 422);
+        }
     }
 
     /** POST /admin/return-requests (Tạo YC từ admin thay KH) */
-    public function store(Request $request): JsonResponse
+    public function store(StoreReturnRequestRequest $request): JsonResponse
     {
-        $validated = $request->validate([
-            'order_id'        => 'required|exists:orders,id',
-            'order_detail_id' => 'nullable|exists:order_details,id',
-            'reason'          => 'required|in:defective,wrong_size,wrong_item,change_mind,other',
-            'customer_note'   => 'nullable|string|max:2000',
-            'quantity'        => 'required|integer|min:1',
-            'refund_amount'   => 'required|numeric|min:0',
-            'evidence_images' => 'nullable|array',
-        ]);
-
-        $validated['ticket_code'] = '#RET-' . strtoupper(Str::random(6));
-
-        $returnRequest = ReturnRequest::create($validated);
-        $returnRequest->load(['order.customer', 'orderDetail.productVariant.attributeValues.attribute']);
+        $returnRequest = $this->service->createReturnRequest($request->validated());
 
         return response()->json([
             'success' => true,
@@ -198,20 +161,5 @@ class ReturnRequestController extends Controller
         return $base;
     }
 
-    private function buildStats(): array
-    {
-        $counts = ReturnRequest::selectRaw('status, COUNT(*) as total')
-            ->groupBy('status')
-            ->pluck('total', 'status')
-            ->toArray();
 
-        return [
-            'total'    => array_sum($counts),
-            'pending'  => $counts['pending']  ?? 0,
-            'approved' => $counts['approved'] ?? 0,
-            'received' => $counts['received'] ?? 0,
-            'refunded' => $counts['refunded'] ?? 0,
-            'rejected' => $counts['rejected'] ?? 0,
-        ];
-    }
 }

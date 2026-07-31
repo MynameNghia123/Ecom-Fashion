@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Staff\StaffResource;
-use App\Models\Staff;
+use App\Services\Admin\Interfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\Admin\Auth\LoginRequest;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -16,6 +16,10 @@ use OpenApi\Attributes as OA;
 )]
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly AuthServiceInterface $authService
+    ) {}
+
     // ── POST /api/admin/auth/login ───────────────────────────────────────────
     #[OA\Post(
         path: '/api/admin/auth/login',
@@ -45,46 +49,22 @@ class AuthController extends Controller
             new OA\Response(response: 422, description: 'Validation error'),
         ]
     )]
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required|string',
-        ], [
-            'email.required'    => 'Email không được để trống.',
-            'email.email'       => 'Email không hợp lệ.',
-            'password.required' => 'Mật khẩu không được để trống.',
-        ]);
+        $result = $this->authService->login($request->only(['email', 'password']));
 
-        $staff = Staff::where('email', $request->email)->first();
-
-        if (!$staff || !Hash::check($request->password, $staff->password)) {
+        if (!$result['success']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Email hoặc mật khẩu không chính xác.',
-            ], 401);
+                'message' => $result['message'],
+            ], $result['status_code']);
         }
-
-        if (!$staff->is_active) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tài khoản của bạn đã bị khóa.',
-            ], 403);
-        }
-
-        // Tạo token mới
-        $token = $staff->createToken('admin-token')->plainTextToken;
-
-        // Cập nhật last_login_at
-        $staff->update([
-            'last_login_at' => now(),
-        ]);
 
         return response()->json([
             'success' => true,
-            'message' => 'Đăng nhập thành công.',
-            'token'   => $token,
-            'user'    => new StaffResource($staff->load(['roles', 'permissions'])),
+            'message' => $result['message'],
+            'token'   => $result['token'],
+            'user'    => new StaffResource($result['user']),
         ]);
     }
 
@@ -105,7 +85,7 @@ class AuthController extends Controller
         $user = $request->user();
         
         if ($user) {
-            $user->currentAccessToken()->delete();
+            $this->authService->logout($user);
         }
 
         return response()->json([
@@ -132,7 +112,7 @@ class AuthController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new StaffResource($user->load(['roles', 'permissions'])),
+            'data'    => new StaffResource($this->authService->me($user)),
         ]);
     }
 }

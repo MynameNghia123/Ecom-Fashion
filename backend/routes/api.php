@@ -16,7 +16,7 @@ use App\Http\Controllers\Admin\GoodReceiptController;
 use App\Http\Controllers\Admin\ProductVariantController;
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BLogController;
+use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReviewController;
@@ -83,7 +83,7 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('goods-receipts', GoodReceiptController::class)->middleware('permission:goods_receipts');
 
     // ── Content: Blog ─────────────────────────────────────────────────────────
-    Route::apiResource('blogs', BLogController::class)->middleware('permission:blogs');
+    Route::apiResource('blogs', BlogController::class)->middleware('permission:blogs');
 
     // ── Marketing: Banners ───────────────────────────────────────────────────
     Route::apiResource('banners', BannerController::class)->middleware('permission:banners');

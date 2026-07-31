@@ -43,5 +43,6 @@ interface CustomerRepositoryInterface extends BaseRepositoryInterface
      */
     public function delete(Model $model): void;
     public function getAll();
+    public function getStats(): array;
 }
  

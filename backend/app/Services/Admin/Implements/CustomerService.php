@@ -39,4 +39,9 @@ class CustomerService implements CustomerServiceInterface
     {
         return $this->customerRepositoryInterface->getAll();
     }
+
+    public function getStats(): array
+    {
+        return $this->customerRepositoryInterface->getStats();
+    }
 }

@@ -14,7 +14,7 @@ use OpenApi\Attributes as OA;
     name: 'Blogs',
     description: 'Quản lý bài viết Blog'
 )]
-class BLogController extends Controller
+class BlogController extends Controller
 {
     public function __construct(
         private readonly BlogServiceInterface $blogService
@@ -99,8 +99,7 @@ class BLogController extends Controller
     public function store(BlogRequest $request): JsonResponse
     {
         $data = $request->validated();
-        // Chuyển status string sang boolean để lưu DB
-        $data['status'] = $data['status'] === 'active';
+
 
         $blog = $this->blogService->create($data);
 
@@ -175,7 +174,7 @@ class BLogController extends Controller
     public function update(BlogRequest $request, Blog $blog): JsonResponse
     {
         $data = $request->validated();
-        $data['status'] = $data['status'] === 'active';
+
 
         $updated = $this->blogService->update($blog, $data);
 

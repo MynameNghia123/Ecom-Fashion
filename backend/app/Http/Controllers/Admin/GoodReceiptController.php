@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\GoodReceipt\StoreGoodReceiptRequest;
 use App\Http\Requests\Admin\GoodReceipt\UpdateGoodReceiptRequest;
+use App\Http\Requests\Admin\GoodReceipt\DeleteGoodReceiptRequest;
 use App\Http\Resources\Admin\GoodReceipt\GoodReceiptResource;
 use App\Models\GoodReceipt;
 use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
@@ -168,15 +169,8 @@ class GoodReceiptController extends Controller
             new OA\Response(response: 204, description: 'Xóa thành công')
         ]
     )]
-    public function destroy(GoodReceipt $goods_receipt): JsonResponse
+    public function destroy(DeleteGoodReceiptRequest $request, GoodReceipt $goods_receipt): JsonResponse
     {
-       if (in_array($goods_receipt->status, ['cancel', 'completed'])) {
-           return response()->json([
-               'message' => 'Không thể xóa phiếu nhập đã bị hủy hoặc đã hoàn thành.',
-               'errors'  => ['status' => ['Không thể xóa phiếu nhập đã bị hủy hoặc đã hoàn thành.']]
-           ], 422);
-       }
-
        $this->service->delete($goods_receipt);
 
        return response()->json([
