@@ -95,17 +95,17 @@
             <p class="text-xs text-slate-400 mt-0.5">Cho phép nhà phân phối tham gia vào hệ thống.</p>
           </div>
           <button
-            @click="form.is_active = !form.is_active"
+            @click="form.is_active = form.is_active === 1 ? 0 : 1"
             type="button"
             :class="[
                   'relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none',
-                  form.is_active ? 'bg-[#0258cb]' : 'bg-gray-300'
+                  form.is_active === 1 ? 'bg-[#0258cb]' : 'bg-gray-300'
                 ]"
               >
             <span 
               :class="[
                 'inline-block w-5 h-5 mt-0.5 rounded-full bg-white transition-transform duration-200',
-                form.is_active ? 'translate-x-5' : 'translate-x-0.5'
+                form.is_active === 1 ? 'translate-x-5' : 'translate-x-0.5'
               ]"
             ></span>
         </button>
@@ -120,13 +120,17 @@
           Hủy bỏ
         </button>
         <button
+          :disabled="isSubmitting"
           @click="handleSubmit()"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98]">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100">
+          <svg v-if="isSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
+          </svg>
+          <svg v-else class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
             <polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/>
           </svg>
-          <span>{{ props.typeOfAction === 'add' ? 'Thêm mới' : 'Chỉnh sửa' }}</span>
+          <span>{{ isSubmitting ? 'Đang cập nhật...' : (props.typeOfAction === 'add' ? 'Thêm mới' : 'Chỉnh sửa') }}</span>
         </button>
       </div>
     </div>
@@ -158,12 +162,14 @@ const form = reactive({
   phone: props.supplierData?.phone || '',
   email: props.supplierData?.email || '',
   address: props.supplierData?.address || '',
-  is_active: props.supplierData?.isActive ?? true,
+  is_active: props.supplierData?.is_active ?? 1,
 })
+const isSubmitting = ref(false)
 
 watch(
   () => props.show,
   (newVal) => {
+    isSubmitting.value = false;
     if (!newVal) return;
     clearErrors();
   // console.log('SupplierForm props:', props.supplierData)
@@ -172,20 +178,27 @@ watch(
     form.phone = props.supplierData.phone || ''
     form.email = props.supplierData.email || ''
     form.address = props.supplierData.address || ''
-    form.is_active = props.supplierData?.is_active ?? true
+    form.is_active = props.supplierData?.is_active ?? 1
   } else if (newVal && props.typeOfAction === 'add') {
     form.name = ''
     form.phone = ''
     form.email = ''
     form.address = ''
-    form.is_active = true
+    form.is_active = 1
   }
 
 }, { deep: true })
 
 const handleSubmit = () => {
   if (!validate(form)) return  // dừng nếu có lỗi
-  emit('submit', { formData: form, applyBackendErrors })
+  isSubmitting.value = true;
+  emit('submit', { 
+    formData: form, 
+    applyBackendErrors: (e) => {
+      isSubmitting.value = false;
+      applyBackendErrors(e);
+    } 
+  })
 }
 
 </script>

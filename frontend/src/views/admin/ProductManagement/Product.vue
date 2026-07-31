@@ -21,22 +21,22 @@
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tổng sản phẩm</p>
-        <p class="text-3xl font-bold text-slate-800">{{ totalProducts }}</p>
+        <p class="text-3xl font-bold text-slate-800">{{ productStore.stats.total }}</p>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Đang hoạt động</p>
         <div class="flex items-end gap-2">
-          <p class="text-3xl font-bold text-slate-800">{{ totalActiveProducts }}</p>
+          <p class="text-3xl font-bold text-slate-800">{{ productStore.stats.active }}</p>
           <span class="mb-1 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full">{{ percentActiveProducts }}%</span>
         </div>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Hết hàng</p>
-        <p class="text-3xl font-bold text-red-500">{{ totalProductsInStock }}</p>
+        <p class="text-3xl font-bold text-red-500">{{ productStore.stats.out_of_stock }}</p>
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Mới trong tháng</p>
-        <p class="text-3xl font-bold text-[#0258cb]">+{{ totalNewProductsThisMonth }}</p>
+        <p class="text-3xl font-bold text-[#0258cb]">+{{ productStore.stats.new_this_month }}</p>
       </div>
     </div>
     
@@ -253,37 +253,16 @@ const categoryStore = useCategoryStore();
 const useModal = ref('');
 const selectedProduct = ref(null);
 
-const totalNewProductsThisMonth = computed(() =>{
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
-
-  return productStore.products.filter(product => {
-    const createdAt = new Date(product.created_at);
-    return createdAt.getMonth() === currentMonth && createdAt.getFullYear() === currentYear;
-  }).length;
-})
-
-const totalProducts = computed(() => {
-    return productStore.meta?.total || 0; 
-});
-
-const totalActiveProducts = computed(() => {
-    return productStore.products.filter(p => p.is_active).length;
-});
-
-const totalProductsInStock = computed(() => {
-  return productStore.products.filter(product => getProductStock(product) === 0).length;
-});
-
 const percentActiveProducts = computed(() => {
-  if (totalProducts.value === 0) return 0;
-  return ((totalActiveProducts.value / totalProducts.value) * 100).toFixed(1);
+  if (productStore.stats.total === 0) return 0;
+  return ((productStore.stats.active / productStore.stats.total) * 100).toFixed(1);
 });
 onMounted(async () => {
-  await productStore.initialFetch();
-  await categoryStore.initialFetch();
-
+  // 2 fetch độc lập → chạy song song
+  await Promise.all([
+    productStore.initialFetch(),
+    categoryStore.initialFetch(),
+  ]);
 });
 
 const formatDateOnly = (dateString) => {

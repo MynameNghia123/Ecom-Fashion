@@ -25,7 +25,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tổng danh mục</p>
-          <p class="text-3xl font-bold text-slate-800">{{ categoryStore.meta.total }}</p>
+          <p class="text-3xl font-bold text-slate-800">{{ categoryStore.stats.total }}</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
           <svg class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -37,7 +37,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Danh mục cha</p>
-          <p class="text-3xl font-bold text-slate-800">{{ parentCount }}</p>
+          <p class="text-3xl font-bold text-slate-800">{{ categoryStore.stats.parent }}</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
           <svg class="w-6 h-6 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -49,7 +49,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Danh mục con</p>
-          <p class="text-3xl font-bold text-slate-800">{{ childCount }}</p>
+          <p class="text-3xl font-bold text-slate-800">{{ categoryStore.stats.child }}</p>
         </div>
         <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
           <svg class="w-6 h-6 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -269,13 +269,7 @@ onMounted(() => {
   fetchFilterParents()
 })
 
-// ─── Stats tính từ toàn bộ danh sách trang hiện tại ──────────────────────────
-const parentCount = computed(() =>
-  categoryStore.categories.filter(c => !c.parent_id).length
-)
-const childCount = computed(() =>
-  categoryStore.categories.filter(c => c.parent_id).length
-)
+
 
 const getCategoryName = (id) => {
   let cat = categoryStore.categories.find(c => c.id === id)

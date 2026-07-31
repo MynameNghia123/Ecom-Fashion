@@ -11,6 +11,12 @@ export const useProductStore = defineStore('product', () => {
         total: 0,
         last_page: 1,
     })
+    const stats = ref({
+        total: 0,
+        active: 0,
+        out_of_stock: 0,
+        new_this_month: 0,
+    })
     const loading = ref(false)
     const error = ref(null) // SỬA 1: Đổi tên để tránh trùng lặp
 
@@ -26,6 +32,9 @@ export const useProductStore = defineStore('product', () => {
 
             products.value = res.data.data;
             meta.value = res.data.meta;
+            if (res.data.stats) {
+                stats.value = res.data.stats;
+            }
         } catch (err) { // SỬA 2: Đổi tham số thành err
             // Bắt lỗi an toàn hơn
             error.value = err.response?.data?.message || err.message || "Có lỗi xảy ra";
@@ -72,6 +81,7 @@ export const useProductStore = defineStore('product', () => {
     return {
         products,
         meta,
+        stats,
         loading,
         error, 
 

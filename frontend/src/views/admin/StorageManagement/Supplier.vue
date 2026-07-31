@@ -21,7 +21,7 @@
     <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tổng nhà phân phối</p>
-        <p class="text-3xl font-bold text-slate-800">150</p>
+        <p class="text-3xl font-bold text-slate-800">{{ supplierStore.stats.total }}</p>
       </div>
       <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center">
         <svg class="w-6 h-6 text-blue-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -33,7 +33,7 @@
     <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Đang hợp tác</p>
-        <p class="text-3xl font-bold text-slate-800">120</p>
+        <p class="text-3xl font-bold text-slate-800">{{ supplierStore.stats.active }}</p>
       </div>
       <div class="w-12 h-12 rounded-xl bg-emerald-50 flex items-center justify-center">
         <svg class="w-6 h-6 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -44,7 +44,7 @@
     <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
       <div>
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tạm dừng</p>
-        <p class="text-3xl font-bold text-slate-800">30</p>
+        <p class="text-3xl font-bold text-slate-800">{{ supplierStore.stats.inactive }}</p>
       </div>
       <div class="w-12 h-12 rounded-xl bg-red-50 flex items-center justify-center">
         <svg class="w-6 h-6 text-red-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -57,12 +57,6 @@
   <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
     <div class="flex flex-wrap items-center gap-3 p-5 border-b border-slate-100">
-      <p class="text-base font-bold text-slate-800 mr-2">Danh sách nhà phân phối</p>
-      <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-600 text-xs font-bold rounded-lg border border-emerald-100">
-        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-        ACTIVE NOW
-      </span>
-      <div class="flex-1"></div>
       <div class="relative flex items-center min-w-[220px] max-w-xs">
         <span class="absolute left-3.5 text-slate-400">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -78,6 +72,10 @@
           class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
         />
       </div>
+      
+      <!-- Đẩy phần còn lại sang phải -->
+      <div class="flex-1"></div>
+
       <select
         v-model="statusFilter"
         @change="handleFilter"
@@ -113,6 +111,21 @@
           </tr>
         </tbody>
       </template>
+      <template v-else-if="supplierStore.suppliers.length === 0">
+        <tbody>
+          <tr>
+            <td colspan="6" class="py-12 text-center">
+              <div class="flex flex-col items-center justify-center">
+                <svg class="w-12 h-12 text-slate-300 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                </svg>
+                <p class="text-sm font-medium text-slate-500">Không có nhà phân phối nào</p>
+                <p class="text-xs text-slate-400 mt-1">Hãy thêm nhà phân phối mới để bắt đầu quản lý</p>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </template>
       <template v-else>
         <tbody class="divide-y divide-slate-50">
           <tr v-for="supplier in supplierStore.suppliers" 
@@ -134,9 +147,13 @@
               <span class="line-clamp-1 text-sm">{{ supplier.address }}</span>
             </td>
             <td class="py-4 px-4">
-              <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+              <span v-if="supplier.is_active === 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 Đang hợp tác
+              </span>
+              <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-100">
+                <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                Tạm dừng
               </span>
             </td>
             <td class="py-4 px-4">

@@ -658,8 +658,12 @@ watch(roles, (newRoles) => {
 
 // Initialize
 onMounted(async () => {
-  await roleStore.fetchRoles()
-  await permissionStore.fetchAllPermissions()
+  // fetchRoles và fetchAllPermissions độc lập → chạy song song
+  await Promise.all([
+    roleStore.fetchRoles(),
+    permissionStore.fetchAllPermissions(),
+  ])
+  // selectRole phải chờ fetchRoles xong mới có data để chọn
   if (roles.value.length > 0) {
     selectRole(roles.value[0])
   }

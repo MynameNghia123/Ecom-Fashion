@@ -50,7 +50,7 @@
               <div class="grid grid-cols-2 gap-4">
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Tên sản phẩm <span class="text-red-500">*</span></label>
-                  <input v-model="formProduct.name" type="text" placeholder="Nhập tên sản phẩm..."
+                  <input v-model="formProduct.name" @blur="generateSlug" type="text" placeholder="Nhập tên sản phẩm..."
                     class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all" />
                 </div>
                 <div>
@@ -94,7 +94,12 @@
 
             <ProductImageUploader v-model="formProduct.images" />
 
-            <ProductVariantsUploader v-model="formProduct.variants" />
+            <ProductVariantsUploader 
+              v-model="formProduct.variants" 
+              :category-id="formProduct.category_id"
+              :brand="formProduct.brand"
+              :product-name="formProduct.name"
+            />
 
           </div>
 
@@ -157,6 +162,23 @@ const formProduct = reactive({
   images: [],
   variants: []
 })
+
+// ─── Tự động tạo Slug từ tên sản phẩm ──────────────────────────────────────────
+const generateSlug = () => {
+  // Chỉ tự sinh slug nếu đang ở chế độ thêm mới (để tránh hỏng SEO của link cũ khi edit)
+  // hoặc nếu ô slug hiện tại đang trống
+  if ((props.action === 'add' || !formProduct.slug) && formProduct.name) {
+    formProduct.slug = formProduct.name
+      .toLowerCase()
+      .normalize('NFD') // Chuẩn hóa Unicode để tách dấu
+      .replace(/[\u0300-\u036f]/g, '') // Xóa dấu
+      .replace(/đ/g, 'd').replace(/Đ/g, 'D') // Thay thế chữ đ
+      .replace(/[^a-z0-9\s-]/g, '') // Xóa các ký tự đặc biệt
+      .trim()
+      .replace(/\s+/g, '-') // Đổi khoảng trắng thành dấu gạch ngang
+      .replace(/-+/g, '-'); // Tránh 2 dấu gạch ngang liền nhau
+  }
+}
 
 // ─── Khi mở modal edit: nạp dữ liệu sản phẩm hiện tại vào form ──────────────
 watch(() => props.product, (newProduct) => {

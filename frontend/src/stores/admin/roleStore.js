@@ -49,7 +49,11 @@ export const useRoleStore = defineStore('role', () => {
     error.value = null
     try {
       const res = await roleService.create(data)
-      await fetchRoles({ page: meta.value.current_page })
+      // Refresh cả 2 view để dropdown ở các trang khác cũng có role mới
+      await Promise.all([
+        fetchRoles({ page: meta.value.current_page }),
+        fetchDropdownRoles(),
+      ])
       return res.data
     } catch (e) {
       error.value = e.response?.data?.message || e.message
@@ -64,7 +68,12 @@ export const useRoleStore = defineStore('role', () => {
     error.value = null
     try {
       const res = await roleService.update(id, data)
-      await fetchRoles({ page: meta.value.current_page })
+      // Refresh cả 2: danh sách phân trang VÀ dropdown cache
+      // để các trang khác (Staff) thấy tên role mới ngay lập tức
+      await Promise.all([
+        fetchRoles({ page: meta.value.current_page }),
+        fetchDropdownRoles(),
+      ])
       return res.data
     } catch (e) {
       error.value = e.response?.data?.message || e.message
@@ -82,7 +91,11 @@ export const useRoleStore = defineStore('role', () => {
       const newPage = roleList.value.length === 1 && meta.value.current_page > 1
         ? meta.value.current_page - 1
         : meta.value.current_page
-      await fetchRoles({ page: newPage })
+      // Refresh cả 2 view để dropdown không còn chứa role đã xóa
+      await Promise.all([
+        fetchRoles({ page: newPage }),
+        fetchDropdownRoles(),
+      ])
       return res.data
     } catch (e) {
       error.value = e.response?.data?.message || e.message

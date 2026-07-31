@@ -11,6 +11,11 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
     total: 0,
     last_page:1,
   })
+  const stats = ref({
+    total: 0,
+    total_import_value: 0,
+    pending: 0,
+  });
   const errors = ref(null);
   const loading = ref(false);
 
@@ -26,6 +31,9 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
       });
       goodsReceipts.value = res.data.data;
       meta.value = res.data.meta;
+      if (res.data.stats) {
+        stats.value = res.data.stats;
+      }
     } catch (e) {
       errors.value = e.message; 
     } finally {
@@ -63,6 +71,7 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
     // State
     goodsReceipts,
     meta,
+    stats,
     loading,
     errors,
     // Actions

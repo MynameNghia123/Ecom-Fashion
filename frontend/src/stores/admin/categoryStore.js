@@ -11,6 +11,11 @@ export const useCategoryStore = defineStore('category', () => {
     total: 0,
     last_page: 1,
   })
+  const stats = ref({
+    total: 0,
+    parent: 0,
+    child: 0,
+  })
   const loading = ref(false)
   const error = ref(null)
 
@@ -31,6 +36,9 @@ export const useCategoryStore = defineStore('category', () => {
       // res.data.success === true
       categories.value = res.data.data
       meta.value = res.data.meta
+      if (res.data.stats) {
+        stats.value = res.data.stats
+      }
     } catch (e) {
       // e.message đã được chuẩn hóa bởi http interceptor
       error.value = e.message
@@ -88,6 +96,7 @@ export const useCategoryStore = defineStore('category', () => {
     // State
     categories,
     meta,
+    stats,
     loading,
     error,
     // Actions

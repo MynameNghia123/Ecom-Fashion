@@ -638,9 +638,12 @@ watch([searchQuery, filterStatus], () => {
 })
 
 onMounted(() => {
-  staffStore.fetchStaffs()
-  roleStore.fetchDropdownRoles()
-  permissionStore.fetchAllPermissions()
+  // 3 fetch hoàn toàn độc lập nhau → chạy song song
+  Promise.all([
+    staffStore.fetchStaffs(),
+    roleStore.fetchDropdownRoles(),
+    permissionStore.fetchAllPermissions(),
+  ])
 })
 
 const goToPage = (page) => {

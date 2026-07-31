@@ -9,6 +9,11 @@ export const useSupplierStore = defineStore('supplier', () => {
         total: 0,
         last_page: 1,
     });
+    const stats = ref({
+        total: 0,
+        active: 0,
+        inactive: 0,
+    });
     const loading = ref(false);
     const error = ref(null);
     
@@ -27,6 +32,9 @@ export const useSupplierStore = defineStore('supplier', () => {
             });
             suppliers.value = res.data.data;
             meta.value = res.data.meta;
+            if (res.data.stats) {
+                stats.value = res.data.stats;
+            }
         } catch (e) {
             error.value = e.response?.data?.message || e.message;
         } finally {
@@ -62,6 +70,7 @@ export const useSupplierStore = defineStore('supplier', () => {
     return {
         suppliers,
         meta,
+        stats,
         loading,
         error,
 

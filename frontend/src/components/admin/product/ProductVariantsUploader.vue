@@ -50,6 +50,15 @@
         class="hidden" 
       />
 
+      <div class="flex items-center justify-end mb-3" v-if="variants.length > 0">
+        <button 
+          @click="generateSKUsForVariants"
+          type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 7 4 4 20 4 20 7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          Tự động tạo SKU
+        </button>
+      </div>
+
       <table class="w-full text-sm">
         <thead>
           <tr class="bg-slate-50 border-y border-slate-200">
@@ -143,10 +152,18 @@
 import { ref, watch, defineModel, nextTick } from 'vue'
 import { useAttributeStore } from '@/stores/admin/attributeStore'
 import { uploadService } from '@/services/admin/uploadService'
+import { useCategoryStore } from '@/stores/admin/categoryStore'
+
+const props = defineProps({
+  categoryId: { type: [String, Number], default: '' },
+  brand: { type: String, default: '' },
+  productName: { type: String, default: '' },
+})
 
 const variants = defineModel({ default: () => [] })
 const InputAttributeGroup = ref([])
 const attributeStore = useAttributeStore()
+const categoryStore = useCategoryStore()
 attributeStore.initialFetch()
 
 // ==========================================
@@ -290,11 +307,31 @@ const generateVariants = () => {
 
   const oldVariants = [...variants.value];
 
+  // Helper functions for SKU formatting
+  const toAcronym = (str) => {
+    if (!str) return ''
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
+              .toUpperCase().split(' ').map(w => w.charAt(0)).filter(Boolean).join('')
+  }
+  const toCode = (str) => {
+    if (!str) return ''
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
+              .toUpperCase().replace(/\s+/g, '')
+  }
+  const cat = categoryStore.categories.find(c => c.id == props.categoryId)?.name || ''
+  const partCat = toAcronym(cat) 
+  const partBrand = toCode(props.brand).substring(0, 3)
+  const partStyle = toCode(props.productName).substring(0, 4)
+  const skuPrefix = [partCat, partBrand, partStyle].filter(Boolean).join('-')
+
   variants.value = combinations.map(combo => {
     // KEY ẩn để nhận diện dòng chính xác kể cả khi bị sửa tên (sắp xếp theo attribute_id)
     const variantKey = [...combo].sort((a, b) => (a.group.attribute_id || 0) - (b.group.attribute_id || 0)).map(c => c.value).join("|||"); 
     const defaultName = combo.map(c => c.value).join(" - ");
-    const skuSuggestion = `SKU-${combo.map(c => c.value).join("-").toUpperCase().replace(/\s+/g, "")}`;
+    
+    // Auto generate SKU from formula
+    const skuSuffix = combo.map(c => toCode(c.value).substring(0, 3)).join('-')
+    const skuSuggestion = [skuPrefix, skuSuffix].filter(Boolean).join('-').toUpperCase()
     
     // Tìm variant cũ theo key để giữ lại dữ liệu người dùng đã nhập
     const existingVariant = oldVariants.find(v => v.key === variantKey);
@@ -326,6 +363,33 @@ const generateVariants = () => {
       };
     }
   });
+}
+
+const generateSKUsForVariants = () => {
+  const toAcronym = (str) => {
+    if (!str) return ''
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
+              .toUpperCase().split(' ').map(w => w.charAt(0)).filter(Boolean).join('')
+  }
+  
+  const toCode = (str) => {
+    if (!str) return ''
+    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D')
+              .toUpperCase().replace(/\s+/g, '')
+  }
+
+  const cat = categoryStore.categories.find(c => c.id == props.categoryId)?.name || ''
+  
+  const partCat = toAcronym(cat) 
+  const partBrand = toCode(props.brand).substring(0, 3)
+  const partStyle = toCode(props.productName).substring(0, 4)
+  
+  const prefix = [partCat, partBrand, partStyle].filter(Boolean).join('-')
+
+  variants.value.forEach(v => {
+    const suffix = (v.attribute_values || []).map(av => toCode(av.value).substring(0, 3)).join('-')
+    v.sku = [prefix, suffix].filter(Boolean).join('-').toUpperCase()
+  })
 }
 
 // suppressGenerate: ngăn generateVariants() chạy khi reconstruct InputAttributeGroup
