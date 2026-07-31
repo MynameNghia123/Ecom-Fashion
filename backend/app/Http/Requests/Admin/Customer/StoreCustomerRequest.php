@@ -17,7 +17,7 @@ class StoreCustomerRequest extends FormRequest
             'first_name'   => 'required|string|max:255',
             'last_name'    => 'required|string|max:255',
             'email'        => 'required|email|unique:customers,email',
-            'phone_number' => 'nullable|string|max:100',
+            'phone_number' => 'nullable|string|regex:/^0[0-9]{9}$/',
             'password'     => 'required|string|max:255',
             'status'       => 'required|boolean',
         ];
@@ -33,6 +33,7 @@ class StoreCustomerRequest extends FormRequest
             'email.unique'          => 'Email này đã tồn tại.',
             'password.required'     => 'Mật khẩu không được để trống.',
             'status.required'       => 'Trạng thái không được để trống.',
+            'phone_number.regex'    => 'Số điện thoại phải bao gồm 10 chữ số và bắt đầu bằng số 0.',
         ];
     }
 }

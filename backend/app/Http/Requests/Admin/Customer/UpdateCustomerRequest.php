@@ -21,7 +21,7 @@ class UpdateCustomerRequest extends FormRequest
             'first_name'   => ['required', 'string', 'max:255'],
             'last_name'    => ['required', 'string', 'max:255'],
             'email'        => ['required', 'email', Rule::unique('customers', 'email')->ignore($customerId)],
-            'phone_number' => ['required', 'string', 'max:255'],
+            'phone_number' => ['required', 'string', 'regex:/^0[0-9]{9}$/'],
             // Khi update: password nullable — nếu để trống thì giữ nguyên password cũ
             'password'     => ['nullable', 'string', 'min:6', 'max:255'],
             'status'       => ['required', 'boolean'],
@@ -39,7 +39,7 @@ class UpdateCustomerRequest extends FormRequest
             'email.email'            => 'Email khách hàng không hợp lệ.',
             'email.unique'           => 'Email khách hàng đã tồn tại trong hệ thống.',
             'phone_number.required'  => 'Số điện thoại khách hàng không được để trống.',
-            'phone_number.max'       => 'Số điện thoại khách hàng không được vượt quá 255 ký tự.',
+            'phone_number.regex'     => 'Số điện thoại phải bao gồm 10 chữ số và bắt đầu bằng số 0.',
             'password.min'           => 'Mật khẩu khách hàng phải có ít nhất 6 ký tự.',
             'password.max'           => 'Mật khẩu khách hàng không được vượt quá 255 ký tự.',
             'status.required'        => 'Trạng thái khách hàng không được để trống.',
