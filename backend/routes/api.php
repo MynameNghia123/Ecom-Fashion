@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BannerController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\StatisticController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\BannerController as ClientBannerController;
 use App\Http\Controllers\Client\AuthController as ClientAuthController;
@@ -99,6 +100,13 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     Route::post('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'store']);
     Route::get('return-requests/{returnRequest}', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'show']);
     Route::patch('return-requests/{returnRequest}/status', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'updateStatus']);
+
+    // ── Statistics ────────────────────────────────────────────────────────────
+    Route::prefix('statistics')->group(function () {
+        Route::get('dashboard',    [StatisticController::class, 'dashboard']);
+        Route::get('top-products', [StatisticController::class, 'topProducts']);
+        Route::get('low-stock',    [StatisticController::class, 'lowStock']);
+    });
 });
 
 // ── Public Client Routes (không yêu cầu xác thực) ───────────────────────────

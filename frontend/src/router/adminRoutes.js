@@ -15,6 +15,7 @@ import Blog from '../views/admin/Content/Blog.vue'
 import Staff from '../views/admin/Staff/Staff.vue'
 import Role from '../views/admin/Staff/Role.vue'
 import Config from '../views/admin/SystemConfiguration/Config.vue'
+import Statistics from '../views/admin/Statistics.vue'
 
 const adminRoutes = [
   {
@@ -31,6 +32,12 @@ const adminRoutes = [
     path: '/admin/dashboard',
     name: 'AdminDashboard',
     component: DashBoard,
+    meta: { layout: 'AdminLayout' }
+  },
+  {
+    path: '/admin/statistics',
+    name: 'AdminStatistics',
+    component: Statistics,
     meta: { layout: 'AdminLayout' }
   },
   {

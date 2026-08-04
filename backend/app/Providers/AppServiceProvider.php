@@ -22,6 +22,7 @@ use App\Repositories\Admin\Implements\GoodReceiptDetailRepo;
 use App\Repositories\Admin\Implements\OrderRepository;
 use App\Repositories\Admin\Implements\ReturnRequestRepository;
 use App\Repositories\Admin\Implements\ReviewRepository;
+use App\Repositories\Admin\Implements\StatisticRepository;
 
 use App\Repositories\Admin\Interfaces\AttributeRepositoryInterface;
 use App\Repositories\Admin\Interfaces\AttributeValueRepositoryInterface;
@@ -42,6 +43,7 @@ use App\Repositories\Admin\Interfaces\GoodReceiptDetailRepoInterface;
 use App\Repositories\Admin\Interfaces\OrderRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ReviewRepositoryInterface;
+use App\Repositories\Admin\Interfaces\StatisticRepositoryInterface;
 
 // ── Services ──────────────────────────────────────────────────────────────────
 use App\Services\Admin\Implements\AuthService;
@@ -64,6 +66,7 @@ use App\Services\Admin\Implements\GoodReceiptDetailService;
 use App\Services\Admin\Implements\OrderService;
 use App\Services\Admin\Implements\ReturnRequestService;
 use App\Services\Admin\Implements\ReviewService;
+use App\Services\Admin\Implements\StatisticService;
 
 use App\Services\Admin\Interfaces\AuthServiceInterface;
 use App\Services\Admin\Interfaces\AttributeServiceInterface;
@@ -85,6 +88,7 @@ use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
 use App\Services\Admin\Interfaces\OrderServiceInterface;
 use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use App\Services\Admin\Interfaces\ReviewServiceInterface;
+use App\Services\Admin\Interfaces\StatisticServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -115,6 +119,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderRepositoryInterface::class,           OrderRepository::class);
         $this->app->bind(ReturnRequestRepositoryInterface::class,   ReturnRequestRepository::class);
         $this->app->bind(ReviewRepositoryInterface::class,          ReviewRepository::class);
+        $this->app->bind(StatisticRepositoryInterface::class,       StatisticRepository::class);
 
         // ── Services ──────────────────────────────────────────────────────────
         $this->app->bind(AuthServiceInterface::class,               AuthService::class);
@@ -137,6 +142,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(OrderServiceInterface::class,              OrderService::class);
         $this->app->bind(ReturnRequestServiceInterface::class,      ReturnRequestService::class);
         $this->app->bind(ReviewServiceInterface::class,             ReviewService::class);
+        $this->app->bind(StatisticServiceInterface::class,          StatisticService::class);
     }
 
     public function boot(): void

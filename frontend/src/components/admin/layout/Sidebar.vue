@@ -25,7 +25,9 @@
         <span>Dashboard</span>
       </router-link>
 
-      <!-- 2. Quản lý sản phẩm Group -->
+
+
+      <!-- 3. Quản lý sản phẩm Group -->
       <div class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -159,7 +161,18 @@
           >Blog</router-link>
         </div>
       </div>
-
+      <!-- 2. Thống kê Link -->
+      <router-link
+        to="/admin/statistics"
+        class="sidebar-link flex items-center gap-3 px-3 py-2.5 text-[13px] font-medium rounded-lg transition-all no-underline"
+        active-class="sidebar-link--active"
+      >
+        <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/>
+        </svg>
+        <span>Thống kê</span>
+      </router-link>
       <!-- 8. Phân quyền & Nhân sự Group -->
       <div class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
