@@ -60,9 +60,9 @@ class SupplierController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->supplierService->getList([
-            'search'   => $request->query('search'),
-            'status'   => $request->query('status'),   // 'active' | 'paused'
-            'per_page' => (int) $request->query('per_page', 4),
+            'search'    => $request->query('search'),
+            'is_active' => $request->query('is_active'),
+            'per_page'  => (int) $request->query('per_page', 4),
         ]);
 
         return response()->json([

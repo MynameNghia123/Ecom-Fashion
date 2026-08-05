@@ -35,8 +35,8 @@
             <input
               type="text"
               v-model="newReceipt.receipt_code"
-              placeholder="RC20260807"
-              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-400 bg-slate-50 font-mono"
+              placeholder="Ví dụ: PN231015-1234"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-mono"
             />
             <span v-if="errors.receipt_code" class="text-xs text-red-500 mt-1 block">{{ errors.receipt_code }}</span>
           </div>
@@ -221,6 +221,21 @@
   };
   
   const newReceipt = ref({ ...initialReceiptState });
+  
+  const generateReceiptCode = () => {
+    const date = new Date();
+    const yy = String(date.getFullYear()).slice(-2);
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const dd = String(date.getDate()).padStart(2, '0');
+    const random = Math.floor(1000 + Math.random() * 9000); 
+    return `PN${yy}${mm}${dd}-${random}`;
+  };
+
+  watch(() => props.isShowAdd, (newVal) => {
+    if (newVal && !newReceipt.value.receipt_code) {
+      newReceipt.value.receipt_code = generateReceiptCode();
+    }
+  }, { immediate: true });
   
   const goodsReceiptDetails = ref([
     {

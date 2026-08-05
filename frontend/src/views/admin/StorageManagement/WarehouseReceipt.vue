@@ -286,8 +286,10 @@ import Pagination from '@/components/admin/Pagination.vue';
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue';
 import { useGoodsReceiptStore } from '@/stores/admin/goodsReceiptStore.js';
 import { useSupplierStore } from '@/stores/admin/supplierStore';
+import { useProductStore } from '@/stores/admin/productStore.js';
 import { ref, onMounted, computed } from 'vue';
 const supplierStore = useSupplierStore();
+const productStore = useProductStore();
 const suppliers = ref([]);
 const goodsReceiptStore = useGoodsReceiptStore();
 
@@ -352,6 +354,11 @@ const handleSave = async (receiptData, applyBackendErrors) => {
     await goodsReceiptStore.createGoodsReceipt(receiptData);
     isShowAdd.value = false;
     handleFilter(); // refresh list
+    
+    // Refresh product stock if completed
+    if (receiptData.status === 'completed') {
+      productStore.fetchProducts({ page: productStore.meta.current_page });
+    }
   } catch (e) {
     if (applyBackendErrors) {
       applyBackendErrors(e);
@@ -367,6 +374,11 @@ const handleUpdate = async (id, receiptData, applyBackendErrors) => {
     await goodsReceiptStore.updateGoodsReceipt(receiptData, id);
     isShowUpdate.value = false;
     handleFilter(); // refresh list
+
+    // Refresh product stock if completed
+    if (receiptData.status === 'completed') {
+      productStore.fetchProducts({ page: productStore.meta.current_page });
+    }
   } catch (e) {
     if (applyBackendErrors) {
       applyBackendErrors(e);

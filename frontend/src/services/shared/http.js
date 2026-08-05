@@ -41,7 +41,11 @@ http.interceptors.response.use(
     if (status === 401) {
       localStorage.removeItem('admin_token')
       localStorage.removeItem('admin_user')
-      window.location.href = '/admin/signin'
+      
+      // Không reload nếu đang ở trang đăng nhập (để tránh mất thông báo lỗi)
+      if (!window.location.pathname.includes('/admin/signin')) {
+        window.location.href = '/admin/signin'
+      }
     }
 
     return Promise.reject(error)

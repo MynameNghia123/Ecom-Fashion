@@ -24,6 +24,7 @@ class StaffService implements StaffServiceInterface
         private readonly StaffRepositoryInterface $staffRepo
     ) {}
 
+
     public function getList(array $filters): LengthAwarePaginator
     {
         return $this->staffRepo->paginate($filters);
@@ -37,8 +38,13 @@ class StaffService implements StaffServiceInterface
         DB::beginTransaction();
         try {
             $roleIds = $data['role_ids'] ?? [];
-            $permissionIds = $data['permission_ids'] ?? [];
+            $permissionIds = $data['permission_ids'] ?? null;
             unset($data['role_ids'], $data['permission_ids']);
+
+            // Nếu frontend không gửi permission_ids nhưng có gửi role_ids, lấy permission từ roles
+            if ($permissionIds === null && !empty($roleIds)) {
+                $permissionIds = $this->staffRepo->getPermissionsByRoles($roleIds);
+            }
 
             $staff = $this->staffRepo->create($data);
 
@@ -69,6 +75,15 @@ class StaffService implements StaffServiceInterface
             $permissionIds = $data['permission_ids'] ?? null;
             unset($data['role_ids'], $data['permission_ids']);
 
+            // Tự động gán permissions từ roles nếu frontend không truyền permissions
+            if ($permissionIds === null && $roleIds !== null) {
+                if (!empty($roleIds)) {
+                    $permissionIds = $this->staffRepo->getPermissionsByRoles($roleIds);
+                } else {
+                    $permissionIds = []; // Nếu xóa hết role, cũng xóa luôn permissions
+                }
+            }
+
             $updatedStaff = $this->staffRepo->update($model, $data);
 
             if ($roleIds !== null) {
@@ -93,10 +108,5 @@ class StaffService implements StaffServiceInterface
     public function delete(Model $model): void
     {
         $this->staffRepo->delete($model);
-    }
-
-    public function getAll()
-    {
-        return $this->staffRepo->getAll();
     }
 }

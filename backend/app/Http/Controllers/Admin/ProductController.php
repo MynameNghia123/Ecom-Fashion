@@ -50,8 +50,10 @@ class ProductController extends Controller
     public function index(Request $request) : JsonResponse
     {
         $paginator = $this->productService->getList([
-            'search' => $request->query('search'),
-            'per_page' => (int) $request->query('per_page', 10),
+            'search'      => $request->query('search'),
+            'category_id' => $request->query('category_id'),
+            'is_active'   => $request->query('is_active'),
+            'per_page'    => (int) $request->query('per_page', 10),
         ]);
         return response()->json([
             'success' => true,

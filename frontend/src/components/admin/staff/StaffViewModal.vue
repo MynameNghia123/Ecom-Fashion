@@ -93,6 +93,7 @@
               Đóng
             </button>
             <button
+              v-if="authStore.hasPermission('staff', 'update')"
               type="button"
               @click="emit('edit', staff)"
               class="px-5 py-2.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-600 font-semibold text-sm hover:bg-amber-100 transition-all duration-150"
@@ -107,6 +108,9 @@
 </template>
 
 <script setup>
+import { useAuthStore } from '@/stores/admin/authStore'
+const authStore = useAuthStore()
+
 const props = defineProps({
   show: { type: Boolean, default: false },
   staff: { type: Object, default: null },

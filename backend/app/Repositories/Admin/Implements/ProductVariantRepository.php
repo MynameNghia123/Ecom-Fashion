@@ -59,6 +59,14 @@ class ProductVariantRepository implements ProductVariantRepositoryInterface
             ->limit(20)
             ->get();
     }
+
+    /**
+     * Increment stock quantity of a product variant
+     */
+    public function incrementStock(int $id, int $quantity): void
+    {
+        $this->model->where('id', $id)->increment('stock_quantity', $quantity);
+    }
 }
 
 ?>

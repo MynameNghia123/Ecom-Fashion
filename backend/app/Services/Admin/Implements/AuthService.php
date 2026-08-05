@@ -41,11 +41,14 @@ class AuthService implements AuthServiceInterface
             'last_login_at' => now(),
         ]);
 
+        $user = $this->staffRepo->findById($staff->id);
+        $user->load(['roles', 'permissions']);
+
         return [
             'success' => true,
             'message' => 'Đăng nhập thành công.',
             'token'   => $token,
-            'user'    => $this->staffRepo->findById($staff->id),
+            'user'    => $user,
         ];
     }
 
@@ -56,6 +59,8 @@ class AuthService implements AuthServiceInterface
 
     public function me(Staff $user): Staff
     {
-        return $this->staffRepo->findById($user->id);
+        $staff = $this->staffRepo->findById($user->id);
+        $staff->load(['roles', 'permissions']);
+        return $staff;
     }
 }

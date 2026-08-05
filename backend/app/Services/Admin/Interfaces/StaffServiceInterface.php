@@ -12,5 +12,4 @@ interface StaffServiceInterface extends BaseServiceInterface
     public function create(array $data): Staff;
     public function update(Model $model, array $data): Staff;
     public function delete(Model $model): void;
-    public function getAll();
 }

@@ -20,7 +20,18 @@ class ProductRepository implements ProductRepositoryInterface
         $query = $this->model->newQuery();
 
         if (!empty($filters['search'])){
-            $query->where('name', 'like',  $filters['search'] . '%');
+            $query->where(function ($q) use ($filters) {
+                $q->where('name', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('brand', 'like', '%' . $filters['search'] . '%');
+            });
+        }
+
+        if (!empty($filters['category_id'])) {
+            $query->where('category_id', $filters['category_id']);
+        }
+
+        if (isset($filters['is_active']) && $filters['is_active'] !== '') {
+            $query->where('is_active', $filters['is_active']);
         }
 
         return $query

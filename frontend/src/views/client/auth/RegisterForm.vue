@@ -56,8 +56,19 @@
         />
       </div>
 
+      <!-- Confirm Password -->
+      <div class="relative">
+        <label class="block text-[11px] font-text uppercase tracking-wider text-neutral-500 font-semibold mb-1">Xác nhận mật khẩu *</label>
+        <input 
+          type="password" 
+          v-model="registerForm.password_confirmation"
+          required
+          class="w-full border-b border-neutral-250 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
+        />
+      </div>
+
       <!-- Error Message -->
-      <p v-if="authStore.error" class="text-xs text-red-500 font-text">{{ authStore.error }}</p>
+      <p v-if="localError || authStore.error" class="text-xs text-red-500 font-text">{{ localError || authStore.error }}</p>
 
       <!-- Submit Button -->
       <button 
@@ -81,18 +92,26 @@
 </template>
 
 <script setup>
-import { reactive, onMounted } from 'vue'
+import { reactive, ref, onMounted, watch } from 'vue'
 import { useClientAuthStore } from '@/stores/client/authStore'
 
 const emit = defineEmits(['success'])
 const authStore = useClientAuthStore()
+
+const localError = ref('')
 
 const registerForm = reactive({
   firstName: '',
   lastName: '',
   email: '',
   phone: '',
-  password: ''
+  password: '',
+  password_confirmation: ''
+})
+
+// Clear local error when user types
+watch(() => [registerForm.password, registerForm.password_confirmation], () => {
+  if (localError.value) localError.value = ''
 })
 
 onMounted(() => {
@@ -100,12 +119,27 @@ onMounted(() => {
 })
 
 const handleRegister = async () => {
+  // Validate password length
+  if (registerForm.password.length < 6) {
+    localError.value = 'Mật khẩu phải có ít nhất 6 ký tự.'
+    return
+  }
+
+  // Validate password confirmation
+  if (registerForm.password !== registerForm.password_confirmation) {
+    localError.value = 'Mật khẩu xác nhận không khớp.'
+    return
+  }
+
+  localError.value = ''
+
   const result = await authStore.register({
     first_name: registerForm.firstName,
     last_name: registerForm.lastName,
     email: registerForm.email,
     phone_number: registerForm.phone,
-    password: registerForm.password
+    password: registerForm.password,
+    password_confirmation: registerForm.password_confirmation
   })
   if (result.success) {
     emit('success')

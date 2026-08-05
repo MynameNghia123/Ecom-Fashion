@@ -28,7 +28,7 @@
 
 
       <!-- 3. Quản lý sản phẩm Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('categories', 'view') || authStore.hasPermission('products', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <rect x="4" y="4" width="16" height="16" rx="2"/>
@@ -38,15 +38,15 @@
           <span>Quản lý sản phẩm</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/categories"
+          <router-link v-if="authStore.hasPermission('categories', 'view')" to="/admin/categories"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Danh mục</router-link>
-          <router-link to="/admin/products"
+          <router-link v-if="authStore.hasPermission('products', 'view')" to="/admin/products"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Sản phẩm và biến thể</router-link>
-          <router-link to="/admin/product-attributes"
+          <router-link v-if="authStore.hasPermission('products', 'view')" to="/admin/product-attributes"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Thuộc tính sản phẩm</router-link>
@@ -54,7 +54,7 @@
       </div>
 
       <!-- 3. Quản lý bán hàng Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('orders', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="9" cy="21" r="1"/>
@@ -64,11 +64,11 @@
           <span>Quản lý bán hàng</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/orders"
+          <router-link v-if="authStore.hasPermission('orders', 'view')" to="/admin/orders"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Đơn hàng</router-link>
-          <router-link to="/admin/return-requests"
+          <router-link v-if="authStore.hasPermission('orders', 'view')" to="/admin/return-requests"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Yêu cầu đổi trả</router-link>
@@ -76,7 +76,7 @@
       </div>
 
       <!-- 4. Quản lý kho Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('suppliers', 'view') || authStore.hasPermission('goods_receipts', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 20H4V4h16" />
@@ -86,11 +86,11 @@
           <span>Quản lý kho</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/suppliers"
+          <router-link v-if="authStore.hasPermission('suppliers', 'view')" to="/admin/suppliers"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Nhà cung cấp</router-link>
-          <router-link to="/admin/warehouse-receipts"
+          <router-link v-if="authStore.hasPermission('goods_receipts', 'view')" to="/admin/warehouse-receipts"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Phiếu nhập kho</router-link>
@@ -98,7 +98,7 @@
       </div>
 
       <!-- 5. Khách hàng & Đánh giá Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('customers', 'view') || authStore.hasPermission('reviews', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -109,11 +109,11 @@
           <span>Khách hàng & Đánh giá</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/customers"
+          <router-link v-if="authStore.hasPermission('customers', 'view')" to="/admin/customers"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Danh sách khách hàng</router-link>
-          <router-link to="/admin/reviews"
+          <router-link v-if="authStore.hasPermission('reviews', 'view')" to="/admin/reviews"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Quản lý Đánh giá</router-link>
@@ -121,7 +121,7 @@
       </div>
 
       <!-- 6. Tiếp thị Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('coupons', 'view') || authStore.hasPermission('banners', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 5L6 9H2v6h4l5 4V5z"/>
@@ -131,11 +131,11 @@
           <span>Tiếp thị</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/discounts"
+          <router-link v-if="authStore.hasPermission('coupons', 'view')" to="/admin/discounts"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Mã giảm giá</router-link>
-          <router-link to="/admin/banners"
+          <router-link v-if="authStore.hasPermission('banners', 'view')" to="/admin/banners"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Banner quảng cáo</router-link>
@@ -143,7 +143,7 @@
       </div>
 
       <!-- 7. Quản lý nội dung Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('blogs', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -155,7 +155,7 @@
           <span>Quản lý nội dung</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/blog"
+          <router-link v-if="authStore.hasPermission('blogs', 'view')" to="/admin/blog"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Blog</router-link>
@@ -174,7 +174,7 @@
         <span>Thống kê</span>
       </router-link>
       <!-- 8. Phân quyền & Nhân sự Group -->
-      <div class="space-y-1">
+      <div v-if="authStore.hasPermission('staff', 'view') || authStore.hasPermission('roles', 'view')" class="space-y-1">
         <div class="sidebar-group-label flex items-center gap-3 px-3 py-2 text-[10px] font-bold uppercase tracking-widest">
           <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
@@ -184,11 +184,11 @@
           <span>Phân quyền & Nhân sự</span>
         </div>
         <div class="space-y-0.5 pl-2">
-          <router-link to="/admin/staff-accounts"
+          <router-link v-if="authStore.hasPermission('staff', 'view')" to="/admin/staff-accounts"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Tài khoản nhân viên</router-link>
-          <router-link to="/admin/roles-permissions"
+          <router-link v-if="authStore.hasPermission('roles', 'view')" to="/admin/roles-permissions"
             class="sidebar-sublink block px-3 py-2 text-[13px] font-medium rounded-lg transition-all no-underline"
             active-class="sidebar-sublink--active"
           >Vai trò & Quyền hạn</router-link>
@@ -216,7 +216,8 @@
 </template>
 
 <script setup>
-// No script needed — router-link handles everything
+import { useAuthStore } from '@/stores/admin/authStore'
+const authStore = useAuthStore()
 </script>
 
 <style scoped>

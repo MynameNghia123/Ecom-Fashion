@@ -8,6 +8,7 @@
         <p class="text-sm text-slate-500 mt-0.5">Quản lý tài khoản và phân quyền nhân viên trong hệ thống</p>
       </div>
       <button
+        v-if="authStore.hasPermission('staff', 'create')"
         id="btn-open-add-staff"
         type="button"
         @click="openAddModal"
@@ -201,13 +202,13 @@
                       <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                     </svg>
                   </button>
-                  <button type="button" @click="openEditModal(staff)" class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all duration-150" title="Chỉnh sửa">
+                  <button v-if="authStore.hasPermission('staff', 'update')" type="button" @click="openEditModal(staff)" class="p-2 rounded-lg text-slate-400 hover:text-amber-500 hover:bg-amber-50 transition-all duration-150" title="Chỉnh sửa">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                   </button>
-                  <button type="button" @click="openDeleteModal(staff)" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-150" title="Xóa">
+                  <button v-if="authStore.hasPermission('staff', 'delete')" type="button" @click="openDeleteModal(staff)" class="p-2 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all duration-150" title="Xóa">
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
                       <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
@@ -286,6 +287,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useStaffStore } from '@/stores/admin/staffStore'
 import { useRoleStore } from '@/stores/admin/roleStore'
 import { usePermissionStore } from '@/stores/admin/permissionStore'
+import { useAuthStore } from '@/stores/admin/authStore'
 import Pagination from '@/components/admin/Pagination.vue'
 import ConfirmDeleteModal from '@/components/admin/ConfirmDeleteModal.vue'
 import StaffFormModal from '@/components/admin/staff/StaffFormModal.vue'
@@ -294,6 +296,7 @@ import StaffViewModal from '@/components/admin/staff/StaffViewModal.vue'
 const staffStore = useStaffStore()
 const roleStore = useRoleStore()
 const permissionStore = usePermissionStore()
+const authStore = useAuthStore()
 
 // ─── State từ Store ────────────────────────────────────────────────────────────
 const staffList = computed(() => staffStore.staffList)
@@ -388,7 +391,7 @@ const openDeleteModal = (staff) => {
   showDeleteModal.value = true
 }
 
-const handleFormSubmit = async ({ formData, done }) => {
+const handleFormSubmit = async ({ formData, done, setErrors }) => {
   try {
     if (modalMode.value === 'add') {
       await staffStore.createStaff(formData)
@@ -398,9 +401,11 @@ const handleFormSubmit = async ({ formData, done }) => {
       showSuccess('Đã cập nhật thông tin nhân viên thành công.')
     }
     showFormModal.value = false
-  } catch (err) {
-    console.error(err)
-  } finally {
+    done()
+  } catch (e) {
+    if (e.response?.status === 422 && setErrors) {
+      setErrors(e.response.data.errors || {})
+    }
     done()
   }
 }

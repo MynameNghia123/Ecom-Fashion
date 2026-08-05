@@ -33,4 +33,9 @@ interface ProductVariantRepositoryInterface
      * Search product variants by SKU or ID
      */
     public function searchBySkuOrId(string $query);
+
+    /**
+     * Increment stock quantity of a product variant
+     */
+    public function incrementStock(int $id, int $quantity): void;
 }   

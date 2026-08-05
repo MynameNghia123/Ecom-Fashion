@@ -51,26 +51,26 @@
             </svg>
           </span>
           <input
+            v-model="searchQuery"
             type="text"
             placeholder="Tìm theo tên sản phẩm, thương hiệu..."
             class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
           />
         </div>
         <div class="relative ">
-          <select class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
+          <select v-model="filterCategory" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
             <option value="">Tất cả danh mục</option>
-            <option value="1">Áo sơ mi</option>
-            <option value="2">Quần Jeans</option>
+            <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
           </select>
           <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
         </div>
         <div class="relative">
-          <select class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
+          <select v-model="filterStatus" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
             <option value="">Trạng thái</option>
-            <option value="active">Đang hoạt động</option>
-            <option value="inactive">Ngừng hoạt động</option>
+            <option value="1">Đang hoạt động</option>
+            <option value="0">Ngừng hoạt động</option>
           </select>
           <span class="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400">
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
@@ -253,6 +253,14 @@ const categoryStore = useCategoryStore();
 const useModal = ref('');
 const selectedProduct = ref(null);
 
+const searchQuery = ref('');
+const filterCategory = ref('');
+const filterStatus = ref('');
+
+watch([searchQuery, filterCategory, filterStatus], () => {
+  handleCurrentPage(1, true);
+});
+
 const percentActiveProducts = computed(() => {
   if (productStore.stats.total === 0) return 0;
   return ((productStore.stats.active / productStore.stats.total) * 100).toFixed(1);
@@ -294,11 +302,17 @@ const openDelete = (product) => {
 const handleCurrentPage = async (page, forceRefresh = false) => {
   if (!forceRefresh && page === productStore.meta.current_page) return;
   productStore.meta.current_page = page;
-  await productStore.fetchProducts({ page, per_page: productStore.meta.per_page });
+  await productStore.fetchProducts({ 
+    page, 
+    per_page: productStore.meta.per_page,
+    search: searchQuery.value,
+    category_id: filterCategory.value,
+    is_active: filterStatus.value
+  });
 }
 const handlePerPageChange = async (perPage) => {
   productStore.meta.per_page = perPage;
-  await productStore.fetchProducts({ page: 1, per_page: perPage });
+  await handleCurrentPage(1, true);
 }
 
 // ─── Xóa ────────────────────────────────────────────────────────────────────

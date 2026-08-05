@@ -70,11 +70,6 @@ class StaffRepository implements StaffRepositoryInterface
         $model->delete();
     }
 
-    public function getAll()
-    {
-        return $this->model->with(['roles', 'permissions'])->orderBy('id', 'desc')->get();
-    }
-
     public function syncRoles(Staff $staff, array $roleIds): void
     {
         $staff->roles()->sync($roleIds);
@@ -83,5 +78,14 @@ class StaffRepository implements StaffRepositoryInterface
     public function syncPermissions(Staff $staff, array $permissionIds): void
     {
         $staff->permissions()->sync($permissionIds);
+    }
+
+    public function getPermissionsByRoles(array $roleIds): array
+    {
+        return \Illuminate\Support\Facades\DB::table('role_permissions')
+            ->whereIn('role_id', $roleIds)
+            ->pluck('permission_id')
+            ->unique()
+            ->toArray();
     }
 }

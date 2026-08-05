@@ -42,8 +42,9 @@
                 v-model="form.full_name"
                 type="text"
                 placeholder="Nguyễn Văn A"
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.full_name ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
               />
+              <p v-if="validationErrors.full_name" class="mt-1.5 text-xs text-red-500">{{ validationErrors.full_name[0] }}</p>
             </div>
 
             <!-- Email -->
@@ -56,8 +57,9 @@
                 v-model="form.email"
                 type="email"
                 placeholder="nhanvien@example.com"
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.email ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
               />
+              <p v-if="validationErrors.email" class="mt-1.5 text-xs text-red-500">{{ validationErrors.email[0] }}</p>
             </div>
 
             <!-- Số điện thoại -->
@@ -68,8 +70,9 @@
                 v-model="form.phone_number"
                 type="text"
                 placeholder="090 123 4567"
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.phone_number ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
               />
+              <p v-if="validationErrors.phone_number" class="mt-1.5 text-xs text-red-500">{{ validationErrors.phone_number[0] }}</p>
             </div>
 
             <!-- Mật khẩu -->
@@ -84,6 +87,22 @@
                 v-model="form.password"
                 type="password"
                 placeholder="••••••••"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.password ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+              />
+              <p v-if="validationErrors.password" class="mt-1.5 text-xs text-red-500">{{ validationErrors.password[0] }}</p>
+            </div>
+
+            <!-- Xác nhận Mật khẩu -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">
+                Xác nhận mật khẩu
+                <span v-if="mode === 'add'" class="text-red-500">*</span>
+              </label>
+              <input
+                id="input-staff-password-confirmation"
+                v-model="form.password_confirmation"
+                type="password"
+                placeholder="••••••••"
                 class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
               />
             </div>
@@ -96,8 +115,9 @@
                 v-model="form.avatar"
                 type="text"
                 placeholder="https://example.com/avatar.jpg"
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.avatar ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
               />
+              <p v-if="validationErrors.avatar" class="mt-1.5 text-xs text-red-500">{{ validationErrors.avatar[0] }}</p>
               <div v-if="form.avatar" class="mt-2 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-full overflow-hidden border border-slate-200 bg-slate-100">
                   <img :src="form.avatar" alt="Preview avatar" class="w-full h-full object-cover" />
@@ -124,23 +144,7 @@
               </div>
             </div>
 
-            <!-- Quyền đặc cách -->
-            <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quyền đặc cách (Permissions)</label>
-              <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50 max-h-40 overflow-y-auto">
-                <div v-for="perm in permissions" :key="perm.id" class="flex items-center gap-2">
-                  <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
-                    <input
-                      type="checkbox"
-                      class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer"
-                      :value="perm.id"
-                      v-model="form.permission_ids"
-                    />
-                    <span class="font-medium text-slate-700">{{ perm.module }}.{{ perm.action }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
+
 
             <!-- Trạng thái -->
             <div>
@@ -208,10 +212,10 @@ const form = reactive({
   email: '',
   phone_number: '',
   password: '',
+  password_confirmation: '',
   avatar: '',
   is_active: true,
   role_ids: [],
-  permission_ids: [],
 })
 
 const resetForm = () => {
@@ -220,10 +224,11 @@ const resetForm = () => {
   form.email = ''
   form.phone_number = ''
   form.password = ''
+  form.password_confirmation = ''
   form.avatar = ''
   form.is_active = true
   form.role_ids = []
-  form.permission_ids = []
+  validationErrors.value = {}
 }
 
 // Đồng bộ form khi modal được mở
@@ -238,20 +243,24 @@ watch(() => props.show, (isOpen) => {
     form.email = props.staffData.email || ''
     form.phone_number = props.staffData.phone_number || ''
     form.password = ''
+    form.password_confirmation = ''
     form.avatar = props.staffData.avatar || ''
     form.is_active = props.staffData.is_active
     form.role_ids = props.staffData.roles ? props.staffData.roles.map(r => r.id) : []
-    form.permission_ids = props.staffData.permissions ? props.staffData.permissions.map(p => p.id) : []
   } else {
     resetForm()
   }
 })
 
+const validationErrors = ref({})
+
 const handleSubmit = () => {
   isSubmitting.value = true
+  validationErrors.value = {}
   emit('submit', {
     formData: { ...form },
     done: () => { isSubmitting.value = false },
+    setErrors: (errs) => { validationErrors.value = errs }
   })
 }
 </script>
