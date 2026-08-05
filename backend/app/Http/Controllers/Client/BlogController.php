@@ -3,26 +3,24 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Blog\BlogResource;
-use App\Models\Blog;
+use App\Services\Client\Interfaces\BlogServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
+    public function __construct(private readonly BlogServiceInterface $blogService) {}
+
     /**
      * Lấy danh sách bài viết Blog đang active (status = true).
      * Hỗ trợ tìm kiếm và phân trang.
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Blog::where('status', true);
-
-        if (!empty($request->query('search'))) {
-            $query->where('name', 'like', '%' . $request->query('search') . '%');
-        }
-
+        $filters = $request->only(['search']);
         $perPage = (int) $request->query('per_page', 12);
-        $paginator = $query->orderBy('id', 'desc')->paginate($perPage);
+        
+        $paginator = $this->blogService->getActiveBlogs($filters, $perPage);
 
         return response()->json([
             'success' => true,
@@ -41,7 +39,7 @@ class BlogController extends Controller
      */
     public function show(string $slug): JsonResponse
     {
-        $blog = Blog::where('slug', $slug)->where('status', true)->first();
+        $blog = $this->blogService->findActiveBySlug($slug);
 
         if (!$blog) {
             return response()->json([

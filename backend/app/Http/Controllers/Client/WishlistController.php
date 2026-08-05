@@ -3,14 +3,17 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Wishlist;
-use App\Models\Product;
+use App\Http\Requests\Client\Wishlist\ToggleWishlistRequest;
+use App\Services\Client\Interfaces\WishlistServiceInterface;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class WishlistController extends Controller
 {
+    public function __construct(
+        private readonly WishlistServiceInterface $wishlistService
+    ){}
+
     /**
      * GET /client/wishlist — Lấy danh sách yêu thích của khách hàng.
      */
@@ -18,13 +21,7 @@ class WishlistController extends Controller
     {
         $customer = Auth::user();
 
-        $wishlists = Wishlist::with([
-            'product.category',
-            'product.productVariants.attributeValues.attribute',
-        ])
-        ->where('customer_id', $customer->id)
-        ->orderBy('created_at', 'desc')
-        ->get();
+        $wishlists = $this->wishlistService->getList($customer->id);
 
         return response()->json([
             'success' => true,
@@ -35,40 +32,19 @@ class WishlistController extends Controller
     /**
      * POST /client/wishlist/toggle — Thêm hoặc xóa sản phẩm khỏi yêu thích.
      */
-    public function toggle(Request $request): JsonResponse
+    public function toggle(ToggleWishlistRequest $request): JsonResponse
     {
-        $request->validate([
-            'product_id' => 'required|integer|exists:products,id',
-        ]);
-
         $customer = Auth::user();
-        $productId = $request->product_id;
+        $productId = $request->validated()['product_id'];
 
-        $existing = Wishlist::where('customer_id', $customer->id)
-            ->where('product_id', $productId)
-            ->first();
-
-        if ($existing) {
-            $existing->delete();
-            return response()->json([
-                'success' => true,
-                'action'  => 'removed',
-                'message' => 'Đã xóa sản phẩm khỏi danh sách yêu thích',
-            ]);
-        }
-
-        $wishlist = Wishlist::create([
-            'customer_id' => $customer->id,
-            'product_id'  => $productId,
-            'created_at'  => now(),
-        ]);
+        $result = $this->wishlistService->toggle($customer->id, $productId);
 
         return response()->json([
             'success' => true,
-            'action'  => 'added',
-            'message' => 'Đã thêm sản phẩm vào danh sách yêu thích',
-            'data'    => $wishlist,
-        ], 201);
+            'action'  => $result['action'],
+            'message' => $result['message'],
+            'data'    => $result['data'] ?? null,
+        ], $result['action'] === 'added' ? 201 : 200);
     }
 
     /**
@@ -78,9 +54,7 @@ class WishlistController extends Controller
     {
         $customer = Auth::user();
 
-        Wishlist::where('customer_id', $customer->id)
-            ->where('product_id', $productId)
-            ->delete();
+        $this->wishlistService->remove($customer->id, $productId);
 
         return response()->json([
             'success' => true,

@@ -45,6 +45,30 @@ use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
 use App\Repositories\Admin\Interfaces\ReviewRepositoryInterface;
 use App\Repositories\Admin\Interfaces\StatisticRepositoryInterface;
 
+// ── Client Repositories ───────────────────────────────────────────────────────
+use App\Repositories\Client\Implements\BannerRepository;
+use App\Repositories\Client\Interfaces\BannerRepositoryInterface;
+use App\Repositories\Client\Implements\BlogRepository;
+use App\Repositories\Client\Interfaces\BlogRepositoryInterface;
+use App\Repositories\Client\Implements\CouponRepository;
+use App\Repositories\Client\Interfaces\CouponRepositoryInterface;
+use App\Repositories\Client\Implements\ProductRepository;
+use App\Repositories\Client\Interfaces\ProductRepositoryInterface;
+use App\Repositories\Client\Implements\ReviewRepository;
+use App\Repositories\Client\Interfaces\ReviewRepositoryInterface;
+use App\Repositories\Client\Implements\WishlistRepository;
+use App\Repositories\Client\Interfaces\WishlistRepositoryInterface;
+use App\Repositories\Client\Implements\CartRepository;
+use App\Repositories\Client\Interfaces\CartRepositoryInterface;
+use App\Repositories\Client\Implements\CustomerAddressRepository;
+use App\Repositories\Client\Interfaces\CustomerAddressRepositoryInterface;
+use App\Repositories\Client\Implements\OrderRepository;
+use App\Repositories\Client\Interfaces\OrderRepositoryInterface;
+use App\Repositories\Client\Implements\AuthRepository as ClientAuthRepository;
+use App\Repositories\Client\Interfaces\AuthRepositoryInterface as ClientAuthRepositoryInterface;
+use App\Repositories\Client\Implements\AiChatRepository;
+use App\Repositories\Client\Interfaces\AiChatRepositoryInterface;
+
 // ── Services ──────────────────────────────────────────────────────────────────
 use App\Services\Admin\Implements\AuthService;
 use App\Services\Admin\Implements\AttributeService;
@@ -89,6 +113,32 @@ use App\Services\Admin\Interfaces\OrderServiceInterface;
 use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use App\Services\Admin\Interfaces\ReviewServiceInterface;
 use App\Services\Admin\Interfaces\StatisticServiceInterface;
+
+// ── Client Services ───────────────────────────────────────────────────────────
+use App\Services\Client\Implements\BannerService;
+use App\Services\Client\Interfaces\BannerServiceInterface;
+use App\Services\Client\Implements\BlogService;
+use App\Services\Client\Interfaces\BlogServiceInterface;
+use App\Services\Client\Implements\CouponService;
+use App\Services\Client\Interfaces\CouponServiceInterface;
+use App\Services\Client\Implements\ProductService;
+use App\Services\Client\Interfaces\ProductServiceInterface;
+use App\Services\Client\Implements\ReviewService;
+use App\Services\Client\Interfaces\ReviewServiceInterface;
+use App\Services\Client\Implements\WishlistService;
+use App\Services\Client\Interfaces\WishlistServiceInterface;
+use App\Services\Client\Implements\CartService;
+use App\Services\Client\Interfaces\CartServiceInterface;
+use App\Services\Client\Implements\CustomerAddressService;
+use App\Services\Client\Interfaces\CustomerAddressServiceInterface;
+use App\Services\Client\Implements\OrderService;
+use App\Services\Client\Interfaces\OrderServiceInterface;
+use App\Services\Client\Implements\AuthService as ClientAuthService;
+use App\Services\Client\Interfaces\AuthServiceInterface as ClientAuthServiceInterface;
+use App\Services\Client\Implements\PaymentService;
+use App\Services\Client\Interfaces\PaymentServiceInterface;
+use App\Services\Client\Implements\AiChatService;
+use App\Services\Client\Interfaces\AiChatServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -143,6 +193,31 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReturnRequestServiceInterface::class,      ReturnRequestService::class);
         $this->app->bind(ReviewServiceInterface::class,             ReviewService::class);
         $this->app->bind(StatisticServiceInterface::class,          StatisticService::class);
+
+        // Client bindings
+        $this->app->bind(BannerRepositoryInterface::class, BannerRepository::class);
+        $this->app->bind(BannerServiceInterface::class, BannerService::class);
+        $this->app->bind(BlogRepositoryInterface::class, BlogRepository::class);
+        $this->app->bind(BlogServiceInterface::class, BlogService::class);
+        $this->app->bind(CouponRepositoryInterface::class, CouponRepository::class);
+        $this->app->bind(CouponServiceInterface::class, CouponService::class);
+        $this->app->bind(ProductRepositoryInterface::class, ProductRepository::class);
+        $this->app->bind(ProductServiceInterface::class, ProductService::class);
+        $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+        $this->app->bind(ReviewServiceInterface::class, ReviewService::class);
+        $this->app->bind(WishlistRepositoryInterface::class, WishlistRepository::class);
+        $this->app->bind(WishlistServiceInterface::class, WishlistService::class);
+        $this->app->bind(CartRepositoryInterface::class, CartRepository::class);
+        $this->app->bind(CartServiceInterface::class, CartService::class);
+        $this->app->bind(CustomerAddressRepositoryInterface::class, CustomerAddressRepository::class);
+        $this->app->bind(CustomerAddressServiceInterface::class, CustomerAddressService::class);
+        $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
+        $this->app->bind(OrderServiceInterface::class, OrderService::class);
+        $this->app->bind(ClientAuthRepositoryInterface::class, ClientAuthRepository::class);
+        $this->app->bind(ClientAuthServiceInterface::class, ClientAuthService::class);
+        $this->app->bind(PaymentServiceInterface::class, PaymentService::class);
+        $this->app->bind(AiChatRepositoryInterface::class, AiChatRepository::class);
+        $this->app->bind(AiChatServiceInterface::class, AiChatService::class);
     }
 
     public function boot(): void

@@ -2,107 +2,44 @@
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Customer;
-use App\Mail\OtpMail;
+use App\Http\Requests\Client\Auth\RegisterRequest;
+use App\Http\Requests\Client\Auth\LoginRequest;
+use App\Http\Requests\Client\Auth\ForgotPasswordRequest;
+use App\Http\Requests\Client\Auth\VerifyOtpRequest;
+use App\Http\Requests\Client\Auth\ResetPasswordRequest;
+use App\Http\Requests\Client\Auth\UpdateProfileRequest;
+use App\Http\Requests\Client\Auth\ChangePasswordRequest;
+use App\Services\Client\Interfaces\AuthServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
-    public function register(Request $request)
+    public function __construct(private readonly AuthServiceInterface $authService) {}
+
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:customers',
-            'phone_number' => 'nullable|string|max:15',
-            'password' => 'required|string|min:8',
-        ], [
-            'email.unique' => 'Email này đã được đăng ký sử dụng.',
-            'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự.'
-        ]);
+        $result = $this->authService->register($request->validated());
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
-        $customer = Customer::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'phone_number' => $request->phone_number,
-            'password' => $request->password, // model cast 'hashed' tự động hash
-            'status' => 1,
-        ]);
-
-        $token = $customer->createToken('customer_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Customer registered successfully',
-            'token' => $token,
-            'user' => $customer,
-        ], 201);
-    }   
-    
-    public function login(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required',
-        ], [
-            'email.required' => 'Email không được để trống.',
-            'email.email' => 'Email không hợp lệ.',
-            'password.required' => 'Mật khẩu không được để trống.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'errors' => $validator->errors(),
-                'message' => $validator->errors()->first()
-            ], 422);
-        }
-
-        $customer = Customer::where('email', $request->email)->first();
-
-        if (!$customer || !Hash::check($request->password, $customer->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email hoặc mật khẩu không chính xác.',
-            ], 401);
-        }
-
-        if ($customer->status !== 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tài khoản của bạn đã bị khóa.',
-            ], 403);
-        }
-
-        $token = $customer->createToken('customer_token')->plainTextToken;
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Customer logged in successfully',
-            'token' => $token,
-            'user' => $customer,
-        ], 200);
+        return response()->json($result, 201);
     }
 
-    public function logout(Request $request)
+    public function login(LoginRequest $request): JsonResponse
+    {
+        $result = $this->authService->login($request->validated());
+
+        if (!$result['success']) {
+            $status = str_contains($result['message'], 'bị khóa') ? 403 : 401;
+            return response()->json($result, $status);
+        }
+
+        return response()->json($result, 200);
+    }
+
+    public function logout(Request $request): JsonResponse
     {
         if ($request->user()) {
-            $request->user()->currentAccessToken()->delete();
+            $this->authService->logout($request->user());
         }
 
         return response()->json([
@@ -111,7 +48,7 @@ class AuthController extends Controller
         ], 200);
     }
 
-    public function me(Request $request)
+    public function me(Request $request): JsonResponse
     {
         return response()->json([
             'success' => true,
@@ -119,232 +56,65 @@ class AuthController extends Controller
         ]);
     }
 
-    public function forgotPassword(Request $request)
+    public function forgotPassword(ForgotPasswordRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|exists:customers,email',
-        ], [
-            'email.required' => 'Vui lòng cung cấp email.',
-            'email.email'    => 'Email không hợp lệ.',
-            'email.exists'   => 'Email này chưa được đăng ký trong hệ thống.'
-        ]);
+        $result = $this->authService->forgotPassword($request->validated()['email']);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 422);
+        if (!$result['success']) {
+            return response()->json($result, 500);
         }
 
-        // Ensure otp column is VARCHAR(255) — fix for old schema with VARCHAR(6)
-        try {
-            DB::statement("ALTER TABLE customer_password_otps MODIFY COLUMN otp VARCHAR(255) NOT NULL");
-        } catch (\Exception $e) {
-            // Already correct type — ignore
-        }
-
-        // Generate 6 digit OTP
-        $otp = sprintf("%06d", mt_rand(1, 999999));
-
-        try {
-            // Xóa OTP cũ của email này (tránh duplicate)
-            DB::table('customer_password_otps')->where('email', $request->email)->delete();
-
-            // Lưu OTP mới vào DB
-            DB::table('customer_password_otps')->insert([
-                'email'      => $request->email,
-                'otp'        => $otp,
-                'expires_at' => now()->addMinutes(10),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            // Gửi email OTP về Mailpit
-            Mail::to($request->email)->send(new OtpMail($otp));
-
-        } catch (\Exception $e) {
-            \Log::error('[forgotPassword] ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Đã xảy ra lỗi hệ thống, vui lòng thử lại sau.'
-            ], 500);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Mã OTP đã được gửi về email của bạn.'
-        ], 200);
+        return response()->json($result, 200);
     }
 
-
-    public function verifyOtp(Request $request)
+    public function verifyOtp(VerifyOtpRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'otp_code' => 'required|string|size:6',
-        ], [
-            'otp_code.required' => 'Mã OTP không được để trống.',
-            'otp_code.size' => 'Mã OTP phải có đúng 6 chữ số.',
-        ]);
+        $validated = $request->validated();
+        $result = $this->authService->verifyOtp($validated['email'], $validated['otp_code']);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 422);
+        if (!$result['success']) {
+            return response()->json($result, 422);
         }
 
-        // Find verification record
-        $otpRecord = DB::table('customer_password_otps')
-            ->where('email', $request->email)
-            ->where('otp', $request->otp_code)
-            ->where('used', false)
-            ->where('expires_at', '>', now())
-            ->orderBy('created_at', 'desc')
-            ->first();
-
-        if (!$otpRecord) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Mã OTP không hợp lệ hoặc đã hết hạn.'
-            ], 422);
-        }
-
-        // Mark OTP as used
-        DB::table('customer_password_otps')
-            ->where('id', $otpRecord->id)
-            ->update(['used' => true]);
-
-        // Generate temporary reset token (stored in Cache for 10 minutes)
-        $resetToken = Str::random(64);
-        Cache::put('reset_token_' . $resetToken, $request->email, now()->addMinutes(10));
-
-        return response()->json([
-            'success' => true,
-            'reset_token' => $resetToken
-        ], 200);
+        return response()->json($result, 200);
     }
 
-    public function resetPassword(Request $request)
+    public function resetPassword(ResetPasswordRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'token' => 'required|string',
-            'password' => 'required|string|min:8|confirmed',
-        ], [
-            'password.required' => 'Mật khẩu mới không được để trống.',
-            'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự.',
-            'password.confirmed' => 'Mật khẩu xác nhận không khớp.'
-        ]);
+        $validated = $request->validated();
+        $result = $this->authService->resetPassword($validated['token'], $validated['password']);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first()
-            ], 422);
+        if (!$result['success']) {
+            $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 422;
+            return response()->json($result, $status);
         }
 
-        // Get email from token
-        $email = Cache::get('reset_token_' . $request->token);
-
-        if (!$email) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Token xác thực đã hết hạn hoặc không hợp lệ.'
-            ], 422);
-        }
-
-        // Update password
-        $customer = Customer::where('email', $email)->first();
-        if (!$customer) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Không tìm thấy thông tin khách hàng.'
-            ], 404);
-        }
-
-        $customer->update([
-            'password' => $request->password // model cast 'hashed' tự động hash
-        ]);
-
-        // Clear Cache
-        Cache::forget('reset_token_' . $request->token);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Mật khẩu của bạn đã được cập nhật thành công.'
-        ], 200);
+        return response()->json($result, 200);
     }
 
     /**
      * PUT /client/auth/profile — Cập nhật thông tin cá nhân.
      */
-    public function updateProfile(Request $request)
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
     {
         $customer = $request->user();
+        $result = $this->authService->updateProfile($customer, $request->validated());
 
-        $validator = Validator::make($request->all(), [
-            'first_name'   => 'required|string|max:255',
-            'last_name'    => 'required|string|max:255',
-            'phone_number' => 'nullable|string|max:15',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors'  => $validator->errors(),
-            ], 422);
-        }
-
-        $customer->update([
-            'first_name'   => $request->first_name,
-            'last_name'    => $request->last_name,
-            'phone_number' => $request->phone_number,
-        ]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Cập nhật thông tin thành công.',
-            'user'    => $customer->fresh(),
-        ]);
+        return response()->json($result);
     }
 
     /**
-     * PUT /client/auth/change-password — Đổi mật khẩu khi đã đăng nhập.
+     * PUT /client/auth/change-password — Đổi mật khẩu.
      */
-    public function changePassword(Request $request)
+    public function changePassword(ChangePasswordRequest $request): JsonResponse
     {
         $customer = $request->user();
+        $result = $this->authService->changePassword($customer, $request->validated());
 
-        $validator = Validator::make($request->all(), [
-            'current_password'      => 'required|string',
-            'password'              => 'required|string|min:8|confirmed',
-        ], [
-            'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
-            'password.min'              => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
-            'password.confirmed'        => 'Xác nhận mật khẩu không khớp.',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => $validator->errors()->first(),
-                'errors'  => $validator->errors(),
-            ], 422);
+        if (!$result['success']) {
+            return response()->json($result, 400);
         }
 
-        if (!Hash::check($request->current_password, $customer->password)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Mật khẩu hiện tại không chính xác.',
-            ], 422);
-        }
-
-        $customer->update(['password' => $request->password]);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Đổi mật khẩu thành công.',
-        ]);
+        return response()->json($result);
     }
 }
