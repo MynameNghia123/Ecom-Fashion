@@ -9,8 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Customer extends Authenticatable
 {
     use HasApiTokens;
-    protected
-     $fillable = [
+    protected $fillable = [
         'first_name',
         'last_name',
         'email',

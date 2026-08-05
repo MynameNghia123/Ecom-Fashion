@@ -15,9 +15,9 @@
       </div>
       <div class="flex gap-5 items-center">
         <a href="#" class="text-white no-underline font-semibold cursor-pointer">LIÊN HỆ</a>
-        <div class="flex items-center gap-1.25">
+        <!-- <div class="flex items-center gap-1.25">
           <span class="text-white font-semibold cursor-pointer">TIẾNG VIỆT <i class="border-solid border-white border-r border-b inline-block p-[2.5px] rotate-45 ml-1.25 mb-[2px]"></i></span>
-        </div>
+        </div> -->
         <div class="flex items-center gap-1.25">
           <span class="text-white font-semibold cursor-pointer">VND <i class="border-solid border-white border-r border-b inline-block p-[2.5px] rotate-45 ml-1.25 mb-[2px]"></i></span>
         </div>

@@ -143,6 +143,36 @@
           </div>
         </div>
 
+        <!-- Quantity Selector -->
+        <div class="mb-8">
+          <p class="text-[13px] font-bold uppercase tracking-[1px] text-gray-700 mb-3">Số lượng:</p>
+          <div class="flex items-center gap-4">
+            <div class="flex items-center border border-gray-300 h-[50px]">
+              <button 
+                @click="decreaseQuantity"
+                class="px-4 h-full text-gray-600 hover:bg-gray-100 transition-colors"
+                :disabled="quantity <= 1"
+              >-</button>
+              <input 
+                type="number" 
+                v-model.number="quantity"
+                @change="validateQuantity"
+                class="w-16 h-full text-center border-0 border-x border-gray-300 focus:outline-none focus:ring-0 text-[14px] font-medium p-0"
+                min="1"
+                :max="maxQuantity"
+              />
+              <button 
+                @click="increaseQuantity"
+                class="px-4 h-full text-gray-600 hover:bg-gray-100 transition-colors"
+                :disabled="quantity >= maxQuantity || !selectedVariant"
+              >+</button>
+            </div>
+            <span v-if="selectedVariant" class="text-[13px] text-gray-500 font-medium">
+              Còn {{ selectedVariant.stock_quantity }} sản phẩm
+            </span>
+          </div>
+        </div>
+
         <!-- Purchase Buttons (Add to Cart + Buy Now) -->
         <div class="flex flex-col sm:flex-row gap-4 mb-8">
           <!-- Add To Cart Button -->
@@ -313,7 +343,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/client/productService'
 import { useCartStore } from '@/stores/client/cartStore'
@@ -453,10 +483,12 @@ onMounted(async () => {
 
 // Dynamic Attributes Resolution
 const colors = computed(() => {
-  if (!product.value || !product.value.product_variants) return []
+  if (!product.value) return []
+  const variants = product.value.product_variants || product.value.productVariants || []
   const list = new Set()
-  product.value.product_variants.forEach(variant => {
-    variant.attribute_values.forEach(av => {
+  variants.forEach(variant => {
+    const attributeValues = variant.attribute_values || variant.attributeValues || []
+    attributeValues.forEach(av => {
       const name = av.attribute?.name || ''
       const normalizedName = name.toLowerCase().trim()
       if (
@@ -474,19 +506,16 @@ const colors = computed(() => {
 
 // Tất cả các kích cỡ hiện có của sản phẩm này
 const allSizes = computed(() => {
-  if (!product.value || !product.value.product_variants) return []
+  if (!product.value) return []
+  const variants = product.value.product_variants || product.value.productVariants || []
   const list = new Set()
-  product.value.product_variants.forEach(variant => {
-    variant.attribute_values.forEach(av => {
+  variants.forEach(variant => {
+    const attributeValues = variant.attribute_values || variant.attributeValues || []
+    attributeValues.forEach(av => {
       const name = av.attribute?.name || ''
       const normalizedName = name.toLowerCase().trim()
-      if (
-        normalizedName === 'kích cỡ' || 
-        normalizedName === 'size' || 
-        normalizedName === 'kích thước' ||
-        normalizedName.includes('size') ||
-        normalizedName.includes('kích')
-      ) {
+      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
+      if (!isColorAttr) {
         list.add(av.value)
       }
     })
@@ -496,11 +525,13 @@ const allSizes = computed(() => {
 
 // Các size khả dụng cho màu đang được chọn
 const availableSizesForSelectedColor = computed(() => {
-  if (!product.value || !product.value.product_variants) return []
+  if (!product.value) return []
+  const variants = product.value.product_variants || product.value.productVariants || []
   const list = []
-  product.value.product_variants.forEach(variant => {
+  variants.forEach(variant => {
+    const attributeValues = variant.attribute_values || variant.attributeValues || []
     // Nếu có tùy chọn màu sắc, kiểm tra xem có khớp màu đang chọn không
-    const matchColor = colors.value.length === 0 || !selectedColor.value || variant.attribute_values.some(av => {
+    const matchColor = colors.value.length === 0 || !selectedColor.value || attributeValues.some(av => {
       const name = av.attribute?.name || ''
       const normalizedName = name.toLowerCase().trim()
       const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
@@ -508,14 +539,15 @@ const availableSizesForSelectedColor = computed(() => {
     })
     
     if (matchColor) {
-      variant.attribute_values.forEach(av => {
+      attributeValues.forEach(av => {
         const name = av.attribute?.name || ''
         const normalizedName = name.toLowerCase().trim()
-        const isSizeAttr = normalizedName === 'kích cỡ' || normalizedName === 'size' || normalizedName === 'kích thước' || normalizedName.includes('size') || normalizedName.includes('kích')
+        const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
+        const isSizeAttr = !isColorAttr
         if (isSizeAttr) {
           list.push({
             value: av.value,
-            stock: variant.stock_quantity
+            stock: variant.stock_quantity || variant.stockQuantity || 0
           })
         }
       })
@@ -526,10 +558,12 @@ const availableSizesForSelectedColor = computed(() => {
 
 // Biến thể khớp với Màu & Size đã chọn
 const selectedVariant = computed(() => {
-  if (!product.value || !product.value.product_variants) return null
-  return product.value.product_variants.find(variant => {
+  if (!product.value) return null
+  const variants = product.value.product_variants || product.value.productVariants || []
+  return variants.find(variant => {
+    const attributeValues = variant.attribute_values || variant.attributeValues || []
     // Khớp màu sắc (nếu sản phẩm có thuộc tính màu)
-    const matchColor = colors.value.length === 0 || variant.attribute_values.some(av => {
+    const matchColor = colors.value.length === 0 || attributeValues.some(av => {
       const name = av.attribute?.name || ''
       const normalizedName = name.toLowerCase().trim()
       const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
@@ -537,10 +571,11 @@ const selectedVariant = computed(() => {
     })
     
     // Khớp kích cỡ (nếu sản phẩm có thuộc tính kích cỡ)
-    const matchSize = allSizes.value.length === 0 || variant.attribute_values.some(av => {
+    const matchSize = allSizes.value.length === 0 || attributeValues.some(av => {
       const name = av.attribute?.name || ''
       const normalizedName = name.toLowerCase().trim()
-      const isSizeAttr = normalizedName === 'kích cỡ' || normalizedName === 'size' || normalizedName === 'kích thước' || normalizedName.includes('size') || normalizedName.includes('kích')
+      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
+      const isSizeAttr = !isColorAttr
       return isSizeAttr && av.value === selectedSize.value
     })
     
@@ -548,23 +583,66 @@ const selectedVariant = computed(() => {
   })
 })
 
+const quantity = ref(1)
+
+const maxQuantity = computed(() => {
+  if (!selectedVariant.value) return 1
+  return selectedVariant.value.stock_quantity || 1
+})
+
+const increaseQuantity = () => {
+  if (quantity.value < maxQuantity.value) {
+    quantity.value++
+  }
+}
+
+const decreaseQuantity = () => {
+  if (quantity.value > 1) {
+    quantity.value--
+  }
+}
+
+const validateQuantity = () => {
+  if (typeof quantity.value !== 'number' || isNaN(quantity.value) || quantity.value < 1) {
+    quantity.value = 1
+  }
+  if (selectedVariant.value && selectedVariant.value.stock_quantity > 0) {
+    if (quantity.value > selectedVariant.value.stock_quantity) {
+      quantity.value = selectedVariant.value.stock_quantity
+    }
+  }
+}
+
+watch(selectedVariant, (newVal) => {
+  if (newVal && newVal.stock_quantity > 0) {
+    if (quantity.value > newVal.stock_quantity) {
+      quantity.value = newVal.stock_quantity
+    }
+  } else {
+    quantity.value = 1
+  }
+})
+
 
 // Giá hiển thị hiện tại
 const currentPrice = computed(() => {
   if (selectedVariant.value) {
-    return selectedVariant.value.sale_price ?? selectedVariant.value.price
+    return selectedVariant.value.sale_price ?? selectedVariant.value.salePrice ?? selectedVariant.value.price
   }
-  if (product.value && product.value.product_variants && product.value.product_variants.length > 0) {
-    // Trả về giá thấp nhất của các biến thể
-    const prices = product.value.product_variants.map(v => v.sale_price ?? v.price)
-    return Math.min(...prices)
+  if (product.value) {
+    const variants = product.value.product_variants || product.value.productVariants || []
+    if (variants.length > 0) {
+      // Trả về giá thấp nhất của các biến thể
+      const prices = variants.map(v => v.sale_price ?? v.salePrice ?? v.price)
+      return Math.min(...prices)
+    }
   }
   return 0
 })
 
 const originalPrice = computed(() => {
   if (selectedVariant.value) {
-    return selectedVariant.value.sale_price ? selectedVariant.value.price : null
+    return (selectedVariant.value.sale_price ?? selectedVariant.value.salePrice) ? selectedVariant.value.price : null
   }
   return null
 })
@@ -576,10 +654,12 @@ const productImages = computed(() => {
     if (product.value.thumbnail) {
       images.push(product.value.thumbnail)
     }
-    if (product.value.product_images && product.value.product_images.length > 0) {
-      product.value.product_images.forEach(img => {
-        if (img.image_url && img.image_url !== product.value.thumbnail) {
-          images.push(img.image_url)
+    const apiImages = product.value.product_images || product.value.productImages || []
+    if (apiImages.length > 0) {
+      apiImages.forEach(img => {
+        const url = img.image_url || img.imageUrl
+        if (url && url !== product.value.thumbnail) {
+          images.push(url)
         }
       })
     }
@@ -606,7 +686,7 @@ const handleAddToCart = () => {
   
   cartStore.addItem({
     product_variant_id: selectedVariant.value.id,
-    quantity: 1,
+    quantity: quantity.value,
     price: currentPrice.value,
     product_name: product.value.name,
     product_thumbnail: product.value.thumbnail,
@@ -617,7 +697,7 @@ const handleAddToCart = () => {
       { attribute: 'Kích cỡ', value: selectedSize.value }
     ]
   })
-  alert(`Đã thêm ${product.value.name} (Màu: ${selectedColor.value}, Size: ${selectedSize.value}) vào giỏ hàng thành công!`)
+  alert(`Đã thêm ${product.value.name} (Màu: ${selectedColor.value}, Size: ${selectedSize.value}, SL: ${quantity.value}) vào giỏ hàng thành công!`)
 }
 
 // Mua ngay
@@ -633,7 +713,7 @@ const handleBuyNow = () => {
 
   cartStore.addItem({
     product_variant_id: selectedVariant.value.id,
-    quantity: 1,
+    quantity: quantity.value,
     price: currentPrice.value,
     product_name: product.value.name,
     product_thumbnail: product.value.thumbnail,

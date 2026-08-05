@@ -67,16 +67,14 @@ class AuthService implements AuthServiceInterface
 
     public function logout(Customer $customer): void
     {
-        $customer->currentAccessToken()->delete();
+        /** @var \Laravel\Sanctum\PersonalAccessToken|null $token */
+        $token = $customer->currentAccessToken();
+
+        $token?->delete();
     }
 
     public function forgotPassword(string $email): array
     {
-        try {
-            DB::statement("ALTER TABLE customer_password_otps MODIFY COLUMN otp VARCHAR(255) NOT NULL");
-        } catch (\Exception $e) {
-            // Already correct type — ignore
-        }
 
         $otp = sprintf("%06d", mt_rand(1, 999999));
 

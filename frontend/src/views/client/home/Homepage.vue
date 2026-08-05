@@ -69,7 +69,7 @@
           <div 
             v-for="(brand, idx) in duplicatedBrands" 
             :key="brand.domain + '-' + idx"
-            class="flex-shrink-0 w-20 h-20 rounded-full bg-white border border-neutral-200/60 shadow-sm flex items-center justify-center p-4 transition-all duration-300 hover:shadow-md hover:scale-105 cursor-pointer"
+            class="flex-shrink-0 w-[140px] h-[60px] rounded-full bg-white border border-neutral-200/60 shadow-sm flex items-center justify-center px-6 py-2 transition-all duration-300 hover:shadow-md hover:scale-105 cursor-pointer"
           >
             <img 
               v-if="brand.logoUrl" 
@@ -285,13 +285,23 @@ const slides = [
 const currentSlide = ref(0);
 let slideInterval = null;
 
-// Brand Logos state
+// Brand Logos state (Hardcoded since backend doesn't manage this)
 const brandLogos = ref([
-  { name: 'Gucci', domain: 'gucci.com', logoUrl: null },
-  { name: 'Balenciaga', domain: 'balenciaga.com', logoUrl: null },
-  { name: 'Louis Vuitton', domain: 'louisvuitton.com', logoUrl: null },
-  { name: 'Dior', domain: 'dior.com', logoUrl: null },
-  { name: 'Chanel', domain: 'chanel.com', logoUrl: null }
+  { name: 'Gucci', domain: 'gucci.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=GUCCI&font=lora' },
+  { name: 'Balenciaga', domain: 'balenciaga.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=BALENCIAGA&font=lora' },
+  { name: 'Louis Vuitton', domain: 'louisvuitton.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=LOUIS+VUITTON&font=lora' },
+  { name: 'Dior', domain: 'dior.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=DIOR&font=lora' },
+  { name: 'Chanel', domain: 'chanel.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=CHANEL&font=lora' },
+  { name: 'Hermès', domain: 'hermes.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=HERMÈS&font=lora' },
+  { name: 'Prada', domain: 'prada.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=PRADA&font=lora' },
+  { name: 'Versace', domain: 'versace.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=VERSACE&font=lora' },
+  { name: 'Burberry', domain: 'burberry.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=BURBERRY&font=lora' },
+  { name: 'Armani', domain: 'armani.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=ARMANI&font=lora' },
+  { name: 'Fendi', domain: 'fendi.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=FENDI&font=lora' },
+  { name: 'Givenchy', domain: 'givenchy.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=GIVENCHY&font=lora' },
+  { name: 'YSL', domain: 'ysl.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=YSL&font=lora' },
+  { name: 'Rolex', domain: 'rolex.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=ROLEX&font=lora' },
+  { name: 'Cartier', domain: 'cartier.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=CARTIER&font=lora' }
 ]);
 
 // Nhân bản danh sách thương hiệu nhiều lần để cuộn vô hạn mượt mà
@@ -325,136 +335,16 @@ const startSlideTimer = () => {
   slideInterval = setInterval(nextSlide, 10000);
 };
 
-// Trích xuất logo phù hợp cho giao diện nền sáng (tránh logo màu trắng chỉ hiển thị trên nền tối)
-const extractLogoUrl = (brandData) => {
-  if (!brandData || !brandData.logos) return null;
-
-  // 1. Ưu tiên logo chuẩn thiết kế cho nền sáng (hoặc không quy định theme tối)
-  const logo = brandData.logos.find(l => l.type === 'logo' && l.theme !== 'dark');
-  if (logo && logo.formats && logo.formats[0]) {
-    return logo.formats[0].src;
-  }
-
-  // 2. Tiếp theo, ưu tiên biểu tượng (symbol) thiết kế cho nền sáng
-  const symbol = brandData.logos.find(l => l.type === 'symbol' && l.theme !== 'dark');
-  if (symbol && symbol.formats && symbol.formats[0]) {
-    return symbol.formats[0].src;
-  }
-
-  // 3. Tiếp theo, ưu tiên icon thiết kế cho nền sáng
-  const icon = brandData.logos.find(l => l.type === 'icon' && l.theme !== 'dark');
-  if (icon && icon.formats && icon.formats[0]) {
-    return icon.formats[0].src;
-  }
-
-  // 4. Nếu không có logo nền sáng, lấy logo bất kỳ đầu tiên có sẵn làm fallback
-  const fallback = brandData.logos.find(l => l.formats && l.formats[0]);
-  if (fallback) {
-    return fallback.formats[0].src;
-  }
-
-  return null;
-}
-
-// Fetch logos từ Brandfetch
-const fetchBrandLogos = async () => {
-  brandLogos.value.forEach(async (brand) => {
-    try {
-      const response = await api.get(`/client/brands/${brand.domain}`)
-      if (response.data) {
-        const logoUrl = extractLogoUrl(response.data)
-        if (logoUrl) {
-          brand.logoUrl = logoUrl;
-        }
-      }
-    } catch (e) {
-      console.warn(`Không thể lấy logo cho thương hiệu ${brand.name}:`, e.message)
-    }
-  })
-}
-
 onMounted(() => {
   startSlideTimer();
-  fetchBrandLogos();
 });
 
 onUnmounted(() => {
   if (slideInterval) clearInterval(slideInterval);
 });
 
-
-const mockArrivals = [
-  {
-    id: 'mock-1',
-    image: 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi tulle bất đối xứng',
-    currentPrice: '750.000 đ',
-    originalPrice: '1.250.000 đ',
-    discount: '-40%'
-  },
-  {
-    id: 'mock-2',
-    image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi hiệu ứng nhăn',
-    currentPrice: '850.000 đ',
-  },
-  {
-    id: 'mock-3',
-    image: 'https://images.unsplash.com/photo-1515347619253-122e1b1d403f?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy quây xếp nếp',
-    currentPrice: '1.350.000 đ',
-    originalPrice: '1.670.000 đ',
-    discount: '-19%'
-  },
-  {
-    id: 'mock-4',
-    image: 'https://images.unsplash.com/photo-1612336307429-8a898d10e223?q=80&w=800&auto=format&fit=crop',
-    name: 'Váy midi crepe họa tiết hoa',
-    currentPrice: '1.530.000 đ',
-    originalPrice: '1.960.000 đ',
-    discount: '-22%'
-  }
-];
-
-const mockFeatured = [
-  {
-    id: 'mock-f1',
-    image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=800&auto=format&fit=crop',
-    name: "Áo hoodie 'Run & Brunch'",
-    currentPrice: '1.490.000 đ',
-    originalPrice: '1.990.000 đ',
-    discount: '-26%',
-    rating: { score: '4.67', count: 3, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
-  },
-  {
-    id: 'mock-f2',
-    image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=800&auto=format&fit=crop',
-    name: 'Áo khoác cotton siêu nhẹ',
-    currentPrice: '620.000 đ',
-    originalPrice: '850.000 đ',
-    discount: '-28%',
-    rating: { score: '4.33', count: 3, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
-  },
-  {
-    id: 'mock-f3',
-    image: 'https://images.unsplash.com/photo-1544441893-675973e31985?q=80&w=800&auto=format&fit=crop',
-    name: 'Áo khoác denim',
-    currentPrice: '1.120.000 đ',
-    originalPrice: '1.870.000 đ',
-    discount: '-40%',
-    rating: { score: '3.67', count: 5, stars: ['filled', 'filled', 'filled', 'half-filled', 'empty'] }
-  },
-  {
-    id: 'mock-f4',
-    image: 'https://images.unsplash.com/photo-1599305090598-fe179d501227?q=80&w=800&auto=format&fit=crop',
-    name: 'Áo khoác bomber 100% linen',
-    currentPrice: '860.000 đ',
-    rating: { score: '4.33', count: 6, stars: ['filled', 'filled', 'filled', 'filled', 'half-filled'] }
-  }
-];
-
-const newArrivals = ref([...mockArrivals]);
-const featuredProducts = ref([...mockFeatured]);
+const newArrivals = ref([]);
+const featuredProducts = ref([]);
 
 const router = useRouter();
 
@@ -505,12 +395,7 @@ const mapProduct = (item) => {
 }
 
 const goToDetail = (id) => {
-  if (String(id).startsWith('mock-')) {
-    // Trỏ về sản phẩm mock detail tĩnh nếu click vào sản phẩm mock
-    router.push('/product/AB258041NTR26')
-  } else {
-    router.push({ name: 'ProductDetail', params: { id } })
-  }
+  router.push({ name: 'ProductDetail', params: { id } })
 }
 
 onMounted(async () => {
@@ -519,15 +404,13 @@ onMounted(async () => {
     if (response.data && response.data.success && response.data.data.length > 0) {
       const realProducts = response.data.data.map(mapProduct)
       
-      newArrivals.value = [
-        ...realProducts,
-        ...mockArrivals.slice(realProducts.length)
-      ].slice(0, 4)
+      // Lấy 4 sản phẩm đầu cho Hàng mới về
+      newArrivals.value = realProducts.slice(0, 4)
 
-      featuredProducts.value = [
-        ...realProducts,
-        ...mockFeatured.slice(realProducts.length)
-      ].slice(0, 4)
+      // Lấy 4 sản phẩm tiếp theo (hoặc 4 sản phẩm đầu nếu ít hơn) cho Sản phẩm nổi bật
+      featuredProducts.value = realProducts.length > 4 
+        ? realProducts.slice(4, 8) 
+        : realProducts.slice(0, 4)
     }
   } catch (err) {
     console.error('Lỗi khi tải sản phẩm cho trang chủ:', err)
