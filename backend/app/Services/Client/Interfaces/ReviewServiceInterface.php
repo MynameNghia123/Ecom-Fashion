@@ -12,4 +12,6 @@ interface ReviewServiceInterface
      * @return array{success: bool, message: string, data?: Review}
      */
     public function storeReview(int $customerId, array $data): array;
+
+    public function checkReviewEligibility(int $customerId, int $productId): array;
 }

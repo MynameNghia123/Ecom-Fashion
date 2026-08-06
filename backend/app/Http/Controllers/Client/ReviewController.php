@@ -69,4 +69,18 @@ class ReviewController extends Controller
             'total_reviews'  => $reviews->count(),
         ]);
     }
+
+    /**
+     * GET /client/products/{productId}/review-eligibility
+     */
+    public function checkEligibility($productId): JsonResponse
+    {
+        $customer = Auth::user();
+        $eligibility = $this->reviewService->checkReviewEligibility($customer->id, $productId);
+        
+        return response()->json([
+            'success' => true,
+            'data'    => $eligibility
+        ]);
+    }
 }

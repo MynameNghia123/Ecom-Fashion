@@ -21,25 +21,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-16">
       
       <!-- Left side: Images -->
-      <div class="lg:col-span-6 flex flex-col-reverse md:flex-row gap-4">
-        <!-- Vertical Thumbnail Stack -->
-        <div v-if="productImages.length > 1" class="flex md:flex-col gap-3 md:w-[100px] shrink-0">
-          <button 
-            v-for="(img, idx) in productImages" 
-            :key="idx"
-            @click="activeImageIdx = idx"
-            class="w-16 h-20 md:w-full md:h-[120px] border overflow-hidden transition-all duration-200"
-            :class="activeImageIdx === idx ? 'border-black opacity-100' : 'border-gray-200 opacity-70 hover:opacity-100'"
-          >
-            <img :src="img" alt="Thumbnail" class="w-full h-full object-cover">
-          </button>
-        </div>
-
-        <!-- Main Large Image View -->
-        <div class="grow aspect-[3/4] max-h-[600px] md:max-h-[650px] relative bg-gray-50 border border-gray-100 overflow-hidden">
-          <img :src="productImages[activeImageIdx]" alt="Main Product View" class="w-full h-full object-cover transition-all duration-300">
-        </div>
-      </div>
+      <ProductGallery :product-images="productImages" />
 
       <!-- Right side: Product Information & Controls -->
       <div class="lg:col-span-6 flex flex-col justify-start">
@@ -91,29 +73,12 @@
 
         <hr class="border-gray-200 mb-6">
 
-        <!-- Color Selector -->
-        <div v-if="colors.length > 0" class="mb-6">
-          <p class="text-[13px] font-bold uppercase tracking-[1px] mb-3 text-gray-700">Màu sắc:</p>
-          <div class="flex flex-wrap gap-3">
-            <button 
-              v-for="color in colors"
-              :key="color"
-              @click="selectedColor = color; selectedSize = ''"
-              class="flex items-center gap-2 px-4 py-2.5 border text-[13px] font-semibold transition-all duration-200"
-              :class="selectedColor === color ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'"
-            >
-              <span class="w-4 h-4 rounded-full border border-white/20" :style="{ backgroundColor: color.toLowerCase() === 'đen' ? '#000000' : (color.toLowerCase() === 'trắng' ? '#ffffff' : '#888888') }"></span>
-              {{ color }}
-            </button>
-          </div>
-        </div>
-
-        <!-- Size Selector -->
-        <div v-if="allSizes.length > 0" class="mb-6">
+        <!-- Dynamic Attribute Selectors -->
+        <div v-for="(values, attrName) in product?.attributes" :key="attrName" class="mb-6">
           <div class="flex justify-between items-center mb-3">
-            <p class="text-[13px] font-bold uppercase tracking-[1px] text-gray-700">Kích cỡ:</p>
-            <!-- Size Helper Trigger -->
+            <p class="text-[13px] font-bold uppercase tracking-[1px] text-gray-700">{{ attrName }}:</p>
             <button 
+              v-if="attrName.toLowerCase().includes('size') || attrName.toLowerCase().includes('kích')"
               @click="showSizeCalculator = !showSizeCalculator"
               class="text-[12px] text-gray-500 underline hover:text-black flex items-center gap-1 font-medium transition-colors"
             >
@@ -122,23 +87,25 @@
             </button>
           </div>
 
-          <!-- Size suggestions inline tool -->
-          <SizeCalculator v-if="showSizeCalculator" class="mb-4" />
+          <SizeCalculator v-if="(attrName.toLowerCase().includes('size') || attrName.toLowerCase().includes('kích')) && showSizeCalculator" class="mb-4" />
 
-          <!-- Size Grid -->
-          <div class="grid grid-cols-6 gap-2">
+          <div class="flex flex-wrap gap-3">
             <button 
-              v-for="size in allSizes" 
-              :key="size"
-              @click="selectedSize = size"
-              :disabled="!availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0)" 
-              class="py-3 border text-[13px] font-semibold transition-all duration-200"
+              v-for="val in values" 
+              :key="val"
+              @click="selectAttribute(attrName, val)"
+              :disabled="!isAttributeValueAvailable(attrName, val)"
+              class="flex items-center justify-center gap-2 px-4 py-2.5 border text-[13px] font-semibold transition-all duration-200"
               :class="[
-                !availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0) ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50 line-through' : '',
-                selectedSize === size && availableSizesForSelectedColor.some(item => item.value === size && item.stock > 0) ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'
+                !isAttributeValueAvailable(attrName, val) ? 'border-gray-200 text-gray-300 cursor-not-allowed bg-gray-50 line-through' : '',
+                selectedAttributes[attrName] === val && isAttributeValueAvailable(attrName, val) ? 'border-black bg-black text-white' : 'border-gray-300 text-black hover:border-black'
               ]"
             >
-              {{ size }}
+              <span v-if="attrName.toLowerCase().includes('màu') || attrName.toLowerCase().includes('color')" 
+                class="w-4 h-4 rounded-full border border-white/20" 
+                :style="{ backgroundColor: val.toLowerCase() === 'đen' ? '#000000' : (val.toLowerCase() === 'trắng' ? '#ffffff' : '#888888') }"
+              ></span>
+              {{ val }}
             </button>
           </div>
         </div>
@@ -173,6 +140,15 @@
           </div>
         </div>
 
+        <!-- Notification Area -->
+        <div 
+          v-if="notification.show" 
+          class="mb-4 p-3 text-[13px] font-medium border"
+          :class="notification.type === 'success' ? 'bg-green-50 text-green-700 border-green-200' : 'bg-red-50 text-red-600 border-red-200'"
+        >
+          {{ notification.message }}
+        </div>
+
         <!-- Purchase Buttons (Add to Cart + Buy Now) -->
         <div class="flex flex-col sm:flex-row gap-4 mb-8">
           <!-- Add To Cart Button -->
@@ -193,63 +169,7 @@
         </div>
 
         <!-- Accordions -->
-
-        <div class="border-t border-gray-200">
-          <!-- Description Accordion -->
-          <div class="border-b border-gray-200">
-            <button 
-              @click="toggleAccordion('description')"
-              class="w-full flex justify-between items-center py-4 text-[13px] font-bold uppercase tracking-[1px] text-left text-gray-800"
-            >
-              <span>MÔ TẢ</span>
-              <span class="text-[18px] font-normal font-mono">{{ accordions.description ? '-' : '+' }}</span>
-            </button>
-            <div 
-              v-show="accordions.description" 
-              class="pb-5 text-[13px] text-gray-600 leading-relaxed font-normal"
-              v-html="product.description"
-            ></div>
-          </div>
-
-          <!-- Usage Accordion -->
-          <div class="border-b border-gray-200">
-            <button 
-              @click="toggleAccordion('hdsd')"
-              class="w-full flex justify-between items-center py-4 text-[13px] font-bold uppercase tracking-[1px] text-left text-gray-800"
-            >
-              <span>HƯỚNG DẪN SỬ DỤNG SẢN PHẨM</span>
-              <span class="text-[18px] font-normal font-mono">{{ accordions.hdsd ? '-' : '+' }}</span>
-            </button>
-            <div 
-              v-show="accordions.hdsd" 
-              class="pb-5 text-[13px] text-gray-600 leading-relaxed font-normal"
-            >
-              <ul class="list-disc pl-5 space-y-1">
-                <li>Giặt máy ở chế độ nhẹ nhàng, nhiệt độ nước không quá 30°C.</li>
-                <li>Không sử dụng chất tẩy rửa mạnh.</li>
-                <li>Phơi trong bóng râm, tránh ánh nắng trực tiếp.</li>
-                <li>Ủi ở nhiệt độ thấp hoặc vừa phải.</li>
-              </ul>
-            </div>
-          </div>
-
-          <!-- Shipping Accordion -->
-          <div class="border-b border-gray-200">
-            <button 
-              @click="toggleAccordion('giaohang')"
-              class="w-full flex justify-between items-center py-4 text-[13px] font-bold uppercase tracking-[1px] text-left text-gray-800"
-            >
-              <span>GIAO HÀNG / ĐỔI HÀNG</span>
-              <span class="text-[18px] font-normal font-mono">{{ accordions.giaohang ? '-' : '+' }}</span>
-            </button>
-            <div 
-              v-show="accordions.giaohang" 
-              class="pb-5 text-[13px] text-gray-600 leading-relaxed font-normal"
-            >
-              Giao hàng miễn phí toàn quốc cho đơn hàng từ 1.000.000đ. Hỗ trợ đổi trả trong vòng 30 ngày kể từ ngày nhận hàng với điều kiện sản phẩm còn nguyên tem mác và chưa qua sử dụng. Vui lòng liên hệ bộ phận CSKH để được hỗ trợ chi tiết.
-            </div>
-          </div>
-        </div>
+        <ProductAccordions :product="product" />
 
       </div>
     </div>
@@ -283,41 +203,16 @@
 
       <!-- Tab Content: Reviews (Imported Component) -->
       <ProductReviews 
-        v-show="activeTab === 'reviews'" 
         :reviews="reviews" 
-        :rating-stats="ratingStats" 
         :average-rating="averageRating" 
+        :rating-stats="ratingStats" 
+        :is-eligible-to-review="isEligibleToReview"
+        :eligible-order-detail-id="eligibleOrderDetailId"
+        v-show="activeTab === 'reviews'" 
       />
 
       <!-- Tab Content: Size Guide -->
-      <div v-show="activeTab === 'sizeguide'" class="flex justify-center overflow-x-auto w-full">
-        <table class="min-w-[700px] max-w-[900px] border-collapse text-center border border-gray-300 font-text text-[13px]">
-          <thead>
-            <tr class="bg-[#d4e6cc] text-gray-800 font-bold">
-              <th colspan="3" class="border border-gray-300 py-3 text-[14px]">NAM</th>
-              <th colspan="3" class="border border-gray-300 py-3 text-[14px]">NỮ</th>
-            </tr>
-            <tr class="bg-gray-100 font-bold text-gray-700">
-              <th class="border border-gray-300 py-2.5 w-[16%]">Chiều cao</th>
-              <th class="border border-gray-300 py-2.5 w-[16%]">Cân nặng</th>
-              <th class="border border-gray-300 py-2.5 w-[16%]">Size</th>
-              <th class="border border-gray-300 py-2.5 w-[16%]">Chiều cao</th>
-              <th class="border border-gray-300 py-2.5 w-[16%]">Cân nặng</th>
-              <th class="border border-gray-300 py-2.5 w-[16%]">Size</th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-200">
-            <tr v-for="(row, idx) in sizeTable" :key="idx" class="hover:bg-gray-50">
-              <td class="border border-gray-200 py-3 font-medium">{{ row.mHeight }}</td>
-              <td class="border border-gray-200 py-3 text-gray-600">{{ row.mWeight }}</td>
-              <td class="border border-gray-200 py-3 font-semibold text-emerald-800">{{ row.mSize }}</td>
-              <td class="border border-gray-200 py-3 font-medium">{{ row.wHeight }}</td>
-              <td class="border border-gray-200 py-3 text-gray-600">{{ row.wWeight }}</td>
-              <td class="border border-gray-200 py-3 font-semibold text-rose-800">{{ row.wSize }}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <ProductSizeGuide v-show="activeTab === 'sizeguide'" />
     </div>
 
     <!-- Related Products Section -->
@@ -346,25 +241,44 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { productService } from '@/services/client/productService'
+import { reviewService } from '@/services/client/reviewService'
 import { useCartStore } from '@/stores/client/cartStore'
 import { useWishlistStore } from '@/stores/client/wishlistStore'
+import { useClientAuthStore } from '@/stores/client/authStore'
 import ProductCard from '@/components/client/ui/ProductCard.vue'
 import SizeCalculator from '@/components/client/ui/SizeCalculator.vue'
+import ProductGallery from '@/components/client/ui/ProductGallery.vue'
+import ProductAccordions from '@/components/client/ui/ProductAccordions.vue'
+import ProductSizeGuide from '@/components/client/ui/ProductSizeGuide.vue'
 import ProductReviews from '@/components/client/ui/ProductReviews.vue'
 
 const route = useRoute()
 const router = useRouter()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
+const authStore = useClientAuthStore()
 
 // State
 const loading = ref(true)
 const product = ref(null)
-const activeImageIdx = ref(0)
-const selectedColor = ref('')
-const selectedSize = ref('')
+const selectedAttributes = ref({})
 const activeTab = ref('reviews')
 const showSizeCalculator = ref(false)
+
+const isEligibleToReview = ref(false)
+const eligibleOrderDetailId = ref(null)
+
+const notification = ref({
+  show: false,
+  message: '',
+  type: 'error'
+})
+const showNotification = (message, type = 'error') => {
+  notification.value = { show: true, message, type }
+  setTimeout(() => {
+    notification.value.show = false
+  }, 3000)
+}
 
 const isWishlisted = computed(() => {
   if (!product.value) return false
@@ -394,16 +308,7 @@ const ratingStats = ref([
 ])
 const reviews = ref([])
 
-// Accordions
-const accordions = ref({
-  mota: true,
-  hdsd: false,
-  giaohang: false
-})
-
-const toggleAccordion = (section) => {
-  accordions.value[section] = !accordions.value[section]
-}
+// Review State
 
 const formatPrice = (value) => {
   if (!value) return '0'
@@ -418,15 +323,29 @@ onMounted(async () => {
     if (res.data && res.data.success) {
       product.value = res.data.data
       
-      if (colors.value.length > 0) {
-        selectedColor.value = colors.value[0]
-      }
-      if (availableSizesForSelectedColor.value.length > 0) {
-        selectedSize.value = availableSizesForSelectedColor.value[0]
+      console.log('Product API response:', res.data.data)
+      if (product.value.attributes) {
+        Object.keys(product.value.attributes).forEach(attrName => {
+          if (product.value.attributes[attrName].length > 0) {
+            selectedAttributes.value[attrName] = product.value.attributes[attrName][0]
+          }
+        })
       }
     }
 
     // Fetch Reviews
+    try {
+      if (authStore.isAuthenticated) {
+        const eligRes = await reviewService.checkReviewEligibility(id)
+        if (eligRes.data && eligRes.data.success) {
+          isEligibleToReview.value = eligRes.data.data.eligible
+          eligibleOrderDetailId.value = eligRes.data.data.order_detail_id
+        }
+      }
+    } catch (e) {
+      console.warn('Lỗi khi kiểm tra quyền đánh giá:', e)
+    }
+
     try {
       const reviewRes = await productService.getProductReviews(id)
       if (reviewRes.data && reviewRes.data.success) {
@@ -481,106 +400,57 @@ onMounted(async () => {
   }
 })
 
-// Dynamic Attributes Resolution
-const colors = computed(() => {
-  if (!product.value) return []
-  const variants = product.value.product_variants || product.value.productVariants || []
-  const list = new Set()
-  variants.forEach(variant => {
-    const attributeValues = variant.attribute_values || variant.attributeValues || []
-    attributeValues.forEach(av => {
-      const name = av.attribute?.name || ''
-      const normalizedName = name.toLowerCase().trim()
-      if (
-        normalizedName === 'màu sắc' || 
-        normalizedName === 'color' || 
-        normalizedName === 'màu' ||
-        normalizedName.includes('màu')
-      ) {
-        list.add(av.value)
-      }
-    })
-  })
-  return Array.from(list)
-})
+// Dynamic Attributes state update
+const selectAttribute = (attrName, value) => {
+  selectedAttributes.value[attrName] = value;
+}
 
-// Tất cả các kích cỡ hiện có của sản phẩm này
-const allSizes = computed(() => {
-  if (!product.value) return []
-  const variants = product.value.product_variants || product.value.productVariants || []
-  const list = new Set()
-  variants.forEach(variant => {
-    const attributeValues = variant.attribute_values || variant.attributeValues || []
-    attributeValues.forEach(av => {
-      const name = av.attribute?.name || ''
-      const normalizedName = name.toLowerCase().trim()
-      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
-      if (!isColorAttr) {
-        list.add(av.value)
-      }
-    })
-  })
-  return Array.from(list).sort()
-})
-
-// Các size khả dụng cho màu đang được chọn
-const availableSizesForSelectedColor = computed(() => {
-  if (!product.value) return []
-  const variants = product.value.product_variants || product.value.productVariants || []
-  const list = []
-  variants.forEach(variant => {
-    const attributeValues = variant.attribute_values || variant.attributeValues || []
-    // Nếu có tùy chọn màu sắc, kiểm tra xem có khớp màu đang chọn không
-    const matchColor = colors.value.length === 0 || !selectedColor.value || attributeValues.some(av => {
-      const name = av.attribute?.name || ''
-      const normalizedName = name.toLowerCase().trim()
-      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
-      return isColorAttr && av.value === selectedColor.value
-    })
+const isAttributeValueAvailable = (attrName, val) => {
+  if (!product.value) return false;
+  const variants = product.value.product_variants || product.value.productVariants || [];
+  
+  return variants.some(variant => {
+    const attributeValues = variant.attribute_values || variant.attributeValues || [];
     
-    if (matchColor) {
-      attributeValues.forEach(av => {
-        const name = av.attribute?.name || ''
-        const normalizedName = name.toLowerCase().trim()
-        const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
-        const isSizeAttr = !isColorAttr
-        if (isSizeAttr) {
-          list.push({
-            value: av.value,
-            stock: variant.stock_quantity || variant.stockQuantity || 0
-          })
-        }
-      })
+    // Check if this variant has the tested value for this attribute
+    const hasThisValue = attributeValues.some(av => (av.attribute?.name || 'Unknown') === attrName && av.value === val);
+    if (!hasThisValue) return false;
+    
+    // Check stock
+    const stock = variant.stock_quantity || variant.stockQuantity || 0;
+    if (stock <= 0) return false;
+
+    // Check against other currently selected attributes
+    for (const [sName, sVal] of Object.entries(selectedAttributes.value)) {
+      if (sName !== attrName && sVal) {
+        const matchesOther = attributeValues.some(av => (av.attribute?.name || 'Unknown') === sName && av.value === sVal);
+        if (!matchesOther) return false;
+      }
     }
-  })
-  return list
-})
+    return true;
+  });
+}
 
-// Biến thể khớp với Màu & Size đã chọn
 const selectedVariant = computed(() => {
-  if (!product.value) return null
-  const variants = product.value.product_variants || product.value.productVariants || []
+  if (!product.value || !product.value.attributes) return null;
+  const variants = product.value.product_variants || product.value.productVariants || [];
+  const requiredAttrNames = Object.keys(product.value.attributes);
+  
+  // Must have selected all required attributes
+  for (const req of requiredAttrNames) {
+    if (!selectedAttributes.value[req]) return null;
+  }
+
   return variants.find(variant => {
-    const attributeValues = variant.attribute_values || variant.attributeValues || []
-    // Khớp màu sắc (nếu sản phẩm có thuộc tính màu)
-    const matchColor = colors.value.length === 0 || attributeValues.some(av => {
-      const name = av.attribute?.name || ''
-      const normalizedName = name.toLowerCase().trim()
-      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
-      return isColorAttr && av.value === selectedColor.value
-    })
-    
-    // Khớp kích cỡ (nếu sản phẩm có thuộc tính kích cỡ)
-    const matchSize = allSizes.value.length === 0 || attributeValues.some(av => {
-      const name = av.attribute?.name || ''
-      const normalizedName = name.toLowerCase().trim()
-      const isColorAttr = normalizedName === 'màu sắc' || normalizedName === 'color' || normalizedName === 'màu' || normalizedName.includes('màu')
-      const isSizeAttr = !isColorAttr
-      return isSizeAttr && av.value === selectedSize.value
-    })
-    
-    return matchColor && matchSize
-  })
+    const attributeValues = variant.attribute_values || variant.attributeValues || [];
+    // Variant must match all selected attributes
+    for (const req of requiredAttrNames) {
+      const selectedVal = selectedAttributes.value[req];
+      const matches = attributeValues.some(av => (av.attribute?.name || 'Unknown') === req && av.value === selectedVal);
+      if (!matches) return false;
+    }
+    return true;
+  });
 })
 
 const quantity = ref(1)
@@ -676,14 +546,19 @@ const productImages = computed(() => {
 // Thao tác giỏ hàng
 const handleAddToCart = () => {
   if (!selectedVariant.value) {
-    alert('Vui lòng chọn màu sắc và kích cỡ.')
+    showNotification('Vui lòng chọn đầy đủ các tùy chọn sản phẩm.', 'error')
     return
   }
   if (selectedVariant.value.stock_quantity <= 0) {
-    alert('Sản phẩm đã hết hàng.')
+    showNotification('Sản phẩm đã hết hàng.', 'error')
     return
   }
   
+  const mappedAttributes = Object.entries(selectedAttributes.value).map(([attr, val]) => ({
+    attribute: attr,
+    value: val
+  }))
+
   cartStore.addItem({
     product_variant_id: selectedVariant.value.id,
     quantity: quantity.value,
@@ -692,50 +567,28 @@ const handleAddToCart = () => {
     product_thumbnail: product.value.thumbnail,
     sku: selectedVariant.value.sku,
     stock_quantity: selectedVariant.value.stock_quantity,
-    attributes: [
-      { attribute: 'Màu sắc', value: selectedColor.value },
-      { attribute: 'Kích cỡ', value: selectedSize.value }
-    ]
+    attributes: mappedAttributes
   })
-  alert(`Đã thêm ${product.value.name} (Màu: ${selectedColor.value}, Size: ${selectedSize.value}, SL: ${quantity.value}) vào giỏ hàng thành công!`)
+  
+  showNotification('Đã thêm sản phẩm vào giỏ hàng thành công!', 'success')
 }
 
 // Mua ngay
 const handleBuyNow = () => {
   if (!selectedVariant.value) {
-    alert('Vui lòng chọn màu sắc và kích cỡ.')
+    showNotification('Vui lòng chọn đầy đủ các tùy chọn sản phẩm.', 'error')
     return
   }
   if (selectedVariant.value.stock_quantity <= 0) {
-    alert('Sản phẩm đã hết hàng.')
+    showNotification('Sản phẩm đã hết hàng.', 'error')
     return
   }
 
-  cartStore.addItem({
-    product_variant_id: selectedVariant.value.id,
-    quantity: quantity.value,
-    price: currentPrice.value,
-    product_name: product.value.name,
-    product_thumbnail: product.value.thumbnail,
-    sku: selectedVariant.value.sku,
-    stock_quantity: selectedVariant.value.stock_quantity,
-    attributes: [
-      { attribute: 'Màu sắc', value: selectedColor.value },
-      { attribute: 'Kích cỡ', value: selectedSize.value }
-    ]
-  })
+  handleAddToCart()
   
   // Chuyển hướng thẳng tới checkout
   router.push('/checkout')
 }
-
-const sizeTable = ref([
-  { mHeight: '1m60-1m65', mWeight: '55-60kg', mSize: '38', wHeight: '1m48-1m53', wWeight: '38-43kg', wSize: '38' },
-  { mHeight: '1m64-1m69', mWeight: '60-65kg', mSize: '39', wHeight: '1m53-1m55', wWeight: '43-46kg', wSize: '39' },
-  { mHeight: '1m70-1m74', mWeight: '66-70kg', mSize: '40', wHeight: '1m53-1m58', wWeight: '46-53kg', wSize: '40' },
-  { mHeight: '1m74-1m76', mWeight: '70-76kg', mSize: '41', wHeight: '1m55-1m62', wWeight: '53-57kg', wSize: '41' },
-  { mHeight: '1m65-1m77', mWeight: '76-80kg', mSize: '42', wHeight: '1m55-1m66', wWeight: '57-66kg', wSize: '42' }
-])
 
 const relatedProducts = ref([])
 </script>

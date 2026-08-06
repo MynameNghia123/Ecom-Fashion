@@ -53,4 +53,13 @@ class ReviewService implements ReviewServiceInterface
             'data'    => $review,
         ];
     }
+
+    public function checkReviewEligibility(int $customerId, int $productId): array
+    {
+        $orderDetail = $this->repo->getEligibleOrderDetail($customerId, $productId);
+        return [
+            'eligible' => (bool) $orderDetail,
+            'order_detail_id' => $orderDetail ? $orderDetail->id : null
+        ];
+    }
 }

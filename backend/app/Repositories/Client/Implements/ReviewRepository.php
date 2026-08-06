@@ -39,4 +39,17 @@ class ReviewRepository implements ReviewRepositoryInterface
     {
         return $this->model->create($data);
     }
+
+    public function getEligibleOrderDetail(int $customerId, int $productId): ?\App\Models\OrderDetail
+    {
+        return \App\Models\OrderDetail::whereHas('order', function ($q) use ($customerId) {
+            $q->where('customer_id', $customerId)
+              ->where('status', 'completed');
+        })
+        ->whereHas('productVariant', function ($q) use ($productId) {
+            $q->where('product_id', $productId);
+        })
+        ->whereDoesntHave('review')
+        ->first();
+    }
 }

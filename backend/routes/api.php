@@ -189,6 +189,7 @@ Route::prefix('client')->group(function () {
         // Reviews
         Route::get('reviews',                 [\App\Http\Controllers\Client\ReviewController::class, 'index']);
         Route::post('reviews',                [\App\Http\Controllers\Client\ReviewController::class, 'store']);
+        Route::get('products/{productId}/review-eligibility', [\App\Http\Controllers\Client\ReviewController::class, 'checkEligibility']);
 
         // Wishlist
         Route::get('wishlist',                [\App\Http\Controllers\Client\WishlistController::class, 'index']);

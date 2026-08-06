@@ -24,4 +24,37 @@ class ProductService implements ProductServiceInterface
     {
         return $this->repo->findActiveByIdOrSlug($idOrSlug);
     }
+
+    public function getFormattedProductDetail(string $idOrSlug): ?array
+    {
+        $product = $this->repo->findActiveByIdOrSlug($idOrSlug);
+        if (!$product) {
+            return null;
+        }
+
+        $productArray = $product->toArray();
+        $attributes = [];
+
+        if ($product->productVariants) {
+            foreach ($product->productVariants as $variant) {
+                if ($variant->attributeValues) {
+                    foreach ($variant->attributeValues as $attrValue) {
+                        $attrName = $attrValue->attribute->name ?? 'Unknown';
+                        $attrVal = $attrValue->value;
+
+                        if (!isset($attributes[$attrName])) {
+                            $attributes[$attrName] = [];
+                        }
+
+                        if (!in_array($attrVal, $attributes[$attrName])) {
+                            $attributes[$attrName][] = $attrVal;
+                        }
+                    }
+                }
+            }
+        }
+
+        $productArray['attributes'] = $attributes;
+        return $productArray;
+    }
 }

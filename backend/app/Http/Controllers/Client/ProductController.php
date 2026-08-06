@@ -53,7 +53,7 @@ class ProductController extends Controller
      */
     public function show($idOrSlug): JsonResponse
     {
-        $product = $this->productService->findActiveByIdOrSlug($idOrSlug);
+        $product = $this->productService->getFormattedProductDetail($idOrSlug);
 
         if (!$product) {
             return response()->json([

@@ -14,5 +14,10 @@ export const reviewService = {
   /** Lấy danh sách đánh giá của sản phẩm */
   getProductReviews(productId) {
     return api.get(`/client/products/${productId}/reviews`)
+  },
+
+  /** Kiểm tra quyền đánh giá sản phẩm */
+  checkReviewEligibility(productId) {
+    return api.get(`/client/products/${productId}/review-eligibility`)
   }
 }

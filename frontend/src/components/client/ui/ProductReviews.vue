@@ -29,6 +29,51 @@
       </div>
     </div>
 
+    <!-- Write Review Section -->
+    <div class="mb-8 pt-6 border-t border-gray-100">
+      <h3 class="text-[14px] font-bold uppercase tracking-[1px] text-gray-800 mb-4">Viết đánh giá của bạn</h3>
+      
+      <div v-if="!authStore.isAuthenticated" class="bg-gray-50 p-6 border border-gray-100 rounded-sm text-center">
+        <p class="text-[14px] text-gray-600 mb-4">Vui lòng đăng nhập hoặc đăng ký để gửi bình luận.</p>
+        <div class="flex justify-center gap-4">
+          <router-link to="/login" class="bg-black text-white px-6 py-2.5 text-[12px] font-bold uppercase tracking-[1px] hover:bg-neutral-800 transition-colors">
+            ĐĂNG NHẬP
+          </router-link>
+          <router-link to="/register" class="bg-white text-black border border-black px-6 py-2.5 text-[12px] font-bold uppercase tracking-[1px] hover:bg-gray-50 transition-colors">
+            ĐĂNG KÝ
+          </router-link>
+        </div>
+      </div>
+      
+      <div v-else-if="!isEligibleToReview" class="bg-gray-50 p-6 border border-gray-100 rounded-sm text-center">
+        <p class="text-[14px] text-gray-600 mb-0">Bạn chỉ có thể đánh giá sau khi đã mua và nhận sản phẩm này.</p>
+      </div>
+
+      <div v-else class="bg-gray-50 p-6 border border-gray-100 rounded-sm">
+        <div class="mb-4">
+          <label class="block text-[13px] font-bold text-gray-700 mb-2">Đánh giá của bạn</label>
+          <div class="flex gap-1 text-2xl text-yellow-500 cursor-pointer">
+            <span v-for="i in 5" :key="i" @click="newRating = i" :class="i <= newRating ? 'text-yellow-500' : 'text-gray-300'">★</span>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-[13px] font-bold text-gray-700 mb-2">Nội dung đánh giá</label>
+          <textarea 
+            v-model="newComment" 
+            rows="4" 
+            class="w-full border border-gray-300 p-3 text-[13px] focus:outline-none focus:border-black transition-colors"
+            placeholder="Mời bạn chia sẻ cảm nhận về sản phẩm..."
+          ></textarea>
+        </div>
+        <button 
+          @click="submitReview"
+          class="bg-black hover:bg-neutral-800 text-white uppercase px-8 py-3 text-[13px] font-bold tracking-[1px] transition-all duration-300"
+        >
+          GỬI ĐÁNH GIÁ
+        </button>
+      </div>
+    </div>
+
     <!-- Reviews List -->
     <div class="space-y-6 pt-6 border-t border-gray-100">
       <div v-for="(rev, idx) in reviews" :key="idx" class="flex gap-4 pb-6 border-b border-gray-100 last:border-b-0">
@@ -53,7 +98,11 @@
 </template>
 
 <script setup>
-defineProps({
+import { ref } from 'vue'
+import { useClientAuthStore } from '@/stores/client/authStore'
+import { reviewService } from '@/services/client/reviewService'
+
+const props = defineProps({
   reviews: {
     type: Array,
     required: true
@@ -65,8 +114,51 @@ defineProps({
   averageRating: {
     type: [String, Number],
     default: '0'
+  },
+  isEligibleToReview: {
+    type: Boolean,
+    default: false
+  },
+  eligibleOrderDetailId: {
+    type: [Number, String],
+    default: null
   }
 })
+
+const authStore = useClientAuthStore()
+const newComment = ref('')
+const newRating = ref(5)
+
+const submitReview = async () => {
+  if (!newComment.value.trim()) {
+    alert('Vui lòng nhập nội dung bình luận.')
+    return
+  }
+  
+  if (!props.eligibleOrderDetailId) {
+    alert('Không tìm thấy chi tiết đơn hàng để đánh giá.')
+    return
+  }
+
+  try {
+    const res = await reviewService.submitReview({
+      order_detail_id: props.eligibleOrderDetailId,
+      rating: newRating.value,
+      comment: newComment.value
+    })
+    
+    if (res.data && res.data.success) {
+      alert('Cảm ơn bạn đã đánh giá sản phẩm!')
+      newComment.value = ''
+      newRating.value = 5
+      
+      // Emit an event to reload reviews or reload page
+      window.location.reload()
+    }
+  } catch (error) {
+    alert(error.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá.')
+  }
+}
 </script>
 
 <style scoped>

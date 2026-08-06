@@ -9,4 +9,5 @@ interface ReviewRepositoryInterface
     public function getProductReviews(int $productId): Collection;
     public function findByOrderDetailId(int $orderDetailId): ?Review;
     public function create(array $data): Review;
+    public function getEligibleOrderDetail(int $customerId, int $productId): ?\App\Models\OrderDetail;
 }
