@@ -22,7 +22,7 @@ class ReviewRepository implements ReviewRepositoryInterface
     public function getProductReviews(int $productId): Collection
     {
         return $this->model->with([
-            'customer:id,first_name,last_name,avatar',
+            'customer:id,first_name,last_name',
             'orderDetail.productVariant.attributeValues.attribute'
         ])
         ->where('product_id', $productId)
