@@ -7,33 +7,52 @@
 # 1. Hình ảnh minh họa (Screenshots)
 
 ### 🎥 Demo Quy trình mua hàng
-![Mua Sản Phẩm](screenshot/buyaproduct.gif)
+<p align="center">
+  <img src="screenshot/buyaproduct.gif" alt="Mua Sản Phẩm"><br>
+  <i>Hình 1: Trải nghiệm mượt mà từ lúc chọn hàng đến khi thanh toán</i>
+</p>
 
 ### 🏠 Frontend (Trải nghiệm Khách hàng)
-**Trang Danh sách Sản phẩm**
-![Danh sách Sản phẩm](screenshot/productlist.png)
+<p align="center">
+  <img src="screenshot/productlist.png" alt="Danh sách Sản phẩm"><br>
+  <i>Hình 2: Giao diện Trang Danh sách Sản phẩm</i>
+</p>
 
-**Trang Chi tiết Sản phẩm**
-![Chi tiết Sản phẩm](screenshot/detail.png)
+<p align="center">
+  <img src="screenshot/detail.png" alt="Chi tiết Sản phẩm"><br>
+  <i>Hình 3: Giao diện Trang Chi tiết Sản phẩm</i>
+</p>
 
-**Giỏ hàng**
-![Giỏ hàng](screenshot/cart.png)
+<p align="center">
+  <img src="screenshot/cart.png" alt="Giỏ hàng"><br>
+  <i>Hình 4: Giao diện Giỏ hàng Mini-cart</i>
+</p>
 
-**Thanh toán (Checkout)**
-![Thanh toán](screenshot/checkout.png)
+<p align="center">
+  <img src="screenshot/checkout.png" alt="Thanh toán"><br>
+  <i>Hình 5: Giao diện Thanh toán (Checkout) và Tích hợp VNPAY</i>
+</p>
 
 ### ⚙️ Backend (Bảng điều khiển Admin)
-**Dashboard Thống kê Tổng quan**
-![Dashboard Admin](screenshot/dashboard.png)
+<p align="center">
+  <img src="screenshot/dashboard.png" alt="Dashboard Admin"><br>
+  <i>Hình 6: Dashboard Thống kê Tổng quan dành cho Admin</i>
+</p>
 
-**Thống kê Doanh thu & Báo cáo**
-![Báo cáo Thống kê](screenshot/statistic.png)
+<p align="center">
+  <img src="screenshot/statistic.png" alt="Báo cáo Thống kê"><br>
+  <i>Hình 7: Biểu đồ Thống kê Doanh thu & Báo cáo</i>
+</p>
 
-**Quản lý Sản phẩm**
-![Quản lý Sản phẩm](screenshot/quanlysap.png)
+<p align="center">
+  <img src="screenshot/quanlysap.png" alt="Quản lý Sản phẩm"><br>
+  <i>Hình 8: Giao diện Quản lý Danh mục và Sản phẩm</i>
+</p>
 
-**Quản lý Đơn hàng**
-![Quản lý Đơn hàng](screenshot/order.png)
+<p align="center">
+  <img src="screenshot/order.png" alt="Quản lý Đơn hàng"><br>
+  <i>Hình 9: Giao diện Quản lý Đơn hàng và Cập nhật trạng thái</i>
+</p>
 
 ---
 
@@ -152,7 +171,7 @@ Hệ thống đã có sẵn dữ liệu mẫu sau khi chạy Seeder. Bạn có t
 
 * **Tài khoản Admin (Toàn quyền quản trị):**
   - Email: `admin@ecomfashion.com` 
-  - Mật khẩu: `password`
+  - Mật khẩu: `password123`
 
 * **Tài khoản Khách hàng (User):**
   - Email: `customer@ecomfashion.com`
