@@ -1,8 +1,39 @@
-# 1. Tiêu đề và Thông tin chung (Project Title & Info)
+# ECOM FASHION - HỆ THỐNG THƯƠNG MẠI ĐIỆN TỬ VÀ QUẢN LÝ BÁN HÀNG THỜI TRANG
 
-**Tên dự án:** Ecom Fashion - Hệ thống Thương mại Điện tử và Quản lý Bán hàng Thời trang
+Đây là một hệ thống Website Thương mại điện tử chuyên cung cấp các sản phẩm thời trang. Hệ thống bao gồm phần Frontend hiện đại dành cho khách hàng mua sắm (tích hợp AI tư vấn, thanh toán online VNPAY) và phần Backend quản trị hệ thống chặt chẽ, đa chức năng.
 
-**Mô tả ngắn gọn:** Đây là một hệ thống Website Thương mại điện tử chuyên cung cấp các sản phẩm thời trang. Hệ thống bao gồm phần Frontend hiện đại dành cho khách hàng mua sắm (tích hợp AI tư vấn, thanh toán online VNPAY) và phần Backend quản trị hệ thống chặt chẽ, đa chức năng.
+---
+
+# 1. Hình ảnh minh họa (Screenshots)
+
+### 🎥 Demo Quy trình mua hàng
+![Mua Sản Phẩm](screenshot/buyaproduct.gif)
+
+### 🏠 Frontend (Trải nghiệm Khách hàng)
+**Trang Danh sách Sản phẩm**
+![Danh sách Sản phẩm](screenshot/productlist.png)
+
+**Trang Chi tiết Sản phẩm**
+![Chi tiết Sản phẩm](screenshot/detail.png)
+
+**Giỏ hàng**
+![Giỏ hàng](screenshot/cart.png)
+
+**Thanh toán (Checkout)**
+![Thanh toán](screenshot/checkout.png)
+
+### ⚙️ Backend (Bảng điều khiển Admin)
+**Dashboard Thống kê Tổng quan**
+![Dashboard Admin](screenshot/dashboard.png)
+
+**Thống kê Doanh thu & Báo cáo**
+![Báo cáo Thống kê](screenshot/statistic.png)
+
+**Quản lý Sản phẩm**
+![Quản lý Sản phẩm](screenshot/quanlysap.png)
+
+**Quản lý Đơn hàng**
+![Quản lý Đơn hàng](screenshot/order.png)
 
 ---
 
@@ -134,38 +165,3 @@ Hệ thống đã có sẵn dữ liệu mẫu sau khi chạy Seeder. Bạn có t
   - Tên chủ thẻ: `NGUYEN VAN A`
   - Ngày phát hành: `07/15`
   - Mật khẩu OTP: `123456`
-
----
-
-# 7. Hình ảnh minh họa (Screenshots)
-
-### 🎥 Demo Quy trình mua hàng
-![Mua Sản Phẩm](screenshot/buyaproduct.gif)
-
-### 🏠 Frontend (Trải nghiệm Khách hàng)
-**Trang Danh sách Sản phẩm**
-![Danh sách Sản phẩm](screenshot/productlist.png)
-
-**Trang Chi tiết Sản phẩm**
-![Chi tiết Sản phẩm](screenshot/detail.png)
-
-**Giỏ hàng**
-![Giỏ hàng](screenshot/cart.png)
-
-**Thanh toán (Checkout)**
-![Thanh toán](screenshot/checkout.png)
-
-### ⚙️ Backend (Bảng điều khiển Admin)
-**Dashboard Thống kê Tổng quan**
-![Dashboard Admin](screenshot/dashboard.png)
-
-**Thống kê Doanh thu & Báo cáo**
-![Báo cáo Thống kê](screenshot/statistic.png)
-
-**Quản lý Sản phẩm**
-![Quản lý Sản phẩm](screenshot/quanlysap.png)
-
-**Quản lý Đơn hàng**
-![Quản lý Đơn hàng](screenshot/order.png)
-
-
