@@ -57,4 +57,9 @@ class ProductService implements ProductServiceInterface
         $productArray['attributes'] = $attributes;
         return $productArray;
     }
+
+    public function getTopRated(int $limit): \Illuminate\Support\Collection
+    {
+        return $this->repo->getTopRated($limit);
+    }
 }

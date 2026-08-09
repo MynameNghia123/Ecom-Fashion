@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport to="body">
     <Transition name="modal-fade">
       <div
@@ -33,7 +33,7 @@
               type="text"
               :placeholder="mode === 'add' ? 'Vd: Kích thước, Màu sắc...' : 'Nhập tên thuộc tính...'"
               @keyup.enter="handleSubmit"
-              class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+              class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
               :class="errors.name ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
             />
             <p v-if="errors.name" class="text-xs text-red-500 mt-1.5">{{ errors.name }}</p>
@@ -49,7 +49,7 @@
             <button
               @click="handleSubmit"
               :disabled="isSubmitting"
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
             >
               <svg v-if="isSubmitting" class="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>

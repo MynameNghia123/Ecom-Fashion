@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Homepage from '../views/client/home/Homepage.vue'
 import ProductDetail from '../views/client/products/ProductDetail.vue'
 import BlogList from '../views/client/blog/BlogList.vue'
+import BlogDetail from '../views/client/blog/BlogDetail.vue'
 import Contact from '../views/client/contact/Contact.vue'
 import AboutUs from '../views/client/about/AboutUs.vue'
 import Profile from '../views/client/profile/Profile.vue'
@@ -32,7 +33,7 @@ const routes = [
     component: ProductDetail
   },
   {
-    path: '/products/:id',
+    path: '/products/:slug',
     name: 'ProductDetail',
     component: ProductDetail
   },
@@ -40,6 +41,11 @@ const routes = [
     path: '/blog',
     name: 'Blog',
     component: BlogList
+  },
+  {
+    path: '/blog/:slug',
+    name: 'BlogDetail',
+    component: BlogDetail
   },
   {
     path: '/contact',

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
 <!-- Modal Backdrop & Container -->
     <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
@@ -8,7 +8,7 @@
         <div class="flex items-center justify-between px-7 pt-6 pb-4 border-b border-slate-100">
         <div class="flex items-center gap-4">
             <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center">
-            <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
                 <polyline points="14 2 14 8 20 8"/>
             </svg>
@@ -79,7 +79,7 @@
             </thead>
             <tbody class="divide-y divide-slate-50">
                 <!-- Dynamic rows -->
-                <tr v-for="(detail, index) in receipt?.good_receipt_details" :key="detail.id" class="hover:bg-blue-50/30 transition-colors duration-100">
+                <tr v-for="(detail, index) in receipt?.good_receipt_details" :key="detail.id" class="hover:bg-neutral-100/30 transition-colors duration-100">
                 <td class="py-3.5 px-4 text-slate-500 font-mono text-xs">{{ index + 1 }}</td>
                 <td class="py-3.5 px-4 font-mono text-xs text-slate-500">{{ detail.product_variant?.sku || 'N/A' }}</td>
                 <td class="py-3.5 px-4">
@@ -100,7 +100,7 @@
             <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
                 <span class="font-bold text-slate-700">Tổng cộng:</span>
                 <div class="text-right">
-                <span class="text-xl font-bold text-[#0258cb]">{{ formatCurrency(receipt?.total_amount_price) }}</span>
+                <span class="text-xl font-bold text-black">{{ formatCurrency(receipt?.total_amount_price) }}</span>
                 </div>
             </div>
             </div>

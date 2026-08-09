@@ -84,40 +84,38 @@
               />
             </div>
 
-            <!-- Address -->
+            <!-- Street / Detail address -->
             <div class="relative">
-              <label class="block text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mb-1">Địa chỉ giao hàng</label>
+              <label class="block text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mb-1">Số nhà, tên đường</label>
               <input 
                 type="text" 
                 v-model="shippingForm.address" 
                 required
-                placeholder="Số nhà, tên đường, phường/xã"
+                placeholder="123 Đường Lê Lợi..."
                 class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
               />
             </div>
 
-            <!-- City and Phone Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div class="relative">
-                <label class="block text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mb-1">Tỉnh / Thành phố</label>
-                <input 
-                  type="text" 
-                  v-model="shippingForm.city" 
-                  required
-                  placeholder="Hà Nội / Hồ Chí Minh..."
-                  class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                />
-              </div>
-              <div class="relative">
-                <label class="block text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mb-1">Số điện thoại</label>
-                <input 
-                  type="tel" 
-                  v-model="shippingForm.phone" 
-                  required
-                  placeholder="Ví dụ: 0912345678"
-                  class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
-                />
-              </div>
+            <!-- Province / District / Ward -->
+            <ProvincePicker
+              :initialProvince="shippingForm.province"
+              :initialDistrict="shippingForm.district"
+              :initialWard="shippingForm.ward"
+              variant="checkout"
+              :use-ghn="true"
+              @change="onLocationChange"
+            />
+
+            <!-- Phone -->
+            <div class="relative">
+              <label class="block text-[10px] uppercase tracking-wider text-neutral-400 font-semibold mb-1">Số điện thoại</label>
+              <input 
+                type="tel" 
+                v-model="shippingForm.phone" 
+                required
+                placeholder="Ví dụ: 0912345678"
+                class="w-full border-b border-neutral-200 py-2 outline-none focus:border-black transition-colors bg-transparent text-sm text-neutral-800"
+              />
             </div>
           </div>
         </div>
@@ -342,7 +340,9 @@ import { useCartStore } from '@/stores/client/cartStore'
 import { orderService } from '@/services/client/orderService'
 import { profileService } from '@/services/client/profileService'
 import { couponService } from '@/services/client/couponService'
+import { shippingService } from '@/services/client/shippingService'
 import AuthModal from '@/views/client/auth/AuthModal.vue'
+import ProvincePicker from '@/components/client/ProvincePicker.vue'
 
 const router = useRouter()
 const authStore = useClientAuthStore()
@@ -353,12 +353,59 @@ const isAuthModalOpen = ref(false)
 const submitting = ref(false)
 const submitButtonRef = ref(null)
 
+const ghnFee = ref(0)
+const calculatingGhnFee = ref(false)
+const ghnCalculated = ref(false)
+
 const shippingForm = reactive({
   fullName: '',
   address: '',
-  city: '',
+  province: '',
+  district: '',
+  ward: '',
+  district_id: null,
+  ward_code: null,
   phone: ''
 })
+
+const calculateGhnShipping = async (districtId, wardCode) => {
+  if (!districtId || !wardCode) return
+  calculatingGhnFee.value = true
+  try {
+    const sRes = await shippingService.getServices(districtId)
+    const services = sRes.data?.data || []
+    const activeService = services.find(s => s.service_type_id === 2) || services[0]
+    
+    if (activeService) {
+      const feeRes = await shippingService.calculateFee({
+        district_id: districtId,
+        ward_code: String(wardCode),
+        service_id: activeService.service_id,
+        weight: 500
+      })
+      if (feeRes.data && feeRes.data.success) {
+        ghnFee.value = feeRes.data.total
+        ghnCalculated.value = true
+      }
+    }
+  } catch (err) {
+    console.warn('Không thể tự động tính phí GHN:', err)
+  } finally {
+    calculatingGhnFee.value = false
+  }
+}
+
+const onLocationChange = ({ province, district, ward, district_id, ward_code }) => {
+  shippingForm.province = province
+  shippingForm.district = district
+  shippingForm.ward = ward
+  shippingForm.district_id = district_id
+  shippingForm.ward_code = ward_code
+
+  if (district_id && ward_code) {
+    calculateGhnShipping(district_id, ward_code)
+  }
+}
 
 const shippingMethod = ref('standard')
 const paymentMethod = ref('cod') // cod hoặc vnpay
@@ -398,7 +445,9 @@ onMounted(async () => {
           ].filter(Boolean)
           
           shippingForm.address = addressParts.join(', ')
-          shippingForm.city = defaultAddr.province || ''
+          shippingForm.province = defaultAddr.province || ''
+          shippingForm.district = defaultAddr.district || ''
+          shippingForm.ward = defaultAddr.ward || ''
         }
       }
     } catch (err) {
@@ -408,11 +457,14 @@ onMounted(async () => {
 })
 
 const shippingFee = computed(() => {
-  return shippingMethod.value === 'express' ? 150000 : 0
+  const baseFee = ghnFee.value > 0 ? ghnFee.value : (shippingMethod.value === 'express' ? 150000 : 30000)
+  return shippingMethod.value === 'express' ? baseFee + 50000 : baseFee
 })
 
 const shippingFeeText = computed(() => {
-  return shippingMethod.value === 'express' ? '150.000đ' : 'Miễn phí'
+  if (calculatingGhnFee.value) return 'Đang tính phí GHN...'
+  if (ghnCalculated.value) return formatPrice(shippingFee.value) + 'đ (GHN)'
+  return shippingMethod.value === 'express' ? '150.000đ' : '30.000đ'
 })
 
 const total = computed(() => {
@@ -481,10 +533,11 @@ const submitOrder = async () => {
 
   submitting.value = true
   try {
+    const addressParts = [shippingForm.address, shippingForm.ward, shippingForm.district, shippingForm.province].filter(Boolean)
     const payload = {
       shipping_name: shippingForm.fullName,
       shipping_phone: shippingForm.phone,
-      shipping_address: `${shippingForm.address}, ${shippingForm.city}`,
+      shipping_address: addressParts.join(', '),
       shipping_fee: shippingFee.value,
       payment_method: paymentMethod.value,
       items: cartStore.toOrderItems(),

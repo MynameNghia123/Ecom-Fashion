@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <!-- Modal Backdrop & Container -->
   <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
        :class=" isShowUpdate ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'">
@@ -36,7 +36,7 @@
               </span>
               <select 
                 v-model="updatedReceipt.supplier_id"
-                class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200">
+                class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200">
                 <option value="" disabled>Chọn nhà cung cấp</option>
                 <option v-for="supplier in supplierList" :key="supplier.id" :value="supplier.id">
                   {{ supplier.name }}
@@ -49,7 +49,7 @@
             <label class="block text-xs font-bold text-slate-700 mb-1.5">Trạng thái phiếu</label>
             <select 
               v-model="updatedReceipt.status"
-              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200">
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200">
               <option value="pending">Đang chờ duyệt</option>
               <option value="approved">Đã duyệt</option>
               <option value="completed">Đã hoàn thành</option>
@@ -65,7 +65,7 @@
             <p class="text-sm font-bold text-slate-700">Danh sách sản phẩm</p>
             <button 
               @click="addGoodsReceiptDetails"
-              class="inline-flex items-center gap-1 text-sm font-semibold text-[#0258cb] hover:text-[#004bb3] transition-colors">
+              class="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-[#004bb3] transition-colors">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
@@ -97,7 +97,7 @@
                         @focus="activeRowIndex = index"
                         @blur="hideDropdown"
                         placeholder="Tìm sản phẩm / biến thể..."
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                       />
                       <!-- Dropdown list -->
                       <div 
@@ -126,7 +126,7 @@
                       type="number"
                       min="1"
                       v-model="goodReceiptDetail.quantity"
-                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all text-center"
+                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all text-center"
                     />
                   </td>
                   <td class="py-2 px-4">
@@ -135,7 +135,7 @@
                         type="number"
                         min="0"
                         v-model="goodReceiptDetail.import_price"
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                       />
                       <span class="text-slate-400 text-xs font-medium shrink-0">đ</span>
                     </div>
@@ -162,7 +162,7 @@
             <div class="w-64 space-y-2">
               <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
                 <span class="text-sm font-bold text-slate-700">Tổng cộng:</span>
-                <span class="text-lg font-bold text-[#0258cb]">{{ formatCurrency(updatedReceipt.total_amount_price) }}</span>
+                <span class="text-lg font-bold text-black">{{ formatCurrency(updatedReceipt.total_amount_price) }}</span>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@
         <button 
           @click="handleUpdate"
           :disabled="isSubmitting"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed">
           <svg v-if="!isSubmitting" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
             <polyline points="17 21 17 13 7 13 7 21"/>

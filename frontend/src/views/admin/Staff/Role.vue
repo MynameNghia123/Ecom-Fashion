@@ -11,7 +11,7 @@
         id="btn-open-add-role"
         type="button"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -106,12 +106,12 @@
               @click="selectRole(role)"
               class="group relative p-4 rounded-xl border cursor-pointer transition-all duration-200 flex flex-col justify-between"
               :class="selectedRole?.id === role.id
-                ? 'bg-blue-50/50 border-[#0258cb] ring-2 ring-[#0258cb]/10'
+                ? 'bg-blue-50/50 border-black ring-2 ring-black/10'
                 : 'bg-white border-slate-100 hover:border-slate-200 hover:bg-slate-50/40'"
             >
               <div class="flex items-start justify-between">
                 <div>
-                  <h3 class="font-bold text-slate-800 text-sm group-hover:text-[#0258cb] transition-colors">
+                  <h3 class="font-bold text-slate-800 text-sm group-hover:text-black transition-colors">
                     {{ role.name }}
                   </h3>
                   <p class="text-xs text-slate-500 mt-1 line-clamp-2">
@@ -149,7 +149,7 @@
 
               <!-- Permission badges indicator -->
               <div class="mt-3 flex items-center justify-between flex-wrap gap-2 text-xs">
-                <span class="inline-flex items-center gap-1 text-[#0258cb] font-semibold">
+                <span class="inline-flex items-center gap-1 text-black font-semibold">
                   <svg class="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
@@ -171,7 +171,7 @@
           <div class="p-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-wrap gap-4">
             <div>
               <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#0258cb] animate-pulse"></span>
+                <span class="w-2 h-2 rounded-full bg-black animate-pulse"></span>
                 <h2 class="text-sm font-bold text-slate-800 uppercase tracking-wider">
                   {{ selectedRole ? `Bảng gán quyền: ${selectedRole.name}` : 'Thiết lập quyền' }}
                 </h2>
@@ -191,8 +191,8 @@
                   @change="toggleAllPermissions"
                   :disabled="selectedRole.name === 'admin'"
                 />
-                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#0258cb] peer-disabled:opacity-50"></div>
-                <span class="ms-2 text-xs font-semibold text-slate-700 select-none group-hover:text-[#0258cb] transition-colors">
+                <div class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-black peer-disabled:opacity-50"></div>
+                <span class="ms-2 text-xs font-semibold text-slate-700 select-none group-hover:text-black transition-colors">
                   Chọn tất cả
                 </span>
               </label>
@@ -210,7 +210,7 @@
           <!-- Loading state -->
           <div v-else-if="loading" class="flex-1 flex items-center justify-center p-12">
             <div class="flex flex-col items-center gap-3">
-              <div class="w-10 h-10 border-4 border-[#0258cb]/20 border-t-[#0258cb] rounded-full animate-spin"></div>
+              <div class="w-10 h-10 border-4 border-black/20 border-t-black rounded-full animate-spin"></div>
               <p class="text-xs text-slate-500">Đang tải cấu hình quyền hạn...</p>
             </div>
           </div>
@@ -239,46 +239,49 @@
               <div
                 v-for="(perms, moduleName) in permissionsByModule"
                 :key="moduleName"
-                class="border border-slate-100 rounded-xl overflow-hidden shadow-xs hover:border-slate-200 transition-colors"
+                class="border border-slate-100 rounded-xl overflow-hidden shadow-xs hover:border-slate-200 transition-colors bg-white"
               >
                 <!-- Module Header -->
-                <div class="flex items-center justify-between px-4 py-2.5 bg-slate-50 border-b border-slate-100">
-                  <span class="text-xs font-bold text-slate-700 tracking-wide">
+                <div class="flex items-center justify-between px-5 py-3 bg-slate-50/50 border-b border-slate-100">
+                  <span class="text-sm font-bold text-slate-800 tracking-wide">
                      {{ getModuleLabel(moduleName) }}
                   </span>
                   
-                  <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs">
+                  <label class="custom-radio-checkbox" :class="{ 'disabled': selectedRole.name === 'admin' }">
                     <input
                       type="checkbox"
-                      class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer disabled:opacity-50"
+                      class="sr-only peer"
                       :checked="isModuleAllChecked(moduleName)"
                       @change="toggleModule(moduleName)"
                       :disabled="selectedRole.name === 'admin'"
                     />
-                    <span class="text-[11px] font-semibold text-slate-500 select-none">Tất cả</span>
+                    <div class="radio-indicator">
+                      <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <span class="radio-label text-xs">Tất cả</span>
                   </label>
                 </div>
 
-                <!-- Action Checkboxes -->
-                <div class="p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div
+                <!-- Action Radio Checkboxes -->
+                <div class="p-5 grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <label
                     v-for="perm in perms"
                     :key="perm.id"
-                    class="flex items-center gap-2"
+                    class="custom-radio-checkbox"
+                    :class="{ 'disabled': selectedRole.name === 'admin' }"
                   >
-                    <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
-                      <input
-                        type="checkbox"
-                        class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer disabled:opacity-50"
-                        :value="perm.id"
-                        v-model="selectedPermissionIds"
-                        :disabled="selectedRole.name === 'admin'"
-                      />
-                      <span class="font-medium text-slate-700">
-                        {{ getActionLabel(perm.action) }}
-                      </span>
-                    </label>
-                  </div>
+                    <input
+                      type="checkbox"
+                      class="sr-only peer"
+                      :value="perm.id"
+                      v-model="selectedPermissionIds"
+                      :disabled="selectedRole.name === 'admin'"
+                    />
+                    <div class="radio-indicator">
+                      <svg class="check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <span class="radio-label">{{ getActionLabel(perm.action) }}</span>
+                  </label>
                 </div>
               </div>
             </div>
@@ -298,7 +301,7 @@
             <button
               type="button"
               @click="savePermissions"
-              class="inline-flex items-center gap-2 px-6 py-2 bg-[#0258cb] hover:bg-[#004bb3] text-white text-xs font-bold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 disabled:opacity-70 active:scale-[0.98]"
+              class="inline-flex items-center gap-2 px-6 py-2 bg-black hover:bg-neutral-800 text-white text-xs font-bold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 disabled:opacity-70 active:scale-[0.98]"
               :disabled="selectedRole.name === 'admin' || loading"
             >
               <svg v-if="loading" class="w-3.5 h-3.5 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
@@ -327,7 +330,7 @@
             <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
                   </svg>
                 </div>
@@ -353,7 +356,7 @@
                   v-model="form.name"
                   type="text"
                   placeholder="Ví dụ: Editor, Accountant,..."
-                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                   :disabled="modalMode === 'edit' && form.name === 'admin'"
                 />
               </div>
@@ -366,7 +369,7 @@
                   v-model="form.description"
                   rows="3"
                   placeholder="Ghi chú về mục đích hoặc quyền hạn của vai trò..."
-                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                 ></textarea>
               </div>
             </div>
@@ -383,7 +386,7 @@
                 id="btn-submit-role"
                 type="button"
                 @click="submitForm"
-                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
               >
                 {{ modalMode === 'add' ? 'Thêm vai trò' : 'Lưu thay đổi' }}
               </button>
@@ -520,6 +523,14 @@ const toggleAllPermissions = () => {
     selectedPermissionIds.value = []
   } else {
     selectedPermissionIds.value = [...ids]
+  }
+}
+
+const togglePerm = (permId) => {
+  if (selectedPermissionIds.value.includes(permId)) {
+    selectedPermissionIds.value = selectedPermissionIds.value.filter(id => id !== permId)
+  } else {
+    selectedPermissionIds.value.push(permId)
   }
 }
 
@@ -686,5 +697,69 @@ onMounted(async () => {
 }
 .animate-modal-in {
   animation: modalIn 0.22s cubic-bezier(0.34, 1.4, 0.64, 1) forwards;
+}
+
+/* ── Custom Circular Checkboxes (Radio Style) ── */
+.custom-radio-checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.custom-radio-checkbox.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.radio-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1; /* border-slate-300 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ffffff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.check-icon {
+  width: 12px;
+  height: 12px;
+  color: #ffffff;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Checked state */
+.peer:checked + .radio-indicator {
+  background-color: #000000;
+  border-color: #000000;
+}
+
+.peer:checked + .radio-indicator .check-icon {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.radio-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #334155; /* text-slate-700 */
+}
+
+.custom-radio-checkbox:hover .radio-indicator {
+  border-color: #94a3b8; /* slate-400 */
+}
+
+.custom-radio-checkbox:hover .peer:checked + .radio-indicator {
+  background-color: #1e293b; /* dark slate */
+  border-color: #1e293b;
 }
 </style>

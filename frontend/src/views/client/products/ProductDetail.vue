@@ -318,12 +318,11 @@ const formatPrice = (value) => {
 // Fetch Product Details & Reviews
 onMounted(async () => {
   try {
-    const id = route.params.id || '1'
-    const res = await productService.getProductDetail(id)
+    const slug = route.params.slug || route.params.id || '1'
+    const res = await productService.getProductDetail(slug)
     if (res.data && res.data.success) {
       product.value = res.data.data
       
-      console.log('Product API response:', res.data.data)
       if (product.value.attributes) {
         Object.keys(product.value.attributes).forEach(attrName => {
           if (product.value.attributes[attrName].length > 0) {
@@ -334,9 +333,10 @@ onMounted(async () => {
     }
 
     // Fetch Reviews
+    const productId = product.value?.id
     try {
-      if (authStore.isAuthenticated) {
-        const eligRes = await reviewService.checkReviewEligibility(id)
+      if (authStore.isAuthenticated && productId) {
+        const eligRes = await reviewService.checkReviewEligibility(productId)
         if (eligRes.data && eligRes.data.success) {
           isEligibleToReview.value = eligRes.data.data.eligible
           eligibleOrderDetailId.value = eligRes.data.data.order_detail_id
@@ -347,7 +347,7 @@ onMounted(async () => {
     }
 
     try {
-      const reviewRes = await productService.getProductReviews(id)
+      const reviewRes = await productService.getProductReviews(productId || slug)
       if (reviewRes.data && reviewRes.data.success) {
         const revData = reviewRes.data.data || []
         if (revData.length > 0) {

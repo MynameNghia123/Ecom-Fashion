@@ -57,11 +57,13 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
         $total = $this->model->count();
         $total_import_value = $this->model->sum('total_amount_price');
         $pending = $this->model->where('status', 'pending')->count();
+        $pending_total_amount = $this->model->where('status', 'pending')->sum('total_amount_price');
 
         return [
-            'total'              => $total,
-            'total_import_value' => $total_import_value,
-            'pending'            => $pending,
+            'total'                => $total,
+            'total_import_value'   => $total_import_value,
+            'pending'              => $pending,
+            'pending_total_amount' => $pending_total_amount,
         ];
     }
 }

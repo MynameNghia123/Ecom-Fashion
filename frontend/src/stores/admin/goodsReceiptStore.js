@@ -15,6 +15,7 @@ export const useGoodsReceiptStore = defineStore('goods-receipt', () => {
     total: 0,
     total_import_value: 0,
     pending: 0,
+    pending_total_amount: 0,
   });
   const errors = ref(null);
   const loading = ref(false);

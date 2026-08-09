@@ -10,7 +10,7 @@
       <button
         id="btn-open-add-category"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -89,7 +89,7 @@
             @input="onSearch"
             type="text"
             placeholder="Tìm theo tên hoặc slug..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
       </div>
@@ -100,12 +100,12 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-100">
-              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[70px]">ID</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Tên danh mục</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Slug</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px]">Danh mục cha</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Mô tả</th>
-              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Hành động</th>
+              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[70px] whitespace-nowrap">ID</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Tên danh mục</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Slug</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px] whitespace-nowrap">Danh mục cha</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Mô tả</th>
+              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Hành động</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -118,10 +118,14 @@
             </tr> -->
             <template v-if="categoryStore.loading">
               <tr v-for="i in categoryStore.meta.per_page" :key="i" class="animate-pulse">
-                <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-12"></div></td>
+                <td class="py-4 px-5"><div class="h-4 bg-slate-200 rounded w-8"></div></td>
                 <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-40"></div></td>
-                <td class="py-4 px-6">
+                <td class="py-4 px-4"><div class="h-5 bg-slate-200 rounded-lg w-28"></div></td>
+                <td class="py-4 px-4"><div class="h-5 bg-slate-200 rounded-lg w-20"></div></td>
+                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-48"></div></td>
+                <td class="py-4 px-4">
                   <div class="flex justify-end gap-2">
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                     <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                     <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                   </div>
@@ -133,7 +137,7 @@
                 <tr
                   v-for="cat in categoryStore.categories"
                   :key="cat.id"
-                  class="hover:bg-blue-50/40 transition-colors duration-100 group"
+                  class="hover:bg-neutral-100/40 transition-colors duration-100 group"
                 >
                   <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ cat.id }}</td>
                   <td class="py-4 px-4 font-semibold text-slate-800">{{ cat.name }}</td>
@@ -141,7 +145,7 @@
                     <span class="inline-block bg-slate-100 text-slate-600 text-xs font-mono px-2.5 py-1 rounded-lg max-w-[160px] truncate">{{ cat.slug }}</span>
                   </td>
                   <td class="py-4 px-4">
-                    <span v-if="cat.parent_id" class="inline-block bg-blue-50 text-[#0258cb] text-xs font-semibold px-2.5 py-1 rounded-lg max-w-[110px] truncate">
+                    <span v-if="cat.parent_id" class="inline-block bg-blue-50 text-black text-xs font-semibold px-2.5 py-1 rounded-lg max-w-[110px] truncate">
                       {{ getCategoryName(cat.parent_id) }}
                     </span>
                     <span v-else class="text-slate-400 text-sm font-medium">—</span>
@@ -154,7 +158,7 @@
                       <!-- View -->
                       <button
                         @click="openViewModal(cat)"
-                        class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150"
+                        class="p-2 rounded-lg text-slate-400 hover:text-black hover:bg-neutral-100 transition-all duration-150"
                         title="Xem chi tiết"
                       >
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

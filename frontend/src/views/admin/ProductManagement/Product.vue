@@ -8,7 +8,7 @@
       </div>
       <button
         @click="useModal = 'add'"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -36,7 +36,7 @@
       </div>
       <div class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:shadow-md transition-shadow duration-200">
         <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Mới trong tháng</p>
-        <p class="text-3xl font-bold text-[#0258cb]">+{{ productStore.stats.new_this_month }}</p>
+        <p class="text-3xl font-bold text-black">+{{ productStore.stats.new_this_month }}</p>
       </div>
     </div>
     
@@ -54,11 +54,11 @@
             v-model="searchQuery"
             type="text"
             placeholder="Tìm theo tên sản phẩm, thương hiệu..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
           />
         </div>
         <div class="relative ">
-          <select v-model="filterCategory" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
+          <select v-model="filterCategory" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all cursor-pointer">
             <option value="">Tất cả danh mục</option>
             <option v-for="cat in categoryStore.categories" :key="cat.id" :value="cat.id">{{ cat.name }}</option>
           </select>
@@ -67,7 +67,7 @@
           </span>
         </div>
         <div class="relative">
-          <select v-model="filterStatus" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
+          <select v-model="filterStatus" class="appearance-none pl-4 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all cursor-pointer">
             <option value="">Trạng thái</option>
             <option value="1">Đang hoạt động</option>
             <option value="0">Ngừng hoạt động</option>
@@ -76,10 +76,6 @@
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
           </span>
         </div>
-        <button class="ml-auto inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 text-slate-600 text-sm font-semibold hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
-          Lọc nâng cao
-        </button>
       </div>
 
 
@@ -99,11 +95,22 @@
             </tr>
           </thead>
             <template v-if="productStore.loading">
-              <tr v-for="i in categoryStore.meta.per_page" :key="i" class="animate-pulse">
-                <td class="py-4 px-6"><div class="h-4 bg-slate-200 rounded w-12"></div></td>
-                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-40"></div></td>
-                <td class="py-4 px-6">
+              <tr v-for="i in 10" :key="i" class="animate-pulse">
+                <td class="py-4 px-5"><div class="h-4 bg-slate-200 rounded w-8"></div></td>
+                <td class="py-4 px-4">
+                  <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg bg-slate-200 shrink-0"></div>
+                    <div class="h-4 bg-slate-200 rounded w-32"></div>
+                  </div>
+                </td>
+                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-20"></div></td>
+                <td class="py-4 px-4"><div class="h-5 bg-slate-200 rounded-lg w-24"></div></td>
+                <td class="py-4 px-4 text-center"><div class="h-4 bg-slate-200 rounded w-10 mx-auto"></div></td>
+                <td class="py-4 px-4"><div class="h-5 bg-slate-200 rounded-full w-20"></div></td>
+                <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-24"></div></td>
+                <td class="py-4 px-4">
                   <div class="flex justify-end gap-2">
+                    <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                     <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                     <div class="h-8 w-8 bg-slate-200 rounded-lg"></div>
                   </div>
@@ -118,7 +125,7 @@
             <template v-else>
               <tbody class="divide-y divide-slate-50">
               <tr v-for="product in productStore.products" :key="product.id"
-                class="hover:bg-blue-50/40 transition-colors duration-100">
+                class="hover:bg-neutral-100/40 transition-colors duration-100">
                 <td class="py-4 px-5 font-mono text-xs text-slate-500">
                   #{{ product.id }}
                 </td>
@@ -162,7 +169,7 @@
                   <div class="flex items-center justify-end gap-1">
                     <button 
                       @click="openDetail(product)"
-                      class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all" title="Xem chi tiết">
+                      class="p-2 rounded-lg text-slate-400 hover:text-black hover:bg-neutral-100 transition-all" title="Xem chi tiết">
                       <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                       </svg>
@@ -250,15 +257,19 @@ import  ProductFormModal from '@/components/admin/product/ProductFormModal.vue';
 const productStore = useProductStore();
 const categoryStore = useCategoryStore();
 
-const useModal = ref('');
-const selectedProduct = ref(null);
-
 const searchQuery = ref('');
 const filterCategory = ref('');
 const filterStatus = ref('');
 
+const useModal = ref('');
+const selectedProduct = ref(null);
+
+let debounceTimeout = null;
 watch([searchQuery, filterCategory, filterStatus], () => {
-  handleCurrentPage(1, true);
+  if (debounceTimeout) clearTimeout(debounceTimeout);
+  debounceTimeout = setTimeout(() => {
+    handleCurrentPage(1, true);
+  }, 300);
 });
 
 const percentActiveProducts = computed(() => {
@@ -269,7 +280,7 @@ onMounted(async () => {
   // 2 fetch độc lập → chạy song song
   await Promise.all([
     productStore.initialFetch(),
-    categoryStore.initialFetch(),
+    categoryStore.fetchCategories({ per_page: 100 }),
   ]);
 });
 

@@ -8,7 +8,7 @@
       <button
         id="btn-open-add-receipt"
         @click="isShowAdd = true"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -18,7 +18,7 @@
     </div>
 
     <!-- ══════════════════════ STATS CARDS ══════════════════════ -->
-    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <!-- Total receipts -->
       <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
@@ -46,7 +46,7 @@
           </svg>
         </div>
       </div>
-      <!-- Pending -->
+      <!-- Pending receipts count -->
       <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
         <div>
           <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Phiếu chờ xử lý</p>
@@ -55,6 +55,18 @@
         <div class="w-12 h-12 rounded-xl bg-amber-50 flex items-center justify-center">
           <svg class="w-6 h-6 text-amber-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+      </div>
+      <!-- Pending import value -->
+      <div class="bg-white rounded-2xl border border-slate-100 p-5 flex items-center justify-between shadow-sm hover:shadow-md transition-shadow duration-200">
+        <div>
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">Tiền phiếu chưa đồng bộ</p>
+          <p class="text-3xl font-bold text-amber-600">{{ helperFormatCurrency(goodsReceiptStore.stats.pending_total_amount || 0) }}</p>
+        </div>
+        <div class="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center">
+          <svg class="w-6 h-6 text-orange-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
           </svg>
         </div>
       </div>
@@ -86,7 +98,7 @@
             v-model="searchQuery"
             @input="handleFilter"
             placeholder="Search receipts by code..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
         <div class="flex-1"></div>
@@ -94,7 +106,7 @@
         <select
           v-model="statusFilter"
           @change="handleFilter"
-          class="px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+          class="px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="pending">Chờ duyệt</option>
@@ -136,9 +148,10 @@
       <template v-if="goodsReceiptStore.loading">
         <tbody>
           <tr v-for="i in 5" :key="'sk-'+i" class="animate-pulse">
-            <td class="py-4 px-5"><div class="h-4 bg-slate-200 rounded w-8"></div></td>
+            <td class="py-4 px-5"><div class="h-4 bg-slate-200 rounded w-24"></div></td>
             <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-36"></div></td>
             <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-28"></div></td>
+            <td class="py-4 px-4 text-right"><div class="h-4 bg-slate-200 rounded w-20 ml-auto"></div></td>
             <td class="py-4 px-4"><div class="h-4 bg-slate-200 rounded w-28"></div></td>
             <td class="py-4 px-4"><div class="h-6 bg-slate-200 rounded-full w-24"></div></td>
             <td class="py-4 px-4"><div class="flex justify-end gap-2"><div class="h-8 w-8 bg-slate-200 rounded-lg"></div><div class="h-8 w-8 bg-slate-200 rounded-lg"></div><div class="h-8 w-8 bg-slate-200 rounded-lg"></div></div></td>
@@ -201,7 +214,7 @@
               <div class="flex items-center justify-end gap-1">
                 <button 
                   @click="isShowView = true; selectedReceipt = receipt"
-                  class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150" title="Xem chi tiết">
+                  class="p-2 rounded-lg text-slate-400 hover:text-black hover:bg-neutral-100 transition-all duration-150" title="Xem chi tiết">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
@@ -209,7 +222,7 @@
                 <button 
                   v-if="receipt.status !== 'cancel' && receipt.status !== 'completed'"
                   @click="isShowUpdate = true; selectedReceipt = receipt"
-                  class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150" title="Chỉnh sửa">
+                  class="p-2 rounded-lg text-slate-400 hover:text-black hover:bg-neutral-100 transition-all duration-150" title="Chỉnh sửa">
                   <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>

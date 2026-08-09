@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
   :class="show ? '' : 'hidden'"
   >
@@ -8,7 +8,7 @@
       <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl flex items-center justify-center bg-blue-50">
-            <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
           </div>
@@ -36,7 +36,7 @@
             type="text"
             v-model="form.name"
             placeholder="Vd: Cty TNHH TechPro"
-            class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 border-slate-200 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 border-slate-200 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
             :class="fieldError('name') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
           />
           <p v-if="fieldError('name')" class="text-xs text-red-500 mt-1">{{ fieldError('name') }}</p>
@@ -53,7 +53,7 @@
               id="input-supplier-phone"
               type="text"
               placeholder="0987 123 456"
-              class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 border-slate-200 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+              class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 border-slate-200 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
               :class="fieldError('phone') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
             />
             <p v-if="fieldError('phone') " class="text-xs text-red-500 mt-1">{{ fieldError('phone')  }}</p>
@@ -65,7 +65,7 @@
               v-model="form.email"
               type="email"
               placeholder="contact@company.vn"
-              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
               :class="fieldError('email')  ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
 
               />
@@ -80,7 +80,7 @@
             v-model="form.address"
             rows="2"
             placeholder="123 Đường Láng, Đống Đa, Hà Nội"
-            class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 resize-none"
+            class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 resize-none"
               :class="fieldError('address') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
 
            >
@@ -99,7 +99,7 @@
             type="button"
             :class="[
                   'relative inline-flex w-11 h-6 rounded-full transition-colors duration-200 focus:outline-none',
-                  form.is_active === 1 ? 'bg-[#0258cb]' : 'bg-gray-300'
+                  form.is_active === 1 ? 'bg-black' : 'bg-gray-300'
                 ]"
               >
             <span 
@@ -122,7 +122,7 @@
         <button
           :disabled="isSubmitting"
           @click="handleSubmit()"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100">
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100">
           <svg v-if="isSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
           </svg>

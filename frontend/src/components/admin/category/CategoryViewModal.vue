@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport to="body">
     <Transition name="modal-fade">
       <div
@@ -13,7 +13,7 @@
           <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                 </svg>
               </div>
@@ -35,7 +35,7 @@
               </div>
               <div class="bg-slate-50 rounded-xl px-4 py-3">
                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Danh mục cha</p>
-                <p class="text-sm font-semibold text-[#0258cb]">
+                <p class="text-sm font-semibold text-black">
                   {{ category?.parent_id ? getCategoryName(category.parent_id) : '—' }}
                 </p>
               </div>

@@ -88,26 +88,40 @@
       </div>
     </div>
 
-    <!-- Redefine Your Wardrobe Section -->
+    <!-- Hàng Mới Về Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
       <div class="flex justify-between items-center mb-10 max-md:flex-col max-md:items-start max-md:gap-[15px]">
         <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Hàng mới về</h2>
-        <div class="flex gap-6">
-          <a href="#" class="no-underline text-black font-text text-[14px] font-medium transition-colors duration-300">Váy</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Nam</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Áo thun</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Nữ</a>
+        <!-- Slider navigation -->
+        <div class="flex items-center gap-3">
+          <button
+            @click="prevNewArrivalPage"
+            :disabled="newArrivalsPage === 0"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Trang trước"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button
+            @click="nextNewArrivalPage"
+            :disabled="newArrivalsPage >= totalNewArrivalPages - 1"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed"
+            aria-label="Trang tiếp"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
         <div 
-          v-for="product in newArrivals" 
+          v-for="product in visibleNewArrivals" 
           :key="product.id"
-          @click="goToDetail(product.id)"
           class="cursor-pointer"
         >
           <ProductCard 
+            :id="product.id"
+            :slug="product.slug"
             :image="product.image"
             :name="product.name"
             :currentPrice="product.currentPrice"
@@ -122,32 +136,38 @@
 
   
 
-    <!-- Featured Products Section -->
+  
+
+  
+
+    <!-- SẢN PHẨM NỔI BẬT Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
-      <div class="flex justify-between items-center mb-10 max-md:flex-col max-md:items-start max-md:gap-[15px]">
-        <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Sản Phẩm Nổi Bật</h2>
-        <div class="flex gap-6">
-          <a href="#" class="no-underline text-black font-text text-[14px] font-medium transition-colors duration-300">Áo khoác</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Nam</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Áo</a>
-          <a href="#" class="no-underline text-[#888] font-text text-[14px] font-medium transition-colors duration-300 hover:text-black">Nữ</a>
-        </div>
+      <!-- Tiêu đề căn giữa -->
+      <div class="text-center mb-12">
+        <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">S&#7843;n Ph&#7849;m N&#7893;i B&#7853;t</h2>
+        <div class="w-16 h-[3px] bg-black mx-auto mt-4"></div>
       </div>
 
       <div class="relative flex items-center">
-        <button class="absolute top-[35%] -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden" aria-label="Trước">
+        <button
+          @click="prevFeaturedPage"
+          :disabled="featuredPage === 0"
+          class="absolute top-[35%] -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Trước"
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
         
         <div class="w-full overflow-hidden">
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
             <div 
-              v-for="product in featuredProducts" 
+              v-for="product in visibleFeaturedProducts" 
               :key="product.id"
-              @click="goToDetail(product.id)"
               class="cursor-pointer"
             >
               <ProductCard 
+                :id="product.id"
+                :slug="product.slug"
                 :image="product.image"
                 :name="product.name"
                 :currentPrice="product.currentPrice"
@@ -159,16 +179,14 @@
           </div>
         </div>
         
-        <button class="absolute top-[35%] -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden" aria-label="Tiếp theo">
+        <button
+          @click="nextFeaturedPage"
+          :disabled="featuredPage >= totalFeaturedPages - 1"
+          class="absolute top-[35%] -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Tiếp theo"
+        >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
         </button>
-      </div>
-
-      <div class="flex justify-center gap-2 mt-10">
-        <span class="w-1.5 h-1.5 bg-[#111] rounded-full cursor-pointer transition-colors duration-300"></span>
-        <span class="w-1.5 h-1.5 bg-[#ccc] rounded-full cursor-pointer transition-colors duration-300"></span>
-        <span class="w-1.5 h-1.5 bg-[#ccc] rounded-full cursor-pointer transition-colors duration-300"></span>
-        <span class="w-1.5 h-1.5 bg-[#ccc] rounded-full cursor-pointer transition-colors duration-300"></span>
       </div>
     </div>
 
@@ -203,16 +221,52 @@
 
     <!-- Blog Section -->
     <div class="pt-[60px] pb-[100px] px-5 lg:px-20 bg-white">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
+      <!-- Blog Header -->
+      <div class="flex justify-between items-center mb-10">
+        <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Tin Tức &amp; Bài Viết</h2>
+        <div class="flex items-center gap-3">
+          <button
+            @click="prevBlogPage"
+            :disabled="blogPage === 0"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-[#111]"
+            aria-label="Blog trước"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          </button>
+          <button
+            @click="nextBlogPage"
+            :disabled="blogPage >= totalBlogPages - 1"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-[#111]"
+            aria-label="Blog tiếp theo"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Blog Grid -->
+      <div v-if="blogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
         <BlogCard 
-          v-for="blog in blogs" 
+          v-for="blog in visibleBlogs" 
           :key="blog.id"
+          :id="blog.id"
+          :slug="blog.slug"
           :image="blog.image"
           :category="blog.category"
           :title="blog.title"
           :author="blog.author"
           :date="blog.date"
         />
+      </div>
+
+      <!-- Fallback: loading or empty -->
+      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
+        <div v-for="i in 4" :key="i" class="flex flex-col gap-[15px] animate-pulse">
+          <div class="w-full aspect-[4/3] bg-[#f0f0f0] rounded"></div>
+          <div class="h-3 bg-[#f0f0f0] rounded w-1/3"></div>
+          <div class="h-4 bg-[#f0f0f0] rounded w-full"></div>
+          <div class="h-3 bg-[#f0f0f0] rounded w-2/3"></div>
+        </div>
       </div>
     </div>
    
@@ -265,6 +319,7 @@ import { useRouter } from 'vue-router';
 import ProductCard from '@/components/client/ui/ProductCard.vue';
 import BlogCard from '@/components/client/ui/BlogCard.vue';
 import { productService } from '@/services/client/productService';
+import { blogService } from '@/services/client/blogService';
 import api from '@/plugins/axios';
 
 const slides = [
@@ -345,6 +400,29 @@ onUnmounted(() => {
 
 const newArrivals = ref([]);
 const featuredProducts = ref([]);
+const newArrivalsPage = ref(0)
+const featuredPage = ref(0)
+const PRODUCTS_PER_PAGE = 4
+
+const totalNewArrivalPages = computed(() =>
+  Math.max(1, Math.ceil(newArrivals.value.length / PRODUCTS_PER_PAGE))
+)
+const visibleNewArrivals = computed(() => {
+  const start = newArrivalsPage.value * PRODUCTS_PER_PAGE
+  return newArrivals.value.slice(start, start + PRODUCTS_PER_PAGE)
+})
+const prevNewArrivalPage = () => { if (newArrivalsPage.value > 0) newArrivalsPage.value-- }
+const nextNewArrivalPage = () => { if (newArrivalsPage.value < totalNewArrivalPages.value - 1) newArrivalsPage.value++ }
+
+const totalFeaturedPages = computed(() =>
+  Math.max(1, Math.ceil(featuredProducts.value.length / PRODUCTS_PER_PAGE))
+)
+const visibleFeaturedProducts = computed(() => {
+  const start = featuredPage.value * PRODUCTS_PER_PAGE
+  return featuredProducts.value.slice(start, start + PRODUCTS_PER_PAGE)
+})
+const prevFeaturedPage = () => { if (featuredPage.value > 0) featuredPage.value-- }
+const nextFeaturedPage = () => { if (featuredPage.value < totalFeaturedPages.value - 1) featuredPage.value++ }
 
 const router = useRouter();
 
@@ -383,75 +461,107 @@ const mapProduct = (item) => {
   }
   const image = getImageUrl(rawImage)
 
+  // Build rating from reviews_avg_rating if available
+  const avgRating = item.reviews_avg_rating ? parseFloat(item.reviews_avg_rating).toFixed(1) : null
+  const reviewCount = item.reviews_count || 0
+  let rating = null
+  if (avgRating) {
+    const score = parseFloat(avgRating)
+    const stars = [1,2,3,4,5].map(s => {
+      if (score >= s) return 'filled'
+      if (score >= s - 0.5) return 'half-filled'
+      return 'empty'
+    })
+    rating = { score: avgRating, count: reviewCount, stars }
+  }
+
   return {
     id: item.id,
+    slug: item.slug || String(item.id),
     image: image,
     name: item.name,
     currentPrice: formatPrice(currentPriceVal),
     originalPrice: originalPriceVal ? formatPrice(originalPriceVal) : null,
     discount: discount,
-    rating: { score: '5.0', count: 1, stars: ['filled', 'filled', 'filled', 'filled', 'filled'] }
+    rating: rating
   }
 }
 
-const goToDetail = (id) => {
-  router.push({ name: 'ProductDetail', params: { id } })
+const goToDetail = (slugOrId) => {
+  router.push({ name: 'ProductDetail', params: { slug: slugOrId } })
 }
 
+// Fetch Hàng Mới Về (latest)
 onMounted(async () => {
   try {
-    const response = await productService.getProducts({ per_page: 8 })
-    if (response.data && response.data.success && response.data.data.length > 0) {
-      const realProducts = response.data.data.map(mapProduct)
-      
-      // Lấy 4 sản phẩm đầu cho Hàng mới về
-      newArrivals.value = realProducts.slice(0, 4)
-
-      // Lấy 4 sản phẩm tiếp theo (hoặc 4 sản phẩm đầu nếu ít hơn) cho Sản phẩm nổi bật
-      featuredProducts.value = realProducts.length > 4 
-        ? realProducts.slice(4, 8) 
-        : realProducts.slice(0, 4)
+    const response = await productService.getProducts({ per_page: 12, sort: 'latest' })
+    if (response.data && response.data.success) {
+      newArrivals.value = response.data.data.map(mapProduct)
     }
   } catch (err) {
-    console.error('Lỗi khi tải sản phẩm cho trang chủ:', err)
+    console.error('Lỗi khi tải hàng mới về:', err)
+  }
+});
+
+// Fetch Sản phẩm nổi bật (top-rated)
+onMounted(async () => {
+  try {
+    const response = await productService.getTopRatedProducts(8)
+    if (response.data && response.data.success) {
+      featuredProducts.value = response.data.data.map(mapProduct)
+    }
+  } catch (err) {
+    // Fallback: dùng sản phẩm mới nếu chưa có đánh giá
+    console.warn('Fallback to latest products for featured:', err)
   }
 });
 
 
-const blogs = ref([
-  {
-    id: 1,
-    image: 'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?q=80&w=600&auto=format&fit=crop',
-    category: 'MẸO THỜI TRANG',
-    title: 'Trò Chuyện Về Thời Trang Bền Vững Với Một Influencer Thân Thiện Môi Trường',
-    author: 'Simam',
-    date: '9 tháng 7, 2025'
-  },
-  {
-    id: 2,
-    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop',
-    category: 'MẸO THỜI TRANG',
-    title: 'Những Trang Phục Đáng Nhớ Nhất Từ Thảm Đỏ Oscar',
-    author: 'Simam',
-    date: '9 tháng 7, 2025'
-  },
-  {
-    id: 3,
-    image: 'https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?q=80&w=600&auto=format&fit=crop',
-    category: 'XU HƯỚNG MỚI',
-    title: 'Những Phong Cách Street Style Đẹp Nhất Từ Tuần Lễ Thời Trang London',
-    author: 'Simam',
-    date: '9 tháng 7, 2025'
-  },
-  {
-    id: 4,
-    image: 'https://images.unsplash.com/photo-1492447166138-50c3889f1b1a?q=80&w=600&auto=format&fit=crop',
-    category: 'MẸO THỜI TRANG',
-    title: 'Nhìn Lại Những Lễ Trao Giải Thời Trang Có Ảnh Hưởng Nhất',
-    author: 'Simam',
-    date: '9 tháng 7, 2025'
+// ─── Blog Slider ──────────────────────────────────────────────────────────────
+const blogs = ref([])
+const blogPage = ref(0)
+const BLOGS_PER_PAGE = 4
+
+const totalBlogPages = computed(() =>
+  Math.max(1, Math.ceil(blogs.value.length / BLOGS_PER_PAGE))
+)
+
+const visibleBlogs = computed(() => {
+  const start = blogPage.value * BLOGS_PER_PAGE
+  return blogs.value.slice(start, start + BLOGS_PER_PAGE)
+})
+
+const nextBlogPage = () => {
+  if (blogPage.value < totalBlogPages.value - 1) blogPage.value++
+}
+const prevBlogPage = () => {
+  if (blogPage.value > 0) blogPage.value--
+}
+
+const getBlogImageUrl = (path) => {
+  if (!path) return 'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?q=80&w=600&auto=format&fit=crop'
+  if (path.startsWith('http')) return path
+  return `http://localhost:8000/storage/${path}`
+}
+
+onMounted(async () => {
+  try {
+    const res = await blogService.getBlogs({ per_page: 20 })
+    if (res.data && res.data.data && res.data.data.length > 0) {
+      blogs.value = res.data.data.map(b => ({
+        id: b.id,
+        slug: b.slug || String(b.id),
+        image: getBlogImageUrl(b.image),
+        category: 'TIN TỨC',
+        title: b.name,
+        author: 'Luxury',
+        date: b.created_at || ''
+      }))
+    }
+  } catch (err) {
+    console.error('Lỗi khi tải bài viết:', err)
   }
-]);
+})
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-<script setup>
+﻿<script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/admin/authStore'
@@ -67,7 +67,7 @@ const handleSignIn = async () => {
     >
       <!-- Brand Header -->
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-bold tracking-wider text-[#0258cb] mb-1">
+        <h1 class="text-2xl font-bold tracking-wider text-black mb-1">
           ECOM-FASHION
         </h1>
         <p class="text-sm font-medium text-slate-500">
@@ -108,7 +108,7 @@ const handleSignIn = async () => {
               v-model="email"
               type="text"
               placeholder="admin@ecomfashion.com"
-              class="w-full pl-12 pr-4 py-3.5 bg-[#f0f2fa]/85 text-slate-800 placeholder-slate-400/80 border border-transparent rounded-xl focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-medium text-sm"
+              class="w-full pl-12 pr-4 py-3.5 bg-[#f0f2fa]/85 text-slate-800 placeholder-slate-400/80 border border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 font-medium text-sm"
               :disabled="isLoading"
             />
           </div>
@@ -122,7 +122,7 @@ const handleSignIn = async () => {
             </label>
             <a 
               href="#" 
-              class="text-xs font-semibold text-[#0258cb] hover:text-[#004bb3] transition-colors"
+              class="text-xs font-semibold text-black hover:text-[#004bb3] transition-colors"
               @click.prevent
             >
               Quên mật khẩu?
@@ -141,7 +141,7 @@ const handleSignIn = async () => {
               v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="••••••••"
-              class="w-full pl-12 pr-12 py-3.5 bg-[#f0f2fa]/85 text-slate-800 placeholder-slate-400/80 border border-transparent rounded-xl focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-medium text-sm"
+              class="w-full pl-12 pr-12 py-3.5 bg-[#f0f2fa]/85 text-slate-800 placeholder-slate-400/80 border border-transparent rounded-xl focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 font-medium text-sm"
               :disabled="isLoading"
             />
             <button 
@@ -169,7 +169,7 @@ const handleSignIn = async () => {
             <input 
               v-model="rememberMe"
               type="checkbox"
-              class="w-4 h-4 rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer accent-[#0258cb]"
+              class="w-4 h-4 rounded border-slate-300 text-black focus:ring-black/20 cursor-pointer accent-black"
               :disabled="isLoading"
             />
             <span class="text-sm font-medium text-slate-500 group-hover:text-slate-700 transition-colors">
@@ -181,7 +181,7 @@ const handleSignIn = async () => {
         <!-- Submit Button -->
         <button 
           type="submit"
-          class="w-full mt-2 py-3.5 px-5 bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/15 hover:shadow-blue-500/25 flex items-center justify-center gap-2.5 disabled:opacity-80 disabled:cursor-not-allowed group active:scale-[0.98]"
+          class="w-full mt-2 py-3.5 px-5 bg-black hover:bg-neutral-800 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/15 hover:shadow-blue-500/25 flex items-center justify-center gap-2.5 disabled:opacity-80 disabled:cursor-not-allowed group active:scale-[0.98]"
           :disabled="isLoading"
         >
           <span v-if="isLoading" class="flex items-center gap-2">

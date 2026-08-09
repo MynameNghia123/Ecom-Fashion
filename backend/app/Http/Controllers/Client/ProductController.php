@@ -67,4 +67,20 @@ class ProductController extends Controller
             'data'    => $product
         ]);
     }
+
+    /**
+     * Lấy sản phẩm nổi bật (được đánh giá cao nhất)
+     */
+    public function topRated(Request $request): JsonResponse
+    {
+        $limit = (int) $request->query('per_page', 8);
+        $limit = min($limit, 20); // tối đa 20 sản phẩm
+
+        $products = $this->productService->getTopRated($limit);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $products,
+        ]);
+    }
 }

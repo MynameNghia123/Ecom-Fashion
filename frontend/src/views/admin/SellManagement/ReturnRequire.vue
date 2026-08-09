@@ -135,14 +135,14 @@
         <table class="w-full text-left border-collapse">
           <thead>
             <tr class="border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              <th class="py-3.5 px-5">Mã Yêu Cầu</th>
-              <th class="py-3.5 px-5">Mã Đơn Hàng</th>
-              <th class="py-3.5 px-5">Khách Hàng</th>
-              <th class="py-3.5 px-5">Sản Phẩm Trả</th>
-              <th class="py-3.5 px-5">Lý Do Trả Hàng</th>
-              <th class="py-3.5 px-5">Tiền Hoàn Dự Kiến</th>
-              <th class="py-3.5 px-5">Trạng Thái</th>
-              <th class="py-3.5 px-5 text-right">Thao Tác</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Mã Yêu Cầu</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Mã Đơn Hàng</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Khách Hàng</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Sản Phẩm Trả</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Lý Do Trả Hàng</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Tiền Hoàn Dự Kiến</th>
+              <th class="py-3.5 px-5 whitespace-nowrap">Trạng Thái</th>
+              <th class="py-3.5 px-5 text-right whitespace-nowrap">Thao Tác</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100 text-xs">

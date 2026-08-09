@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <Teleport to="body">
     <Transition name="modal-fade">
       <div
@@ -13,7 +13,7 @@
           <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line v-if="mode === 'add'" x1="12" y1="5" x2="12" y2="19"/><line v-if="mode === 'add'" x1="5" y1="12" x2="19" y2="12"/>
                   <path v-if="mode === 'edit'" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path v-if="mode === 'edit'" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -57,7 +57,7 @@
                   @input="autoSlug"
                   type="text"
                   placeholder="Vd: Thời trang nam"
-                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                   :class="fieldError('name') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                 />
                 <p v-if="fieldError('name')" class="text-xs text-red-500 mt-1">{{ fieldError('name') }}</p>
@@ -73,7 +73,7 @@
                   v-model="form.slug"
                   type="text"
                   placeholder="thoi-trang-nam"
-                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-600 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-mono"
+                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-600 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 font-mono"
                   :class="fieldError('slug') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                 />
                 <p v-if="fieldError('slug')" class="text-xs text-red-500 mt-1">{{ fieldError('slug') }}</p>
@@ -87,7 +87,7 @@
                 <select
                   id="select-category-parent"
                   v-model="form.parent_id"
-                  class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
+                  class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
                 >
                   <option :value="null">— Không có (Danh mục gốc) —</option>
                   <option
@@ -112,7 +112,7 @@
                 v-model="form.description"
                 rows="3"
                 placeholder="Nhập mô tả ngắn về danh mục này (tối đa 255 ký tự)..."
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 resize-none leading-relaxed"
+                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 resize-none leading-relaxed"
                 :class="fieldError('description') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
               ></textarea>
               <div class="flex items-center justify-between mt-1">
@@ -133,7 +133,7 @@
               id="btn-submit-category"
               @click="submitForm"
               :disabled="formSubmitting"
-              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
             >
               <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <path d="M21 12a9 9 0 1 1-6.219-8.56"/>

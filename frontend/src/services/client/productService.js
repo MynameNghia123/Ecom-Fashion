@@ -44,5 +44,13 @@ export const productService = {
    */
   getProductReviews(id) {
     return api.get(`/client/products/${id}/reviews`)
+  },
+
+  /**
+   * Lấy sản phẩm nổi bật (được đánh giá cao nhất)
+   * @param {Number} limit - Số lượng sản phẩm tối đa
+   */
+  getTopRatedProducts(limit = 8) {
+    return api.get('/client/products/top-rated', { params: { per_page: limit } })
   }
 }

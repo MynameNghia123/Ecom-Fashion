@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="space-y-6">
 
     <!-- Page Header -->
@@ -11,7 +11,7 @@
       <button
         id="btn-open-add-customer"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -107,7 +107,7 @@
             @input="onSearch"
             type="text"
             placeholder="Tìm theo tên, email, SĐT..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
 
@@ -117,7 +117,7 @@
             id="filter-customer-status"
             v-model="filterStatus"
             @change="onFilterChange"
-            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer"
+            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer"
           >
             <option value="">Tất cả trạng thái</option>
             <option value="1">Đang hoạt động</option>
@@ -157,7 +157,7 @@
               v-else
               v-for="customer in customerStore.customers"
               :key="customer.id"
-              class="hover:bg-blue-50/40 transition-colors duration-100 group"
+              class="hover:bg-neutral-100/40 transition-colors duration-100 group"
             >
               <!-- ID -->
               <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ customer.id }}</td>
@@ -206,7 +206,7 @@
                   <!-- View -->
                   <button
                     @click="openViewModal(customer)"
-                    class="p-2 rounded-lg text-slate-400 hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150"
+                    class="p-2 rounded-lg text-slate-400 hover:text-black hover:bg-neutral-100 transition-all duration-150"
                     title="Xem chi tiết"
                   >
                     <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -283,7 +283,7 @@
             <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line v-if="modalMode === 'add'" x1="12" y1="5" x2="12" y2="19"/><line v-if="modalMode === 'add'" x1="5" y1="12" x2="19" y2="12"/>
                     <path v-if="modalMode === 'edit'" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path v-if="modalMode === 'edit'" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -324,7 +324,7 @@
                     v-model="form.last_name"
                     type="text"
                     placeholder="Nguyễn"
-                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('last_name') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('last_name')" class="text-xs text-red-500 mt-1">{{ fieldError('last_name') }}</p>
@@ -338,7 +338,7 @@
                     v-model="form.first_name"
                     type="text"
                     placeholder="Văn Long"
-                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('first_name') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('first_name')" class="text-xs text-red-500 mt-1">{{ fieldError('first_name') }}</p>
@@ -353,7 +353,7 @@
                   v-model="form.email"
                   type="email"
                   placeholder="long.nv@gmail.com"
-                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                   :class="fieldError('email') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                 />
                 <p v-if="fieldError('email')" class="text-xs text-red-500 mt-1">{{ fieldError('email') }}</p>
@@ -367,7 +367,7 @@
                   v-model="form.phone_number"
                   type="text"
                   placeholder="090 123 4567"
-                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                   :class="fieldError('phone_number') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                 />
                 <p v-if="fieldError('phone_number')" class="text-xs text-red-500 mt-1">{{ fieldError('phone_number') }}</p>
@@ -381,7 +381,7 @@
                   v-model="form.password"
                   type="password"
                   placeholder="••••••••"
-                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                  class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                   :class="fieldError('password') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                 />
                 <p v-if="fieldError('password')" class="text-xs text-red-500 mt-1">{{ fieldError('password') }}</p>
@@ -394,7 +394,7 @@
                   <select
                     id="select-customer-status"
                     v-model="form.status"
-                    class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
+                    class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
                   >
                     <option :value="1">Hoạt động</option>
                     <option :value="0">Bị khóa</option>
@@ -418,7 +418,7 @@
                 id="btn-submit-customer"
                 @click="submitForm"
                 :disabled="formSubmitting"
-                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
@@ -445,7 +445,7 @@
             <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
                   </svg>
                 </div>

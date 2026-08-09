@@ -4,7 +4,7 @@
     
     <!-- Logo Header -->
     <div class="h-16 px-6 flex items-center shrink-0" style="border-bottom:1px solid rgba(255,255,255,0.07);">
-      <span class="text-lg font-bold tracking-widest uppercase text-white">BFD Admin</span>
+      <span class="text-lg font-bold tracking-widest uppercase text-white">LUXURY ADMIN </span>
     </div>
 
     <!-- Navigation Scroll Area -->

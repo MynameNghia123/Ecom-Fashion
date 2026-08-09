@@ -42,5 +42,11 @@ return [
         'key' => env('GEMINI_API_KEY'),
     ],
 
+    'ghn' => [
+        'url'     => env('GHN_API_URL', 'https://online-gateway.ghn.vn/shiip/public-api'),
+        'token'   => env('GHN_TOKEN'),
+        'shop_id' => env('GHN_SHOP_ID'),
+    ],
+
 ];
 

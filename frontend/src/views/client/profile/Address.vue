@@ -57,41 +57,14 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          <!-- Province -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Tỉnh / Thành phố</label>
-            <input
-              v-model="form.province"
-              type="text"
-              required
-              placeholder="Hà Nội / TP.HCM"
-              class="w-full border border-neutral-200 px-4 py-3 text-sm bg-white focus:border-neutral-950 focus:outline-none transition-colors"
-            />
-          </div>
-          <!-- District -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Quận / Huyện</label>
-            <input
-              v-model="form.district"
-              type="text"
-              required
-              placeholder="Quận 1"
-              class="w-full border border-neutral-200 px-4 py-3 text-sm bg-white focus:border-neutral-950 focus:outline-none transition-colors"
-            />
-          </div>
-          <!-- Ward -->
-          <div class="space-y-2">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Phường / Xã</label>
-            <input
-              v-model="form.ward"
-              type="text"
-              required
-              placeholder="Bến Nghé"
-              class="w-full border border-neutral-200 px-4 py-3 text-sm bg-white focus:border-neutral-950 focus:outline-none transition-colors"
-            />
-          </div>
-        </div>
+        <!-- Province / District / Ward Dropdowns -->
+        <ProvincePicker
+          :initialProvince="form.province"
+          :initialDistrict="form.district"
+          :initialWard="form.ward"
+          variant="profile"
+          @change="onLocationChange"
+        />
 
         <!-- Detail Address -->
         <div class="space-y-2">
@@ -211,12 +184,18 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { profileService } from '@/services/client/profileService'
+import ProvincePicker from '@/components/client/ProvincePicker.vue'
 
 const addresses  = ref([])
 const loading    = ref(false)
 const submitting = ref(false)
 const showForm   = ref(false)
 const editingAddress = ref(null)
+const onLocationChange = ({ province, district, ward }) => {
+  form.value.province = province
+  form.value.district = district
+  form.value.ward = ward
+}
 
 const alert = ref({ show: false, type: 'success', message: '' })
 const showAlert = (type, message) => {
@@ -259,7 +238,7 @@ const openAddForm = () => {
     district: '',
     ward: '',
     detail_address: '',
-    is_default: addresses.value.length === 0 // automatic default if first address
+    is_default: addresses.value.length === 0
   }
   showForm.value = true
 }

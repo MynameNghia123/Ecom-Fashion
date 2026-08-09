@@ -9,4 +9,6 @@ interface ProductRepositoryInterface
     public function getActiveProducts(array $filters, string $sort, int $perPage): LengthAwarePaginator;
     public function getActiveBrands(): Collection;
     public function findActiveByIdOrSlug(string $idOrSlug): ?Product;
+    public function getTopRated(int $limit): Collection;
 }
+

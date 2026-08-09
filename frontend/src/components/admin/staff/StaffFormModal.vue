@@ -13,7 +13,7 @@
           <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
             <div class="flex items-center gap-3">
               <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                   <line v-if="mode === 'add'" x1="12" y1="5" x2="12" y2="19"/><line v-if="mode === 'add'" x1="5" y1="12" x2="19" y2="12"/>
                   <path v-if="mode === 'edit'" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                   <path v-if="mode === 'edit'" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -42,7 +42,7 @@
                 v-model="form.full_name"
                 type="text"
                 placeholder="Nguyễn Văn A"
-                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.full_name ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.full_name ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-black focus:ring-black/10']"
               />
               <p v-if="validationErrors.full_name" class="mt-1.5 text-xs text-red-500">{{ validationErrors.full_name[0] }}</p>
             </div>
@@ -57,7 +57,7 @@
                 v-model="form.email"
                 type="email"
                 placeholder="nhanvien@example.com"
-                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.email ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.email ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-black focus:ring-black/10']"
               />
               <p v-if="validationErrors.email" class="mt-1.5 text-xs text-red-500">{{ validationErrors.email[0] }}</p>
             </div>
@@ -70,7 +70,7 @@
                 v-model="form.phone_number"
                 type="text"
                 placeholder="090 123 4567"
-                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.phone_number ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.phone_number ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-black focus:ring-black/10']"
               />
               <p v-if="validationErrors.phone_number" class="mt-1.5 text-xs text-red-500">{{ validationErrors.phone_number[0] }}</p>
             </div>
@@ -87,7 +87,7 @@
                 v-model="form.password"
                 type="password"
                 placeholder="••••••••"
-                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.password ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.password ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-black focus:ring-black/10']"
               />
               <p v-if="validationErrors.password" class="mt-1.5 text-xs text-red-500">{{ validationErrors.password[0] }}</p>
             </div>
@@ -103,7 +103,7 @@
                 v-model="form.password_confirmation"
                 type="password"
                 placeholder="••••••••"
-                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
               />
             </div>
 
@@ -115,7 +115,7 @@
                 v-model="form.avatar"
                 type="text"
                 placeholder="https://example.com/avatar.jpg"
-                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.avatar ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-[#0258cb] focus:ring-[#0258cb]/10']"
+                :class="['w-full px-3.5 py-2.5 text-sm border rounded-xl placeholder-slate-400 bg-slate-50 focus:bg-white focus:ring-4 focus:outline-none transition-all duration-200', validationErrors.avatar ? 'border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/10' : 'border-slate-200 text-slate-800 focus:border-black focus:ring-black/10']"
               />
               <p v-if="validationErrors.avatar" class="mt-1.5 text-xs text-red-500">{{ validationErrors.avatar[0] }}</p>
               <div v-if="form.avatar" class="mt-2 flex items-center gap-3">
@@ -134,7 +134,7 @@
                   <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
                     <input
                       type="checkbox"
-                      class="rounded border-slate-300 text-[#0258cb] focus:ring-[#0258cb]/20 cursor-pointer"
+                      class="rounded border-slate-300 text-black focus:ring-black/20 cursor-pointer"
                       :value="role.id"
                       v-model="form.role_ids"
                     />
@@ -144,7 +144,23 @@
               </div>
             </div>
 
-
+            <!-- Quyền đặc cách -->
+            <div>
+              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quyền đặc cách (Permissions)</label>
+              <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50 max-h-40 overflow-y-auto">
+                <div v-for="perm in permissions" :key="perm.id" class="flex items-center gap-2">
+                  <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
+                    <input
+                      type="checkbox"
+                      class="rounded border-slate-300 text-black focus:ring-black/20 cursor-pointer"
+                      :value="perm.id"
+                      v-model="form.permission_ids"
+                    />
+                    <span class="font-medium text-slate-700">{{ perm.module }}.{{ perm.action }}</span>
+                  </label>
+                </div>
+              </div>
+            </div>
 
             <!-- Trạng thái -->
             <div>
@@ -153,7 +169,7 @@
                 <select
                   id="select-staff-status"
                   v-model="form.is_active"
-                  class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
+                  class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
                 >
                   <option :value="true">Hoạt động</option>
                   <option :value="false">Ngưng hoạt động</option>
@@ -179,7 +195,7 @@
               type="button"
               :disabled="isSubmitting"
               @click="handleSubmit"
-              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
+              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed disabled:active:scale-100"
             >
               <svg v-if="isSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
               {{ isSubmitting ? 'Đang lưu...' : (mode === 'add' ? 'Thêm nhân viên' : 'Lưu thay đổi') }}

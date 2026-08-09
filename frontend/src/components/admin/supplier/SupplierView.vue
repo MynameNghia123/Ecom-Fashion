@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
   :class="formView?.show ? '' : 'hidden'"
   >
@@ -46,7 +46,7 @@
             </div>
             <button 
               @click="emit('edit')"
-              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all duration-150 shrink-0">
+              class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white border border-slate-200 text-slate-600 text-sm font-semibold hover:border-black hover:text-black hover:bg-neutral-100 transition-all duration-150 shrink-0">
               <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -84,7 +84,7 @@
         <div v-if="false">
           <div class="flex items-center justify-between mb-3">
             <p class="text-sm font-bold text-slate-700">Sản phẩm cung cấp</p>
-            <span class="px-2.5 py-1 bg-blue-50 text-[#0258cb] text-xs font-bold rounded-lg border border-blue-100">
+            <span class="px-2.5 py-1 bg-blue-50 text-black text-xs font-bold rounded-lg border border-blue-100">
               2 sản phẩm
             </span>
           </div>
@@ -100,7 +100,7 @@
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-50">
-                <tr class="hover:bg-blue-50/30 transition-colors duration-100">
+                <tr class="hover:bg-neutral-100/30 transition-colors duration-100">
                   <td class="py-3 px-4">
                     <div class="flex items-center gap-2">
                       <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center shrink-0">
@@ -133,7 +133,7 @@
         </button>
         <button 
           @click="emit('edit')"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98]">
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98]">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>

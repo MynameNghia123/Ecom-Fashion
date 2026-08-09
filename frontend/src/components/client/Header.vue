@@ -157,7 +157,11 @@
         </button>
         <button @click="openMiniCart" class="icon-btn relative" :class="actionBtnClass" aria-label="Giỏ hàng">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-          <span class="badge bg-black">2</span>
+          <span 
+            v-if="cartStore.totalQuantity > 0"
+            class="badge bg-black"
+            :class="{ 'cart-bump': cartBumping }"
+          >{{ cartStore.totalQuantity }}</span>
         </button>
       </div>
     </header>
@@ -184,10 +188,11 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
 import { useWishlistStore } from '@/stores/client/wishlistStore'
+import { useCartStore } from '@/stores/client/cartStore'
 import { productService } from '@/services/client/productService'
 import AuthModal from '@/views/client/auth/AuthModal.vue'
 import MiniCart from '@/components/client/cart/MiniCart.vue'
@@ -196,6 +201,8 @@ import SearchOverlay from '@/components/client/SearchOverlay.vue'
 const router = useRouter()
 const authStore = useClientAuthStore()
 const wishlistStore = useWishlistStore()
+const cartStore = useCartStore()
+const cartBumping = ref(false)
 const isAuthModalOpen = ref(false)
 const authModalMode = ref('login')
 const isMiniCartOpen = ref(false)
@@ -266,6 +273,14 @@ onMounted(() => {
 
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll)
+})
+
+// Watch cart quantity changes to trigger bump animation
+watch(() => cartStore.totalQuantity, (newVal, oldVal) => {
+  if (newVal > oldVal) {
+    cartBumping.value = true
+    setTimeout(() => { cartBumping.value = false }, 450)
+  }
 })
 
 // ── Computed Classes ──────────────────────────────────────────
@@ -519,5 +534,16 @@ const actionBtnClass = computed(() => isLight.value ? 'text-black' : 'text-white
 .dropdown-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-6px);
+}
+
+/* ── Cart Badge Bump Animation ── */
+@keyframes cart-bump {
+  0%   { transform: scale(1); }
+  35%  { transform: scale(1.55); }
+  65%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
+}
+.cart-bump {
+  animation: cart-bump 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 }
 </style>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="space-y-6 font-text text-slate-800">
     <!-- Page Header -->
     <div class="flex items-center justify-between flex-wrap gap-4">
@@ -219,7 +219,7 @@
             :key="p"
             @click="changePage(p)"
             class="w-9 h-9 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center"
-            :class="p === reviewStore.meta.current_page ? 'bg-[#0258cb] text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'"
+            :class="p === reviewStore.meta.current_page ? 'bg-black text-white' : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50'"
           >
             {{ p }}
           </button>

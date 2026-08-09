@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <!-- Modal Chi tiết sản phẩm -->
   <Teleport to="body">
     <Transition name="modal-fade">
@@ -29,7 +29,7 @@
 
             <!-- Thông tin chung -->
             <div class="border border-slate-200 rounded-xl p-5">
-              <h3 class="flex items-center gap-2 text-sm font-bold text-[#0258cb] mb-4">
+              <h3 class="flex items-center gap-2 text-sm font-bold text-black mb-4">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 Thông tin chung
               </h3>
@@ -60,7 +60,7 @@
                   <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Trạng thái</p>
                   <div class="flex items-center gap-2 mt-0.5">
                     <div
-                      :class="product?.is_active ? 'bg-[#0258cb] justify-end' : 'bg-slate-300 justify-start'"
+                      :class="product?.is_active ? 'bg-black justify-end' : 'bg-slate-300 justify-start'"
                       class="w-10 h-5 rounded-full flex items-center px-0.5 transition-colors"
                     >
                       <div class="w-4 h-4 bg-white rounded-full shadow-sm"></div>
@@ -73,7 +73,7 @@
 
             <!-- Mô tả -->
             <div class="border border-slate-200 rounded-xl p-5">
-              <h3 class="flex items-center gap-2 text-sm font-bold text-[#0258cb] mb-4">
+              <h3 class="flex items-center gap-2 text-sm font-bold text-black mb-4">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
                 Mô tả chi tiết
               </h3>
@@ -84,7 +84,7 @@
 
             <!-- Hình ảnh -->
             <div class="border border-slate-200 rounded-xl p-5">
-              <h3 class="flex items-center gap-2 text-sm font-bold text-[#0258cb] mb-4">
+              <h3 class="flex items-center gap-2 text-sm font-bold text-black mb-4">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
                 Quản lý hình ảnh
               </h3>
@@ -95,7 +95,7 @@
                 >
                   <img :src="img.image_url" :alt="img.alt_text" class="w-full h-full object-cover" />
                   <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent px-2 py-2">
-                    <span v-if="img.is_thumbnail" class="block text-[9px] font-bold text-white bg-[#0258cb] px-1.5 py-0.5 rounded uppercase mb-0.5 w-fit">Thumbnail</span>
+                    <span v-if="img.is_thumbnail" class="block text-[9px] font-bold text-white bg-black px-1.5 py-0.5 rounded uppercase mb-0.5 w-fit">Thumbnail</span>
                     <p v-if="img.alt_text" class="text-[10px] text-white font-medium truncate">{{ img.alt_text }}</p>
                   </div>
                 </div>
@@ -105,7 +105,7 @@
 
             <!-- Biến thể -->
             <div class="border border-slate-200 rounded-xl p-5">
-              <h3 class="flex items-center gap-2 text-sm font-bold text-[#0258cb] mb-4">
+              <h3 class="flex items-center gap-2 text-sm font-bold text-black mb-4">
                 <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
                 Biến thể sản phẩm
               </h3>
@@ -135,7 +135,7 @@
                         </div>
                       </td>
                       <td class="py-3 px-3 font-mono text-xs text-slate-700 font-semibold">{{ v.sku }}</td>
-                      <td class="py-3 px-3 text-sm text-[#0258cb] font-medium">
+                      <td class="py-3 px-3 text-sm text-black font-medium">
                         {{ (v.attribute_values ?? []).map(av => av.value).join(' / ') || '—' }}
                       </td>
                       <td class="py-3 px-3 text-sm text-slate-600">{{ formatCurrency(v.cost_price) }}</td>
@@ -166,7 +166,7 @@
               class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 font-semibold text-sm hover:bg-slate-50 transition-all">Đóng</button>
             <button 
               @click="$emit('moveToUpdate')"
-              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all active:scale-[0.98]">
+              class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 transition-all active:scale-[0.98]">
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>

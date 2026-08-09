@@ -67,6 +67,12 @@ class ProductRepository implements ProductRepositoryInterface
                     WHERE product_variants.product_id = products.id
                 ) DESC');
                 break;
+            case 'top_rated':
+                $query->withAvg('reviews', 'rating')
+                      ->withCount('reviews')
+                      ->orderByDesc('reviews_avg_rating')
+                      ->orderByDesc('reviews_count');
+                break;
             default: // 'latest'
                 $query->latest();
                 break;
@@ -94,5 +100,18 @@ class ProductRepository implements ProductRepositoryInterface
                 $query->where('id', $idOrSlug)->orWhere('slug', $idOrSlug);
             })
             ->first();
+    }
+
+    public function getTopRated(int $limit): Collection
+    {
+        return $this->model->where('is_active', true)
+            ->with(['category', 'productImages', 'productVariants.attributeValues.attribute'])
+            ->withAvg('reviews', 'rating')
+            ->withCount('reviews')
+            ->orderByDesc('reviews_avg_rating')
+            ->orderByDesc('reviews_count')
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
     }
 }

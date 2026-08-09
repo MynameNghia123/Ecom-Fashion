@@ -29,4 +29,7 @@ export default defineConfig({
       usePolling: true,
     },
   },
+  optimizeDeps: {
+    include: ['vue-inner-image-zoom'],
+  },
 })

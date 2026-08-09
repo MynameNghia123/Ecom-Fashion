@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="border border-slate-200 rounded-xl p-5 space-y-4">
     <h3 class="text-sm font-bold text-slate-700">Quản lý hình ảnh sản phẩm</h3>
     
@@ -14,15 +14,15 @@
     <!-- Khu vực kéo thả / click để chọn ảnh -->
     <div 
       @click="triggerFileInput"
-      class="border-2 border-dashed border-slate-300 hover:border-[#0258cb] rounded-xl p-8 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors group bg-blue-50/30 hover:bg-blue-50/60"
+      class="border-2 border-dashed border-slate-300 hover:border-black rounded-xl p-8 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors group bg-blue-50/30 hover:bg-neutral-100/60"
     >
       <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-        <svg class="w-6 h-6 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg class="w-6 h-6 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/>
           <path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/>
         </svg>
       </div>
-      <p class="text-sm font-semibold text-[#0258cb]">Kéo thả ảnh vào đây hoặc nhấp để tải lên</p>
+      <p class="text-sm font-semibold text-black">Kéo thả ảnh vào đây hoặc nhấp để tải lên</p>
       <p class="text-xs text-slate-400">Hỗ trợ JPG, PNG, WebP. Tối đa 5MB/ảnh. Tối đa 10 ảnh.</p>
     </div>
 
@@ -38,7 +38,7 @@
           <img v-if="image.preview_url" :src="image.preview_url" class="w-full h-full object-cover" alt="preview" />
           <!-- Đang upload spinner -->
           <div v-if="image._uploading" class="absolute inset-0 bg-white/80 flex items-center justify-center">
-            <svg class="w-5 h-5 text-[#0258cb] animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <svg class="w-5 h-5 text-black animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
           </div>
@@ -51,11 +51,11 @@
         <div class="flex-1 grid grid-cols-3 gap-3 items-center">
           <div class="col-span-1">
             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Alt Text</p>
-            <input v-model="image.alt_text" type="text" placeholder="Mô tả ảnh..." class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:border-[#0258cb] focus:outline-none transition-all" />
+            <input v-model="image.alt_text" type="text" placeholder="Mô tả ảnh..." class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:border-black focus:outline-none transition-all" />
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Thứ tự</p>
-            <input v-model.number="image.display_order" type="number" min="1" class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:border-[#0258cb] focus:outline-none transition-all text-center" />
+            <input v-model.number="image.display_order" type="number" min="1" class="w-full px-2.5 py-1.5 text-xs border border-slate-200 rounded-lg bg-white focus:border-black focus:outline-none transition-all text-center" />
           </div>
           <div class="flex items-center gap-3">
             <div>
@@ -65,7 +65,7 @@
                 type="button"
                 :class="[
                   'w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all',
-                  image.is_thumbnail ? 'border-[#0258cb] bg-[#0258cb]' : 'border-slate-300 bg-white'
+                  image.is_thumbnail ? 'border-black bg-black' : 'border-slate-300 bg-white'
                 ]"  
               >
                 <div v-if="image.is_thumbnail" class="w-2.5 h-2.5 rounded-full bg-white"></div>

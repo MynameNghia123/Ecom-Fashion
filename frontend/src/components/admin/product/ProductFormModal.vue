@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <!-- Modal Thêm / Sửa sản phẩm -->
   <Teleport to="body">
     <Transition name="modal-fade">
@@ -35,7 +35,7 @@
                       type="button" 
                       :class="[
                         'w-11 h-6 rounded-full flex items-center px-0.5 transition-colors duration-200 focus:outline-none',
-                        formProduct.is_active ? 'bg-[#0258cb]' : 'bg-slate-300'
+                        formProduct.is_active ? 'bg-black' : 'bg-slate-300'
                       ]"
                     >
                       <div 
@@ -51,19 +51,19 @@
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Tên sản phẩm <span class="text-red-500">*</span></label>
                   <input v-model="formProduct.name" @blur="generateSlug" type="text" placeholder="Nhập tên sản phẩm..."
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all" />
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all" />
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Slug <span class="text-red-500">*</span></label>
                   <input v-model="formProduct.slug" type="text" placeholder="ten-san-pham-slug"
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all font-mono" />
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-600 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all font-mono" />
                 </div>
                 <div>
                   <label class="block text-xs font-bold text-slate-700 mb-1.5">Danh mục <span class="text-red-500">*</span></label>
                   <div class="relative">
                     <select 
                       v-model="formProduct.category_id"
-                    class="w-full appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer">
+                    class="w-full appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all cursor-pointer">
                       <option value="">Chọn danh mục</option>
                       <option
                         v-for="category in categoryStore.categories" 
@@ -79,7 +79,7 @@
                   <input 
                     v-model="formProduct.brand"
                     type="text" placeholder="Nhập thương hiệu"
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all" />
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all" />
                 </div>
               </div>
 
@@ -88,7 +88,7 @@
                 <textarea 
                   v-model="formProduct.description"
                   rows="5" placeholder="Nhập mô tả sản phẩm..."
-                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-b-xl text-slate-700 placeholder-slate-400 bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all resize-none leading-relaxed rounded-t-none"></textarea>
+                  class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-b-xl text-slate-700 placeholder-slate-400 bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all resize-none leading-relaxed rounded-t-none"></textarea>
               </div>
             </div>
 
@@ -110,7 +110,7 @@
             <button
               @click="handleSave"
               :disabled="isSaving || isUploadingAny"
-              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+              class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 transition-all active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
               <svg v-if="isSaving || isUploadingAny" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
               {{ isSaving ? 'Đang lưu...' : (isUploadingAny ? 'Đang tải ảnh...' : 'Lưu sản phẩm') }}
             </button>

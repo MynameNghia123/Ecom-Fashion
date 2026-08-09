@@ -10,7 +10,7 @@
       <button
         id="btn-open-add-coupon"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -103,7 +103,7 @@
             @input="onSearch"
             type="text"
             placeholder="Tìm theo mã code..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
 
@@ -113,7 +113,7 @@
             id="filter-coupon-type"
             v-model="filterType"
             @change="onFilterChange"
-            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer"
+            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer"
           >
             <option value="">Tất cả loại</option>
             <option value="percent">Phần trăm (%)</option>
@@ -130,7 +130,7 @@
             id="filter-coupon-status"
             v-model="filterStatus"
             @change="onFilterChange"
-            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer"
+            class="appearance-none pl-3.5 pr-9 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer"
           >
             <option value="">Tất cả trạng thái</option>
             <option value="1">Đang hoạt động</option>
@@ -147,15 +147,15 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-100">
-              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px]">ID</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Mã Code</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px]">Loại</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Giá trị</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[150px]">Đơn tối thiểu</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Lượt dùng</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Hết hạn</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Trạng thái</th>
-              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Hành động</th>
+              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px] whitespace-nowrap">ID</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Mã Code</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px] whitespace-nowrap">Loại</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px] whitespace-nowrap">Giá trị</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[150px] whitespace-nowrap">Đơn tối thiểu</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px] whitespace-nowrap">Lượt dùng</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px] whitespace-nowrap">Hết hạn</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Trạng thái</th>
+              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Hành động</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -172,7 +172,7 @@
               v-else
               v-for="coupon in couponStore.coupons"
               :key="coupon.id"
-              class="hover:bg-blue-50/40 transition-colors duration-100 group"
+              class="hover:bg-neutral-100/40 transition-colors duration-100 group"
             >
               <!-- ID -->
               <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ coupon.id }}</td>
@@ -185,7 +185,7 @@
                   </span>
                   <button
                     @click="copyCode(coupon.code)"
-                    class="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-[#0258cb] transition-all duration-150"
+                    class="opacity-0 group-hover:opacity-100 p-1 rounded text-slate-400 hover:text-black transition-all duration-150"
                     title="Sao chép mã"
                   >
                     <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -332,7 +332,7 @@
             <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
               <div class="flex items-center gap-3">
                 <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-                  <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <line v-if="modalMode === 'add'" x1="12" y1="5" x2="12" y2="19"/><line v-if="modalMode === 'add'" x1="5" y1="12" x2="19" y2="12"/>
                     <path v-if="modalMode === 'edit'" d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                     <path v-if="modalMode === 'edit'" d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
@@ -374,14 +374,14 @@
                     v-model="form.code"
                     type="text"
                     placeholder="VD: SUMMER20"
-                    class="flex-1 px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 font-mono uppercase"
+                    class="flex-1 px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 font-mono uppercase"
                     :class="fieldError('code') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                     @input="form.code = form.code.toUpperCase()"
                   />
                   <button
                     type="button"
                     @click="generateCode"
-                    class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 text-xs font-semibold transition-all duration-150 whitespace-nowrap"
+                    class="px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-500 hover:border-black hover:text-black hover:bg-neutral-100 text-xs font-semibold transition-all duration-150 whitespace-nowrap"
                     title="Tạo mã ngẫu nhiên"
                   >
                     Tạo ngẫu nhiên
@@ -401,7 +401,7 @@
                     <select
                       id="select-coupon-type"
                       v-model="form.type"
-                      class="w-full appearance-none px-3.5 py-2.5 text-sm border rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
+                      class="w-full appearance-none px-3.5 py-2.5 text-sm border rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
                       :class="fieldError('type') ? 'border-red-400' : 'border-slate-200'"
                     >
                       <option value="percent">Phần trăm (%)</option>
@@ -427,7 +427,7 @@
                     :min="0"
                     :max="form.type === 'percent' ? 100 : undefined"
                     :placeholder="form.type === 'percent' ? 'VD: 20' : 'VD: 50000'"
-                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('discount_value') ? 'border-red-400 focus:border-red-400 focus:ring-red-100' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('discount_value')" class="text-xs text-red-500 mt-1">{{ fieldError('discount_value') }}</p>
@@ -447,7 +447,7 @@
                     type="number"
                     min="0"
                     placeholder="VD: 200000 (để trống = không giới hạn)"
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('price_min_order_value') ? 'border-red-400' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('price_min_order_value')" class="text-xs text-red-500 mt-1">{{ fieldError('price_min_order_value') }}</p>
@@ -464,7 +464,7 @@
                     type="number"
                     min="1"
                     placeholder="Để trống = không giới hạn"
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('max_usage') ? 'border-red-400' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('max_usage')" class="text-xs text-red-500 mt-1">{{ fieldError('max_usage') }}</p>
@@ -480,7 +480,7 @@
                     id="input-coupon-expiry"
                     v-model="form.expiry_date"
                     type="date"
-                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                    class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     :class="fieldError('expiry_date') ? 'border-red-400' : 'border-slate-200'"
                   />
                   <p v-if="fieldError('expiry_date')" class="text-xs text-red-500 mt-1">{{ fieldError('expiry_date') }}</p>
@@ -494,7 +494,7 @@
                     <select
                       id="select-coupon-status"
                       v-model="form.is_active"
-                      class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
+                      class="w-full appearance-none px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 cursor-pointer pr-10"
                     >
                       <option :value="true">Hoạt động</option>
                       <option :value="false">Tắt</option>
@@ -510,7 +510,7 @@
               <div v-if="form.code" class="p-4 bg-gradient-to-r from-blue-50 to-violet-50 border border-blue-100 rounded-xl">
                 <p class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Xem trước mã</p>
                 <div class="flex items-center gap-3">
-                  <span class="inline-flex items-center px-4 py-2 rounded-xl bg-white border-2 border-dashed border-blue-300 font-mono text-lg font-bold text-[#0258cb] tracking-widest shadow-sm">
+                  <span class="inline-flex items-center px-4 py-2 rounded-xl bg-white border-2 border-dashed border-blue-300 font-mono text-lg font-bold text-black tracking-widest shadow-sm">
                     {{ form.code }}
                   </span>
                   <div class="text-sm text-slate-600">
@@ -534,7 +534,7 @@
                 id="btn-submit-coupon"
                 @click="submitForm"
                 :disabled="formSubmitting"
-                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
+                class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed"
               >
                 <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <path d="M21 12a9 9 0 1 1-6.219-8.56"/>

@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <!-- Modal Backdrop & Container -->
   <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4"
       :class=" isShowAdd ? 'pointer-events-auto opacity-100' : 'pointer-events-none opacity-0'"
@@ -10,7 +10,7 @@
       <div class="flex items-center justify-between px-7 pt-6 pb-5 border-b border-slate-100">
         <div class="flex items-center gap-3">
           <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
-            <svg class="w-5 h-5 text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg class="w-5 h-5 text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
           </div>
@@ -46,7 +46,7 @@
             </label>
             <select
               v-model="newReceipt.supplier_id"
-              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+              class="w-full px-3.5 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
             >
               <option class="cursor-not-allowed" value="">Chọn nhà cung cấp</option>
               <option v-for="supplier in supplierList" :key="supplier.id" :value="supplier.id">
@@ -63,7 +63,7 @@
             <p class="text-sm font-bold text-slate-700">Danh sách sản phẩm</p>
             <button
               @click="addGoodsReceiptDetails"
-              class="inline-flex items-center gap-1 text-sm font-semibold text-[#0258cb] hover:text-[#004bb3] transition-colors"
+              class="inline-flex items-center gap-1 text-sm font-semibold text-black hover:text-[#004bb3] transition-colors"
             >
               <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -97,7 +97,7 @@
                         @focus="activeRowIndex = index"
                         @blur="hideDropdown"
                         placeholder="Tìm sản phẩm / biến thể..."
-                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                        class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                       />
                       <!-- Dropdown list -->
                       <div 
@@ -126,7 +126,7 @@
                       type="number"
                       min="1"
                       v-model="goodReceiptDetail.quantity"
-                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200 text-center"
+                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200 text-center"
                     />
                   </td>
                   <td class="py-2 px-4">
@@ -134,7 +134,7 @@
                       type="number"
                       min="0"
                       v-model="goodReceiptDetail.import_price"
-                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+                      class="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg text-slate-800 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
                     />
                   </td>
                   <td class="py-2 px-4 text-right font-semibold text-slate-700">
@@ -162,7 +162,7 @@
             <div class="w-64 space-y-2">
               <div class="pt-2 border-t border-slate-200 flex justify-between items-center">
                 <span class="text-sm font-bold text-slate-700">Tổng cộng:</span>
-                <span class="text-lg font-bold text-[#0258cb]">{{formatCurrency(newReceipt.total_amount_price)}}</span>
+                <span class="text-lg font-bold text-black">{{formatCurrency(newReceipt.total_amount_price)}}</span>
               </div>
             </div>
           </div>
@@ -178,7 +178,7 @@
         <button
           @click="handleSave"
           :disabled="isSubmitting"
-          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all duration-150 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <svg v-if="!isSubmitting" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>

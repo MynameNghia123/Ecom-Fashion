@@ -29,6 +29,7 @@ use App\Http\Controllers\Client\CartController as ClientCartController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
 use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
+use App\Http\Controllers\Client\ShippingController as ClientShippingController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
 
@@ -119,8 +120,18 @@ Route::prefix('client')->group(function () {
     // Products & Brands
     Route::get('products', [ClientProductController::class, 'index']);
     Route::get('products/brands', [ClientProductController::class, 'brands']);
-    Route::get('products/{id}', [ClientProductController::class, 'show']);
-    Route::get('products/{id}/reviews', [\App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+    Route::get('products/top-rated', [ClientProductController::class, 'topRated']);
+    Route::get('products/{idOrSlug}', [ClientProductController::class, 'show']);
+    Route::get('products/{idOrSlug}/reviews', [\App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+
+    // GHN Shipping proxy
+    Route::prefix('shipping')->group(function () {
+        Route::get('provinces', [ClientShippingController::class, 'provinces']);
+        Route::get('districts', [ClientShippingController::class, 'districts']);
+        Route::get('wards', [ClientShippingController::class, 'wards']);
+        Route::get('services', [ClientShippingController::class, 'services']);
+        Route::post('fee', [ClientShippingController::class, 'fee']);
+    });
 
     // Categories (public — for filter sidebar & mega menu)
     Route::get('categories/tree', function () {

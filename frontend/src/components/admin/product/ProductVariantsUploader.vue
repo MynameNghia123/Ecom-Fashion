@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="border border-slate-200 rounded-xl p-5 space-y-4">
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-bold text-slate-700">Phân loại hàng (Biến thể)</h3>
@@ -18,17 +18,17 @@
             @focus="group.showSuggestions = true"
             @blur="hideSuggestionsDelay(group)"
             type="text" placeholder="VD: Màu sắc, Size..." 
-            class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-2 focus:ring-[#0258cb]/10 focus:outline-none transition-all font-semibold text-slate-700" 
+            class="w-full px-3 py-1.5 text-sm border border-slate-200 rounded-xl bg-slate-50 focus:bg-white focus:border-black focus:ring-2 focus:ring-black/10 focus:outline-none transition-all font-semibold text-slate-700" 
           />
           <ul v-if="group.showSuggestions && filterAttributeGroup(group.name).length > 0" class="absolute z-10 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-40 overflow-y-auto">
-            <li v-for="attr in filterAttributeGroup(group.name)" :key="attr.id" @mousedown="selectAttribute(group, attr)" class="px-3 py-2 text-sm text-slate-600 hover:bg-blue-50 hover:text-[#0258cb] cursor-pointer transition-colors">
+            <li v-for="attr in filterAttributeGroup(group.name)" :key="attr.id" @mousedown="selectAttribute(group, attr)" class="px-3 py-2 text-sm text-slate-600 hover:bg-neutral-100 hover:text-black cursor-pointer transition-colors">
               {{ attr.name }}
             </li>
           </ul>
         </div>
 
         <div class="flex flex-wrap items-center gap-1.5 flex-1 p-1 border border-transparent rounded-xl focus-within:border-slate-200 focus-within:bg-slate-50 transition-colors min-h-[36px]">
-          <span v-for="(val, valIndex) in group.values" :key="valIndex" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-[#0258cb] border border-blue-200">
+          <span v-for="(val, valIndex) in group.values" :key="valIndex" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-black border border-blue-200">
             {{ val }}
             <button @click="removeValueFromGroup(group, valIndex)" type="button" class="hover:text-red-500 transition-colors">×</button>
           </span>
@@ -79,7 +79,7 @@
               <div class="relative w-10 h-10 mx-auto group">
                 <div 
                   @click="triggerVariantImage(vIdx)" 
-                  class="w-full h-full rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden cursor-pointer group-hover:border-[#0258cb] transition-colors relative"
+                  class="w-full h-full rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden cursor-pointer group-hover:border-black transition-colors relative"
                   title="Nhấp để tải ảnh lên"
                 >
                   <img v-if="v._image_preview" :src="v._image_preview" class="w-full h-full object-cover" />
@@ -101,28 +101,28 @@
             </td>
 
             <td class="py-3 px-3">
-              <input v-model="v.sku" type="text" class="w-24 px-2 py-1.5 text-xs font-mono border border-slate-200 rounded-lg focus:border-[#0258cb] focus:outline-none bg-white transition-colors" />
+              <input v-model="v.sku" type="text" class="w-24 px-2 py-1.5 text-xs font-mono border border-slate-200 rounded-lg focus:border-black focus:outline-none bg-white transition-colors" />
             </td>
 
             <td class="py-3 px-3">
-              <input v-model="v.name" type="text" class="w-32 px-2 py-1.5 text-xs font-medium text-[#0258cb] border border-transparent hover:border-slate-200 focus:border-[#0258cb] rounded-lg focus:outline-none bg-transparent focus:bg-white transition-colors" />
+              <input v-model="v.name" type="text" class="w-32 px-2 py-1.5 text-xs font-medium text-black border border-transparent hover:border-slate-200 focus:border-black rounded-lg focus:outline-none bg-transparent focus:bg-white transition-colors" />
             </td>
 
             <td class="py-3 px-3">
               <!-- cost_price: giá vốn -->
-              <input v-model.number="v.cost_price" type="number" min="0" placeholder="0" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-[#0258cb] focus:outline-none text-right bg-white transition-colors" />
+              <input v-model.number="v.cost_price" type="number" min="0" placeholder="0" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-black focus:outline-none text-right bg-white transition-colors" />
             </td>
             <td class="py-3 px-3">
               <!-- price: giá bán chính (backend field) -->
-              <input v-model.number="v.price" type="number" min="0" placeholder="0" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-[#0258cb] focus:outline-none font-semibold text-right bg-white transition-colors" />
+              <input v-model.number="v.price" type="number" min="0" placeholder="0" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-black focus:outline-none font-semibold text-right bg-white transition-colors" />
             </td>
             <td class="py-3 px-3">
               <!-- sale_price: giá khuyến mãi (backend field) -->
-              <input v-model.number="v.sale_price" type="number" min="0" placeholder="Không" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-[#0258cb] focus:outline-none text-pink-600 font-semibold text-right bg-white transition-colors" />
+              <input v-model.number="v.sale_price" type="number" min="0" placeholder="Không" class="w-20 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-black focus:outline-none text-pink-600 font-semibold text-right bg-white transition-colors" />
             </td>
             <td class="py-3 px-3 text-center">
               <!-- stock_quantity: tồn kho (backend field) -->
-              <input v-model.number="v.stock_quantity" type="number" min="0" placeholder="0" class="w-16 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-[#0258cb] focus:outline-none text-center font-bold bg-white transition-colors" />
+              <input v-model.number="v.stock_quantity" type="number" min="0" placeholder="0" class="w-16 px-2 py-1.5 text-xs border border-slate-200 rounded-lg focus:border-black focus:outline-none text-center font-bold bg-white transition-colors" />
             </td>
             <td class="py-3 px-3 text-center">
               <!-- is_active: kích hoạt (backend field) -->

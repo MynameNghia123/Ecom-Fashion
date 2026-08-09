@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="flex items-center justify-between flex-wrap gap-3 w-full">
     <!-- Info Text & Per Page Selector -->
     <div class="flex items-center gap-3 flex-wrap">
@@ -17,7 +17,7 @@
           :value="perPage"
           @change="onPerPageChange"
           :disabled="loading"
-          class="appearance-none pl-2.5 pr-7 py-1.5 border border-slate-200 rounded-lg text-slate-600 bg-white hover:border-[#0258cb] focus:border-[#0258cb] focus:ring-2 focus:ring-[#0258cb]/10 focus:outline-none transition-all cursor-pointer font-medium"
+          class="appearance-none pl-2.5 pr-7 py-1.5 border border-slate-200 rounded-lg text-slate-600 bg-white hover:border-black focus:border-black focus:ring-2 focus:ring-black/10 focus:outline-none transition-all cursor-pointer font-medium"
         >
           <option :value="4">4 / trang</option>
           <option :value="10">10 / trang</option>
@@ -38,7 +38,7 @@
       <button
         @click="emit('update:currentPage', currentPage - 1)"
         :disabled="currentPage === 1 || loading"
-        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all disabled:cursor-not-allowed"
+        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-black hover:text-black hover:bg-neutral-100 transition-all disabled:cursor-not-allowed"
         title="Trang trước"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -55,10 +55,10 @@
         :class="[
           'w-8 h-8 flex items-center justify-center rounded-lg text-sm font-semibold transition-all',
           page === currentPage
-            ? 'bg-[#0258cb] text-white border border-[#0258cb] shadow-sm'
+            ? 'bg-black text-white border border-black shadow-sm'
             : page === '...'
             ? 'text-slate-400 cursor-default border border-transparent'
-            : 'border border-slate-200 text-slate-600 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 disabled:cursor-not-allowed'
+            : 'border border-slate-200 text-slate-600 hover:border-black hover:text-black hover:bg-neutral-100 disabled:cursor-not-allowed'
         ]"
       >
         {{ page }}
@@ -68,7 +68,7 @@
       <button
         @click="emit('update:currentPage', currentPage + 1)"
         :disabled="currentPage === lastPage || loading"
-        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-[#0258cb] hover:text-[#0258cb] hover:bg-blue-50 transition-all disabled:cursor-not-allowed"
+        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-500 disabled:opacity-40 hover:border-black hover:text-black hover:bg-neutral-100 transition-all disabled:cursor-not-allowed"
         title="Trang sau"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">

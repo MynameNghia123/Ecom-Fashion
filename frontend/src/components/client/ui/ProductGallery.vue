@@ -15,13 +15,23 @@
 
     <!-- Main Large Image View -->
     <div class="grow aspect-[3/4] max-h-[600px] md:max-h-[650px] relative bg-gray-50 border border-gray-100 overflow-hidden">
-      <img :src="productImages[activeImageIdx]" alt="Main Product View" class="w-full h-full object-cover transition-all duration-300">
+      <InnerImageZoom 
+        v-if="productImages && productImages.length > 0"
+        :src="productImages[activeImageIdx]" 
+        :zoomSrc="productImages[activeImageIdx]" 
+        :zoomScale="1.5"
+        zoomType="hover"
+        alt="Main Product View" 
+        class="w-full h-full object-cover main-product-zoom"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue'
+import InnerImageZoom from 'vue-inner-image-zoom'
+import 'vue-inner-image-zoom/lib/styles.min.css'
 
 const props = defineProps({
   productImages: {
@@ -38,3 +48,18 @@ watch(() => props.productImages, () => {
   activeImageIdx.value = 0
 }, { deep: true })
 </script>
+
+<style scoped>
+:deep(.main-product-zoom),
+:deep(.main-product-zoom .iiz) {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+}
+
+:deep(.main-product-zoom .iiz__img) {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+</style>

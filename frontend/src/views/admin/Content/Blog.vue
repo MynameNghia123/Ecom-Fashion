@@ -10,7 +10,7 @@
       <button
         id="btn-open-add-blog"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -85,14 +85,14 @@
             @input="onSearch"
             type="text"
             placeholder="Tìm theo tiêu đề..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
         <!-- Filter Status -->
         <select
           v-model="filterStatus"
           @change="onFilterChange"
-          class="py-2.5 px-4 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+          class="py-2.5 px-4 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
         >
           <option value="">Tất cả trạng thái</option>
           <option value="active">Đang hiển thị</option>
@@ -105,13 +105,13 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-100">
-              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px]">ID</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[80px]">Ảnh</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Tiêu đề</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Slug</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Trạng thái</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px]">Ngày tạo</th>
-              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Hành động</th>
+              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px] whitespace-nowrap">ID</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[80px] whitespace-nowrap">Ảnh</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Tiêu đề</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Slug</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Trạng thái</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px] whitespace-nowrap">Ngày tạo</th>
+              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Hành động</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -140,7 +140,7 @@
               <tr
                 v-for="blog in blogStore.blogs"
                 :key="blog.id"
-                class="hover:bg-blue-50/40 transition-colors duration-100 group"
+                class="hover:bg-neutral-100/40 transition-colors duration-100 group"
               >
                 <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ blog.id }}</td>
                 <td class="py-3 px-4">
@@ -267,7 +267,7 @@
                   @input="autoSlug"
                   type="text"
                   placeholder="Nhập tiêu đề bài viết..."
-                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                 />
                 <p v-if="formErrors.name" class="mt-1 text-xs text-red-500">{{ formErrors.name[0] }}</p>
               </div>
@@ -282,7 +282,7 @@
                     v-model="form.slug"
                     type="text"
                     placeholder="ten-bai-viet-theo-url"
-                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 font-mono focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 font-mono focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                   />
                 </div>
                 <p v-if="formErrors.slug" class="mt-1 text-xs text-red-500">{{ formErrors.slug[0] }}</p>
@@ -308,10 +308,10 @@
                 <label
                   v-else
                   :class="imageUploading ? 'opacity-60 pointer-events-none' : 'cursor-pointer'"
-                  class="flex flex-col items-center justify-center w-full aspect-[16/7] border-2 border-dashed border-slate-300 rounded-xl hover:border-[#0258cb] hover:bg-blue-50/30 transition-all"
+                  class="flex flex-col items-center justify-center w-full aspect-[16/7] border-2 border-dashed border-slate-300 rounded-xl hover:border-black hover:bg-neutral-100/30 transition-all"
                 >
                   <input type="file" accept="image/*" class="sr-only" @change="handleImageUpload" :disabled="imageUploading" />
-                  <div v-if="imageUploading" class="flex flex-col items-center gap-2 text-[#0258cb]">
+                  <div v-if="imageUploading" class="flex flex-col items-center gap-2 text-black">
                     <svg class="w-7 h-7 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
                     </svg>
@@ -337,7 +337,7 @@
                   v-model="form.description"
                   rows="6"
                   placeholder="Nhập nội dung bài viết..."
-                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 resize-none focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 resize-none focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                 ></textarea>
                 <p v-if="formErrors.description" class="mt-1 text-xs text-red-500">{{ formErrors.description[0] }}</p>
               </div>
@@ -349,11 +349,11 @@
                   <label
                     class="flex items-center gap-2.5 px-4 py-2.5 border rounded-xl cursor-pointer transition-all"
                     :class="form.status === 'active'
-                      ? 'border-[#0258cb] bg-blue-50 text-[#0258cb]'
+                      ? 'border-black bg-blue-50 text-black'
                       : 'border-slate-200 text-slate-500 hover:border-slate-300'"
                   >
                     <input type="radio" v-model="form.status" value="active" class="sr-only" />
-                    <span class="w-2 h-2 rounded-full" :class="form.status === 'active' ? 'bg-[#0258cb]' : 'bg-slate-300'"></span>
+                    <span class="w-2 h-2 rounded-full" :class="form.status === 'active' ? 'bg-black' : 'bg-slate-300'"></span>
                     <span class="text-sm font-medium">Hiển thị</span>
                   </label>
                   <label
@@ -388,7 +388,7 @@
                 <button
                   type="submit"
                   :disabled="formSubmitting"
-                  class="flex-1 py-2.5 px-5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all shadow-md shadow-blue-200 focus:outline-none active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2"
+                  class="flex-1 py-2.5 px-5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all shadow-md shadow-neutral-200 focus:outline-none active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2"
                 >
                   <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                   {{ modalMode === 'add' ? 'Thêm bài viết' : 'Lưu thay đổi' }}

@@ -10,7 +10,7 @@
       <button
         id="btn-open-add-banner"
         @click="openAddModal"
-        class="inline-flex items-center gap-2 px-5 py-2.5 bg-[#0258cb] hover:bg-[#004bb3] text-white text-sm font-semibold rounded-xl shadow-md shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 active:scale-[0.98]"
+        class="inline-flex items-center gap-2 px-5 py-2.5 bg-black hover:bg-neutral-800 text-white text-sm font-semibold rounded-xl shadow-md shadow-neutral-200 hover:shadow-neutral-300 transition-all duration-200 active:scale-[0.98]"
       >
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -84,13 +84,13 @@
             @input="onSearch"
             type="text"
             placeholder="Tìm theo tiêu đề..."
-            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+            class="w-full pl-10 pr-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
           />
         </div>
         <select
           v-model="filterPosition"
           @change="onFilterChange"
-          class="py-2.5 px-4 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all duration-200"
+          class="py-2.5 px-4 text-sm border border-slate-200 rounded-xl text-slate-600 bg-slate-50 focus:bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all duration-200"
         >
           <option value="">Tất cả vị trí</option>
           <option value="home_hero">Trang chủ - Hero</option>
@@ -104,14 +104,14 @@
         <table class="w-full text-sm">
           <thead>
             <tr class="bg-slate-50 border-b border-slate-100">
-              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px]">ID</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Ảnh</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider">Tiêu đề</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px]">Vị trí</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[70px]">Thứ tự</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px]">Hiệu lực</th>
-              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px]">Trạng thái</th>
-              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[100px]">Hành động</th>
+              <th class="py-3.5 px-5 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[60px] whitespace-nowrap">ID</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px] whitespace-nowrap">Ảnh</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider whitespace-nowrap">Tiêu đề</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[130px] whitespace-nowrap">Vị trí</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[70px] whitespace-nowrap">Thứ tự</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[120px] whitespace-nowrap">Hiệu lực</th>
+              <th class="py-3.5 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-[110px] whitespace-nowrap">Trạng thái</th>
+              <th class="py-3.5 px-4 text-right text-xs font-bold text-slate-500 uppercase tracking-wider w-[100px] whitespace-nowrap">Hành động</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-50">
@@ -140,7 +140,7 @@
               <tr
                 v-for="banner in bannerStore.banners"
                 :key="banner.id"
-                class="hover:bg-blue-50/40 transition-colors duration-100 group"
+                class="hover:bg-neutral-100/40 transition-colors duration-100 group"
               >
                 <td class="py-4 px-5 font-mono text-xs text-slate-500">{{ banner.id }}</td>
                 <td class="py-3 px-4">
@@ -158,7 +158,7 @@
                 </td>
                 <td class="py-4 px-4 max-w-[220px]">
                   <p class="font-semibold text-slate-800 line-clamp-1">{{ banner.title }}</p>
-                  <a v-if="banner.target_url" :href="banner.target_url" target="_blank" class="text-xs text-[#0258cb] hover:underline truncate block max-w-[200px]">{{ banner.target_url }}</a>
+                  <a v-if="banner.target_url" :href="banner.target_url" target="_blank" class="text-xs text-black hover:underline truncate block max-w-[200px]">{{ banner.target_url }}</a>
                 </td>
                 <td class="py-4 px-4">
                   <span class="inline-block bg-purple-50 text-purple-700 border border-purple-200 text-xs font-semibold px-2.5 py-1 rounded-full">
@@ -277,7 +277,7 @@
                   v-model="form.title"
                   type="text"
                   placeholder="Nhập tiêu đề banner..."
-                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                 />
                 <p v-if="formErrors.title" class="mt-1 text-xs text-red-500">{{ formErrors.title[0] }}</p>
               </div>
@@ -300,10 +300,10 @@
                 <label
                   v-else
                   :class="imageUploading ? 'opacity-60 pointer-events-none' : 'cursor-pointer'"
-                  class="flex flex-col items-center justify-center w-full aspect-[21/9] border-2 border-dashed border-slate-300 rounded-xl hover:border-[#0258cb] hover:bg-blue-50/30 transition-all"
+                  class="flex flex-col items-center justify-center w-full aspect-[21/9] border-2 border-dashed border-slate-300 rounded-xl hover:border-black hover:bg-neutral-100/30 transition-all"
                 >
                   <input type="file" accept="image/*" class="sr-only" @change="handleImageUpload" :disabled="imageUploading" />
-                  <div v-if="imageUploading" class="flex flex-col items-center gap-2 text-[#0258cb]">
+                  <div v-if="imageUploading" class="flex flex-col items-center gap-2 text-black">
                     <svg class="w-7 h-7 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                     <span class="text-sm font-medium">Đang tải lên...</span>
                   </div>
@@ -325,7 +325,7 @@
                   v-model="form.target_url"
                   type="text"
                   placeholder="Ví dụ: /products?sale=1"
-                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                  class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                 />
               </div>
 
@@ -337,7 +337,7 @@
                   </label>
                   <select
                     v-model="form.position"
-                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-white focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 bg-white focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                   >
                     <option value="">Chọn vị trí...</option>
                     <option value="home_hero">Trang chủ - Hero Slider</option>
@@ -353,7 +353,7 @@
                     type="number"
                     min="0"
                     placeholder="0"
-                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 placeholder-slate-400 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                   />
                 </div>
               </div>
@@ -365,7 +365,7 @@
                   <input
                     v-model="form.start_date"
                     type="date"
-                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                   />
                   <p v-if="formErrors.start_date" class="mt-1 text-xs text-red-500">{{ formErrors.start_date[0] }}</p>
                 </div>
@@ -374,7 +374,7 @@
                   <input
                     v-model="form.end_date"
                     type="date"
-                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 focus:border-[#0258cb] focus:ring-4 focus:ring-[#0258cb]/10 focus:outline-none transition-all"
+                    class="w-full px-4 py-2.5 text-sm border border-slate-200 rounded-xl text-slate-700 focus:border-black focus:ring-4 focus:ring-black/10 focus:outline-none transition-all"
                   />
                   <p v-if="formErrors.end_date" class="mt-1 text-xs text-red-500">{{ formErrors.end_date[0] }}</p>
                 </div>
@@ -387,11 +387,11 @@
                   <label
                     class="flex items-center gap-2.5 px-4 py-2.5 border rounded-xl cursor-pointer transition-all"
                     :class="form.is_active
-                      ? 'border-[#0258cb] bg-blue-50 text-[#0258cb]'
+                      ? 'border-black bg-blue-50 text-black'
                       : 'border-slate-200 text-slate-500 hover:border-slate-300'"
                   >
                     <input type="radio" :value="true" v-model="form.is_active" class="sr-only" />
-                    <span class="w-2 h-2 rounded-full" :class="form.is_active ? 'bg-[#0258cb]' : 'bg-slate-300'"></span>
+                    <span class="w-2 h-2 rounded-full" :class="form.is_active ? 'bg-black' : 'bg-slate-300'"></span>
                     <span class="text-sm font-medium">Bật</span>
                   </label>
                   <label
@@ -426,7 +426,7 @@
                 <button
                   type="submit"
                   :disabled="formSubmitting"
-                  class="flex-1 py-2.5 px-5 rounded-xl bg-[#0258cb] hover:bg-[#004bb3] text-white font-semibold text-sm transition-all shadow-md shadow-blue-200 focus:outline-none active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2"
+                  class="flex-1 py-2.5 px-5 rounded-xl bg-black hover:bg-neutral-800 text-white font-semibold text-sm transition-all shadow-md shadow-neutral-200 focus:outline-none active:scale-[0.98] disabled:opacity-60 disabled:pointer-events-none flex items-center justify-center gap-2"
                 >
                   <svg v-if="formSubmitting" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                   {{ modalMode === 'add' ? 'Thêm banner' : 'Lưu thay đổi' }}
