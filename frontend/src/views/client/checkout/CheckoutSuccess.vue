@@ -71,10 +71,20 @@
               <p class="font-semibold text-black">{{ detail.product_variant?.product?.name || 'Sản phẩm' }}</p>
               <p class="text-neutral-400 text-xs">SKU: {{ detail.product_variant?.sku }} &times; {{ detail.quantity }}</p>
             </div>
-            <div class="flex items-center gap-4">
-              <span class="font-semibold text-black">{{ formatPrice(detail.unit_price * detail.quantity) }}đ</span>
+            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 sm:gap-4">
+              <span class="font-semibold text-black mb-2 sm:mb-0">{{ formatPrice(detail.unit_price * detail.quantity) }}đ</span>
               
-              <!-- Đánh giá nút -->
+              <div class="flex items-center gap-2">
+                <!-- Nút Đổi trả -->
+                <button 
+                  v-if="order.status === 'completed'" 
+                  @click="openReturnModal(detail)"
+                  class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border border-rose-500 text-rose-500 bg-white hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-text"
+                >
+                  Hoàn / Trả
+                </button>
+
+                <!-- Đánh giá nút -->
               <button 
                 v-if="order.status === 'completed'" 
                 @click="openReviewModal(detail)"
@@ -88,6 +98,7 @@
               >
                 {{ detail.review ? 'Đã đánh giá' : 'Đánh giá' }}
               </button>
+              </div>
             </div>
           </div>
         </div>
@@ -218,6 +229,84 @@
       </div>
     </transition>
 
+    <!-- Return Modal -->
+    <transition name="fade">
+      <div v-if="isReturnModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-text">
+        <div class="bg-white border border-neutral-200 w-full max-w-[500px] p-6 space-y-6 relative animate-scale-in max-h-[90vh] overflow-y-auto">
+          <!-- Close button -->
+          <button @click="closeReturnModal" class="absolute top-4 right-4 text-neutral-400 hover:text-black cursor-pointer bg-transparent border-none">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+
+          <!-- Title -->
+          <div class="space-y-1">
+            <h3 class="font-title text-[18px] font-bold uppercase tracking-wider text-black">Yêu cầu hoàn trả</h3>
+            <p class="text-xs text-neutral-400">Vui lòng cung cấp lý do và hình ảnh bằng chứng.</p>
+          </div>
+
+          <!-- Product Details -->
+          <div v-if="selectedReturnDetail" class="flex gap-4 items-center bg-neutral-50 p-3 border border-neutral-100 rounded">
+            <div class="space-y-0.5">
+              <p class="text-xs font-bold text-neutral-900 leading-snug">{{ selectedReturnDetail.product_variant?.product?.name }}</p>
+              <p class="text-[11px] text-neutral-400 font-mono">SKU: {{ selectedReturnDetail.product_variant?.sku }} &times; {{ selectedReturnDetail.quantity }}</p>
+            </div>
+          </div>
+
+          <!-- Alert -->
+          <div v-if="returnAlert.show" :class="['px-4 py-2.5 text-xs font-medium border', returnAlert.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700']">
+            {{ returnAlert.message }}
+          </div>
+
+          <!-- Return Form -->
+          <form @submit.prevent="submitReturn" class="space-y-5">
+            <!-- Reason -->
+            <div class="space-y-2">
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-neutral-500">Lý do hoàn trả *</label>
+              <select v-model="returnForm.reason" class="w-full border border-neutral-200 p-3 text-sm focus:border-neutral-900 focus:outline-none transition-colors rounded bg-white">
+                <option value="">-- Chọn lý do --</option>
+                <option value="Hàng lỗi / Không hoạt động">Hàng lỗi / Không hoạt động</option>
+                <option value="Sản phẩm khác với mô tả">Sản phẩm khác với mô tả</option>
+                <option value="Giao sai số lượng / phụ kiện">Giao sai số lượng / phụ kiện</option>
+                <option value="Giao nhầm sản phẩm">Giao nhầm sản phẩm</option>
+                <option value="Hàng bị hư hỏng trong quá trình vận chuyển">Hàng bị hư hỏng trong quá trình vận chuyển</option>
+                <option value="Khác">Khác</option>
+              </select>
+            </div>
+
+            <!-- Customer Note -->
+            <div class="space-y-2">
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-neutral-500">Mô tả chi tiết</label>
+              <textarea
+                v-model="returnForm.customer_note"
+                rows="3"
+                placeholder="Vui lòng cung cấp thêm thông tin chi tiết về tình trạng sản phẩm..."
+                class="w-full border border-neutral-200 p-3 text-sm focus:border-neutral-900 focus:outline-none transition-colors rounded resize-none"
+              ></textarea>
+            </div>
+
+            <!-- Evidence Images -->
+            <div class="space-y-2">
+              <label class="block text-[10px] font-bold uppercase tracking-widest text-neutral-500">Hình ảnh bằng chứng (Tối đa 5 ảnh) *</label>
+              <input type="file" ref="evidenceFiles" multiple accept="image/*" @change="handleFileUpload" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-slate-50 file:text-slate-700 hover:file:bg-slate-100 border border-slate-200 rounded p-1"/>
+              <p class="text-[10px] text-neutral-400 mt-1">Hỗ trợ JPG, PNG (Tối đa 5MB/ảnh)</p>
+            </div>
+
+            <!-- Submit -->
+            <div class="pt-2">
+              <button
+                type="submit"
+                :disabled="submittingReturn || !returnForm.reason || returnForm.images.length === 0"
+                class="w-full bg-rose-600 hover:bg-rose-700 disabled:bg-neutral-300 text-white font-bold uppercase tracking-wider text-xs py-3.5 transition-colors cursor-pointer border-none rounded"
+              >
+                {{ submittingReturn ? 'Đang gửi yêu cầu...' : 'Gửi yêu cầu hoàn trả' }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -226,6 +315,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { orderService } from '@/services/client/orderService'
 import { reviewService } from '@/services/client/reviewService'
+import returnRequestService from '@/services/client/returnRequestService'
 
 const route = useRoute()
 
@@ -288,25 +378,107 @@ const showReviewAlert = (type, message) => {
 }
 
 const submitReview = async () => {
-  if (!selectedDetail.value || !reviewForm.value.rating) return
+  if (!reviewForm.value.rating || submittingReview.value) return
   submittingReview.value = true
+  
   try {
-    const res = await reviewService.submitReview({
+    const res = await reviewService.createReview({
       order_detail_id: selectedDetail.value.id,
+      product_id: selectedDetail.value.product_variant.product_id,
       rating: reviewForm.value.rating,
-      comment: reviewForm.value.comment
+      comment: reviewForm.value.comment || ''
     })
+    
     if (res.data && res.data.success) {
-      showReviewAlert('success', res.data.message)
-      selectedDetail.value.review = res.data.data
+      reviewAlert.value = { show: true, type: 'success', message: 'Cảm ơn bạn đã đánh giá!' }
+      selectedDetail.value.review = true // mark as reviewed
+      
       setTimeout(() => {
         closeReviewModal()
       }, 1500)
     }
   } catch (err) {
-    showReviewAlert('error', err.response?.data?.message || 'Không thể gửi đánh giá lúc này.')
+    reviewAlert.value = { 
+      show: true, 
+      type: 'error', 
+      message: err.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá.'
+    }
   } finally {
     submittingReview.value = false
+  }
+}
+
+// ================= RETURN REQUEST LOGIC =================
+const isReturnModalOpen = ref(false)
+const selectedReturnDetail = ref(null)
+const submittingReturn = ref(false)
+const evidenceFiles = ref(null)
+const returnForm = ref({
+  reason: '',
+  customer_note: '',
+  images: []
+})
+const returnAlert = ref({ show: false, type: 'success', message: '' })
+
+const openReturnModal = (detail) => {
+  selectedReturnDetail.value = detail
+  isReturnModalOpen.value = true
+  returnForm.value = { reason: '', customer_note: '', images: [] }
+  returnAlert.value = { show: false, type: '', message: '' }
+  if (evidenceFiles.value) evidenceFiles.value.value = ''
+}
+
+const closeReturnModal = () => {
+  isReturnModalOpen.value = false
+  setTimeout(() => {
+    selectedReturnDetail.value = null
+    returnForm.value = { reason: '', customer_note: '', images: [] }
+    returnAlert.value = { show: false, type: '', message: '' }
+    if (evidenceFiles.value) evidenceFiles.value.value = ''
+  }, 300)
+}
+
+const handleFileUpload = (e) => {
+  returnForm.value.images = Array.from(e.target.files)
+}
+
+const submitReturn = async () => {
+  if (!returnForm.value.reason || returnForm.value.images.length === 0 || submittingReturn.value) return
+  
+  if (returnForm.value.images.length > 5) {
+    returnAlert.value = { show: true, type: 'error', message: 'Chỉ được tải lên tối đa 5 hình ảnh.' }
+    return
+  }
+
+  submittingReturn.value = true
+  
+  const formData = new FormData()
+  formData.append('order_detail_id', selectedReturnDetail.value.id)
+  formData.append('reason', returnForm.value.reason)
+  if (returnForm.value.customer_note) {
+    formData.append('customer_note', returnForm.value.customer_note)
+  }
+  returnForm.value.images.forEach(img => {
+    formData.append('evidence_images[]', img)
+  })
+
+  try {
+    const res = await returnRequestService.createReturnRequest(formData)
+    
+    if (res.data && res.data.success) {
+      returnAlert.value = { show: true, type: 'success', message: 'Gửi yêu cầu thành công!' }
+      setTimeout(() => {
+        closeReturnModal()
+      }, 1500)
+    }
+  } catch (err) {
+    returnAlert.value = { 
+      show: true, 
+      type: 'error', 
+      message: err.response?.data?.message || 'Có lỗi xảy ra. Có thể bạn đã gửi yêu cầu cho sản phẩm này rồi.'
+    }
+  } finally {
+    submittingReturn.value = false
   }
 }
 </script>

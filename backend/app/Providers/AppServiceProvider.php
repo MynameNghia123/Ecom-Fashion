@@ -51,6 +51,8 @@ use App\Repositories\Client\Interfaces\BannerRepositoryInterface as ClientBanner
 use App\Repositories\Client\Implements\BlogRepository as ClientBlogRepository;
 use App\Repositories\Client\Interfaces\BlogRepositoryInterface as ClientBlogRepositoryInterface;
 use App\Repositories\Client\Implements\CouponRepository as ClientCouponRepository;
+use App\Repositories\Client\Interfaces\ReturnRequestRepositoryInterface as ClientReturnRequestRepositoryInterface;
+use App\Repositories\Client\Implements\ReturnRequestRepository as ClientReturnRequestRepository;
 use App\Repositories\Client\Interfaces\CouponRepositoryInterface as ClientCouponRepositoryInterface;
 use App\Repositories\Client\Implements\ProductRepository as ClientProductRepository;
 use App\Repositories\Client\Interfaces\ProductRepositoryInterface as ClientProductRepositoryInterface;
@@ -120,6 +122,8 @@ use App\Services\Client\Interfaces\BannerServiceInterface as ClientBannerService
 use App\Services\Client\Implements\BlogService as ClientBlogService;
 use App\Services\Client\Interfaces\BlogServiceInterface as ClientBlogServiceInterface;
 use App\Services\Client\Implements\CouponService as ClientCouponService;
+use App\Services\Client\Interfaces\ReturnRequestServiceInterface as ClientReturnRequestServiceInterface;
+use App\Services\Client\Implements\ReturnRequestService as ClientReturnRequestService;
 use App\Services\Client\Interfaces\CouponServiceInterface as ClientCouponServiceInterface;
 use App\Services\Client\Implements\ProductService as ClientProductService;
 use App\Services\Client\Interfaces\ProductServiceInterface as ClientProductServiceInterface;
@@ -178,7 +182,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BannerServiceInterface::class,             BannerService::class);
         $this->app->bind(BlogServiceInterface::class,               BlogService::class);
         $this->app->bind(CategoryServiceInterface::class,           CategoryService::class);
-        $this->app->bind(CouponServiceInterface::class,             CouponService::class);
+        $this->app->bind(ClientCouponServiceInterface::class,             ClientCouponService::class);
+        $this->app->bind(ClientReturnRequestServiceInterface::class,      ClientReturnRequestService::class);
         $this->app->bind(CustomerServiceInterface::class,           CustomerService::class);
         $this->app->bind(PermissionServiceInterface::class,         PermissionService::class);
         $this->app->bind(ProductServiceInterface::class,            ProductService::class);
@@ -199,7 +204,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ClientBannerServiceInterface::class, ClientBannerService::class);
         $this->app->bind(ClientBlogRepositoryInterface::class, ClientBlogRepository::class);
         $this->app->bind(ClientBlogServiceInterface::class, ClientBlogService::class);
-        $this->app->bind(ClientCouponRepositoryInterface::class, ClientCouponRepository::class);
+        $this->app->bind(ClientCouponRepositoryInterface::class,          ClientCouponRepository::class);
+        $this->app->bind(ClientReturnRequestRepositoryInterface::class,   ClientReturnRequestRepository::class);
         $this->app->bind(ClientCouponServiceInterface::class, ClientCouponService::class);
         $this->app->bind(ClientProductRepositoryInterface::class, ClientProductRepository::class);
         $this->app->bind(ClientProductServiceInterface::class, ClientProductService::class);

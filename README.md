@@ -33,25 +33,30 @@
   <i>Hình 5: Giao diện Thanh toán (Checkout) và Tích hợp VNPAY</i>
 </p>
 
+<p align="center">
+  <img src="screenshot/image.png" alt="Chức năng Hoàn trả hàng"><br>
+  <i>Hình 6: Giao diện Yêu cầu Hoàn / Trả hàng dành cho Khách</i>
+</p>
+
 ### ⚙️ Backend (Bảng điều khiển Admin)
 <p align="center">
   <img src="screenshot/dashboard.png" alt="Dashboard Admin"><br>
-  <i>Hình 6: Dashboard Thống kê Tổng quan dành cho Admin</i>
+  <i>Hình 7: Dashboard Thống kê Tổng quan dành cho Admin</i>
 </p>
 
 <p align="center">
   <img src="screenshot/statistic.png" alt="Báo cáo Thống kê"><br>
-  <i>Hình 7: Biểu đồ Thống kê Doanh thu & Báo cáo</i>
+  <i>Hình 8: Biểu đồ Thống kê Doanh thu & Báo cáo</i>
 </p>
 
 <p align="center">
   <img src="screenshot/quanlysap.png" alt="Quản lý Sản phẩm"><br>
-  <i>Hình 8: Giao diện Quản lý Danh mục và Sản phẩm</i>
+  <i>Hình 9: Giao diện Quản lý Danh mục và Sản phẩm</i>
 </p>
 
 <p align="center">
   <img src="screenshot/order.png" alt="Quản lý Đơn hàng"><br>
-  <i>Hình 9: Giao diện Quản lý Đơn hàng và Cập nhật trạng thái</i>
+  <i>Hình 10: Giao diện Quản lý Đơn hàng và Cập nhật trạng thái</i>
 </p>
 
 ---

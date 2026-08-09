@@ -210,5 +210,10 @@ Route::prefix('client')->group(function () {
         // AI Chat History & Sync
         Route::get('ai/history',             [ClientAiChatController::class, 'history']);
         Route::post('ai/sync-guest-history', [ClientAiChatController::class, 'syncGuestHistory']);
+
+        // Return Requests
+        Route::get('return-requests',        [\App\Http\Controllers\Client\ReturnRequestController::class, 'index']);
+        Route::post('return-requests',       [\App\Http\Controllers\Client\ReturnRequestController::class, 'store']);
+        Route::get('return-requests/{id}',   [\App\Http\Controllers\Client\ReturnRequestController::class, 'show']);
     });
 });

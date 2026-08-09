@@ -14,6 +14,7 @@ import Reviews from '../views/client/profile/Reviews.vue'
 import Vouchers from '../views/client/profile/Vouchers.vue'
 import WishList from '../views/client/profile/WishList.vue'
 import Settings from '../views/client/profile/Settings.vue'
+import Returns from '../views/client/profile/Returns.vue'
 import CheckoutSuccess from '../views/client/checkout/CheckoutSuccess.vue'
 import Checkout from '../views/client/checkout/Checkout.vue'
 import VNPayReturn from '../views/client/checkout/VNPayReturn.vue'
@@ -100,6 +101,11 @@ const routes = [
         path: 'settings',
         name: 'Settings',
         component: Settings
+      },
+      {
+        path: 'returns',
+        name: 'Returns',
+        component: Returns
       }
     ]
   },

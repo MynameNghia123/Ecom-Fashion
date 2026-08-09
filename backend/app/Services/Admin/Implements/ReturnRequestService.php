@@ -7,6 +7,7 @@ use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Auth;
 use Exception;
 
 class ReturnRequestService implements ReturnRequestServiceInterface
@@ -44,10 +45,21 @@ class ReturnRequestService implements ReturnRequestServiceInterface
             throw new Exception("Không thể chuyển từ '{$model->status}' sang '{$data['status']}'.");
         }
 
-        $data['processed_by_staff_id'] = auth()->id();
+        $data['processed_by_staff_id'] = Auth::id();
         $data['processed_at'] = now();
 
-        return $this->repository->update($model, $data);
+        $updatedModel = $this->repository->update($model, $data);
+
+        // Cộng lại tồn kho khi đã nhận lại hàng (received)
+        if ($data['status'] === 'received') {
+            $updatedModel->load('orderDetail.productVariant');
+            $orderDetail = $updatedModel->orderDetail;
+            if ($orderDetail && $orderDetail->productVariant) {
+                $orderDetail->productVariant->increment('stock', $updatedModel->quantity);
+            }
+        }
+
+        return $updatedModel;
     }
 
     public function create(array $data): Model { return $this->createReturnRequest($data); }
