@@ -6,6 +6,12 @@
         <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Quản lý Đơn hàng</h1>
         <p class="text-sm text-slate-500 mt-0.5">Theo dõi trạng thái, phương thức thanh toán và xử lý các đơn đặt hàng</p>
       </div>
+      <div>
+        <router-link to="/admin/orders/create" class="inline-flex items-center justify-center px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm">
+          <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+          Tạo đơn hàng
+        </router-link>
+      </div>
     </div>
 
     <!-- Stats Cards -->

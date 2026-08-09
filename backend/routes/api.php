@@ -91,7 +91,7 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('banners', BannerController::class)->middleware('permission:banners');
 
     // ── Orders ────────────────────────────────────────────────────────────────
-    Route::apiResource('orders', OrderController::class)->only(['index', 'show', 'update'])->middleware('permission:orders');
+    Route::apiResource('orders', OrderController::class)->only(['index', 'show', 'update', 'store'])->middleware('permission:orders');
 
     // ── Reviews ───────────────────────────────────────────────────────────────
     Route::apiResource('reviews', ReviewController::class)->only(['index', 'destroy'])->middleware('permission:reviews');

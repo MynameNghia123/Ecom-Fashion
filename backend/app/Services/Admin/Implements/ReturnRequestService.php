@@ -55,7 +55,7 @@ class ReturnRequestService implements ReturnRequestServiceInterface
             $updatedModel->load('orderDetail.productVariant');
             $orderDetail = $updatedModel->orderDetail;
             if ($orderDetail && $orderDetail->productVariant) {
-                $orderDetail->productVariant->increment('stock', $updatedModel->quantity);
+                $orderDetail->productVariant->increment('stock_quantity', $updatedModel->quantity);
             }
         }
 

@@ -4,6 +4,7 @@ import Category from '../views/admin/ProductManagement/Category.vue'
 import Product from '../views/admin/ProductManagement/Product.vue'
 import AttributeProduct from '../views/admin/ProductManagement/AttributeProduct.vue'
 import Order from '../views/admin/SellManagement/Order.vue'
+import CreateOrder from '../views/admin/SellManagement/CreateOrder.vue'
 import ReturnRequire from '../views/admin/SellManagement/ReturnRequire.vue'
 import Supplier from '../views/admin/StorageManagement/Supplier.vue'
 import WarehouseReceipt from '../views/admin/StorageManagement/WarehouseReceipt.vue'
@@ -63,6 +64,12 @@ const adminRoutes = [
     name: 'AdminOrder',
     component: Order,
     meta: { layout: 'AdminLayout', permission: 'orders.view' }
+  },
+  {
+    path: '/admin/orders/create',
+    name: 'AdminCreateOrder',
+    component: CreateOrder,
+    meta: { layout: 'AdminLayout', permission: 'orders.create' }
   },
   {
     path: '/admin/return-requests',

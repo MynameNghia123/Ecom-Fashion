@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Order\UpdateOrderRequest;
+use App\Http\Requests\Admin\Order\StoreOrderRequest;
 use App\Services\Admin\Interfaces\OrderServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -114,6 +115,32 @@ class OrderController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Có lỗi xảy ra khi cập nhật đơn hàng: ' . $e->getMessage()
+            ], 422);
+        }
+    }
+
+    #[OA\Post(
+        path: '/api/admin/orders',
+        summary: 'Tạo đơn hàng mới (POS)',
+        tags: ['Admin - Orders'],
+        responses: [
+            new OA\Response(response: 201, description: 'Tạo đơn hàng thành công')
+        ]
+    )]
+    public function store(StoreOrderRequest $request): JsonResponse
+    {
+        try {
+            $order = $this->orderService->createOrder($request->validated());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tạo đơn hàng thành công.',
+                'data'    => $order
+            ], 201);
+        } catch (\Throwable $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Có lỗi xảy ra khi tạo đơn hàng: ' . $e->getMessage()
             ], 422);
         }
     }
