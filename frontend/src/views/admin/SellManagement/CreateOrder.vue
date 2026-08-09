@@ -165,7 +165,6 @@
 
       </div>
     </div>
-  </div>
 
     <!-- Custom Toast -->
     <Transition name="toast-fade">
@@ -324,6 +323,7 @@ const submitOrder = async () => {
     isSubmitting.value = false
   }
 }
+</script>
 <style scoped>
 .toast-fade-enter-active,
 .toast-fade-leave-active {
