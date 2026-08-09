@@ -142,7 +142,7 @@
           <div 
             v-for="prod in products" 
             :key="prod.id"
-            @click="goToDetail(prod.id)"
+            @click="goToDetail(prod.slug || prod.id)"
             class="cursor-pointer group"
           >
             <ProductCard
@@ -198,8 +198,8 @@ const getMinPrice = (prod) => {
   return 0
 }
 
-const goToDetail = (id) => {
-  router.push({ name: 'ProductDetail', params: { id } })
+const goToDetail = (slug) => {
+  router.push({ name: 'ProductDetail', params: { slug } })
 }
 
 const fetchProducts = async () => {
