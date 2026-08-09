@@ -139,8 +139,33 @@ Hệ thống đã có sẵn dữ liệu mẫu sau khi chạy Seeder. Bạn có t
 
 # 7. Hình ảnh minh họa (Screenshots)
 
-*(Nhóm phát triển có thể chèn ảnh chụp màn hình các giao diện chính vào đây để minh họa)*
+### 🎥 Demo Quy trình mua hàng
+![Mua Sản Phẩm](screenshot/buyaproduct.gif)
 
-![Trang Chủ Client](/frontend/public/home-screenshot.png)
-![Dashboard Admin](/backend/public/admin-screenshot.png)
-![Giao diện AI Chat](/frontend/public/ai-screenshot.png)
+### 🏠 Frontend (Trải nghiệm Khách hàng)
+**Trang Danh sách Sản phẩm**
+![Danh sách Sản phẩm](screenshot/productlist.png)
+
+**Trang Chi tiết Sản phẩm**
+![Chi tiết Sản phẩm](screenshot/detail.png)
+
+**Giỏ hàng**
+![Giỏ hàng](screenshot/cart.png)
+
+**Thanh toán (Checkout)**
+![Thanh toán](screenshot/checkout.png)
+
+### ⚙️ Backend (Bảng điều khiển Admin)
+**Dashboard Thống kê Tổng quan**
+![Dashboard Admin](screenshot/dashboard.png)
+
+**Thống kê Doanh thu & Báo cáo**
+![Báo cáo Thống kê](screenshot/statistic.png)
+
+**Quản lý Sản phẩm**
+![Quản lý Sản phẩm](screenshot/quanlysap.png)
+
+**Quản lý Đơn hàng**
+![Quản lý Đơn hàng](screenshot/order.png)
+
+
