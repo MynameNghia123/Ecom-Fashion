@@ -179,7 +179,7 @@ router.beforeEach(async (to, from, next) => {
       if (to.meta && to.meta.permission) {
         const [module, action] = to.meta.permission.split('.')
         if (!authStore.hasPermission(module, action)) {
-          alert('Bạn không có quyền truy cập trang này.')
+          console.warn('Bạn không có quyền truy cập trang này.')
           next('/admin/dashboard')
           return
         }

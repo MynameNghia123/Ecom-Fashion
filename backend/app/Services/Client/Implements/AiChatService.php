@@ -74,11 +74,28 @@ class AiChatService implements AiChatServiceInterface
                 $variantsText . "\n\n";
         }
 
+        $catalogContext = '';
+        if (!$product) {
+            $categories = \App\Models\Category::pluck('name')->toArray();
+            $productsList = \App\Models\Product::select('name', 'brand')->limit(30)->get();
+            
+            $catText = !empty($categories) ? implode(', ', $categories) : 'Thời trang nam, nữ, phụ kiện';
+            $prodText = '';
+            foreach ($productsList as $p) {
+                $prodText .= "- {$p->name}" . ($p->brand ? " ({$p->brand})" : "") . "\n";
+            }
+
+            $catalogContext = "HIỆN TẠI CỬA HÀNG ĐANG BÁN CÁC DANH MỤC CHÍNH SAU: {$catText}.\n\n" .
+                              "DANH SÁCH MỘT SỐ SẢN PHẨM CỬA HÀNG ĐANG CÓ:\n{$prodText}\n" .
+                              "LƯU Ý QUAN TRỌNG: Nếu khách hỏi cửa hàng có bán những gì, HÃY DỰA VÀO DANH SÁCH TRÊN ĐỂ TRẢ LỜI. TUYỆT ĐỐI KHÔNG được tự bịa ra các sản phẩm không có trong danh sách này.\n\n";
+        }
+
         $systemInstruction = [
             'parts' => [[
                 'text' => 'Bạn là Trợ lý thời trang AI của thương hiệu Ecom Fashion. ' .
                           'Nhiệm vụ của bạn là tư vấn phong cách, gợi ý trang phục, phối đồ và giải đáp về thời trang. ' .
                           'Luôn trả lời bằng tiếng Việt, ngắn gọn, thân thiện, lịch sự và chuyên nghiệp.' . "\n\n" .
+                          $catalogContext .
                           $productContext
             ]]
         ];

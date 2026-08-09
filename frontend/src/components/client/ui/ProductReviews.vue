@@ -131,12 +131,12 @@ const newRating = ref(5)
 
 const submitReview = async () => {
   if (!newComment.value.trim()) {
-    alert('Vui lòng nhập nội dung bình luận.')
+    console.warn('Vui lòng nhập nội dung bình luận.')
     return
   }
   
   if (!props.eligibleOrderDetailId) {
-    alert('Không tìm thấy chi tiết đơn hàng để đánh giá.')
+    console.warn('Không tìm thấy chi tiết đơn hàng để đánh giá.')
     return
   }
 
@@ -148,7 +148,7 @@ const submitReview = async () => {
     })
     
     if (res.data && res.data.success) {
-      alert('Cảm ơn bạn đã đánh giá sản phẩm!')
+      console.warn('Cảm ơn bạn đã đánh giá sản phẩm!')
       newComment.value = ''
       newRating.value = 5
       
@@ -156,7 +156,7 @@ const submitReview = async () => {
       window.location.reload()
     }
   } catch (error) {
-    alert(error.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá.')
+    console.warn(error.response?.data?.message || 'Có lỗi xảy ra khi gửi đánh giá.')
   }
 }
 </script>

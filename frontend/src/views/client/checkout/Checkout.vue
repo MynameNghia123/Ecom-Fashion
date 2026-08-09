@@ -526,12 +526,12 @@ const submitOrder = async () => {
     isAuthModalOpen.value = true
     return
   }
-  if (cartStore.isEmpty) {
-    alert('Giỏ hàng của bạn đang trống.')
+  if (cartStore.items.length === 0) {
+    console.warn('Giỏ hàng của bạn đang trống.')
     return
   }
   if (cartStore.selectedIds.size === 0) {
-    alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.')
+    console.warn('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.')
     return
   }
 
@@ -560,10 +560,10 @@ const submitOrder = async () => {
         window.location.href = res.data.payment_url
       }
     } else {
-      alert(res.data.message || 'Đã xảy ra lỗi khi tạo đơn hàng.')
+      console.error(res.data.message || 'Đã xảy ra lỗi khi tạo đơn hàng.')
     }
   } catch (err) {
-    alert(err.message || 'Lỗi hệ thống khi thanh toán.')
+    console.error(err.message || 'Lỗi hệ thống khi thanh toán.')
   } finally {
     submitting.value = false
   }

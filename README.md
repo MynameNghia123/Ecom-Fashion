@@ -1,250 +1,146 @@
-# EcomFashion
+# 1. Tiêu đề và Thông tin chung (Project Title & Info)
 
-EcomFashion là dự án cá nhân gồm hai phần chính:
+**Tên dự án:** Ecom Fashion - Hệ thống Thương mại Điện tử và Quản lý Bán hàng Thời trang
 
-- `backend`: Laravel dùng để xây dựng API/server.
-- `frontend`: Vue 3 + Vite dùng để xây dựng giao diện người dùng.
+**Mô tả ngắn gọn:** Đây là một hệ thống Website Thương mại điện tử chuyên cung cấp các sản phẩm thời trang. Hệ thống bao gồm phần Frontend hiện đại dành cho khách hàng mua sắm (tích hợp AI tư vấn, thanh toán online VNPAY) và phần Backend quản trị hệ thống chặt chẽ, đa chức năng.
 
-Dự án được cấu hình chạy bằng Docker Compose. Khi chạy project, Docker sẽ khởi động cùng lúc Laravel, Vue/Vite, MySQL và phpMyAdmin. Vì vậy bạn không cần cài riêng PHP, Composer, Node, MySQL, XAMPP hoặc Laragon trên máy để chạy dự án này.
+---
 
-## Cấu Trúc Dự Án
+# 2. Công nghệ sử dụng (Tech Stack)
 
-```text
-EcomFashion/
-  README.md
-  docker-compose.yml
-  backend/
-    Dockerfile
-    .dockerignore
-    .env
-    .env.example
-    composer.json
-    composer.lock
-  frontend/
-    Dockerfile
-    .dockerignore
-    .env
-    package.json
-    package-lock.json
+* **Frontend:** Vue.js 3, Vite, Tailwind CSS, Pinia.
+* **Backend:** Laravel 11.x, RESTful API.
+* **Cơ sở dữ liệu:** MySQL.
+* **Tích hợp bên thứ 3:** VNPAY (Thanh toán), GHN (Giao Hàng Nhanh), Google Gemini AI (Trợ lý ảo), Mailpit (Test email).
+* **Công cụ & Môi trường:** Docker, Docker Compose, Git/GitHub.
+
+---
+
+# 3. Yêu cầu hệ thống (Prerequisites)
+
+Để chạy được dự án này trên môi trường local, máy tính của bạn cần cài đặt sẵn:
+* **Docker** và **Docker Compose** (Dự án được đóng gói chạy hoàn toàn trên Docker, môi trường đã được cấu hình sẵn, không cần cài PHP hay Node.js thủ công vào máy thật).
+* **Git** (Để clone source code).
+
+---
+
+# 4. Hướng dẫn cài đặt và Chạy dự án (Installation & Setup)
+
+Mở Terminal (hoặc Git Bash / PowerShell) và thực hiện lần lượt các bước sau:
+
+**Bước 1: Clone dự án về máy**
+```bash
+git clone <link-repo>
+cd EcomFashion
 ```
 
-Dự án chỉ giữ một file README duy nhất ở thư mục gốc:
+**Bước 2: Cấu hình môi trường (Backend & Frontend)**
+```bash
+# Cấu hình Backend
+cp backend/.env.example backend/.env
 
-```text
-EcomFashion/README.md
+# Cấu hình Frontend
+cp frontend/.env.example frontend/.env
 ```
 
-## Yêu Cầu
-
-- Docker Desktop
-- Docker Compose
-
-Backend đang dùng PHP `8.4` trong Docker vì `composer.lock` có một số package Symfony v8 yêu cầu PHP `>=8.4`.
-
-## Các Service Trong Docker
-
-```text
-mysql       MySQL database server, nơi lưu dữ liệu thật.
-phpmyadmin  Giao diện web để xem và thao tác database MySQL.
-backend     Laravel app, chạy ở port 8000.
-frontend    Vue/Vite app, chạy ở port 5173.
-```
-
-Lưu ý: `phpmyadmin` chỉ là giao diện quản lý database. Database thật vẫn là service `mysql`.
-
-## Biến Môi Trường Chính
-
-Backend dùng file:
-
-```text
-backend/.env
-```
-
-Cấu hình database hiện tại:
+**LƯU Ý QUAN TRỌNG VỀ CẤU HÌNH `.env` BACKEND:**
+Bạn cần mở file `backend/.env` và thêm các thông số kết nối API bên thứ 3 (Sandbox VNPAY, Google Gemini, Giao Hàng Nhanh...) vào cuối file để các chức năng nâng cao hoạt động được:
 
 ```env
-APP_URL=http://localhost:8000
-APP_PORT=8000
+# ── SANCTUM & CORS (Cần thiết để Frontend kết nối) ──
+FRONTEND_URL=http://localhost:5173
+SANCTUM_STATEFUL_DOMAINS=localhost:5173
+SESSION_DOMAIN=localhost
+SESSION_DRIVER=database
 
-DB_CONNECTION=mysql
-DB_HOST=mysql
-DB_PORT=3306
-DB_DATABASE=ecom_fashion
-DB_USERNAME=ecom_user
-DB_PASSWORD=ecom_password
+# ── VNPAY Sandbox (Thanh toán) ──
+VNPAY_TMN_CODE=your_tmn_code_here
+VNPAY_HASH_SECRET=your_hash_secret_here
+VNPAY_URL=https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+VNPAY_IPN_URL=http://localhost:8000/api/client/vnpay/ipn
+VNPAY_RETURN_URL=http://localhost:5173/checkout/vnpay-return
+
+# ── Trợ lý ảo AI (Gemini) ──
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# ── Giao Hàng Nhanh (Tính phí ship) ──
+GHN_API_URL=https://online-gateway.ghn.vn/shiip/public-api
+GHN_TOKEN=your_ghn_token_here
+GHN_SHOP_ID=your_ghn_shop_id_here
 ```
 
-Frontend dùng file:
-
-```text
-frontend/.env
-```
-
-Cấu hình frontend hiện tại:
-
-```env
-VITE_APP_NAME=EcomFashion
-VITE_API_BASE_URL=http://localhost:8000
-VITE_DEV_SERVER_PORT=5173
-VITE_API_URL=http://localhost:8000/api
-```
-
-## Cách Khởi Động Dự Án
-
-Chạy lệnh tại thư mục gốc `EcomFashion`:
-
+**Bước 3: Khởi động hệ thống bằng Docker**
 ```bash
-docker compose up -d --build
+docker-compose up -d --build
 ```
+*(Lệnh này sẽ tự động tải các môi trường cần thiết, chạy `composer install`, `npm install` ngầm bên trong container và khởi động hệ thống).*
 
-Lệnh này sẽ:
-
-- Build image cho backend và frontend.
-- Pull image MySQL và phpMyAdmin nếu máy chưa có.
-- Cài dependency cho Laravel bằng `composer install`.
-- Cài dependency cho frontend bằng `npm ci`.
-- Chạy migrate cho Laravel bằng `php artisan migrate --force`.
-- Khởi động toàn bộ service ở chế độ chạy nền.
-
-Lần đầu chạy có thể mất vài phút vì Docker cần tải image và cài dependency.
-
-## Chạy Lại Dự Án Sau Lần Đầu
-
-Nếu không thay đổi Dockerfile hoặc dependency, có thể chạy nhanh bằng:
-
+**Bước 4: Khởi tạo dữ liệu (Chạy bên trong Backend Container)**
 ```bash
-docker compose up -d
+# Truy cập vào terminal của container backend
+docker exec -it ecom-fashion-backend bash
+
+# Tạo App Key bảo mật cho Laravel
+php artisan key:generate
+
+# Chạy migration và seeder để tạo cấu trúc bảng & đổ dữ liệu mẫu
+php artisan migrate:fresh --seed
+
+# Thoát khỏi container
+exit
 ```
 
-Nếu có sửa `Dockerfile`, `composer.json`, `composer.lock`, `package.json` hoặc `package-lock.json`, nên chạy lại:
+**Bước 5: Truy cập ứng dụng trên trình duyệt**
+* **Frontend (Trang mua sắm):** http://localhost:5173
+* **Backend (API):** http://localhost:8000
+<!-- * **Mailpit (Kiểm tra Email Test):** http://localhost:1025 -->
 
-```bash
-docker compose up -d --build
-```
+---
 
-## Đường Dẫn Sau Khi Chạy
+# 5. Danh sách tính năng (Features)
 
-```text
-Frontend:   http://localhost:5173
-Backend:    http://localhost:8000
-phpMyAdmin: http://localhost:8080
-MySQL:      localhost:3307
-```
+**Dành cho Người dùng (Client):**
+* Đăng ký, Đăng nhập, Đăng xuất (xác thực qua Sanctum), Quản lý hồ sơ cá nhân.
+* Duyệt, tìm kiếm, lọc và xem chi tiết sản phẩm thời trang.
+* Quản lý giỏ hàng, chọn từng sản phẩm muốn thanh toán.
+* Checkout đa dạng phương thức: COD, VNPAY (Sandbox tích hợp sẵn).
+* Theo dõi trạng thái đơn hàng và lịch sử mua hàng.
+* **Đặc biệt:** Trợ lý ảo AI Chatbot tư vấn phong cách, gợi ý trang phục dựa theo dữ liệu thực tế từ Database.
 
-## Đăng Nhập phpMyAdmin
+**Dành cho Quản trị viên (Admin):**
+* Quản lý Sản phẩm (Danh mục, Biến thể, Tồn kho, Thuộc tính màu sắc/size).
+* Quản lý Đơn hàng (Cập nhật trạng thái, tích hợp đẩy đơn Giao Hàng Nhanh).
+* Quản lý Người dùng & Nhân viên (Phân quyền Role/Permission).
+* Thống kê doanh thu, số lượng đơn hàng và hiển thị biểu đồ báo cáo.
 
-Mở trình duyệt:
+---
 
-```text
-http://localhost:8080
-```
+# 6. Tài khoản kiểm thử (Test Credentials)
 
-Thông tin đăng nhập:
+Hệ thống đã có sẵn dữ liệu mẫu sau khi chạy Seeder. Bạn có thể dùng các tài khoản dưới đây để test chức năng ngay lập tức:
 
-```text
-Server: mysql
-Username: ecom_user
-Password: ecom_password
-```
+* **Tài khoản Admin (Toàn quyền quản trị):**
+  - Email: `admin@ecomfashion.com` 
+  - Mật khẩu: `password`
 
-Nếu phpMyAdmin không hiện ô `Server`, chỉ cần nhập username và password.
+* **Tài khoản Khách hàng (User):**
+  - Email: `customer@ecomfashion.com`
+  - Mật khẩu: `password`
+  - *(Hoặc tự đăng ký một tài khoản mới ở giao diện Frontend)*
 
-## Kết Nối MySQL Bằng Tool Khác
+* **Thẻ Test Thanh toán VNPAY (Sandbox):**
+  - Ngân hàng: `NCB`
+  - Số thẻ: `9704198526191432198`
+  - Tên chủ thẻ: `NGUYEN VAN A`
+  - Ngày phát hành: `07/15`
+  - Mật khẩu OTP: `123456`
 
-Nếu dùng MySQL Workbench, DBeaver, TablePlus hoặc HeidiSQL trên máy host, dùng cấu hình:
+---
 
-```text
-Host: localhost
-Port: 3307
-Database: ecom_fashion
-User: ecom_user
-Password: ecom_password
-```
+# 7. Hình ảnh minh họa (Screenshots)
 
-Trong Laravel container, `DB_HOST` phải là:
+*(Nhóm phát triển có thể chèn ảnh chụp màn hình các giao diện chính vào đây để minh họa)*
 
-```env
-DB_HOST=mysql
-DB_PORT=3306
-```
-
-Không dùng `DB_HOST=localhost` trong Docker, vì `localhost` bên trong container backend là chính container backend, không phải container MySQL.
-
-## Xem Log
-
-Xem log toàn bộ service:
-
-```bash
-docker compose logs -f
-```
-
-Xem log backend:
-
-```bash
-docker compose logs -f backend
-```
-
-Xem log frontend:
-
-```bash
-docker compose logs -f frontend
-```
-
-Xem log MySQL:
-
-```bash
-docker compose logs -f mysql
-```
-
-Xem log phpMyAdmin:
-
-```bash
-docker compose logs -f phpmyadmin
-```
-
-## Dừng Dự Án
-
-Dừng container nhưng vẫn giữ dữ liệu MySQL:
-
-```bash
-docker compose down
-```
-
-Xoá cả container và volume:
-
-```bash
-docker compose down -v
-```
-
-Cẩn thận: `docker compose down -v` sẽ xoá volume `mysql_data`, nghĩa là dữ liệu MySQL cũng bị xoá. Chỉ dùng lệnh này khi muốn reset database.
-
-## Rebuild Khi Cần
-
-Build lại backend không dùng cache:
-
-```bash
-docker compose build --no-cache backend
-docker compose up -d backend
-```
-
-Build lại frontend không dùng cache:
-
-```bash
-docker compose build --no-cache frontend
-docker compose up -d frontend
-```
-
-Build lại toàn bộ project:
-
-```bash
-docker compose up -d --build
-```
-
-## Ghi Chú
-
-- Dự án này ưu tiên dùng Docker, không cần XAMPP hoặc Laragon.
-- MySQL chạy trong container `ecom-fashion-mysql`.
-- phpMyAdmin chạy trong container `ecom-fashion-phpmyadmin`.
-- Backend chạy trong container `ecom-fashion-backend`.
-- Frontend chạy trong container `ecom-fashion-frontend`.
-- Dữ liệu MySQL được lưu trong Docker volume `mysql_data`.
+![Trang Chủ Client](/frontend/public/home-screenshot.png)
+![Dashboard Admin](/backend/public/admin-screenshot.png)
+![Giao diện AI Chat](/frontend/public/ai-screenshot.png)

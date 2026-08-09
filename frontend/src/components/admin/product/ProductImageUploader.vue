@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="border border-slate-200 rounded-xl p-5 space-y-4">
     <h3 class="text-sm font-bold text-slate-700">Quản lý hình ảnh sản phẩm</h3>
     
@@ -113,7 +113,7 @@ const handleFileChange = async (event) => {
   for (const file of files) {
     if (!file.type.startsWith('image/')) continue
     if (file.size > 5 * 1024 * 1024) {
-      alert(`Ảnh "${file.name}" vượt quá 5MB, bỏ qua.`)
+      console.warn(`Ảnh "${file.name}" vượt quá 5MB, bỏ qua.`)
       continue
     }
 

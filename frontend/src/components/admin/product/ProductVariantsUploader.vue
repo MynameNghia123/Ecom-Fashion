@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="border border-slate-200 rounded-xl p-5 space-y-4">
     <div class="flex items-center justify-between">
       <h3 class="text-sm font-bold text-slate-700">Phân loại hàng (Biến thể)</h3>
@@ -231,7 +231,7 @@ const handleVariantImageChange = async (event) => {
   const file = event.target.files[0];
   if (!file || !file.type.startsWith('image/')) return;
   if (file.size > 5 * 1024 * 1024) {
-    alert('Kích thước ảnh vượt quá 5MB.');
+    console.warn('Kích thước ảnh vượt quá 5MB.');
     return;
   }
 
