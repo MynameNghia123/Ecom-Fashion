@@ -27,6 +27,42 @@ export const useCartStore = defineStore('cart', () => {
 
   const isEmpty = computed(() => items.value.length === 0)
 
+  // ─── Selected Items (dùng chung cho Cart, MiniCart, Checkout) ──────────────
+  const selectedIds = ref(new Set())
+
+  // Mặc định chọn tất cả khi có items
+  const initSelection = () => {
+    selectedIds.value = new Set(items.value.map(i => i.product_variant_id))
+  }
+  initSelection()
+
+  const isAllSelected = computed(() =>
+    items.value.length > 0 &&
+    items.value.every(i => selectedIds.value.has(i.product_variant_id))
+  )
+
+  const selectedItems = computed(() =>
+    items.value.filter(i => selectedIds.value.has(i.product_variant_id))
+  )
+
+  const selectedTotal = computed(() =>
+    selectedItems.value.reduce((sum, i) => sum + i.price * i.quantity, 0)
+  )
+
+  function toggleSelect(productVariantId) {
+    const next = new Set(selectedIds.value)
+    next.has(productVariantId) ? next.delete(productVariantId) : next.add(productVariantId)
+    selectedIds.value = next
+  }
+
+  function toggleSelectAll() {
+    if (isAllSelected.value) {
+      selectedIds.value = new Set()
+    } else {
+      selectedIds.value = new Set(items.value.map(i => i.product_variant_id))
+    }
+  }
+
   // ─── Actions ────────────────────────────────────────────────────────────────
 
   /**
@@ -61,6 +97,8 @@ export const useCartStore = defineStore('cart', () => {
         stock_quantity,
         attributes,
       })
+      // Auto-select newly added item
+      selectedIds.value = new Set([...selectedIds.value, product_variant_id])
     }
     persist()
   }
@@ -84,6 +122,10 @@ export const useCartStore = defineStore('cart', () => {
    */
   function removeItem(productVariantId) {
     items.value = items.value.filter(i => i.product_variant_id !== productVariantId)
+    // Bỏ khỏi selectedIds nếu có
+    const next = new Set(selectedIds.value)
+    next.delete(productVariantId)
+    selectedIds.value = next
     persist()
   }
 
@@ -96,11 +138,11 @@ export const useCartStore = defineStore('cart', () => {
   }
 
   /**
-   * Chuyển giỏ hàng sang định dạng backend cần khi đặt hàng.
+   * Chuyển các sản phẩm ĐƯỢC CHỌN sang định dạng backend cần khi đặt hàng.
    * @returns {Array} [{ product_variant_id, quantity }]
    */
   function toOrderItems() {
-    return items.value.map(i => ({
+    return selectedItems.value.map(i => ({
       product_variant_id: i.product_variant_id,
       quantity: i.quantity,
     }))
@@ -130,6 +172,14 @@ export const useCartStore = defineStore('cart', () => {
     totalQuantity,
     totalPrice,
     isEmpty,
+    // Selection
+    selectedIds,
+    selectedItems,
+    selectedTotal,
+    isAllSelected,
+    toggleSelect,
+    toggleSelectAll,
+    // Actions
     addItem,
     updateQuantity,
     removeItem,

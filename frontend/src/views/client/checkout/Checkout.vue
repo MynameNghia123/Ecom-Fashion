@@ -233,7 +233,7 @@
         <!-- Product list -->
         <div class="space-y-6 mb-8 max-h-[300px] overflow-y-auto pr-2 scrollbar-thin">
           <div 
-            v-for="item in cartStore.items" 
+            v-for="item in cartStore.selectedItems" 
             :key="item.product_variant_id" 
             class="flex gap-4 items-center"
           >
@@ -294,8 +294,8 @@
         <!-- Pricing calculation -->
         <div class="border-t border-neutral-200/60 pt-6 space-y-3.5 text-[13px] text-neutral-600 mb-6">
           <div class="flex justify-between">
-            <span>Tạm tính</span>
-            <span class="font-medium text-black">{{ formatPrice(cartStore.totalPrice) }}đ</span>
+            <span>Tạm tính <span class="text-neutral-400">({{ cartStore.selectedItems.length }} sp)</span></span>
+            <span class="font-medium text-black">{{ formatPrice(cartStore.selectedTotal) }}đ</span>
           </div>
           <div v-if="discountAmount > 0" class="flex justify-between text-green-600">
             <span>Giảm giá ({{ appliedCoupon.code }})</span>
@@ -468,7 +468,7 @@ const shippingFeeText = computed(() => {
 })
 
 const total = computed(() => {
-  return Math.max(0, cartStore.totalPrice - discountAmount.value) + shippingFee.value
+  return Math.max(0, cartStore.selectedTotal - discountAmount.value) + shippingFee.value
 })
 
 const applyCoupon = async () => {
@@ -479,7 +479,7 @@ const applyCoupon = async () => {
   couponError.value = false
 
   try {
-    const res = await couponService.applyCoupon(couponCode.value, cartStore.totalPrice)
+    const res = await couponService.applyCoupon(couponCode.value, cartStore.selectedTotal)
     if (res.data && res.data.success) {
       appliedCoupon.value = res.data.coupon
       discountAmount.value = res.data.discount
@@ -528,6 +528,10 @@ const submitOrder = async () => {
   }
   if (cartStore.isEmpty) {
     alert('Giỏ hàng của bạn đang trống.')
+    return
+  }
+  if (cartStore.selectedIds.size === 0) {
+    alert('Vui lòng chọn ít nhất 1 sản phẩm để thanh toán.')
     return
   }
 
