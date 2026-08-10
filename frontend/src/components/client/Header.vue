@@ -237,7 +237,7 @@ const closeDropdown = () => {
 
 const goToCategory = (cat) => {
   activeDropdown.value = null
-  router.push({ path: '/category', query: { category_id: cat.id } })
+  router.push({ path: `/category/${cat.slug || cat.id}` })
 }
 
 // ── Auth & Cart ───────────────────────────────────────────────

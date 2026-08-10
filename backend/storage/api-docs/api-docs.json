@@ -2564,6 +2564,18 @@
                         "description": "Lấy danh sách thành công"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Admin - Orders"
+                ],
+                "summary": "Tạo đơn hàng mới (POS)",
+                "operationId": "ac9de7f6338d9523f477427635b5280e",
+                "responses": {
+                    "201": {
+                        "description": "Tạo đơn hàng thành công"
+                    }
+                }
             }
         },
         "/api/admin/orders/{id}": {

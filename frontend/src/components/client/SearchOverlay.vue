@@ -144,7 +144,7 @@ const goToSearch = () => {
 }
 
 const selectCategory = (cat) => {
-  router.push({ path: '/category', query: { category_id: cat.id } })
+  router.push({ path: `/category/${cat.slug || cat.id}` })
   close()
 }
 

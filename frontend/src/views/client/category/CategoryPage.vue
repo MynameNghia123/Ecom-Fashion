@@ -21,7 +21,7 @@
           </h3>
           <ul class="space-y-2 font-text text-[13px] text-neutral-600">
             <li 
-              @click="selectedCategory = null" 
+              @click="selectCategory(null)" 
               :class="['cursor-pointer hover:text-black transition-colors', !selectedCategory ? 'font-bold text-black' : '']"
             >
               Tất cả danh mục
@@ -29,7 +29,7 @@
             <li 
               v-for="cat in categories" 
               :key="cat.id"
-              @click="selectedCategory = cat.id"
+              @click="selectCategory(cat)"
               :class="['cursor-pointer hover:text-black transition-colors flex items-center justify-between', selectedCategory === cat.id ? 'font-bold text-black' : '']"
             >
               <span>{{ cat.name }}</span>
@@ -172,8 +172,8 @@ const categories = ref([])
 const brands = ref([])
 const loading = ref(true)
 
-// Filter states — đồng bộ với route.query nếu có
-const selectedCategory = ref(route.query.category_id ? Number(route.query.category_id) : null)
+// Filter states — đồng bộ với route.params.slug
+const selectedCategory = ref(null)
 const selectedBrand = ref(null)
 const minPrice = ref(null)
 const maxPrice = ref(null)
@@ -206,7 +206,7 @@ const fetchProducts = async () => {
   loading.value = true
   try {
     const params = {
-      category_id: selectedCategory.value || (route.query.category_id ? Number(route.query.category_id) : null),
+      category_id: selectedCategory.value,
       brand: selectedBrand.value,
       min_price: minPrice.value,
       max_price: maxPrice.value,
@@ -240,6 +240,7 @@ const fetchCategoriesAndBrands = async () => {
     ])
     if (catRes.data && catRes.data.success) {
       categories.value = catRes.data.data
+      syncCategoryFromRoute()
     }
     if (brandRes.data && brandRes.data.success) {
       brands.value = brandRes.data.data
@@ -249,26 +250,51 @@ const fetchCategoriesAndBrands = async () => {
   }
 }
 
+const syncCategoryFromRoute = () => {
+  const slugOrId = route.params.slug
+  if (!slugOrId) {
+    selectedCategory.value = null
+  } else {
+    const cat = categories.value.find(c => c.slug === slugOrId || c.id == slugOrId)
+    if (cat) {
+      selectedCategory.value = cat.id
+    }
+  }
+}
+
+const selectCategory = (cat) => {
+  if (!cat) {
+    router.push({ path: '/category' })
+  } else {
+    router.push({ path: `/category/${cat.slug || cat.id}` })
+  }
+}
+
 const resetAllFilters = () => {
-  selectedCategory.value = null
   selectedBrand.value = null
   minPrice.value = null
   maxPrice.value = null
   sortBy.value = 'latest'
-  fetchProducts()
+  
+  if (route.params.slug || route.query.search) {
+    router.push({ path: '/category' })
+  } else {
+    fetchProducts()
+  }
 }
 
-// Watch filters & search/category query
-watch([selectedCategory, selectedBrand, sortBy, () => route.query.search, () => route.query.category_id], (newVals, oldVals) => {
-  // Nếu category_id từ URL thay đổi thì sync vào selectedCategory
-  if (newVals[4] !== oldVals?.[4]) {
-    selectedCategory.value = newVals[4] ? Number(newVals[4]) : null
-  }
+// Watch params slug
+watch(() => route.params.slug, () => {
+  syncCategoryFromRoute()
+})
+
+// Watch filters & search query
+watch([selectedCategory, selectedBrand, sortBy, () => route.query.search], () => {
   fetchProducts()
 })
 
-onMounted(() => {
-  fetchCategoriesAndBrands()
+onMounted(async () => {
+  await fetchCategoriesAndBrands()
   fetchProducts()
 })
 </script>
