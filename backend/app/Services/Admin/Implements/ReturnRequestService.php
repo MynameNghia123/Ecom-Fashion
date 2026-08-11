@@ -4,6 +4,7 @@ namespace App\Services\Admin\Implements;
 use App\Models\ReturnRequest;
 use App\Repositories\Admin\Interfaces\ReturnRequestRepositoryInterface;
 use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
+use App\Services\Client\Interfaces\NotificationServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
@@ -12,7 +13,10 @@ use Exception;
 
 class ReturnRequestService implements ReturnRequestServiceInterface
 {
-    public function __construct(private readonly ReturnRequestRepositoryInterface $repository) {}
+    public function __construct(
+        private readonly ReturnRequestRepositoryInterface $repository,
+        private readonly NotificationServiceInterface $notificationService
+    ) {}
 
     public function getList(array $filters): LengthAwarePaginator {
         return $this->repository->paginate($filters);
@@ -56,6 +60,25 @@ class ReturnRequestService implements ReturnRequestServiceInterface
             $orderDetail = $updatedModel->orderDetail;
             if ($orderDetail && $orderDetail->productVariant) {
                 $orderDetail->productVariant->increment('stock_quantity', $updatedModel->quantity);
+            }
+        }
+        
+        $updatedModel->load('order');
+        if ($updatedModel->order && $updatedModel->order->customer_id) {
+            $statusMap = [
+                'approved' => 'Đã được duyệt',
+                'rejected' => 'Đã bị từ chối',
+                'received' => 'Đã nhận được hàng hoàn',
+                'refunded' => 'Đã hoàn tiền',
+            ];
+            
+            if (isset($statusMap[$data['status']])) {
+                $this->notificationService->notify(
+                    $updatedModel->order->customer_id,
+                    'return_request_updated',
+                    "Yêu cầu hoàn trả {$updatedModel->ticket_code} " . strtolower($statusMap[$data['status']]),
+                    "Trạng thái yêu cầu hoàn trả {$updatedModel->ticket_code} của bạn đã được cập nhật thành: {$statusMap[$data['status']]}."
+                );
             }
         }
 

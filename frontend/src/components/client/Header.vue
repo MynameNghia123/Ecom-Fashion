@@ -160,6 +160,19 @@
         <button @click="handleAccountClick" class="icon-btn" :class="actionBtnClass" aria-label="Tài khoản">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
         </button>
+        <div class="relative flex items-center justify-center" v-if="authStore.isAuthenticated" @mouseenter="isNotificationOpen = true" @mouseleave="closeNotificationDropdown">
+          <button @click="isNotificationOpen = !isNotificationOpen" class="icon-btn relative" :class="actionBtnClass" aria-label="Thông báo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+            <span v-if="notificationStore.unreadCount > 0" class="badge bg-blue-600">{{ notificationStore.unreadCount > 99 ? '99+' : notificationStore.unreadCount }}</span>
+          </button>
+          <!-- Notification Dropdown Component -->
+          <NotificationDropdown
+            :is-open="isNotificationOpen"
+            @close="isNotificationOpen = false"
+            @mouseenter="clearNotificationTimeout"
+            @mouseleave="closeNotificationDropdown"
+          />
+        </div>
         <button @click="openMiniCart" class="icon-btn relative" :class="actionBtnClass" aria-label="Giỏ hàng">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
           <span 
@@ -234,16 +247,19 @@ import { useRouter, useRoute } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
 import { useWishlistStore } from '@/stores/client/wishlistStore'
 import { useCartStore } from '@/stores/client/cartStore'
+import { useNotificationStore } from '@/stores/client/notificationStore'
 import { productService } from '@/services/client/productService'
 import AuthModal from '@/views/client/auth/AuthModal.vue'
 import MiniCart from '@/components/client/cart/MiniCart.vue'
 import SearchOverlay from '@/components/client/SearchOverlay.vue'
+import NotificationDropdown from '@/components/client/NotificationDropdown.vue'
 
 const router = useRouter()
 const route = useRoute()
 const cartStore = useCartStore()
 const wishlistStore = useWishlistStore()
 const authStore = useClientAuthStore()
+const notificationStore = useNotificationStore()
 
 const isMobileMenuOpen = ref(false)
 const cartBumping = ref(false)
@@ -251,6 +267,7 @@ const isAuthModalOpen = ref(false)
 const authModalMode = ref('login')
 const isMiniCartOpen = ref(false)
 const isSearchOpen = ref(false)
+const isNotificationOpen = ref(false)
 const activeDropdown = ref(null)
 const rootCategories = ref([])
 
@@ -300,6 +317,16 @@ const handleAccountClick = () => {
 
 const openMiniCart = () => {
   isMiniCartOpen.value = true
+}
+
+let notificationTimeout = null
+const closeNotificationDropdown = () => {
+  notificationTimeout = setTimeout(() => {
+    isNotificationOpen.value = false
+  }, 150)
+}
+const clearNotificationTimeout = () => {
+  if (notificationTimeout) clearTimeout(notificationTimeout)
 }
 
 // ── Props & Scroll ────────────────────────────────────────────

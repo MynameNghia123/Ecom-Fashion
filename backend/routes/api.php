@@ -31,6 +31,7 @@ use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
 use App\Http\Controllers\Client\SePayController as ClientSePayController;
 use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
 use App\Http\Controllers\Client\ShippingController as ClientShippingController;
+use App\Http\Controllers\Client\NotificationController as ClientNotificationController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 
 
@@ -221,5 +222,11 @@ Route::prefix('client')->group(function () {
         Route::get('return-requests',        [\App\Http\Controllers\Client\ReturnRequestController::class, 'index']);
         Route::post('return-requests',       [\App\Http\Controllers\Client\ReturnRequestController::class, 'store']);
         Route::get('return-requests/{id}',   [\App\Http\Controllers\Client\ReturnRequestController::class, 'show']);
+
+        // Notifications
+        Route::get('notifications',                  [ClientNotificationController::class, 'index']);
+        Route::get('notifications/unread-count',     [ClientNotificationController::class, 'unreadCount']);
+        Route::patch('notifications/read-all',       [ClientNotificationController::class, 'markAllAsRead']);
+        Route::patch('notifications/{id}/read',      [ClientNotificationController::class, 'markAsRead']);
     });
 });

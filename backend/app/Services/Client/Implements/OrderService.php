@@ -4,6 +4,7 @@ use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Repositories\Client\Interfaces\OrderRepositoryInterface;
+use App\Services\Client\Interfaces\NotificationServiceInterface;
 use App\Services\Client\Interfaces\OrderServiceInterface;
 use App\Services\SePayService;
 use App\Services\VNPayService;
@@ -18,7 +19,8 @@ class OrderService implements OrderServiceInterface
     public function __construct(
         private readonly OrderRepositoryInterface $repo,
         private readonly VNPayService $vnpay,
-        private readonly SePayService $sepay
+        private readonly SePayService $sepay,
+        private readonly NotificationServiceInterface $notificationService
     ) {}
 
     public function getCustomerOrders(int $customerId): Collection
@@ -139,6 +141,13 @@ class OrderService implements OrderServiceInterface
             if ($data['payment_method'] === 'cod') {
                 $order->update(['payment_status' => 'unpaid', 'status' => 'confirmed']);
 
+                $this->notificationService->notify(
+                    $customerId,
+                    'order_placed',
+                    'Đặt hàng thành công',
+                    "Đơn hàng {$order->order_code} đã được đặt thành công và đang chờ xác nhận."
+                );
+
                 return [
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
@@ -155,6 +164,13 @@ class OrderService implements OrderServiceInterface
                     'order_code' => $order->order_code,
                     'final_amount' => $order->final_amount,
                 ]);
+
+                $this->notificationService->notify(
+                    $customerId,
+                    'order_placed',
+                    'Đặt hàng thành công',
+                    "Đơn hàng {$order->order_code} đã được tạo. Vui lòng thanh toán qua chuyển khoản."
+                );
 
                 return [
                     'success'      => true,
@@ -174,6 +190,13 @@ class OrderService implements OrderServiceInterface
                 'client_ip' => $clientIp,
                 'payment_url' => $paymentUrl,
             ]);
+
+            $this->notificationService->notify(
+                $customerId,
+                'order_placed',
+                'Đặt hàng thành công',
+                "Đơn hàng {$order->order_code} đã được tạo. Vui lòng thanh toán qua VNPAY."
+            );
 
             return [
                 'success' => true,

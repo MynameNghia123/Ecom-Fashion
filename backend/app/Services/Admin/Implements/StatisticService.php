@@ -19,6 +19,11 @@ class StatisticService implements StatisticServiceInterface
             'category_chart'   => $this->statisticRepository->getRevenueByCategory($startDate, $endDate),
             'order_status'     => $this->statisticRepository->getOrderStatusDistribution($startDate, $endDate),
             'recent_orders'    => $this->statisticRepository->getRecentOrders(5),
+            'alerts'           => [
+                'pending_orders'  => \App\Models\Order::where('status', 'pending')->count(),
+                'return_requests' => \App\Models\ReturnRequest::where('status', 'pending')->count(),
+                'low_stock'       => \App\Models\ProductVariant::where('stock_quantity', '<=', 10)->count(),
+            ]
         ];
     }
 

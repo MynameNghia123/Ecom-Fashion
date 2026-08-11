@@ -23,6 +23,11 @@ export const useStatisticStore = defineStore('statistic', () => {
   const recentOrders = ref([])
   const topProducts = ref([])
   const lowStockProducts = ref([])
+  const alerts = ref({
+    pending_orders: 0,
+    return_requests: 0,
+    low_stock: 0,
+  })
 
   // Bộ lọc thời gian hiện tại
   const dateRange = ref({
@@ -60,6 +65,7 @@ export const useStatisticStore = defineStore('statistic', () => {
       categoryChart.value  = data.category_chart ?? categoryChart.value
       orderStatus.value    = data.order_status   ?? orderStatus.value
       recentOrders.value   = data.recent_orders  ?? []
+      alerts.value         = data.alerts         ?? alerts.value
 
       // Cập nhật lại dateRange từ meta nếu server trả về
       if (res.data.meta) {
@@ -132,6 +138,7 @@ export const useStatisticStore = defineStore('statistic', () => {
     recentOrders,
     topProducts,
     lowStockProducts,
+    alerts,
     dateRange,
     loadingDashboard,
     loadingTopProducts,

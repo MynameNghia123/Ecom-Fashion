@@ -7,6 +7,7 @@ use App\Models\OrderDetail;
 use App\Models\ProductVariant;
 use App\Repositories\Admin\Interfaces\OrderRepositoryInterface;
 use App\Services\Admin\Interfaces\OrderServiceInterface;
+use App\Services\Client\Interfaces\NotificationServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,8 @@ use Exception;
 class OrderService implements OrderServiceInterface
 {
     public function __construct(
-        private readonly OrderRepositoryInterface $orderRepository
+        private readonly OrderRepositoryInterface $orderRepository,
+        private readonly NotificationServiceInterface $notificationService
     ) {}
 
     public function getList(array $filters): LengthAwarePaginator
@@ -163,6 +165,24 @@ class OrderService implements OrderServiceInterface
             }
 
             $updated = $this->orderRepository->update($model, $data);
+
+            if ($newStatus !== $oldStatus && $updated->customer_id) {
+                $statusMap = [
+                    'confirmed' => 'Đã xác nhận',
+                    'shipping' => 'Đang giao hàng',
+                    'completed' => 'Đã giao thành công',
+                    'cancelled' => 'Đã hủy',
+                ];
+                
+                if (isset($statusMap[$newStatus])) {
+                    $this->notificationService->notify(
+                        $updated->customer_id,
+                        'order_status_updated',
+                        "Đơn hàng {$updated->order_code} " . strtolower($statusMap[$newStatus]),
+                        "Trạng thái đơn hàng {$updated->order_code} của bạn đã được cập nhật thành: {$statusMap[$newStatus]}."
+                    );
+                }
+            }
 
             $updated->load([
                 'customer',

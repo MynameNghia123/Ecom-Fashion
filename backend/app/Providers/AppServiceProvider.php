@@ -70,6 +70,8 @@ use App\Repositories\Client\Implements\AuthRepository as ClientAuthRepository;
 use App\Repositories\Client\Interfaces\AuthRepositoryInterface as ClientAuthRepositoryInterface;
 use App\Repositories\Client\Implements\AiChatRepository;
 use App\Repositories\Client\Interfaces\AiChatRepositoryInterface;
+use App\Repositories\Client\Implements\NotificationRepository;
+use App\Repositories\Client\Interfaces\NotificationRepositoryInterface;
 
 // ── Services ──────────────────────────────────────────────────────────────────
 use App\Services\Admin\Implements\AuthService;
@@ -143,6 +145,8 @@ use App\Services\Client\Implements\PaymentService;
 use App\Services\Client\Interfaces\PaymentServiceInterface;
 use App\Services\Client\Implements\AiChatService;
 use App\Services\Client\Interfaces\AiChatServiceInterface;
+use App\Services\Client\Implements\NotificationService;
+use App\Services\Client\Interfaces\NotificationServiceInterface;
 
 use Illuminate\Support\ServiceProvider;
 
@@ -224,6 +228,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(PaymentServiceInterface::class, PaymentService::class);
         $this->app->bind(AiChatRepositoryInterface::class, AiChatRepository::class);
         $this->app->bind(AiChatServiceInterface::class, AiChatService::class);
+        $this->app->bind(NotificationRepositoryInterface::class, NotificationRepository::class);
+        $this->app->bind(NotificationServiceInterface::class, NotificationService::class);
     }
 
     public function boot(): void
