@@ -105,9 +105,17 @@ class OrderService implements OrderServiceInterface
                 'payment_status' => 'unpaid',
             ]);
 
-            // Increment coupon usage
+            // Increment coupon usage and track customer coupon
             if ($appliedCoupon && $couponId) {
                 $appliedCoupon->increment('used_count');
+                
+                DB::table('customer_coupons')->insert([
+                    'customer_id' => $customerId,
+                    'coupon_id' => $couponId,
+                    'used_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
             }
 
             // 3. Create Order details & reduce stock

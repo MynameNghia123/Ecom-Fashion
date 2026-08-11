@@ -15,8 +15,26 @@
 
     <div class="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
 
+      <!-- Mobile Filter Button -->
+      <div class="lg:hidden w-full flex justify-end mb-4">
+        <button @click="isMobileFilterOpen = true" class="flex items-center gap-2 border border-black px-4 py-2 bg-white text-black font-bold text-xs uppercase tracking-wider cursor-pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          Lọc sản phẩm
+        </button>
+      </div>
+
+      <!-- Mobile Filter Overlay -->
+      <div v-if="isMobileFilterOpen" @click="isMobileFilterOpen = false" class="fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
+
       <!-- LEFT SIDEBAR: Filters -->
-      <aside class="w-full lg:w-[250px] shrink-0 space-y-8 divide-y divide-neutral-200">
+      <aside :class="['w-[85%] max-w-[320px] lg:w-[250px] shrink-0 space-y-8 divide-y divide-neutral-200 fixed lg:relative top-0 left-0 h-full lg:h-auto bg-white lg:bg-transparent z-50 lg:z-auto p-6 lg:p-0 overflow-y-auto lg:overflow-visible transition-transform duration-300', isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']">
+        
+        <div class="flex justify-between items-center lg:hidden mb-6 pb-4 border-b border-neutral-100">
+          <span class="font-bold uppercase tracking-wider text-sm">Bộ lọc</span>
+          <button @click="isMobileFilterOpen = false" class="bg-transparent border-none cursor-pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
         
         <!-- 1. Danh mục sản phẩm -->
         <div class="space-y-3 pt-0">
@@ -158,6 +176,37 @@
           </div>
         </div>
 
+        <!-- Pagination -->
+        <div v-if="lastPage > 1" class="flex justify-center items-center gap-2 mt-12 mb-8">
+          <button 
+            @click="changePage(currentPage - 1)" 
+            :disabled="currentPage === 1"
+            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            &lt;
+          </button>
+          
+          <button 
+            v-for="page in lastPage" 
+            :key="page"
+            @click="changePage(page)"
+            :class="[
+              'w-10 h-10 flex items-center justify-center text-sm font-medium border cursor-pointer transition-colors',
+              currentPage === page ? 'border-black bg-black text-white' : 'border-neutral-200 bg-white text-black hover:bg-neutral-50'
+            ]"
+          >
+            {{ page }}
+          </button>
+          
+          <button 
+            @click="changePage(currentPage + 1)" 
+            :disabled="currentPage === lastPage"
+            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            &gt;
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -177,6 +226,12 @@ const products = ref([])
 const categories = ref([])
 const brands = ref([])
 const loading = ref(true)
+const isMobileFilterOpen = ref(false)
+
+// Pagination states
+const currentPage = ref(1)
+const lastPage = ref(1)
+const totalProducts = ref(0)
 
 // Filter states — đồng bộ với route.params.slug
 const selectedCategory = ref(null)
@@ -217,7 +272,8 @@ const fetchProducts = async () => {
       min_price: minPrice.value,
       max_price: maxPrice.value,
       sort: sortBy.value,
-      search: route.query.search || null
+      search: route.query.search || null,
+      page: currentPage.value
     }
     
     // Remove null/empty keys
@@ -230,11 +286,17 @@ const fetchProducts = async () => {
     const res = await productService.getProducts(params)
     if (res.data && res.data.success) {
       products.value = res.data.data
+      if (res.data.meta) {
+        currentPage.value = res.data.meta.current_page
+        lastPage.value = res.data.meta.last_page
+        totalProducts.value = res.data.meta.total
+      }
     }
   } catch (err) {
     console.error('Lỗi tải sản phẩm:', err)
   } finally {
     loading.value = false
+    isMobileFilterOpen.value = false
   }
 }
 
@@ -277,15 +339,20 @@ const selectCategory = (cat) => {
 }
 
 const resetAllFilters = () => {
+  selectedCategory.value = null
   selectedBrand.value = null
   minPrice.value = null
   maxPrice.value = null
   sortBy.value = 'latest'
-  
-  if (route.params.slug || route.query.search) {
-    router.push({ path: '/category' })
-  } else {
+  currentPage.value = 1
+  fetchProducts()
+}
+
+const changePage = (page) => {
+  if (page >= 1 && page <= lastPage.value) {
+    currentPage.value = page
     fetchProducts()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 }
 
@@ -294,8 +361,9 @@ watch(() => route.params.slug, () => {
   syncCategoryFromRoute()
 })
 
-// Watch filters & search query
-watch([selectedCategory, selectedBrand, sortBy, () => route.query.search], () => {
+// Watch all filters and search query
+watch([selectedCategory, selectedBrand, minPrice, maxPrice, sortBy, () => route.query.search], () => {
+  currentPage.value = 1
   fetchProducts()
 })
 
