@@ -86,7 +86,11 @@ class GoodReceiptController extends Controller
     )]
     public function store(StoreGoodReceiptRequest $request): JsonResponse
     {
-       $created = $this->service->create($request->validated());
+       $data = $request->validated();
+       if (!isset($data['staff_id'])) {
+           $data['staff_id'] = $request->user()->id;
+       }
+       $created = $this->service->create($data);
 
        return response()->json([
             'success'   => true,
@@ -150,7 +154,11 @@ class GoodReceiptController extends Controller
     )]
     public function update(UpdateGoodReceiptRequest $request, GoodReceipt $goods_receipt): JsonResponse
     {
-        $updated = $this->service->update($goods_receipt, $request->validated());
+        $data = $request->validated();
+        if (!isset($data['staff_id'])) {
+            $data['staff_id'] = $request->user()->id;
+        }
+        $updated = $this->service->update($goods_receipt, $data);
 
         return response()->json([
             'success'   => true,

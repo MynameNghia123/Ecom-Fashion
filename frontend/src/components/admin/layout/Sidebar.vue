@@ -1,10 +1,9 @@
 <template>
-  <aside class="w-[260px] h-screen sticky top-0 flex flex-col shrink-0 select-none"
-    style="background:#111111; border-right:1px solid rgba(255,255,255,0.07);">
+  <aside class="w-[260px] h-screen sticky top-0 flex flex-col shrink-0 select-none bg-white border-r border-slate-200">
     
     <!-- Logo Header -->
-    <div class="h-16 px-6 flex items-center shrink-0" style="border-bottom:1px solid rgba(255,255,255,0.07);">
-      <span class="text-lg font-bold tracking-widest uppercase text-white">LUXURY ADMIN </span>
+    <div class="h-16 px-6 flex items-center shrink-0 border-b border-slate-200">
+      <span class="text-lg font-bold tracking-widest uppercase text-black">LUXURY ADMIN </span>
     </div>
 
     <!-- Navigation Scroll Area -->
@@ -198,10 +197,7 @@
       <!-- 9. Quay lại website -->
       <router-link
         to="/"
-        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold no-underline rounded-lg transition-all mt-2"
-        style="color:#f87171;"
-        @mouseenter="e => e.currentTarget.style.background='rgba(248,113,113,0.1)'"
-        @mouseleave="e => e.currentTarget.style.background='transparent'"
+        class="flex items-center gap-3 px-3 py-2.5 text-[13px] font-semibold no-underline rounded-lg transition-all mt-2 text-rose-500 hover:bg-rose-50"
       >
         <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"/>
@@ -224,44 +220,44 @@ const authStore = useAuthStore()
 /* ── Sidebar Scrollbar ── */
 .admin-sidebar-nav::-webkit-scrollbar { width: 4px; }
 .admin-sidebar-nav::-webkit-scrollbar-track { background: transparent; }
-.admin-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
-.admin-sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+.admin-sidebar-nav::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.15); border-radius: 4px; }
+.admin-sidebar-nav::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.3); }
 
 /* ── Group labels (section headers) ── */
 .sidebar-group-label {
-  color: rgba(255,255,255,0.35);
+  color: rgba(0,0,0,0.4);
   letter-spacing: 0.1em;
 }
 
 /* ── Top-level nav link (Dashboard) ── */
 .sidebar-link {
-  color: rgba(255,255,255,0.6);
+  color: rgba(0,0,0,0.6);
   border-left: 2px solid transparent;
 }
 .sidebar-link:hover {
-  color: #ffffff;
-  background: rgba(255,255,255,0.07);
+  color: #000000;
+  background: rgba(0,0,0,0.06);
 }
 .sidebar-link--active {
   color: #ffffff !important;
-  background: rgba(255,255,255,0.1) !important;
-  border-left-color: #ffffff !important;
+  background: #111111 !important;
+  border-left-color: #111111 !important;
   font-weight: 600 !important;
 }
 
 /* ── Sub-level links ── */
 .sidebar-sublink {
-  color: rgba(255,255,255,0.5);
+  color: rgba(0,0,0,0.6);
   border-left: 2px solid transparent;
 }
 .sidebar-sublink:hover {
-  color: rgba(255,255,255,0.85);
-  background: rgba(255,255,255,0.06);
+  color: #000000;
+  background: rgba(0,0,0,0.06);
 }
 .sidebar-sublink--active {
   color: #ffffff !important;
-  background: rgba(255,255,255,0.1) !important;
-  border-left-color: rgba(255,255,255,0.6) !important;
+  background: #111111 !important;
+  border-left-color: #111111 !important;
   font-weight: 600 !important;
 }
 </style>

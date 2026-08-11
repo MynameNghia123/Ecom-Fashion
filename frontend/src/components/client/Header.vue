@@ -6,7 +6,7 @@
       :class="topBarClass"
     >
       <div class="flex gap-5 items-center">
-        <a href="#" class="text-white no-underline font-semibold cursor-pointer">THEO DÕI ĐƠN HÀNG</a>
+        <router-link to="/profile/orders" class="text-white no-underline font-semibold cursor-pointer">THEO DÕI ĐƠN HÀNG</router-link>
         <a href="#" @click.prevent="handleAccountClick" class="text-white no-underline font-semibold cursor-pointer">TÀI KHOẢN CỦA TÔI</a>
         <router-link to="/about" class="text-white no-underline font-semibold cursor-pointer">VỀ CHÚNG TÔI</router-link>
       </div>
@@ -14,7 +14,7 @@
         <span class="text-white font-semibold">GIẢM GIÁ MÙA HÈ CHO TẤT CẢ ĐỒ BƠI VÀ MIỄN PHÍ GIAO HÀNG QUỐC TẾ TỐC ĐỘ CAO</span>
       </div>
       <div class="flex gap-5 items-center">
-        <a href="#" class="text-white no-underline font-semibold cursor-pointer">LIÊN HỆ</a>
+        <router-link to="/contact" class="text-white no-underline font-semibold cursor-pointer">LIÊN HỆ</router-link>
         <!-- <div class="flex items-center gap-1.25">
           <span class="text-white font-semibold cursor-pointer">TIẾNG VIỆT <i class="border-solid border-white border-r border-b inline-block p-[2.5px] rotate-45 ml-1.25 mb-[2px]"></i></span>
         </div> -->
@@ -84,7 +84,7 @@
                 <div class="dropdown-inner">
                   <!-- Các sub-category (cột) -->
                   <div
-                    v-for="sub in cat.children"
+                    v-for="sub in cat.children.slice(0, 8)"
                     :key="sub.id"
                     class="dropdown-col"
                   >
@@ -96,9 +96,14 @@
 
                     <!-- Sub-sub-categories nếu có -->
                     <ul v-if="sub.children && sub.children.length" class="dropdown-links">
-                      <li v-for="leaf in sub.children" :key="leaf.id">
+                      <li v-for="leaf in sub.children.slice(0, 8)" :key="leaf.id">
                         <button class="dropdown-link" @click="goToCategory(leaf)">
                           {{ leaf.name }}
+                        </button>
+                      </li>
+                      <li v-if="sub.children.length > 8">
+                        <button class="dropdown-link font-medium text-black mt-1" @click="goToCategory(sub)">
+                          Xem tất cả
                         </button>
                       </li>
                     </ul>

@@ -198,7 +198,7 @@
               <!-- Loại -->
               <td class="py-4 px-4">
                 <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
                   :class="coupon.type === 'percent' ? 'bg-violet-50 text-violet-700' : 'bg-amber-50 text-amber-700'"
                 >
                   {{ coupon.type === 'percent' ? '% Phần trăm' : '₫ Cố định' }}
@@ -249,7 +249,7 @@
               <!-- Trạng thái -->
               <td class="py-4 px-4">
                 <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
                   :class="coupon.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-slate-100 text-slate-500'"
                 >
                   <span

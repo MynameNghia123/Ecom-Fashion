@@ -340,15 +340,15 @@
                   <div class="bg-slate-50/60 rounded-xl p-5 border border-slate-100 grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <h3 class="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Người nhận hàng</h3>
-                      <p class="font-bold text-slate-800 text-sm">{{ activeOrder.shipping_name }}</p>
-                      <p class="text-xs text-slate-650 mt-1">SĐT: {{ activeOrder.shipping_phone }}</p>
-                      <p class="text-xs text-slate-650 mt-1.5 leading-relaxed">Địa chỉ: {{ activeOrder.shipping_address }}</p>
+                      <p class="font-bold text-slate-800 text-sm truncate">{{ activeOrder.shipping_name }}</p>
+                      <p class="text-xs text-slate-650 mt-1 truncate">SĐT: {{ activeOrder.shipping_phone }}</p>
+                      <p class="text-xs text-slate-650 mt-1.5 leading-relaxed break-words">Địa chỉ: {{ activeOrder.shipping_address }}</p>
                     </div>
                     <div>
                       <h3 class="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Thông tin tài khoản</h3>
-                      <p class="font-semibold text-slate-800 text-sm">{{ activeOrder.customer?.full_name || 'Khách vãng lai' }}</p>
-                      <p class="text-xs text-slate-650 mt-1">{{ activeOrder.customer?.email }}</p>
-                      <p class="text-xs text-slate-650 mt-1">Tài khoản SĐT: {{ activeOrder.customer?.phone_number || 'N/A' }}</p>
+                      <p class="font-semibold text-slate-800 text-sm truncate">{{ activeOrder.customer?.full_name || 'Khách vãng lai' }}</p>
+                      <p class="text-xs text-slate-650 mt-1 truncate">{{ activeOrder.customer?.email }}</p>
+                      <p class="text-xs text-slate-650 mt-1 truncate">Tài khoản SĐT: {{ activeOrder.customer?.phone_number || 'N/A' }}</p>
                     </div>
                   </div>
 
@@ -419,9 +419,9 @@
                       <span class="font-mono font-medium">-{{ formatPrice(activeOrder.coupon_discount_amount) }}</span>
                     </div>
 
-                    <div class="flex justify-between text-xs text-slate-600">
+                    <div class="flex justify-between text-xs text-slate-800 font-semibold bg-slate-100 p-2 rounded-lg">
                       <span>Phí giao hàng:</span>
-                      <span class="font-mono font-medium">{{ formatPrice(activeOrder.shipping_fee) }}</span>
+                      <span class="font-mono font-bold">{{ formatPrice(activeOrder.shipping_fee) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center text-sm text-slate-800 font-extrabold pt-2 border-t border-slate-200/60">
@@ -481,7 +481,7 @@
                       <button
                         type="submit"
                         :disabled="submittingStatusUpdate"
-                        class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-all shadow-md shadow-blue-100 hover:shadow flex items-center justify-center gap-2 active:scale-[0.98]"
+                        class="w-full py-2.5 bg-black hover:bg-neutral-800 disabled:opacity-60 text-white text-sm font-semibold rounded-xl transition-all shadow-md flex items-center justify-center gap-2 active:scale-[0.98]"
                       >
                         <svg v-if="submittingStatusUpdate" class="w-4 h-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
                         <span>Cập nhật trạng thái</span>

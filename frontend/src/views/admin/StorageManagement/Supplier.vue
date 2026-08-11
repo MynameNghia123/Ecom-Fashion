@@ -147,11 +147,11 @@
               <span class="line-clamp-1 text-sm">{{ supplier.address }}</span>
             </td>
             <td class="py-4 px-4">
-              <span v-if="supplier.is_active === 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+              <span v-if="supplier.is_active === 1" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-emerald-50 text-emerald-600 border border-emerald-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                 Đang hợp tác
               </span>
-              <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-100">
+              <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-red-50 text-red-600 border border-red-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                 Tạm dừng
               </span>

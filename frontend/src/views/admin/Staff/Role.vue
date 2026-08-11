@@ -216,7 +216,7 @@
           </div>
 
           <!-- Permission Matrix Form -->
-          <div v-else class="flex-1 p-5 overflow-y-auto max-h-[600px] space-y-4">
+          <div v-else class="flex-1 p-5 overflow-y-auto space-y-4">
             
             <!-- Warning for Superadmin -->
             <div

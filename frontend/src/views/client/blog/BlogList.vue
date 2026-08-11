@@ -1,15 +1,17 @@
 <template>
-  <div class="w-full bg-white text-black py-12 px-5 lg:px-20 font-text min-h-[70vh]">
-    
-    <!-- Title Section -->
-    <div class="text-center mb-12 border-b border-gray-100 pb-8">
-      <h1 class="font-title text-[40px] md:text-[56px] font-bold tracking-wide mb-6 text-gray-900">
+  <div class="w-full bg-white text-black font-text min-h-[70vh]">
+    <!-- Background Banner -->
+    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex flex-col items-center justify-center">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <h1 class="relative font-title text-[40px] md:text-[56px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
         TẠP CHÍ THỜI TRANG
       </h1>
-      <p class="text-xs text-neutral-400 font-semibold tracking-widest uppercase max-w-[500px] mx-auto">
+      <p class="relative text-xs text-white/90 font-semibold tracking-widest uppercase mt-4 z-10 max-w-[500px] text-center px-5">
         Cập nhật xu hướng, cảm hứng phong cách và câu chuyện thương hiệu Luxury.
       </p>
     </div>
+
+    <div class="py-12 px-5 lg:px-20 max-w-[1280px] mx-auto">
 
     <!-- Loading State -->
     <div v-if="loading" class="grid grid-cols-1 md:grid-cols-3 gap-8 py-12">
@@ -72,6 +74,7 @@
       </div>
     </div>
 
+    </div>
   </div>
 </template>
 

@@ -189,23 +189,23 @@
             <td class="py-4 px-4 text-right font-semibold text-slate-800">{{ helperFormatCurrency(receipt.total_amount_price)}}</td>
             <td class="py-4 px-4 text-slate-500 text-xs">{{helperFomatDate(receipt.created_at) }}</td>
             <td class="py-4 px-4">
-              <span v-if="receipt.status === 'completed'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-600 border border-emerald-100">
+              <span v-if="receipt.status === 'completed'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-emerald-50 text-emerald-600 border border-emerald-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                Đã hoàn thành
+                Đang hoàn thành
               </span>
-              <span v-else-if="receipt.status === 'approved'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-600 border border-blue-100">
+              <span v-else-if="receipt.status === 'approved'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-blue-50 text-blue-600 border border-blue-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                 Đã duyệt
               </span>
-              <span v-else-if="receipt.status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-600 border border-amber-100">
+              <span v-else-if="receipt.status === 'pending'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-amber-50 text-amber-600 border border-amber-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                 Chờ duyệt
               </span>
-              <span v-else-if="receipt.status === 'cancel'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-red-50 text-red-600 border border-red-100">
+              <span v-else-if="receipt.status === 'cancel'" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-red-50 text-red-600 border border-red-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
                 Đã huỷ
               </span>
-              <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-50 text-slate-600 border border-slate-100">
+              <span v-else class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap bg-slate-50 text-slate-600 border border-slate-100">
                 <span class="w-1.5 h-1.5 rounded-full bg-slate-500"></span>
                 {{ receipt.status }}
               </span>

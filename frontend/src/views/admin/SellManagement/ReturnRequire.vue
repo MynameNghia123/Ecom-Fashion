@@ -20,7 +20,7 @@
       <div class="bg-gradient-to-br from-slate-900 to-slate-800 text-white rounded-2xl p-4 flex flex-col justify-between shadow-md">
         <p class="text-xs font-semibold uppercase tracking-wider text-slate-300">Tổng yêu cầu</p>
         <div class="mt-3 flex items-baseline justify-between">
-          <span class="text-2xl font-bold">{{ stats.total }}</span>
+          <span class="text-2xl font-bold">{{ returnStore.stats.total }}</span>
           <span class="text-xs font-medium text-slate-400">Tất cả</span>
         </div>
       </div>
@@ -29,7 +29,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Chờ xử lý</p>
-          <p class="text-2xl font-bold text-amber-600 mt-1">{{ stats.pending }}</p>
+          <p class="text-2xl font-bold text-amber-600 mt-1">{{ returnStore.stats.pending }}</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -40,7 +40,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Đã chấp nhận</p>
-          <p class="text-2xl font-bold text-blue-600 mt-1">{{ stats.approved }}</p>
+          <p class="text-2xl font-bold text-blue-600 mt-1">{{ returnStore.stats.approved }}</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
@@ -51,7 +51,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Đã nhận hàng</p>
-          <p class="text-2xl font-bold text-purple-600 mt-1">{{ stats.received }}</p>
+          <p class="text-2xl font-bold text-purple-600 mt-1">{{ returnStore.stats.received }}</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
@@ -62,7 +62,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Đã hoàn tiền</p>
-          <p class="text-2xl font-bold text-emerald-600 mt-1">{{ stats.refunded }}</p>
+          <p class="text-2xl font-bold text-emerald-600 mt-1">{{ returnStore.stats.refunded }}</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -73,7 +73,7 @@
       <div class="bg-white rounded-2xl border border-slate-100 p-4 shadow-sm flex items-center justify-between">
         <div>
           <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Từ chối</p>
-          <p class="text-2xl font-bold text-rose-600 mt-1">{{ stats.rejected }}</p>
+          <p class="text-2xl font-bold text-rose-600 mt-1">{{ returnStore.stats.rejected }}</p>
         </div>
         <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
           <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
@@ -145,8 +145,19 @@
               <th class="py-3.5 px-5 text-right whitespace-nowrap">Thao Tác</th>
             </tr>
           </thead>
-          <tbody class="divide-y divide-slate-100 text-xs">
-            <tr v-for="item in filteredRequests" :key="item.id" class="hover:bg-slate-50/80 transition-colors">
+          <tbody class="divide-y divide-slate-100 text-xs relative">
+            <tr v-if="returnStore.loading">
+              <td colspan="8" class="text-center py-10 text-slate-500">
+                <div class="w-8 h-8 border-4 border-slate-200 border-t-black rounded-full animate-spin mx-auto"></div>
+                <p class="mt-2">Đang tải dữ liệu...</p>
+              </td>
+            </tr>
+            <tr v-else-if="filteredRequests.length === 0">
+              <td colspan="8" class="text-center py-10 text-slate-500">
+                Không tìm thấy yêu cầu nào phù hợp.
+              </td>
+            </tr>
+            <tr v-else v-for="item in filteredRequests" :key="item.id" class="hover:bg-slate-50/80 transition-colors">
               <!-- Return Ticket Code -->
               <td class="py-4 px-5 font-bold text-slate-800 font-mono">
                 {{ item.ticket_code }}
@@ -298,8 +309,7 @@
               </div>
             </div>
 
-            <!-- Proof Images -->
-            <div>
+            <div v-if="selectedRequest.proof_images && selectedRequest.proof_images.length">
               <p class="font-bold text-slate-700 text-xs mb-2">Hình ảnh bằng chứng đính kèm:</p>
               <div class="flex items-center gap-3">
                 <img
@@ -363,136 +373,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { useReturnStore } from '@/stores/admin/returnStore'
+import { onMounted, watch } from 'vue'
 
+const returnStore = useReturnStore()
 const searchQuery = ref('')
 const selectedStatus = ref('')
 const selectedReason = ref('')
 const selectedRequest = ref(null)
 
-// Mock Return Requests dataset
-const requests = ref([
-  {
-    id: 1,
-    ticket_code: '#RET-1001',
-    order_code: '#ORD-8829',
-    customer_name: 'Nguyễn Văn An',
-    customer_phone: '0912 345 678',
-    customer_email: 'nguyenvanan@gmail.com',
-    pickup_address: '123 Đường Lê Lợi, Phường Bến Thành, Quận 1, TP. Hồ Chí Minh',
-    product_name: 'Áo Sơ Mi Nữ Tay Dài Form Rộng Oxford',
-    product_image: 'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=400&auto=format&fit=crop',
-    variant_size: 'M',
-    variant_color: 'Trắng',
-    quantity: 1,
-    unit_price: 450000,
-    refund_amount: 450000,
-    reason: 'wrong_size',
-    customer_note: 'Mặc bị chật vai một chút, muốn đổi sang size L hoặc trả hàng hoàn tiền.',
-    proof_images: [
-      'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?q=80&w=400&auto=format&fit=crop'
-    ],
-    status: 'pending',
-    created_at: '2026-07-21 14:30'
-  },
-  {
-    id: 2,
-    ticket_code: '#RET-1002',
-    order_code: '#ORD-8815',
-    customer_name: 'Trần Thị Mai',
-    customer_phone: '0988 765 432',
-    customer_email: 'thimai.tran@gmail.com',
-    pickup_address: '45 Nguyễn Huệ, Phường 2, Thành phố Vũng Tàu',
-    product_name: 'Quần Jean Nam Slimfit Cao Cấp',
-    product_image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=400&auto=format&fit=crop',
-    variant_size: '31',
-    variant_color: 'Xanh Đậm',
-    quantity: 1,
-    unit_price: 680000,
-    refund_amount: 680000,
-    reason: 'defective',
-    customer_note: 'Khi bóc hàng thấy dải chỉ gấu quần bị sứt chỉ một đường dài.',
-    proof_images: [
-      'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?q=80&w=400&auto=format&fit=crop'
-    ],
-    status: 'approved',
-    created_at: '2026-07-20 09:15'
-  },
-  {
-    id: 3,
-    ticket_code: '#RET-1003',
-    order_code: '#ORD-8790',
-    customer_name: 'Lê Hoàng Nam',
-    customer_phone: '0933 112 233',
-    customer_email: 'hoangnam.le@gmail.com',
-    pickup_address: '88 Cầu Giấy, Quận Cầu Giấy, Hà Nội',
-    product_name: 'Váy Đầm Dáng Xòe Họa Tiết Hoa Mùa Hè',
-    product_image: 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=400&auto=format&fit=crop',
-    variant_size: 'S',
-    variant_color: 'Hoa Vàng',
-    quantity: 1,
-    unit_price: 790000,
-    refund_amount: 790000,
-    reason: 'wrong_item',
-    customer_note: 'Đơn đặt màu hoa vàng nhưng shop gửi nhầm sang hoa xanh.',
-    proof_images: [
-      'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=400&auto=format&fit=crop'
-    ],
-    status: 'received',
-    created_at: '2026-07-19 16:45'
-  },
-  {
-    id: 4,
-    ticket_code: '#RET-1004',
-    order_code: '#ORD-8752',
-    customer_name: 'Phạm Minh Tuấn',
-    customer_phone: '0905 999 888',
-    customer_email: 'minhtuan.pham@gmail.com',
-    pickup_address: '12 Nguyễn Văn Linh, Đà Nẵng',
-    product_name: 'Áo Khoác Blazer Nam Hai Hàng Cúc',
-    product_image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=400&auto=format&fit=crop',
-    variant_size: 'XL',
-    variant_color: 'Đen Classic',
-    quantity: 1,
-    unit_price: 1250000,
-    refund_amount: 1250000,
-    reason: 'change_mind',
-    customer_note: 'Cảm thấy không hợp với phong cách cá nhân.',
-    proof_images: [
-      'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=400&auto=format&fit=crop'
-    ],
-    status: 'refunded',
-    created_at: '2026-07-18 11:20'
-  }
-])
-
-// Filtered Computed
-const filteredRequests = computed(() => {
-  return requests.value.filter(req => {
-    const matchSearch =
-      !searchQuery.value ||
-      req.ticket_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      req.order_code.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      req.customer_name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-      req.customer_phone.includes(searchQuery.value)
-
-    const matchStatus = !selectedStatus.value || req.status === selectedStatus.value
-    const matchReason = !selectedReason.value || req.reason === selectedReason.value
-
-    return matchSearch && matchStatus && matchReason
+// Refresh / Filter trigger
+const fetchWithFilters = () => {
+  returnStore.fetchReturnRequests({
+    search: searchQuery.value,
+    status: selectedStatus.value,
+    reason: selectedReason.value
   })
+}
+
+watch([searchQuery, selectedStatus, selectedReason], () => {
+  fetchWithFilters()
 })
 
-// Stats Summary Computed
-const stats = computed(() => {
-  return {
-    total: requests.value.length,
-    pending: requests.value.filter(r => r.status === 'pending').length,
-    approved: requests.value.filter(r => r.status === 'approved').length,
-    received: requests.value.filter(r => r.status === 'received').length,
-    refunded: requests.value.filter(r => r.status === 'refunded').length,
-    rejected: requests.value.filter(r => r.status === 'rejected').length
-  }
+onMounted(() => {
+  fetchWithFilters()
+})
+
+const filteredRequests = computed(() => {
+  return returnStore.requests
 })
 
 // Helpers
@@ -559,11 +467,14 @@ const openModal = (item) => {
   selectedRequest.value = item
 }
 
-const updateStatus = (newStatus) => {
+const updateStatus = async (newStatus) => {
   if (selectedRequest.value) {
-    selectedRequest.value.status = newStatus
-    const found = requests.value.find(r => r.id === selectedRequest.value.id)
-    if (found) found.status = newStatus
+    try {
+      await returnStore.updateStatus(selectedRequest.value.id, newStatus)
+      selectedRequest.value.status = newStatus
+    } catch (err) {
+      alert('Lỗi cập nhật trạng thái: ' + err.message)
+    }
   }
 }
 
@@ -571,6 +482,7 @@ const refreshData = () => {
   searchQuery.value = ''
   selectedStatus.value = ''
   selectedReason.value = ''
+  fetchWithFilters()
 }
 </script>
 

@@ -1,9 +1,14 @@
 <template>
-  <div class="max-w-[1280px] mx-auto px-5 py-12">
+  <div class="w-full">
+    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <h1 class="relative font-title text-[42px] md:text-[52px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
+        Cửa hàng
+      </h1>
+    </div>
 
-    <!-- Page Title -->
-    <h1 class="font-title text-[42px] md:text-[52px] font-normal text-black text-center mb-3 tracking-[0.5px]">Cửa hàng</h1>
-    <p v-if="route.query.search" class="text-center font-text text-sm text-neutral-500 mb-10">
+    <div class="max-w-[1280px] mx-auto px-5 py-12">
+      <p v-if="route.query.search" class="text-center font-text text-sm text-neutral-500 mb-10">
       Kết quả tìm kiếm cho: <strong class="text-black font-semibold">"{{ route.query.search }}"</strong>
       <button @click="router.push('/category')" class="ml-2 text-xs text-neutral-400 hover:text-black underline border-none bg-transparent cursor-pointer">Xóa tìm kiếm</button>
     </p>
@@ -155,6 +160,7 @@
 
       </div>
     </div>
+  </div>
   </div>
 </template>
 
