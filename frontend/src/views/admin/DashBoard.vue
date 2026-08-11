@@ -300,65 +300,101 @@
       </div>
     </div>
 
-    <!-- Recent Orders Section -->
-    <div class="bg-white border border-[#eef2f7] rounded-xl p-6 shadow-sm">
-      <div class="flex items-center justify-between mb-5">
-        <h3 class="text-base font-bold text-slate-900">Đơn hàng gần đây</h3>
-        <router-link to="/admin/orders" class="text-black text-sm font-bold hover:underline no-underline">Xem tất cả</router-link>
+    <!-- Bottom Section: Recent Orders & Top Products -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <!-- Recent Orders Section -->
+      <div class="bg-white border border-[#eef2f7] rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-base font-bold text-slate-900">Đơn hàng gần đây</h3>
+          <router-link to="/admin/orders" class="text-black text-sm font-bold hover:underline no-underline">Xem tất cả</router-link>
+        </div>
+
+        <div v-if="statStore.loadingDashboard" class="py-12 flex items-center justify-center">
+          <div class="w-8 h-8 border-4 border-slate-200 border-t-black rounded-full animate-spin"></div>
+        </div>
+        <template v-else>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <th class="py-3 px-4">Mã đơn</th>
+                  <th class="py-3 px-4">Khách hàng</th>
+                  <th class="py-3 px-4">Tổng tiền</th>
+                  <th class="py-3 px-4">Trạng thái</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm font-medium text-slate-700 divide-y divide-slate-50">
+                <tr v-for="order in statStore.recentOrders.slice(0,5)" :key="order.id" class="hover:bg-slate-50/50 transition-colors">
+                  <td class="py-4 px-4 text-black font-semibold font-mono whitespace-nowrap">{{ order.order_code }}</td>
+                  <td class="py-4 px-4 whitespace-nowrap">
+                    <div class="flex items-center gap-3">
+                      <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-extrabold bg-neutral-900 text-white shrink-0">
+                        {{ (order.customer_name || 'K').charAt(0).toUpperCase() }}
+                      </div>
+                      <span class="text-slate-800 font-semibold">{{ order.customer_name || 'Khách vãng lai' }}</span>
+                    </div>
+                  </td>
+                  <td class="py-4 px-4 text-slate-800 font-bold font-mono whitespace-nowrap">{{ formatPrice(order.final_amount) }}</td>
+                  <td class="py-4 px-4 whitespace-nowrap">
+                    <span :class="`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-semibold ${getStatusClass(order.status)}`">
+                      {{ getStatusText(order.status) }}
+                    </span>
+                  </td>
+                </tr>
+                <tr v-if="statStore.recentOrders.length === 0">
+                  <td colspan="4" class="text-center py-8 text-slate-400 font-medium">Chưa có đơn hàng nào</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
       </div>
 
-      <div v-if="statStore.loadingDashboard" class="py-12 flex items-center justify-center">
-        <div class="w-8 h-8 border-4 border-slate-200 border-t-black rounded-full animate-spin"></div>
-      </div>
-      <template v-else>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse min-w-[700px]">
-            <thead>
-              <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
-                <th class="py-3 px-4">Mã đơn hàng</th>
-                <th class="py-3 px-4">Khách hàng</th>
-                <th class="py-3 px-4">Ngày đặt</th>
-                <th class="py-3 px-4">Tổng tiền</th>
-                <th class="py-3 px-4">Trạng thái</th>
-                <th class="py-3 px-4 text-center">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody class="text-sm font-medium text-slate-700 divide-y divide-slate-50">
-              <tr v-for="order in statStore.recentOrders" :key="order.id" class="hover:bg-slate-50/50 transition-colors">
-                <td class="py-4 px-4 text-black font-semibold font-mono">{{ order.order_code }}</td>
-                <td class="py-4 px-4">
-                  <div class="flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-extrabold bg-neutral-900 text-white">
-                      {{ (order.customer_name || 'K').charAt(0).toUpperCase() }}
-                    </div>
-                    <span class="text-slate-800 font-semibold">{{ order.customer_name || 'Khách vãng lai' }}</span>
-                  </div>
-                </td>
-                <td class="py-4 px-4 text-slate-400 font-normal">
-                  {{ order.created_at || '—' }}
-                </td>
-                <td class="py-4 px-4 text-slate-800 font-bold font-mono">{{ formatPrice(order.final_amount) }}</td>
-                <td class="py-4 px-4">
-                  <span :class="`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${getStatusClass(order.status)}`">
-                    {{ getStatusText(order.status) }}
-                  </span>
-                </td>
-                <td class="py-4 px-4 text-center">
-                  <button @click="router.push(`/admin/orders/${order.id}`)" class="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-black hover:bg-slate-50 transition-all cursor-pointer" title="Xem chi tiết">
-                    <svg class="w-4.5 h-4.5 mx-auto" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  </button>
-                </td>
-              </tr>
-              <tr v-if="statStore.recentOrders.length === 0">
-                <td colspan="6" class="text-center py-8 text-slate-400 font-medium">Chưa có đơn hàng nào trong kỳ báo cáo</td>
-              </tr>
-            </tbody>
-          </table>
+      <!-- Top Products Section -->
+      <div class="bg-white border border-[#eef2f7] rounded-xl p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-5">
+          <h3 class="text-base font-bold text-slate-900">Sản phẩm bán chạy</h3>
+          <router-link to="/admin/products" class="text-black text-sm font-bold hover:underline no-underline">Xem kho</router-link>
         </div>
-      </template>
+
+        <div v-if="statStore.loadingTopProducts" class="py-12 flex items-center justify-center">
+          <div class="w-8 h-8 border-4 border-slate-200 border-t-black rounded-full animate-spin"></div>
+        </div>
+        <template v-else>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr class="border-b border-slate-100 text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  <th class="py-3 px-4">Sản phẩm</th>
+                  <th class="py-3 px-4 text-center">Đã bán</th>
+                  <th class="py-3 px-4 text-right">Doanh thu</th>
+                </tr>
+              </thead>
+              <tbody class="text-sm font-medium text-slate-700 divide-y divide-slate-50">
+                <tr v-for="product in statStore.topProducts.slice(0,5)" :key="product.id" class="hover:bg-slate-50/50 transition-colors">
+                  <td class="py-3 px-4">
+                    <div class="flex items-center gap-3">
+                      <div class="w-10 h-10 rounded-lg bg-slate-100 overflow-hidden shrink-0 border border-slate-200">
+                        <img v-if="product.image_url" :src="product.image_url" :alt="product.name" class="w-full h-full object-cover" />
+                        <div v-else class="w-full h-full flex items-center justify-center text-slate-400 text-xs font-medium">No img</div>
+                      </div>
+                      <div class="min-w-0">
+                        <p class="text-slate-800 font-semibold truncate">{{ product.name }}</p>
+                        <p class="text-xs text-slate-400 mt-0.5 truncate">{{ product.category_name || 'Khác' }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3 px-4 text-center text-slate-800 font-bold whitespace-nowrap">{{ product.total_sold || 0 }}</td>
+                  <td class="py-3 px-4 text-right text-emerald-600 font-bold font-mono whitespace-nowrap">{{ formatPrice(product.total_revenue || 0) }}</td>
+                </tr>
+                <tr v-if="statStore.topProducts.length === 0">
+                  <td colspan="3" class="text-center py-8 text-slate-400 font-medium">Chưa có dữ liệu sản phẩm bán chạy</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </div>
     </div>
   </div>
 </template>
@@ -482,6 +518,7 @@ function getStatusText(status) {
 
 onMounted(() => {
   statStore.fetchDashboard()
+  statStore.fetchTopProducts()
 })
 </script>
 

@@ -18,7 +18,7 @@
             :class="[
               'px-3 py-1.5 text-xs font-semibold rounded-lg transition-all',
               activePreset === preset.key
-                ? 'bg-[#0258cb] text-white shadow-sm'
+                ? 'bg-black text-white shadow-sm'
                 : 'text-slate-500 hover:text-slate-700 hover:bg-slate-50'
             ]"
           >
@@ -31,17 +31,17 @@
           <input
             v-model="customStart"
             type="date"
-            class="text-xs border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:border-[#0258cb] focus:outline-none transition-all"
+            class="text-xs border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:border-black focus:outline-none transition-all"
           />
           <span class="text-slate-400 text-xs font-medium">→</span>
           <input
             v-model="customEnd"
             type="date"
-            class="text-xs border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:border-[#0258cb] focus:outline-none transition-all"
+            class="text-xs border border-slate-200 rounded-xl px-3 py-2 text-slate-700 bg-white focus:border-black focus:outline-none transition-all"
           />
           <button
             @click="applyCustomRange"
-            class="px-3 py-2 bg-[#0258cb] text-white text-xs font-semibold rounded-xl hover:bg-blue-700 transition-colors"
+            class="px-3 py-2 bg-black text-white text-xs font-semibold rounded-xl hover:bg-neutral-800 transition-colors"
           >
             Áp dụng
           </button>
@@ -123,7 +123,7 @@
         <!-- Loading skeleton -->
         <div v-if="statStore.loadingDashboard" class="h-52 flex items-center justify-center">
           <div class="flex flex-col items-center gap-2 text-slate-400">
-            <svg class="w-8 h-8 animate-spin text-[#0258cb]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <svg class="w-8 h-8 animate-spin text-black" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
             </svg>
             <span class="text-sm">Đang tải biểu đồ...</span>
@@ -134,7 +134,7 @@
         <div v-else-if="chartData.labels.length > 0" class="relative">
           <!-- Legend -->
           <div class="flex items-center gap-5 mb-3 text-xs font-semibold text-slate-500">
-            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-[#0258cb]"></span>Doanh thu</span>
+            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-black"></span>Doanh thu</span>
             <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-sm bg-emerald-500"></span>Lợi nhuận gộp</span>
           </div>
           <!-- SVG Bar Chart -->
@@ -154,7 +154,7 @@
                 :width="barWidth"
                 :height="getBarH(chartData.revenue[i], maxChartValue)"
                 rx="3"
-                :fill="hoveredBar === i ? '#0246a8' : '#0258cb'"
+                :fill="hoveredBar === i ? '#333333' : '#000000'"
                 @mouseenter="hoveredBar = i; tooltipIndex = i"
                 @mouseleave="hoveredBar = -1; tooltipIndex = -1"
                 class="transition-colors cursor-pointer"
@@ -317,7 +317,7 @@
           <h3 class="text-base font-bold text-slate-900">Đơn hàng gần đây</h3>
           <router-link
             to="/admin/orders"
-            class="text-[#0258cb] text-xs font-bold hover:underline no-underline"
+            class="text-black text-xs font-bold hover:underline no-underline"
           >Xem tất cả →</router-link>
         </div>
 
@@ -345,7 +345,7 @@
                 :key="order.id"
                 class="hover:bg-slate-50/50 transition-colors"
               >
-                <td class="py-3.5 px-5 font-mono font-bold text-[#0258cb] text-xs">{{ order.order_code }}</td>
+                <td class="py-3.5 px-5 font-mono font-bold text-black text-xs">{{ order.order_code }}</td>
                 <td class="py-3.5 px-5 text-slate-700 font-medium">{{ order.customer_name }}</td>
                 <td class="py-3.5 px-5 text-right font-bold text-slate-800 font-mono text-xs">{{ formatPrice(order.final_amount) }}</td>
                 <td class="py-3.5 px-5">
@@ -580,7 +580,7 @@ const kpiCards = computed(() => {
       value:     formatPrice(ov.total_revenue),
       change:    ov.revenue_change_percent,
       iconBg:    'bg-blue-50',
-      iconColor: 'text-[#0258cb]',
+      iconColor: 'text-black',
       icon:      RevenueIcon,
     },
     {
@@ -662,7 +662,7 @@ function formatChartLabel(label) {
 
 // ─── Donut Chart ─────────────────────────────────────────────────────────────
 const circumference = 2 * Math.PI * 48
-const categoryColors = ['#0258cb', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899', '#64748b']
+const categoryColors = ['#000000', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444', '#06b6d4', '#ec4899', '#64748b']
 
 const donutSegments = computed(() => {
   const data   = categoryData.value.data ?? []

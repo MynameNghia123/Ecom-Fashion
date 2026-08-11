@@ -1,17 +1,40 @@
 <template>
-  <div class="max-w-[1280px] mx-auto px-5 py-12">
+  <div class="w-full">
+    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex items-center justify-center">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <h1 class="relative font-title text-[42px] md:text-[52px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
+        Cửa hàng
+      </h1>
+    </div>
 
-    <!-- Page Title -->
-    <h1 class="font-title text-[42px] md:text-[52px] font-normal text-black text-center mb-3 tracking-[0.5px]">Cửa hàng</h1>
-    <p v-if="route.query.search" class="text-center font-text text-sm text-neutral-500 mb-10">
+    <div class="max-w-[1280px] mx-auto px-5 py-12">
+      <p v-if="route.query.search" class="text-center font-text text-sm text-neutral-500 mb-10">
       Kết quả tìm kiếm cho: <strong class="text-black font-semibold">"{{ route.query.search }}"</strong>
       <button @click="router.push('/category')" class="ml-2 text-xs text-neutral-400 hover:text-black underline border-none bg-transparent cursor-pointer">Xóa tìm kiếm</button>
     </p>
 
     <div class="flex flex-col lg:flex-row gap-10 lg:gap-14 items-start">
 
+      <!-- Mobile Filter Button -->
+      <div class="lg:hidden w-full flex justify-end mb-4">
+        <button @click="isMobileFilterOpen = true" class="flex items-center gap-2 border border-black px-4 py-2 bg-white text-black font-bold text-xs uppercase tracking-wider cursor-pointer">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+          Lọc sản phẩm
+        </button>
+      </div>
+
+      <!-- Mobile Filter Overlay -->
+      <div v-if="isMobileFilterOpen" @click="isMobileFilterOpen = false" class="fixed inset-0 bg-black/50 z-40 lg:hidden"></div>
+
       <!-- LEFT SIDEBAR: Filters -->
-      <aside class="w-full lg:w-[250px] shrink-0 space-y-8 divide-y divide-neutral-200">
+      <aside :class="['w-[85%] max-w-[320px] lg:w-[250px] shrink-0 space-y-8 divide-y divide-neutral-200 fixed lg:relative top-0 left-0 h-full lg:h-auto bg-white lg:bg-transparent z-50 lg:z-auto p-6 lg:p-0 overflow-y-auto lg:overflow-visible transition-transform duration-300', isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0']">
+        
+        <div class="flex justify-between items-center lg:hidden mb-6 pb-4 border-b border-neutral-100">
+          <span class="font-bold uppercase tracking-wider text-sm">Bộ lọc</span>
+          <button @click="isMobileFilterOpen = false" class="bg-transparent border-none cursor-pointer">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          </button>
+        </div>
         
         <!-- 1. Danh mục sản phẩm -->
         <div class="space-y-3 pt-0">
@@ -21,7 +44,7 @@
           </h3>
           <ul class="space-y-2 font-text text-[13px] text-neutral-600">
             <li 
-              @click="selectedCategory = null" 
+              @click="selectCategory(null)" 
               :class="['cursor-pointer hover:text-black transition-colors', !selectedCategory ? 'font-bold text-black' : '']"
             >
               Tất cả danh mục
@@ -29,7 +52,7 @@
             <li 
               v-for="cat in categories" 
               :key="cat.id"
-              @click="selectedCategory = cat.id"
+              @click="selectCategory(cat)"
               :class="['cursor-pointer hover:text-black transition-colors flex items-center justify-between', selectedCategory === cat.id ? 'font-bold text-black' : '']"
             >
               <span>{{ cat.name }}</span>
@@ -150,8 +173,40 @@
           />
         </div>
 
+        <!-- Pagination -->
+        <div v-if="lastPage > 1" class="flex justify-center items-center gap-2 mt-12 mb-8">
+          <button 
+            @click="changePage(currentPage - 1)" 
+            :disabled="currentPage === 1"
+            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            &lt;
+          </button>
+          
+          <button 
+            v-for="page in lastPage" 
+            :key="page"
+            @click="changePage(page)"
+            :class="[
+              'w-10 h-10 flex items-center justify-center text-sm font-medium border cursor-pointer transition-colors',
+              currentPage === page ? 'border-black bg-black text-white' : 'border-neutral-200 bg-white text-black hover:bg-neutral-50'
+            ]"
+          >
+            {{ page }}
+          </button>
+          
+          <button 
+            @click="changePage(currentPage + 1)" 
+            :disabled="currentPage === lastPage"
+            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            &gt;
+          </button>
+        </div>
+
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -168,9 +223,15 @@ const products = ref([])
 const categories = ref([])
 const brands = ref([])
 const loading = ref(true)
+const isMobileFilterOpen = ref(false)
 
-// Filter states — đồng bộ với route.query nếu có
-const selectedCategory = ref(route.query.category_id ? Number(route.query.category_id) : null)
+// Pagination states
+const currentPage = ref(1)
+const lastPage = ref(1)
+const totalProducts = ref(0)
+
+// Filter states — đồng bộ với route.params.slug
+const selectedCategory = ref(null)
 const selectedBrand = ref(null)
 const minPrice = ref(null)
 const maxPrice = ref(null)
@@ -201,12 +262,13 @@ const fetchProducts = async () => {
   loading.value = true
   try {
     const params = {
-      category_id: selectedCategory.value || (route.query.category_id ? Number(route.query.category_id) : null),
+      category_id: selectedCategory.value,
       brand: selectedBrand.value,
       min_price: minPrice.value,
       max_price: maxPrice.value,
       sort: sortBy.value,
-      search: route.query.search || null
+      search: route.query.search || null,
+      page: currentPage.value
     }
     
     // Remove null/empty keys
@@ -219,11 +281,17 @@ const fetchProducts = async () => {
     const res = await productService.getProducts(params)
     if (res.data && res.data.success) {
       products.value = res.data.data
+      if (res.data.meta) {
+        currentPage.value = res.data.meta.current_page
+        lastPage.value = res.data.meta.last_page
+        totalProducts.value = res.data.meta.total
+      }
     }
   } catch (err) {
     console.error('Lỗi tải sản phẩm:', err)
   } finally {
     loading.value = false
+    isMobileFilterOpen.value = false
   }
 }
 
@@ -235,6 +303,7 @@ const fetchCategoriesAndBrands = async () => {
     ])
     if (catRes.data && catRes.data.success) {
       categories.value = catRes.data.data
+      syncCategoryFromRoute()
     }
     if (brandRes.data && brandRes.data.success) {
       brands.value = brandRes.data.data
@@ -244,26 +313,57 @@ const fetchCategoriesAndBrands = async () => {
   }
 }
 
+const syncCategoryFromRoute = () => {
+  const slugOrId = route.params.slug
+  if (!slugOrId) {
+    selectedCategory.value = null
+  } else {
+    const cat = categories.value.find(c => c.slug === slugOrId || c.id == slugOrId)
+    if (cat) {
+      selectedCategory.value = cat.id
+    }
+  }
+}
+
+const selectCategory = (cat) => {
+  if (!cat) {
+    router.push({ path: '/category' })
+  } else {
+    router.push({ path: `/category/${cat.slug || cat.id}` })
+  }
+}
+
 const resetAllFilters = () => {
   selectedCategory.value = null
   selectedBrand.value = null
   minPrice.value = null
   maxPrice.value = null
   sortBy.value = 'latest'
+  currentPage.value = 1
   fetchProducts()
 }
 
-// Watch filters & search/category query
-watch([selectedCategory, selectedBrand, sortBy, () => route.query.search, () => route.query.category_id], (newVals, oldVals) => {
-  // Nếu category_id từ URL thay đổi thì sync vào selectedCategory
-  if (newVals[4] !== oldVals?.[4]) {
-    selectedCategory.value = newVals[4] ? Number(newVals[4]) : null
+const changePage = (page) => {
+  if (page >= 1 && page <= lastPage.value) {
+    currentPage.value = page
+    fetchProducts()
+    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
+}
+
+// Watch params slug
+watch(() => route.params.slug, () => {
+  syncCategoryFromRoute()
+})
+
+// Watch all filters and search query
+watch([selectedCategory, selectedBrand, minPrice, maxPrice, sortBy, () => route.query.search], () => {
+  currentPage.value = 1
   fetchProducts()
 })
 
-onMounted(() => {
-  fetchCategoriesAndBrands()
+onMounted(async () => {
+  await fetchCategoriesAndBrands()
   fetchProducts()
 })
 </script>

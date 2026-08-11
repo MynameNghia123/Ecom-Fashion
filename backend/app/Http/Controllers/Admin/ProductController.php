@@ -144,7 +144,9 @@ class ProductController extends Controller
     )]
     public function store(StoreProductRequest $request): JsonResponse
     {
-        $product = $this->productService->create($request->validated());
+        $data = $request->validated();
+        $data['created_by_staff_id'] = $request->user()->id;
+        $product = $this->productService->create($data);
         return response()->json([
             'success' => true,
             'data'    => new ProductResource($product),
@@ -257,7 +259,9 @@ class ProductController extends Controller
     )]
     public function update(UpdateProductRequest $request, Product $product): JsonResponse
     {
-        $updatedProduct = $this->productService->update($product, $request->validated());
+        $data = $request->validated();
+        $data['updated_by_staff_id'] = $request->user()->id;
+        $updatedProduct = $this->productService->update($product, $data);
 
         return response()->json([
             'success' => true,

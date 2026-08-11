@@ -6,7 +6,7 @@
       :class="topBarClass"
     >
       <div class="flex gap-5 items-center">
-        <a href="#" class="text-white no-underline font-semibold cursor-pointer">THEO DÕI ĐƠN HÀNG</a>
+        <router-link to="/profile/orders" class="text-white no-underline font-semibold cursor-pointer">THEO DÕI ĐƠN HÀNG</router-link>
         <a href="#" @click.prevent="handleAccountClick" class="text-white no-underline font-semibold cursor-pointer">TÀI KHOẢN CỦA TÔI</a>
         <router-link to="/about" class="text-white no-underline font-semibold cursor-pointer">VỀ CHÚNG TÔI</router-link>
       </div>
@@ -14,7 +14,7 @@
         <span class="text-white font-semibold">GIẢM GIÁ MÙA HÈ CHO TẤT CẢ ĐỒ BƠI VÀ MIỄN PHÍ GIAO HÀNG QUỐC TẾ TỐC ĐỘ CAO</span>
       </div>
       <div class="flex gap-5 items-center">
-        <a href="#" class="text-white no-underline font-semibold cursor-pointer">LIÊN HỆ</a>
+        <router-link to="/contact" class="text-white no-underline font-semibold cursor-pointer">LIÊN HỆ</router-link>
         <!-- <div class="flex items-center gap-1.25">
           <span class="text-white font-semibold cursor-pointer">TIẾNG VIỆT <i class="border-solid border-white border-r border-b inline-block p-[2.5px] rotate-45 ml-1.25 mb-[2px]"></i></span>
         </div> -->
@@ -27,10 +27,10 @@
     <!-- Main Header / Nav -->
     <header :class="headerClass">
       <div class="flex items-center gap-[25px]">
-        <button class="bg-transparent border-none cursor-pointer flex flex-col gap-1.25 p-0">
-          <span class="block w-6 h-[2px] transition-all duration-300" :class="menuLineClass"></span>
-          <span class="block w-[18px] h-[2px] transition-all duration-300" :class="menuLineClass"></span>
-          <span class="block w-6 h-[2px] transition-all duration-300" :class="menuLineClass"></span>
+        <button @click="isMobileMenuOpen = true" class="lg:hidden bg-transparent border-none cursor-pointer flex flex-col gap-1.25 p-0">
+          <span class="block w-6 h-[2px] transition-all duration-300 bg-black" :class="menuLineClass"></span>
+          <span class="block w-[18px] h-[2px] transition-all duration-300 bg-black" :class="menuLineClass"></span>
+          <span class="block w-6 h-[2px] transition-all duration-300 bg-black" :class="menuLineClass"></span>
         </button>
         <router-link to="/" class="logo no-underline block">
           <h1 class="font-title text-[32px] m-0 tracking-[2px] font-bold" :class="logoTextClass">Luxury</h1>
@@ -84,7 +84,7 @@
                 <div class="dropdown-inner">
                   <!-- Các sub-category (cột) -->
                   <div
-                    v-for="sub in cat.children"
+                    v-for="sub in cat.children.slice(0, 8)"
                     :key="sub.id"
                     class="dropdown-col"
                   >
@@ -96,9 +96,14 @@
 
                     <!-- Sub-sub-categories nếu có -->
                     <ul v-if="sub.children && sub.children.length" class="dropdown-links">
-                      <li v-for="leaf in sub.children" :key="leaf.id">
+                      <li v-for="leaf in sub.children.slice(0, 8)" :key="leaf.id">
                         <button class="dropdown-link" @click="goToCategory(leaf)">
                           {{ leaf.name }}
+                        </button>
+                      </li>
+                      <li v-if="sub.children.length > 8">
+                        <button class="dropdown-link font-medium text-black mt-1" @click="goToCategory(sub)">
+                          Xem tất cả
                         </button>
                       </li>
                     </ul>
@@ -166,6 +171,42 @@
       </div>
     </header>
 
+    <!-- Mobile Menu Overlay -->
+    <div
+      v-if="isMobileMenuOpen"
+      class="fixed inset-0 bg-black/50 z-50 transition-opacity lg:hidden"
+      @click="isMobileMenuOpen = false"
+    ></div>
+
+    <!-- Mobile Menu Drawer -->
+    <div
+      class="fixed top-0 left-0 bottom-0 w-[80%] max-w-[300px] bg-white z-50 transform transition-transform duration-300 ease-in-out lg:hidden flex flex-col"
+      :class="isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'"
+    >
+      <div class="flex items-center justify-between p-5 border-b border-neutral-100">
+        <span class="font-title text-[24px] tracking-[2px] font-bold text-black">Luxury</span>
+        <button @click="isMobileMenuOpen = false" class="bg-transparent border-none p-2 cursor-pointer text-black">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="flex-1 overflow-y-auto py-5">
+        <ul class="flex flex-col list-none m-0 p-0 gap-4 px-5">
+          <li><router-link to="/" class="text-sm font-bold tracking-widest text-black no-underline" @click="isMobileMenuOpen = false">TRANG CHỦ</router-link></li>
+          <li><router-link to="/category" class="text-sm font-bold tracking-widest text-black no-underline" @click="isMobileMenuOpen = false">SẢN PHẨM</router-link></li>
+          
+          <li v-for="cat in rootCategories" :key="cat.id" class="flex flex-col gap-2">
+            <button @click="goToCategory(cat); isMobileMenuOpen = false" class="text-sm font-bold tracking-widest text-black border-none bg-transparent text-left cursor-pointer p-0">
+              {{ cat.name.toUpperCase() }}
+            </button>
+          </li>
+          
+          <li><router-link to="/blog" class="text-sm font-bold tracking-widest text-black no-underline" @click="isMobileMenuOpen = false">TIN TỨC</router-link></li>
+          <li><router-link to="/contact" class="text-sm font-bold tracking-widest text-black no-underline" @click="isMobileMenuOpen = false">LIÊN HỆ</router-link></li>
+        </ul>
+      </div>
+    </div>
+
     <!-- Auth Modal -->
     <AuthModal
       :is-open="isAuthModalOpen"
@@ -189,7 +230,7 @@
 
 <script setup>
 import { computed, ref, onMounted, onUnmounted, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
 import { useWishlistStore } from '@/stores/client/wishlistStore'
 import { useCartStore } from '@/stores/client/cartStore'
@@ -199,9 +240,12 @@ import MiniCart from '@/components/client/cart/MiniCart.vue'
 import SearchOverlay from '@/components/client/SearchOverlay.vue'
 
 const router = useRouter()
-const authStore = useClientAuthStore()
-const wishlistStore = useWishlistStore()
+const route = useRoute()
 const cartStore = useCartStore()
+const wishlistStore = useWishlistStore()
+const authStore = useClientAuthStore()
+
+const isMobileMenuOpen = ref(false)
 const cartBumping = ref(false)
 const isAuthModalOpen = ref(false)
 const authModalMode = ref('login')
@@ -237,7 +281,7 @@ const closeDropdown = () => {
 
 const goToCategory = (cat) => {
   activeDropdown.value = null
-  router.push({ path: '/category', query: { category_id: cat.id } })
+  router.push({ path: `/category/${cat.slug || cat.id}` })
 }
 
 // ── Auth & Cart ───────────────────────────────────────────────

@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="space-y-6">
 
     <!-- Page Header -->
@@ -184,7 +184,7 @@
               <!-- Trạng thái -->
               <td class="py-4 px-4">
                 <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
                   :class="customer.status === 1
                     ? 'bg-emerald-50 text-emerald-700'
                     : 'bg-red-50 text-red-600'"

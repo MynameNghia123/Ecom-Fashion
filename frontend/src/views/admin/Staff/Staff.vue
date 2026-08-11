@@ -184,7 +184,7 @@
 
               <td class="py-4 px-4">
                 <span
-                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold"
+                  class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap"
                   :class="staff.is_active ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-600'"
                 >
                   <span class="w-1.5 h-1.5 rounded-full" :class="staff.is_active ? 'bg-emerald-500' : 'bg-red-400'"></span>

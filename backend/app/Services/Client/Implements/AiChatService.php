@@ -25,13 +25,13 @@ class AiChatService implements AiChatServiceInterface
         $product = null;
 
         if ($productId) {
-            $product = Product::with(['productVariants.attributeValues.attribute'])->find($productId);
+            $product = Product::with(['productVariants.attributeValues.attribute', 'productImages'])->find($productId);
         } else {
             $latestMsg = collect($messages)->last();
             $queryText = $latestMsg ? trim($latestMsg['content']) : '';
             
             if (strlen($queryText) > 3) {
-                $product = Product::with(['productVariants.attributeValues.attribute'])
+                $product = Product::with(['productVariants.attributeValues.attribute', 'productImages'])
                     ->whereRaw('INSTR(?, `name`) > 0', [$queryText])
                     ->first();
 
@@ -43,7 +43,7 @@ class AiChatService implements AiChatServiceInterface
                                 ->orWhereHas('productVariants', function ($q) use ($code) {
                                     $q->where('sku', 'like', "%{$code}%");
                                 })
-                                ->with(['productVariants.attributeValues.attribute'])
+                                ->with(['productVariants.attributeValues.attribute', 'productImages'])
                                 ->first();
                             if ($product) break;
                         }

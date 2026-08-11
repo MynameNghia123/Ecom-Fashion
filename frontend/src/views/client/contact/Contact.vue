@@ -1,15 +1,18 @@
 <template>
-  <div class="w-full bg-white text-black py-12 px-5 lg:px-20 font-text">
+  <div class="w-full bg-white text-black font-text">
     
-    <!-- Title & Intro Section -->
-    <div class="mb-16 max-w-[800px] mx-auto">
-      <h1 class="font-title text-[48px] md:text-[60px] font-bold tracking-wide mb-6 text-gray-900 uppercase text-center">
+    <!-- Background Banner -->
+    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex flex-col items-center justify-center">
+      <div class="absolute inset-0 bg-black/40"></div>
+      <h1 class="relative font-title text-[48px] md:text-[60px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
         LIÊN HỆ
       </h1>
-      <p class="text-[15px] md:text-[16px] text-gray-600 leading-relaxed font-normal text-center">
+      <p class="relative text-[15px] md:text-[16px] text-white/90 leading-relaxed font-normal text-center mt-4 z-10 max-w-[800px] px-5">
         Trải nghiệm sự tinh tế trong từng điểm chạm. Đội ngũ trợ lý riêng của Luxury luôn sẵn sàng hỗ trợ bạn kiến tạo phong cách cá nhân độc bản.
       </p>
     </div>
+
+    <div class="py-12 px-5 lg:px-20 max-w-[1280px] mx-auto">
 
     <!-- Grid Columns: Direct Links vs Office Info -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 mb-20 items-start">
@@ -204,6 +207,7 @@
       </div>
     </div>
 
+    </div>
   </div>
 </template>
 
