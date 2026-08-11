@@ -58,77 +58,55 @@
       </div>
     </div>
 
-    <!-- Brand Logos Section (Infinite Marquee) -->
-    <div class="py-8 bg-neutral-50/50 border-b border-neutral-100/50 overflow-hidden select-none relative">
-      <!-- Gradient Fade Overlays for Premium Look -->
-      <div class="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#fbfbfb] to-transparent z-10 pointer-events-none max-md:w-8"></div>
-      <div class="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#fbfbfb] to-transparent z-10 pointer-events-none max-md:w-8"></div>
 
-      <div class="marquee-wrapper overflow-hidden w-full flex">
-        <div class="marquee-track flex gap-8 items-center">
-          <div 
-            v-for="(brand, idx) in duplicatedBrands" 
-            :key="brand.domain + '-' + idx"
-            class="flex-shrink-0 w-[140px] h-[60px] rounded-full bg-white border border-neutral-200/60 shadow-sm flex items-center justify-center px-6 py-2 transition-all duration-300 hover:shadow-md hover:scale-105 cursor-pointer"
-          >
-            <img 
-              v-if="brand.logoUrl" 
-              :src="brand.logoUrl" 
-              :alt="brand.name"
-              class="max-h-full max-w-full object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
-            />
-            <span 
-              v-else 
-              class="font-title text-[9px] tracking-[1.5px] font-bold text-neutral-400 hover:text-neutral-900 transition-colors duration-300 uppercase text-center"
-            >
-              {{ brand.name }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- Hàng Mới Về Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
-      <div class="flex justify-between items-center mb-10 max-md:flex-col max-md:items-start max-md:gap-[15px]">
-        <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Hàng mới về</h2>
-        <!-- Slider navigation -->
-        <div class="flex items-center gap-3">
-          <button
-            @click="prevNewArrivalPage"
-            :disabled="newArrivalsPage === 0"
-            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed"
-            aria-label="Trang trước"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-          </button>
-          <button
-            @click="nextNewArrivalPage"
-            :disabled="newArrivalsPage >= totalNewArrivalPages - 1"
-            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed"
-            aria-label="Trang tiếp"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-          </button>
-        </div>
+      <!-- Tiêu đề căn giữa -->
+      <div class="text-center mb-12">
+        <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">Hàng Mới Về</h2>
+        <div class="w-16 h-[3px] bg-black mx-auto mt-4"></div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-        <div 
-          v-for="product in visibleNewArrivals" 
-          :key="product.id"
-          class="cursor-pointer"
+      <div class="relative flex items-center">
+        <button
+          @click="prevNewArrivalPage"
+          :disabled="newArrivalsPage === 0"
+          class="absolute top-[35%] -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Trang trước"
         >
-          <ProductCard 
-            :id="product.id"
-            :slug="product.slug"
-            :image="product.image"
-            :name="product.name"
-            :currentPrice="product.currentPrice"
-            :originalPrice="product.originalPrice"
-            :discount="product.discount"
-          />
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        </button>
+
+        <div class="w-full overflow-hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
+            <div 
+              v-for="product in visibleNewArrivals" 
+              :key="product.id"
+              class="cursor-pointer"
+            >
+              <ProductCard 
+                :id="product.id"
+                :slug="product.slug"
+                :image="product.image"
+                :name="product.name"
+                :currentPrice="product.currentPrice"
+                :originalPrice="product.originalPrice"
+                :discount="product.discount"
+                :rating="product.rating"
+              />
+            </div>
+          </div>
         </div>
+
+        <button
+          @click="nextNewArrivalPage"
+          :disabled="newArrivalsPage >= totalNewArrivalPages - 1"
+          class="absolute top-[35%] -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          aria-label="Trang tiếp"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
       </div>
     </div>
 
@@ -208,12 +186,12 @@
         <p class="font-text text-[14px] text-[#555] leading-[1.6] mb-[35px] mt-0">Được thiết kế có trách nhiệm cho cuộc sống hàng ngày. Những đường nét tinh tế, chất liệu tự nhiên, và phong cách trường tồn vượt thời gian.</p>
         <button class="bg-black text-white border-none py-[15px] px-[35px] font-text text-[12px] font-bold tracking-[1px] uppercase cursor-pointer transition-colors duration-300 hover:bg-[#333]">KHÁM PHÁ NGAY</button>
       </div>
-      <div class="flex-1.5 flex gap-10 items-center justify-end max-lg:w-full max-lg:justify-center">
-        <div class="w-[55%] aspect-[3/4]">
-          <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=800&auto=format&fit=crop" alt="Áo khoác thời trang" class="w-full h-full object-cover">
+      <div class="flex-1.5 flex gap-10 items-end justify-end max-lg:w-full max-lg:justify-center">
+        <div class="w-[55%]">
+          <img src="/img/eco-fashion/eco-fashion1.jpg" alt="Eco Fashion 1" class="w-full h-auto object-contain block">
         </div>
-        <div class="w-[40%] aspect-[3/4] h-[70%]">
-          <img src="https://images.unsplash.com/photo-1618932260643-eee4a2f652a6?q=80&w=800&auto=format&fit=crop" alt="Áo thun cơ bản" class="w-full h-full object-cover">
+        <div class="w-[40%]">
+          <img src="/img/eco-fashion/eco-fashion2.jpg" alt="Eco Fashion 2" class="w-full h-auto object-contain block">
         </div>
       </div>
     </div>
@@ -285,52 +263,28 @@ import api from '@/plugins/axios';
 
 const slides = [
   {
-    image: '/product homepage/phuc1.jpg',
+    image: '/img/banner/banner1.jpg',
     subtitle: 'Xu Hướng Mùa Hè Này',
     title: 'Luxury'
   },
   {
-    image: '/product homepage/phuc2.jpg',
+    image: '/img/banner/banner2.jpg',
     subtitle: 'Độc Đáo & Tinh Tế',
     title: 'Luxury'
   }
 ];
 
+// Promo banners
+const promoBanners = [
+  { image: '/img/promo-banners/promo-banners.png', alt: 'Promo Banner 1' },
+  { image: '/img/promo-banners/promo-banners2.png', alt: 'Promo Banner 2' }
+];
+const currentPromoSlide = ref(0);
+
 const currentSlide = ref(0);
 let slideInterval = null;
 
-// Brand Logos state (Hardcoded since backend doesn't manage this)
-const brandLogos = ref([
-  { name: 'Gucci', domain: 'gucci.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=GUCCI&font=lora' },
-  { name: 'Balenciaga', domain: 'balenciaga.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=BALENCIAGA&font=lora' },
-  { name: 'Louis Vuitton', domain: 'louisvuitton.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=LOUIS+VUITTON&font=lora' },
-  { name: 'Dior', domain: 'dior.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=DIOR&font=lora' },
-  { name: 'Chanel', domain: 'chanel.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=CHANEL&font=lora' },
-  { name: 'Hermès', domain: 'hermes.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=HERMÈS&font=lora' },
-  { name: 'Prada', domain: 'prada.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=PRADA&font=lora' },
-  { name: 'Versace', domain: 'versace.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=VERSACE&font=lora' },
-  { name: 'Burberry', domain: 'burberry.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=BURBERRY&font=lora' },
-  { name: 'Armani', domain: 'armani.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=ARMANI&font=lora' },
-  { name: 'Fendi', domain: 'fendi.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=FENDI&font=lora' },
-  { name: 'Givenchy', domain: 'givenchy.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=GIVENCHY&font=lora' },
-  { name: 'YSL', domain: 'ysl.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=YSL&font=lora' },
-  { name: 'Rolex', domain: 'rolex.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=ROLEX&font=lora' },
-  { name: 'Cartier', domain: 'cartier.com', logoUrl: 'https://placehold.co/400x150/ffffff/000000/png?text=CARTIER&font=lora' }
-]);
 
-// Nhân bản danh sách thương hiệu nhiều lần để cuộn vô hạn mượt mà
-const duplicatedBrands = computed(() => {
-  return [
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value,
-    ...brandLogos.value
-  ];
-});
 
 const nextSlide = () => {
   currentSlide.value = (currentSlide.value + 1) % slides.length;
