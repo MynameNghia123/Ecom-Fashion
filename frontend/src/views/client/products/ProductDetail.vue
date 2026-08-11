@@ -216,21 +216,22 @@
     </div>
 
     <!-- Related Products Section -->
-    <div class="border-t border-gray-200 pt-16">
-      <h2 class="font-title text-[28px] font-bold text-gray-900 mb-8 tracking-tight">
-        Sản phẩm liên quan
-      </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Reusing the shared ProductCard component -->
+    <div v-if="relatedProducts.length > 0" class="border-t border-gray-200 pt-16">
+      <div class="text-center mb-10">
+        <h2 class="font-title text-[28px] font-bold text-gray-900 tracking-tight uppercase">Sản phẩm liên quan</h2>
+        <div class="w-16 h-[3px] bg-black mx-auto mt-4"></div>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
         <ProductCard 
           v-for="rel in relatedProducts" 
           :key="rel.id" 
+          :id="rel.id"
+          :slug="rel.slug"
           :image="rel.image"
           :name="rel.name"
-          :currentPrice="formatPrice(rel.price) + ' đ'"
-          :originalPrice="formatPrice(rel.originalPrice) + ' đ'"
-          :discount="'-' + rel.discount + '%'"
-          :rating="rel.rating"
+          :currentPrice="rel.currentPrice"
+          :originalPrice="rel.originalPrice"
+          :discount="rel.discount ? '-' + rel.discount + '%' : null"
         />
       </div>
     </div>
@@ -298,9 +299,9 @@ const handleToggleWishlist = () => {
 }
 
 // Review State
-const averageRating = ref(5)
+const averageRating = ref(0)
 const ratingStats = ref([
-  { stars: 5, percentage: '100%', count: 1 },
+  { stars: 5, percentage: '0%', count: 0 },
   { stars: 4, percentage: '0%', count: 0 },
   { stars: 3, percentage: '0%', count: 0 },
   { stars: 2, percentage: '0%', count: 0 },
@@ -348,16 +349,16 @@ onMounted(async () => {
 
     try {
       const reviewRes = await productService.getProductReviews(productId || slug)
-      if (reviewRes.data && reviewRes.data.success) {
+        if (reviewRes.data && reviewRes.data.success) {
         const revData = reviewRes.data.data || []
         if (revData.length > 0) {
           reviews.value = revData.map(r => ({
             author: r.customer ? `${r.customer.first_name || ''} ${r.customer.last_name || ''}`.trim() || 'Khách hàng' : 'Khách hàng',
             date: r.created_at ? new Date(r.created_at).toLocaleDateString('vi-VN') : 'Gần đây',
             rating: r.rating || 5,
-            comment: r.comment || 'Sản phẩm rất tốt'
+            comment: r.comment || ''
           }))
-          averageRating.value = reviewRes.data.average_rating || 5
+          averageRating.value = reviewRes.data.average_rating || 0
 
           // Compute star distribution percentages
           const total = revData.length
@@ -370,18 +371,11 @@ onMounted(async () => {
             }
           })
         } else {
-          // Default initial review state if no reviews in DB yet
-          reviews.value = [
-            {
-              author: 'Nguyễn Văn A (Đã mua hàng)',
-              date: '20/07/2026',
-              rating: 5,
-              comment: 'Sản phẩm tuyệt vời, chất vải mát, đúng như mô tả. Sẽ tiếp tục ủng hộ shop!'
-            }
-          ]
-          averageRating.value = 5
+          // No reviews yet — show empty state
+          reviews.value = []
+          averageRating.value = 0
           ratingStats.value = [
-            { stars: 5, percentage: '100%', count: 1 },
+            { stars: 5, percentage: '0%', count: 0 },
             { stars: 4, percentage: '0%', count: 0 },
             { stars: 3, percentage: '0%', count: 0 },
             { stars: 2, percentage: '0%', count: 0 },
@@ -391,6 +385,39 @@ onMounted(async () => {
       }
     } catch (e) {
       console.warn('Chưa có đánh giá hoặc lỗi khi tải đánh giá:', e)
+    }
+
+    // Fetch related products from same category
+    try {
+      const categoryId = product.value?.category_id
+      if (categoryId) {
+        const relRes = await productService.getProducts({ category_id: categoryId, per_page: 4 })
+        if (relRes.data && relRes.data.success) {
+          const allCatProducts = relRes.data.data?.data || relRes.data.data || []
+          relatedProducts.value = allCatProducts
+            .filter(p => p.id !== product.value?.id)
+            .slice(0, 4)
+            .map(p => {
+              const variants = p.product_variants || p.productVariants || []
+              const prices = variants.map(v => v.sale_price ?? v.salePrice ?? v.price).filter(Boolean)
+              const minPrice = prices.length > 0 ? Math.min(...prices) : 0
+              const originalPrices = variants.map(v => v.price).filter(Boolean)
+              const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0
+              const hasSale = minPrice > 0 && maxOriginal > 0 && minPrice < maxOriginal
+              return {
+                id: p.id,
+                slug: p.slug,
+                name: p.name,
+                image: p.thumbnail,
+                currentPrice: minPrice,
+                originalPrice: hasSale ? maxOriginal : null,
+                discount: hasSale ? Math.round((1 - minPrice / maxOriginal) * 100) : null
+              }
+            })
+        }
+      }
+    } catch (e) {
+      console.warn('Lỗi tải sản phẩm liên quan:', e)
     }
 
   } catch (err) {

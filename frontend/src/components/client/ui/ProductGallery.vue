@@ -9,20 +9,22 @@
         class="w-16 h-20 md:w-full md:h-[120px] border overflow-hidden transition-all duration-200"
         :class="activeImageIdx === idx ? 'border-black opacity-100' : 'border-gray-200 opacity-70 hover:opacity-100'"
       >
-        <img :src="img" alt="Thumbnail" class="w-full h-full object-cover">
+        <img :src="fullUrl(img)" alt="Thumbnail" class="w-full h-full object-cover">
       </button>
     </div>
 
-    <!-- Main Large Image View -->
-    <div class="grow aspect-[3/4] max-h-[600px] md:max-h-[650px] relative bg-gray-50 border border-gray-100 overflow-hidden">
-      <InnerImageZoom 
+    <!-- Main Large Image View — fixed container, zoom only inside -->
+    <div class="grow" style="position: relative; aspect-ratio: 3/4; max-height: 650px; background: #f9f9f9; border: 1px solid #e5e7eb; overflow: hidden;">
+      <img
         v-if="productImages && productImages.length > 0"
-        :src="productImages[activeImageIdx]" 
-        :zoomSrc="productImages[activeImageIdx]" 
-        :zoomScale="1.5"
-        zoomType="hover"
-        alt="Main Product View" 
-        class="w-full h-full object-cover main-product-zoom"
+        :src="fullUrl(productImages[activeImageIdx])"
+        alt="Main Product View"
+        class="gallery-main-img"
+        :class="{ 'zoomed': isZoomed }"
+        :style="isZoomed ? { transformOrigin: zoomOrigin, transform: 'scale(2)' } : {}"
+        @mouseenter="isZoomed = true"
+        @mouseleave="isZoomed = false"
+        @mousemove="onMouseMove"
       />
     </div>
   </div>
@@ -30,8 +32,6 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import InnerImageZoom from 'vue-inner-image-zoom'
-import 'vue-inner-image-zoom/lib/styles.min.css'
 
 const props = defineProps({
   productImages: {
@@ -42,6 +42,21 @@ const props = defineProps({
 })
 
 const activeImageIdx = ref(0)
+const isZoomed = ref(false)
+const zoomOrigin = ref('50% 50%')
+
+const fullUrl = (path) => {
+  if (!path) return ''
+  if (path.startsWith('http')) return path
+  return `http://localhost:8000/storage/${path}`
+}
+
+const onMouseMove = (e) => {
+  const rect = e.currentTarget.getBoundingClientRect()
+  const x = ((e.clientX - rect.left) / rect.width) * 100
+  const y = ((e.clientY - rect.top) / rect.height) * 100
+  zoomOrigin.value = `${x}% ${y}%`
+}
 
 // Reset index when images change
 watch(() => props.productImages, () => {
@@ -50,16 +65,17 @@ watch(() => props.productImages, () => {
 </script>
 
 <style scoped>
-:deep(.main-product-zoom),
-:deep(.main-product-zoom .iiz) {
-  width: 100% !important;
-  height: 100% !important;
+.gallery-main-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   display: block;
+  cursor: zoom-in;
+  transition: transform 0.15s ease;
+  will-change: transform;
 }
 
-:deep(.main-product-zoom .iiz__img) {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
+.gallery-main-img.zoomed {
+  cursor: zoom-in;
 }
 </style>
