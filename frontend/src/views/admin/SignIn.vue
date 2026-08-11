@@ -1,4 +1,4 @@
-﻿<script setup>
+<script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/admin/authStore'
@@ -7,7 +7,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 
 const email = ref('admin@ecomfashion.com')
-const password = ref('password123')
+const password = ref('123')
 const rememberMe = ref(false)
 const showPassword = ref(false)
 const isLoading = ref(false)

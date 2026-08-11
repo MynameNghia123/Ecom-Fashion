@@ -182,7 +182,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BannerServiceInterface::class,             BannerService::class);
         $this->app->bind(BlogServiceInterface::class,               BlogService::class);
         $this->app->bind(CategoryServiceInterface::class,           CategoryService::class);
-        $this->app->bind(ClientCouponServiceInterface::class,             ClientCouponService::class);
+        $this->app->bind(CouponServiceInterface::class,                   CouponService::class);
         $this->app->bind(ClientReturnRequestServiceInterface::class,      ClientReturnRequestService::class);
         $this->app->bind(CustomerServiceInterface::class,           CustomerService::class);
         $this->app->bind(PermissionServiceInterface::class,         PermissionService::class);

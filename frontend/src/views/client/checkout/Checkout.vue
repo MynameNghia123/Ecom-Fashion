@@ -58,8 +58,16 @@
       </div>
     </div>
 
+    <!-- SePay QR Payment Modal -->
+    <SePayQR
+      v-if="showSePayQR"
+      :order-code="sePayOrderCode"
+      @close="showSePayQR = false"
+      @success="handleSePaySuccess"
+    />
+
     <!-- MAIN CHECKOUT FORM -->
-    <div v-else class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
+    <div v-else-if="!showSePayQR" class="flex flex-col lg:flex-row gap-12 lg:gap-16 items-start">
       
       <!-- LEFT COLUMN: Forms -->
       <form @submit.prevent="submitOrder" class="w-full lg:w-[60%] space-y-12">
@@ -184,7 +192,7 @@
                 type="button"
                 @click="paymentMethod = 'cod'"
                 :class="[
-                  'flex-1 py-4 px-6 text-xs font-bold uppercase tracking-wider border-r border-neutral-200 transition-colors cursor-pointer border-none',
+                  'flex-1 py-4 px-4 text-xs font-bold uppercase tracking-wider border-r border-neutral-200 transition-colors cursor-pointer border-none',
                   paymentMethod === 'cod' ? 'bg-white text-black border-b-2 border-b-black' : 'text-neutral-500 hover:text-black bg-transparent'
                 ]"
               >
@@ -192,9 +200,19 @@
               </button>
               <button 
                 type="button"
+                @click="paymentMethod = 'sepay'"
+                :class="[
+                  'flex-1 py-4 px-4 text-xs font-bold uppercase tracking-wider border-r border-neutral-200 transition-colors cursor-pointer border-none',
+                  paymentMethod === 'sepay' ? 'bg-white text-black border-b-2 border-b-black' : 'text-neutral-500 hover:text-black bg-transparent'
+                ]"
+              >
+                Chuyển khoản (SePay)
+              </button>
+              <button 
+                type="button"
                 @click="paymentMethod = 'vnpay'"
                 :class="[
-                  'flex-1 py-4 px-6 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer border-none',
+                  'flex-1 py-4 px-4 text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer border-none',
                   paymentMethod === 'vnpay' ? 'bg-white text-black border-b-2 border-b-black' : 'text-neutral-500 hover:text-black bg-transparent'
                 ]"
               >
@@ -209,6 +227,16 @@
                 <p class="text-sm font-semibold text-neutral-800 mt-4">Thanh toán khi nhận hàng</p>
                 <p class="text-xs text-neutral-500 max-w-[420px] mx-auto leading-relaxed">
                   Nhân viên giao nhận sẽ thu tiền mặt trực tiếp tại địa chỉ giao nhận khi giao kiện hàng cho quý khách.
+                </p>
+              </div>
+              <div v-else-if="paymentMethod === 'sepay'" class="space-y-2 animate-fade-in">
+                <div class="w-16 h-10 bg-blue-50 text-[10px] font-bold text-blue-700 flex items-center justify-center border border-blue-200 rounded mx-auto select-none">
+                  <img src="https://sepay.vn/assets/images/sepay-logo.svg" class="h-5" onerror="this.style.display='none';this.nextSibling.style.display='block'" />
+                  <span style="display:none">SePay</span>
+                </div>
+                <p class="text-sm font-semibold text-neutral-800 mt-4">Chuyển khoản ngân hàng (SePay)</p>
+                <p class="text-xs text-neutral-500 max-w-[420px] mx-auto leading-relaxed">
+                  Sau khi đặt hàng, bạn sẽ được hiển thị mã QR để chuyển khoản. Đơn hàng sẽ tự động xác nhận sau khi thanh toán thành công.
                 </p>
               </div>
               <div v-else class="space-y-2 animate-fade-in">
@@ -338,6 +366,7 @@ import { useRouter } from 'vue-router'
 import { useClientAuthStore } from '@/stores/client/authStore'
 import { useCartStore } from '@/stores/client/cartStore'
 import { orderService } from '@/services/client/orderService'
+import SePayQR from '@/components/client/SePayQR.vue'
 import { profileService } from '@/services/client/profileService'
 import { couponService } from '@/services/client/couponService'
 import { shippingService } from '@/services/client/shippingService'
@@ -352,6 +381,13 @@ const cartStore = useCartStore()
 const isAuthModalOpen = ref(false)
 const submitting = ref(false)
 const submitButtonRef = ref(null)
+const showSePayQR = ref(false)
+const sePayOrderCode = ref('')
+
+const handleSePaySuccess = (orderCode) => {
+  showSePayQR.value = false
+  router.push({ name: 'CheckoutSuccess', query: { code: orderCode } })
+}
 
 const ghnFee = ref(0)
 const calculatingGhnFee = ref(false)
@@ -555,6 +591,11 @@ const submitOrder = async () => {
         // COD thành công -> Clear giỏ hàng ngay và chuyển hướng sang trang success
         cartStore.clearCart()
         router.push({ name: 'CheckoutSuccess', query: { code: res.data.data.order_code } })
+      } else if (paymentMethod.value === 'sepay' && res.data.data?.order_code) {
+        // SePay: hiển thị QR modal để user chuyển khoản
+        sePayOrderCode.value = res.data.data.order_code
+        showSePayQR.value = true
+        cartStore.clearCart()
       } else if (paymentMethod.value === 'vnpay' && res.data.payment_url) {
         // Redirect sang VNPAY Sandbox (Không clear giỏ hàng ở đây, sẽ clear khi thanh toán thành công tại vnpay-return)
         window.location.href = res.data.payment_url

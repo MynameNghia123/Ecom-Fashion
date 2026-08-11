@@ -287,18 +287,21 @@ watch(() => cartStore.totalQuantity, (newVal, oldVal) => {
 const wrapperClass = computed(() =>
   props.isTransparent
     ? 'fixed top-0 left-0 right-0 w-full z-[200]'
-    : 'sticky top-0 left-0 right-0 w-full z-[200] bg-white'
+    : 'sticky top-0 left-0 right-0 w-full z-[200]'
 )
 
-const topBarClass = computed(() =>
-  scrolled.value ? 'max-h-0 py-0 opacity-0 pointer-events-none' : 'max-h-[60px] py-2.5'
-)
+// TopBar chỉ ẩn khi đang ở transparent mode (homepage) và đã scroll
+// Với non-transparent pages, topbar luôn hiển thị để không gây layout shift
+const topBarClass = computed(() => {
+  if (!props.isTransparent) return 'max-h-[60px] py-2.5'
+  return scrolled.value ? 'max-h-0 py-0 opacity-0 pointer-events-none overflow-hidden' : 'max-h-[60px] py-2.5'
+})
 
 const isLight = computed(() => !props.isTransparent || scrolled.value)
 
 const headerClass = computed(() => {
-  const base = 'flex justify-between items-center py-[25px] px-5 lg:px-20 w-full transition-all duration-500'
-  if (!props.isTransparent) return `${base} sticky top-0 bg-white text-black border-b border-gray-200 shadow-sm`
+  const base = 'flex justify-between items-center py-[25px] px-5 lg:px-20 w-full transition-all duration-300'
+  if (!props.isTransparent) return `${base} bg-white text-black border-b border-gray-200`
   if (scrolled.value) return `${base} bg-white/95 backdrop-blur-md text-black border-b border-gray-200 shadow-sm`
   return `${base} bg-transparent text-white`
 })

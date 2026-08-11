@@ -5,6 +5,7 @@ use App\Models\Order;
 use App\Models\ProductVariant;
 use App\Repositories\Client\Interfaces\OrderRepositoryInterface;
 use App\Services\Client\Interfaces\OrderServiceInterface;
+use App\Services\SePayService;
 use App\Services\VNPayService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,8 @@ class OrderService implements OrderServiceInterface
 {
     public function __construct(
         private readonly OrderRepositoryInterface $repo,
-        private readonly VNPayService $vnpay
+        private readonly VNPayService $vnpay,
+        private readonly SePayService $sepay
     ) {}
 
     public function getCustomerOrders(int $customerId): Collection
@@ -132,8 +134,26 @@ class OrderService implements OrderServiceInterface
                 return [
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
-                    'data' => ['order_code' => $order->order_code],
+                    'data'    => ['order_code' => $order->order_code],
                     'payment_url' => null,
+                ];
+            }
+
+            // SEPAY – chuyển khoản ngân hàng
+            if ($data['payment_method'] === 'sepay') {
+                $paymentInfo = $this->sepay->createPaymentInfo($order);
+
+                Log::info('[SEPAY] Payment info created', [
+                    'order_code' => $order->order_code,
+                    'final_amount' => $order->final_amount,
+                ]);
+
+                return [
+                    'success'      => true,
+                    'message'      => 'Đơn hàng đã được tạo. Vui lòng thanh toán qua chuyển khoản.',
+                    'data'         => ['order_code' => $order->order_code],
+                    'payment_url'  => null,
+                    'payment_info' => $paymentInfo,
                 ];
             }
 

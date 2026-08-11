@@ -139,18 +139,15 @@
 
         <!-- Products Grid -->
         <div v-else class="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-10 mb-12">
-          <div 
-            v-for="prod in products" 
+          <ProductCard
+            v-for="prod in products"
             :key="prod.id"
-            @click="goToDetail(prod.slug || prod.id)"
-            class="cursor-pointer group"
-          >
-            <ProductCard
-              :image="getImageUrl(prod.thumbnail)"
-              :name="prod.name"
-              :currentPrice="formatPrice(getMinPrice(prod)) + ' đ'"
-            />
-          </div>
+            :id="prod.id"
+            :slug="prod.slug || String(prod.id)"
+            :image="getImageUrl(prod.thumbnail)"
+            :name="prod.name"
+            :currentPrice="formatPrice(getMinPrice(prod)) + ' đ'"
+          />
         </div>
 
       </div>
@@ -198,9 +195,7 @@ const getMinPrice = (prod) => {
   return 0
 }
 
-const goToDetail = (slug) => {
-  router.push({ name: 'ProductDetail', params: { slug } })
-}
+
 
 const fetchProducts = async () => {
   loading.value = true

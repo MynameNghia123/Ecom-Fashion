@@ -28,6 +28,7 @@ use App\Http\Controllers\Client\ProductController as ClientProductController;
 use App\Http\Controllers\Client\CartController as ClientCartController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
 use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
+use App\Http\Controllers\Client\SePayController as ClientSePayController;
 use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
 use App\Http\Controllers\Client\ShippingController as ClientShippingController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
@@ -173,6 +174,11 @@ Route::prefix('client')->group(function () {
     // ── VNPAY (public - VNPAY server gọi không có token) ────────────────────
     Route::get('vnpay/return', [ClientVNPayController::class, 'verifyReturn']);
     Route::post('vnpay/ipn', [ClientVNPayController::class, 'ipn']);
+
+    // ── SePay (public webhook + public check) ─────────────────────────────
+    Route::post('sepay/webhook',          [ClientSePayController::class, 'webhook']);
+    Route::get('sepay/check/{orderCode}', [ClientSePayController::class, 'checkStatus']);
+    Route::get('sepay/info/{orderCode}',  [ClientSePayController::class, 'paymentInfo']);
 
     // ── Protected Client Routes (yêu cầu đăng nhập customer) ────────────────
     Route::middleware(['auth:sanctum'])->group(function () {
