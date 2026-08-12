@@ -66,10 +66,19 @@ class AiChatService implements AiChatServiceInterface
             }
             $variantsText = implode("\n", $variantsInfo);
 
+            $imagesInfo = [];
+            foreach ($product->productImages as $img) {
+                $url = str_starts_with($img->image_path, 'http') ? $img->image_path : "http://localhost:8000/storage/" . $img->image_path;
+                $imagesInfo[] = "- " . $url;
+            }
+            $imagesText = !empty($imagesInfo) ? implode("\n", $imagesInfo) : "Không có ảnh";
+
             $productContext = "DƯỚI ĐÂY LÀ THÔNG TIN SẢN PHẨM KHÁCH HÀNG ĐANG HỎI/XEM (Hãy trả lời chính xác theo thông tin này, không tự bịa giá hoặc size):\n" .
                 "Tên sản phẩm: {$product->name}\n" .
                 "Thương hiệu: {$product->brand}\n" .
                 "Mô tả: {$product->description}\n" .
+                "Hình ảnh sản phẩm (bạn có thể gợi ý khách xem):\n" .
+                $imagesText . "\n\n" .
                 "Các biến thể/Size/Màu sắc hiện có trong kho:\n" .
                 $variantsText . "\n\n";
         }

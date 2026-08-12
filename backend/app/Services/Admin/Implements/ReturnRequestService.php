@@ -54,12 +54,14 @@ class ReturnRequestService implements ReturnRequestServiceInterface
 
         $updatedModel = $this->repository->update($model, $data);
 
-        // Cộng lại tồn kho khi đã nhận lại hàng (received)
-        if ($data['status'] === 'received') {
-            $updatedModel->load('orderDetail.productVariant');
-            $orderDetail = $updatedModel->orderDetail;
-            if ($orderDetail && $orderDetail->productVariant) {
-                $orderDetail->productVariant->increment('stock_quantity', $updatedModel->quantity);
+        // KHÔNG CỘNG LẠI TỒN KHO vì hàng lỗi/hỏng không bán lại được
+        
+        if ($data['status'] === 'refunded') {
+            $updatedModel->load('order');
+            if ($updatedModel->order && clone $updatedModel->order) {
+                 // Nếu đơn hoàn toàn, có thể set payment_status = refunded. 
+                 // Tùy theo nghiệp vụ (hoàn 1 phần hay toàn phần). Ở đây set cho order.
+                 $updatedModel->order->update(['payment_status' => 'refunded']);
             }
         }
         

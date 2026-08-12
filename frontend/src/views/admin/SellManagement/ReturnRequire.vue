@@ -472,6 +472,8 @@ const updateStatus = async (newStatus) => {
     try {
       await returnStore.updateStatus(selectedRequest.value.id, newStatus)
       selectedRequest.value.status = newStatus
+      fetchWithFilters() // Reload stats and list
+      alert('Cập nhật trạng thái thành công!')
     } catch (err) {
       alert('Lỗi cập nhật trạng thái: ' + err.message)
     }

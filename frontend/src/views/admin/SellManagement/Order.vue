@@ -346,8 +346,8 @@
                     </div>
                     <div>
                       <h3 class="text-xs font-bold text-slate-450 uppercase tracking-wider mb-2">Thông tin tài khoản</h3>
-                      <p class="font-semibold text-slate-800 text-sm truncate">{{ activeOrder.customer?.full_name || 'Khách vãng lai' }}</p>
-                      <p class="text-xs text-slate-650 mt-1 truncate">{{ activeOrder.customer?.email }}</p>
+                      <p class="font-semibold text-slate-800 text-sm truncate" :title="activeOrder.customer?.full_name || 'Khách vãng lai'">{{ activeOrder.customer?.full_name || 'Khách vãng lai' }}</p>
+                      <p class="text-xs text-slate-650 mt-1 truncate" :title="activeOrder.customer?.email">{{ activeOrder.customer?.email }}</p>
                       <p class="text-xs text-slate-650 mt-1 truncate">Tài khoản SĐT: {{ activeOrder.customer?.phone_number || 'N/A' }}</p>
                     </div>
                   </div>
@@ -378,7 +378,7 @@
                                   alt="Product image"
                                 />
                                 <div>
-                                  <p class="font-semibold text-slate-800 line-clamp-1 leading-snug">{{ item.product_variant?.product?.name }}</p>
+                                  <p class="font-semibold text-slate-800 line-clamp-2 leading-snug" :title="item.product_variant?.product?.name">{{ item.product_variant?.product?.name }}</p>
                                   <p class="text-xs text-slate-400 font-mono mt-0.5">{{ item.product_variant?.sku }}</p>
                                   <!-- Attributes (Size / Color) -->
                                   <div class="flex gap-1.5 mt-1 flex-wrap">
@@ -419,9 +419,12 @@
                       <span class="font-mono font-medium">-{{ formatPrice(activeOrder.coupon_discount_amount) }}</span>
                     </div>
 
-                    <div class="flex justify-between text-xs text-slate-800 font-semibold bg-slate-100 p-2 rounded-lg">
-                      <span>Phí giao hàng:</span>
-                      <span class="font-mono font-bold">{{ formatPrice(activeOrder.shipping_fee) }}</span>
+                    <div class="flex justify-between text-xs text-slate-800 font-semibold bg-emerald-50/50 border border-emerald-100 p-2 rounded-lg">
+                      <span class="flex items-center gap-1">
+                        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+                        Phí giao hàng:
+                      </span>
+                      <span class="font-mono font-bold text-emerald-700">{{ formatPrice(activeOrder.shipping_fee) }}</span>
                     </div>
 
                     <div class="flex justify-between items-center text-sm text-slate-800 font-extrabold pt-2 border-t border-slate-200/60">

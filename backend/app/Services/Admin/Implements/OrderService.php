@@ -153,6 +153,17 @@ class OrderService implements OrderServiceInterface
                         $detail->productVariant->increment('stock_quantity', $detail->quantity);
                     }
                 }
+                
+                if ($model->coupon_id && $model->customer_id) {
+                    $model->load('coupon');
+                    if ($model->coupon) {
+                        $model->coupon->decrement('used_count');
+                        DB::table('customer_coupons')
+                            ->where('customer_id', $model->customer_id)
+                            ->where('coupon_id', $model->coupon_id)
+                            ->delete();
+                    }
+                }
             } elseif ($oldStatus === 'cancelled' && $newStatus !== 'cancelled') {
                 foreach ($model->details as $detail) {
                     if ($detail->productVariant) {

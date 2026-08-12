@@ -169,9 +169,9 @@
     </div>
 
     <!-- Elegant Quote Section -->
-    <div class="py-[60px] px-5 lg:px-20 bg-transparent flex justify-center items-center text-center max-md:py-[40px] max-md:px-5">
+    <div class="py-[40px] px-5 lg:px-20 bg-transparent flex justify-center items-center text-center max-md:py-[30px] max-md:px-5">
       <div class="max-w-[900px] relative">
-        <p class="font-title text-[42px] max-md:text-[28px] font-medium leading-[1.4] text-[#111] m-0 tracking-[0.5px] italic drop-shadow-[1px_1px_2px_rgba(0,0,0,0.05)] px-10">
+        <p class="font-title text-[42px] max-md:text-[28px] font-medium leading-[1.4] text-[#111] m-0 tracking-[0.5px] italic drop-shadow-[1px_1px_2px_rgba(0,0,0,0.05)]">
           "Nâng tầm phong cách của bạn với vẻ thanh lịch vượt thời gian trong bộ sưu tập mới."
         </p>
         <div class="w-20 h-[3px] bg-black mx-auto mt-10"></div>
@@ -222,8 +222,18 @@
         </div>
       </div>
 
+      <!-- Loading State -->
+      <div v-if="loadingBlogs" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
+        <div v-for="i in 4" :key="i" class="flex flex-col gap-[15px] animate-pulse">
+          <div class="w-full aspect-[4/3] bg-[#f0f0f0] rounded"></div>
+          <div class="h-3 bg-[#f0f0f0] rounded w-1/3"></div>
+          <div class="h-4 bg-[#f0f0f0] rounded w-full"></div>
+          <div class="h-3 bg-[#f0f0f0] rounded w-2/3"></div>
+        </div>
+      </div>
+      
       <!-- Blog Grid -->
-      <div v-if="blogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
+      <div v-else-if="blogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
         <BlogCard 
           v-for="blog in visibleBlogs" 
           :key="blog.id"
@@ -237,14 +247,9 @@
         />
       </div>
 
-      <!-- Fallback: loading or empty -->
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
-        <div v-for="i in 4" :key="i" class="flex flex-col gap-[15px] animate-pulse">
-          <div class="w-full aspect-[4/3] bg-[#f0f0f0] rounded"></div>
-          <div class="h-3 bg-[#f0f0f0] rounded w-1/3"></div>
-          <div class="h-4 bg-[#f0f0f0] rounded w-full"></div>
-          <div class="h-3 bg-[#f0f0f0] rounded w-2/3"></div>
-        </div>
+      <!-- Empty State -->
+      <div v-else class="text-center text-[#888] font-text py-10 w-full col-span-full">
+        Chưa có tin tức và bài viết nào.
       </div>
     </div>
    
@@ -433,6 +438,7 @@ onMounted(async () => {
 // ─── Blog Slider ──────────────────────────────────────────────────────────────
 const blogs = ref([])
 const blogPage = ref(0)
+const loadingBlogs = ref(true)
 const BLOGS_PER_PAGE = 4
 
 const totalBlogPages = computed(() =>
@@ -460,7 +466,7 @@ const getBlogImageUrl = (path) => {
 onMounted(async () => {
   try {
     const res = await blogService.getBlogs({ per_page: 20 })
-    if (res.data && res.data.data && res.data.data.length > 0) {
+    if (res.data && res.data.data) {
       blogs.value = res.data.data.map(b => ({
         id: b.id,
         slug: b.slug || String(b.id),
@@ -473,6 +479,8 @@ onMounted(async () => {
     }
   } catch (err) {
     console.error('Lỗi khi tải bài viết:', err)
+  } finally {
+    loadingBlogs.value = false
   }
 })
 </script>

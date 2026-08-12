@@ -107,7 +107,7 @@ const formatPrice = (v) => {
                 <div class="flex items-center justify-between mb-6">
                   <h3 class="text-sm font-bold uppercase tracking-wider">Thông tin cá nhân</h3>
                   <button @click="$router.push('/profile/information')" class="text-xs font-bold uppercase tracking-wider underline hover:text-gray-600 transition-colors">
-                    EDIT
+                    SỬA
                   </button>
                 </div>
                 
@@ -139,15 +139,15 @@ const formatPrice = (v) => {
               <div class="relative z-10 text-center space-y-4 w-full">
                 <div>
                   <span class="inline-block bg-white text-[9px] font-bold uppercase tracking-[0.2em] text-gray-900 px-3 py-1">
-                    New Collection
+                    Bộ sưu tập mới
                   </span>
                 </div>
                 <h4 class="text-2xl font-bold tracking-[0.15em] text-white uppercase leading-tight">
-                  Essentials<br>Autumn '24
+                  Essentials<br>Thu '24
                 </h4>
                 <div>
                   <button class="inline-block border border-white text-white text-[10px] font-bold uppercase tracking-widest px-6 py-2.5 hover:bg-white hover:text-gray-900 transition-all duration-300">
-                    Shop Now
+                    Mua ngay
                   </button>
                 </div>
               </div>
@@ -166,11 +166,11 @@ const formatPrice = (v) => {
               <table class="w-full text-left border-collapse min-w-[650px]">
                 <thead>
                   <tr class="border-b-2 border-gray-900">
-                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Order ID</th>
-                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Date</th>
-                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Status</th>
-                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Total</th>
-                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5 text-right">Action</th>
+                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Mã đơn</th>
+                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Ngày đặt</th>
+                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Trạng thái</th>
+                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5">Tổng cộng</th>
+                    <th class="pb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 w-1/5 text-right">Thao tác</th>
                   </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100 text-xs font-medium">

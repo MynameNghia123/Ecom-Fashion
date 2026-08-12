@@ -4,12 +4,12 @@
       <div class="flex flex-col">
         <h4 class="font-title text-[15px] font-semibold mb-[25px] mt-0 text-white">Công ty</h4>
         <ul class="list-none p-0 m-0 flex flex-col gap-[15px]">
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Tuyển dụng</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Tuyển dụng</router-link></li>
           <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Về chúng tôi</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quan hệ nhà đầu tư</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Thiết bị Luxury</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Đánh giá khách hàng</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trách nhiệm xã hội</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quan hệ nhà đầu tư</router-link></li>
+          <li><router-link to="/category" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Thiết bị Luxury</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Đánh giá khách hàng</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trách nhiệm xã hội</router-link></li>
           <li><router-link to="/contact" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Hệ thống cửa hàng</router-link></li>
         </ul>
       </div>
@@ -17,13 +17,13 @@
       <div class="flex flex-col">
         <h4 class="font-title text-[15px] font-semibold mb-[25px] mt-0 text-white">Tài nguyên</h4>
         <ul class="list-none p-0 m-0 flex flex-col gap-[15px]">
-          <li><router-link to="/profile/order-history" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Đơn hàng của bạn</router-link></li>
+          <li><router-link to="/profile/orders" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Đơn hàng của bạn</router-link></li>
           <li><router-link to="/profile/returns" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trả hàng & Đổi trả</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Phí & Chính sách giao hàng</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Chính sách hoàn tiền</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Chính sách bảo mật</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Điều khoản và điều kiện</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Cài đặt Cookie</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Phí & Chính sách giao hàng</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Chính sách hoàn tiền</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Chính sách bảo mật</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Điều khoản và điều kiện</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Cài đặt Cookie</router-link></li>
           <li><router-link to="/contact" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trung tâm trợ giúp</router-link></li>
         </ul>
       </div>
@@ -36,8 +36,8 @@
           <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Luxury Doanh nghiệp</router-link></li>
           <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Ứng dụng Luxury</router-link></li>
           <li><router-link to="/contact" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trở thành đối tác liên kết</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quảng cáo sản phẩm</router-link></li>
-          <li><router-link to="/" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Hợp tác xuất bản</router-link></li>
+          <li><router-link to="/category" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Quảng cáo sản phẩm</router-link></li>
+          <li><router-link to="/about" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Hợp tác xuất bản</router-link></li>
           <li><router-link to="/contact" class="text-[#aaa] no-underline text-[13px] transition-colors duration-300 hover:text-white">Trở thành nhà cung cấp</router-link></li>
         </ul>
       </div>
@@ -49,7 +49,7 @@
           <input type="email" placeholder="Nhập địa chỉ email của bạn" required class="bg-transparent border border-[#333] text-white py-3 px-[15px] font-text text-[13px] outline-none focus:border-white">
           <button type="submit" class="bg-transparent text-white border-none text-left p-0 font-text text-[12px] font-bold cursor-pointer tracking-[0.5px]">ĐĂNG KÝ</button>
         </form>
-        <p class="text-[11px] text-[#666] leading-[1.5]">Bằng cách đăng ký, bạn đồng ý với <router-link to="/" class="text-[#aaa] underline">Điều khoản & Điều kiện</router-link> và <router-link to="/" class="text-[#aaa] underline">Chính sách Bảo mật</router-link> của chúng tôi.</p>
+        <p class="text-[11px] text-[#666] leading-[1.5]">Bằng cách đăng ký, bạn đồng ý với <router-link to="/about" class="text-[#aaa] underline">Điều khoản & Điều kiện</router-link> và <router-link to="/about" class="text-[#aaa] underline">Chính sách Bảo mật</router-link> của chúng tôi.</p>
       </div>
     </div>
     
