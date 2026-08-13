@@ -7,6 +7,8 @@
     <Footer />
     <!-- AI Assistant Floating Chat Widget -->
     <AiAssistant />
+    <!-- Coupon Popup -->
+    <CouponPopup />
   </div>
 </template>
 
@@ -14,6 +16,7 @@
 import Header from '@/components/client/Header.vue'
 import Footer from '@/components/client/Footer.vue'
 import AiAssistant from '@/components/client/ai-assistant/AiAssistant.vue'
+import CouponPopup from '@/components/client/CouponPopup.vue'
 
 defineProps({
   isTransparent: {

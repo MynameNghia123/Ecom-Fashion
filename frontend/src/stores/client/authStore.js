@@ -11,6 +11,10 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
   const loading = ref(false)
   const error = ref(null)
   
+  // Coupon popup state
+  const showCouponPopup = ref(false)
+  const collectableCoupons = ref([])
+  
   // OTP flow state
   const otpEmail = ref('')
   const resetToken = ref('')
@@ -44,7 +48,16 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
       
       return { success: true }
     } catch (err) {
-      error.value = err.response?.data?.message || 'Đăng ký thất bại!'
+      let errorMessage = 'Đăng ký thất bại!'
+      if (err.response?.data) {
+        if (err.response.data.errors) {
+          const firstErrorKey = Object.keys(err.response.data.errors)[0]
+          errorMessage = err.response.data.errors[firstErrorKey][0]
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message
+        }
+      }
+      error.value = errorMessage
       return { success: false, message: error.value }
     } finally {
       loading.value = false
@@ -74,9 +87,39 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
         console.error('Failed to trigger AI chat sync on login', e)
       }
 
+      // Check collectable coupons
+      try {
+        const { profileService } = await import('@/services/client/profileService')
+        const couponRes = await profileService.getCollectableCoupons()
+        if (couponRes.data && couponRes.data.success && couponRes.data.data.length > 0) {
+          collectableCoupons.value = couponRes.data.data
+          showCouponPopup.value = true
+        }
+      } catch (e) {
+        console.error('Failed to fetch collectable coupons on login', e)
+      }
+
+      // Sync cart from LocalStorage to DB
+      try {
+        const { useCartStore } = await import('@/stores/client/cartStore')
+        const cartStore = useCartStore()
+        await cartStore.syncCart()
+      } catch (e) {
+        console.error('Failed to sync cart on login', e)
+      }
+
       return { success: true }
     } catch (err) {
-      error.value = err.response?.data?.message || 'Đăng nhập thất bại!'
+      let errorMessage = 'Đăng nhập thất bại!'
+      if (err.response?.data) {
+        if (err.response.data.errors) {
+          const firstErrorKey = Object.keys(err.response.data.errors)[0]
+          errorMessage = err.response.data.errors[firstErrorKey][0]
+        } else if (err.response.data.message) {
+          errorMessage = err.response.data.message
+        }
+      }
+      error.value = errorMessage
       return { success: false, message: error.value }
     } finally {
       loading.value = false
@@ -97,6 +140,16 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
       user.value = null
       token.value = null
       localStorage.removeItem('customer_token')
+      
+      // Xóa giỏ hàng khỏi RAM
+      try {
+        const { useCartStore } = await import('@/stores/client/cartStore')
+        const cartStore = useCartStore()
+        cartStore.clearCart()
+      } catch (e) {
+        console.error('Failed to clear cart on logout', e)
+      }
+      
       loading.value = false
     }
   }
@@ -128,6 +181,14 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
   const initAuth = async () => {
     if (token.value) {
       await fetchMe()
+      
+      try {
+        const { useCartStore } = await import('@/stores/client/cartStore')
+        const cartStore = useCartStore()
+        await cartStore.fetchCart()
+      } catch (e) {
+        console.error('Failed to fetch cart on initAuth', e)
+      }
     }
   }
 
@@ -229,5 +290,7 @@ export const useClientAuthStore = defineStore('clientAuth', () => {
     resetPassword,
     clearError,
     updateProfile,
+    showCouponPopup,
+    collectableCoupons,
   }
 })

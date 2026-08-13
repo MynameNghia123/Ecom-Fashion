@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Cart\AddItemRequest;
 use App\Http\Requests\Client\Cart\UpdateItemRequest;
+use App\Http\Requests\Client\Cart\SyncCartRequest;
 use App\Services\Client\Interfaces\CartServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -23,6 +24,22 @@ class CartController extends Controller
             'success' => true,
             'data'    => $this->cartService->getCart($customer->id),
         ]);
+    }
+
+    /**
+     * POST /client/cart/sync — Đồng bộ giỏ hàng từ LocalStorage.
+     */
+    public function syncCart(SyncCartRequest $request): JsonResponse
+    {
+        $customer = Auth::user();
+        $validated = $request->validated();
+        
+        // Items may be empty if LocalStorage was empty
+        $items = $validated['items'] ?? [];
+
+        $result = $this->cartService->syncCart($customer->id, $items);
+
+        return response()->json($result);
     }
 
     /**

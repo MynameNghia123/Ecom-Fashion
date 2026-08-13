@@ -31,8 +31,6 @@
           {{ blog.name }}
         </h1>
         <div class="flex items-center justify-center gap-6 text-xs text-neutral-500 font-medium border-t border-b border-neutral-100 py-3 max-w-[400px] mx-auto">
-          <span>Tác giả: <strong class="text-neutral-800">Luxury Editorial</strong></span>
-          <span>•</span>
           <span>{{ blog.created_at || 'Mới cập nhật' }}</span>
         </div>
       </header>

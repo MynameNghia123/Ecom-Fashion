@@ -186,6 +186,7 @@ Route::prefix('client')->group(function () {
 
         // Cart
         Route::get('cart', [ClientCartController::class, 'index']);
+        Route::post('cart/sync', [ClientCartController::class, 'syncCart']);
         Route::post('cart/items', [ClientCartController::class, 'addItem']);
         Route::put('cart/items/{id}', [ClientCartController::class, 'updateItem']);
         Route::delete('cart/items/{id}', [ClientCartController::class, 'removeItem']);
@@ -196,8 +197,10 @@ Route::prefix('client')->group(function () {
         Route::get('orders/{code}',      [ClientOrderController::class, 'show']);
 
         // Coupons
-        Route::get('coupons',            [\App\Http\Controllers\Client\CouponController::class, 'index']);
-        Route::post('coupons/apply',     [\App\Http\Controllers\Client\CouponController::class, 'apply']);
+        Route::get('coupons',                 [\App\Http\Controllers\Client\CouponController::class, 'index']);
+        Route::get('coupons/collectable',     [\App\Http\Controllers\Client\CouponController::class, 'collectable']);
+        Route::post('coupons/collect',        [\App\Http\Controllers\Client\CouponController::class, 'collect']);
+        Route::post('coupons/apply',          [\App\Http\Controllers\Client\CouponController::class, 'apply']);
 
         // Addresses
         Route::get('addresses',               [\App\Http\Controllers\Client\CustomerAddressController::class, 'index']);

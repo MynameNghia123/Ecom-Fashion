@@ -33,4 +33,26 @@ class CouponRepository implements CouponRepositoryInterface
             })
             ->first();
     }
+
+    public function getCollectableCoupons(int $customerId): Collection
+    {
+        return $this->model->where('is_active', true)
+            ->where(function ($q) {
+                $q->whereNull('expiry_date')
+                  ->orWhere('expiry_date', '>=', now()->toDateString());
+            })
+            ->where(function ($q) {
+                $q->whereNull('max_usage')
+                  ->orWhereColumn('used_count', '<', 'max_usage');
+            })
+            ->whereDoesntHave('orders', function ($q) use ($customerId) {
+                $q->where('customer_id', $customerId);
+            }) // Note: Orders uses the coupon. But customer_coupons also saves it.
+            // Wait, does the coupon model have a customers() relation? Let's check Coupon model.
+            ->whereNotIn('id', function($q) use ($customerId) {
+                $q->select('coupon_id')->from('customer_coupons')->where('customer_id', $customerId);
+            })
+            ->orderBy('expiry_date')
+            ->get();
+    }
 }

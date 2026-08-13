@@ -21,6 +21,16 @@ export const profileService = {
     return api.post('/client/coupons/apply', data)
   },
 
+  /** Lấy danh sách coupon có thể lưu */
+  getCollectableCoupons() {
+    return api.get('/client/coupons/collectable')
+  },
+
+  /** Lưu mã giảm giá */
+  collectCoupon(couponId) {
+    return api.post('/client/coupons/collect', { coupon_id: couponId })
+  },
+
   /** Lấy danh sách địa chỉ */
   getAddresses() {
     return api.get('/client/addresses')

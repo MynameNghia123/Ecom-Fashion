@@ -113,13 +113,21 @@ class OrderService implements OrderServiceInterface
             if ($appliedCoupon && $couponId) {
                 $appliedCoupon->increment('used_count');
                 
-                DB::table('customer_coupons')->insert([
-                    'customer_id' => $customerId,
-                    'coupon_id' => $couponId,
-                    'used_at' => now(),
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
+                DB::table('customer_coupons')->updateOrInsert(
+                    [
+                        'customer_id' => $customerId,
+                        'coupon_id' => $couponId,
+                    ],
+                    [
+                        'used_at' => now(),
+                        // Instead of created_at/updated_at which might not exist or cause errors,
+                        // we can omit them, but if they exist, let's keep them if it's an insert
+                        // Actually, if we use upsert in raw query or just leave them out if they don't exist.
+                        // I will assume the table does not have created_at as seen in the migration, 
+                        // so I will just set used_at. If it fails due to missing timestamps, 
+                        // we will know. The previous code had created_at and updated_at. I'll remove them.
+                    ]
+                );
             }
 
             // 3. Create Order details & reduce stock

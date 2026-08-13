@@ -120,8 +120,8 @@ onMounted(() => {
 
 const handleRegister = async () => {
   // Validate password length
-  if (registerForm.password.length < 6) {
-    localError.value = 'Mật khẩu phải có ít nhất 6 ký tự.'
+  if (registerForm.password.length < 8) {
+    localError.value = 'Mật khẩu phải có ít nhất 8 ký tự.'
     return
   }
 

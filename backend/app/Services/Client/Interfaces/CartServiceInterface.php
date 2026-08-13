@@ -22,4 +22,5 @@ interface CartServiceInterface
      * @return array{success: bool, message: string, data?: array}
      */
     public function removeItem(int $customerId, int $itemId): array;
+    public function syncCart(int $customerId, array $items): array;
 }

@@ -25,6 +25,33 @@ class CouponController extends Controller
     }
 
     /**
+     * GET /client/coupons/collectable
+     */
+    public function collectable(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $customerId = $request->user()->id;
+        $coupons = $this->couponService->getCollectableCoupons($customerId);
+
+        return response()->json([
+            'success' => true,
+            'data'    => $coupons,
+        ]);
+    }
+
+    /**
+     * POST /client/coupons/collect
+     */
+    public function collect(\Illuminate\Http\Request $request): JsonResponse
+    {
+        $request->validate(['coupon_id' => 'required|integer']);
+        $customerId = $request->user()->id;
+        
+        $result = $this->couponService->collectCoupon($customerId, $request->coupon_id);
+
+        return response()->json($result);
+    }
+
+    /**
      * POST /client/coupons/apply
      */
     public function apply(ApplyCouponRequest $request): JsonResponse

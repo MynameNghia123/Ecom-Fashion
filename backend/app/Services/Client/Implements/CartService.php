@@ -97,6 +97,23 @@ class CartService implements CartServiceInterface
         ];
     }
 
+    public function syncCart(int $customerId, array $items): array
+    {
+        // Add items one by one. The addItem function handles quantity logic
+        foreach ($items as $item) {
+            $this->addItem($customerId, $item['product_variant_id'], $item['quantity']);
+        }
+
+        $cart = $this->repo->getActiveCartByCustomerId($customerId);
+        $cart = $this->repo->loadCartRelations($cart);
+
+        return [
+            'success' => true,
+            'message' => 'Đồng bộ giỏ hàng thành công.',
+            'data'    => $this->formatCart($cart),
+        ];
+    }
+
     private function formatCart(Cart $cart): array
     {
         $items = $cart->items->map(function (CartItem $item) {

@@ -20,4 +20,9 @@ export const cartService = {
   removeItem(itemId) {
     return api.delete(`/client/cart/items/${itemId}`)
   },
+
+  /** Đồng bộ giỏ hàng từ localStorage lên server */
+  syncCart(items) {
+    return api.post('/client/cart/sync', { items })
+  },
 }

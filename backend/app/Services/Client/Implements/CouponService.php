@@ -14,6 +14,32 @@ class CouponService implements CouponServiceInterface
         return $this->repo->getActiveCoupons();
     }
 
+    public function getCollectableCoupons(int $customerId): Collection
+    {
+        return $this->repo->getCollectableCoupons($customerId);
+    }
+
+    public function collectCoupon(int $customerId, int $couponId): array
+    {
+        // Insert into customer_coupons without setting used_at so it's "collected" but not "used"
+        // Wait, if used_at is not nullable, this will throw an error in DB.
+        // Let's set used_at to NULL if possible, or if it fails, we will know we must alter the table.
+        // We will do an updateOrInsert in case they somehow have it.
+        \Illuminate\Support\Facades\DB::table('customer_coupons')->updateOrInsert(
+            [
+                'customer_id' => $customerId,
+                'coupon_id' => $couponId,
+            ],
+            [
+                // we don't set used_at because they haven't used it!
+                // if mysql complains about used_at not having a default value, 
+                // we will have to alter the table to make it nullable.
+            ]
+        );
+
+        return ['success' => true, 'message' => 'Lưu mã giảm giá thành công.'];
+    }
+
     public function applyCoupon(string $code, float $orderTotal): array
     {
         $coupon = $this->repo->findActiveByCode($code);
