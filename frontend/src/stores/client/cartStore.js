@@ -2,7 +2,6 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { cartService } from '@/services/client/cartService'
 import { useClientAuthStore } from '@/stores/client/authStore'
-import { useToast } from 'vue-toastification'
 
 const STORAGE_KEY = 'ef_cart_items'
 
