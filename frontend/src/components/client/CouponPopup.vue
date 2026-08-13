@@ -93,7 +93,7 @@ const formatPrice = (val) => {
 }
 
 const formatDiscount = (coupon) => {
-  if (coupon.type === 'percentage') {
+  if (coupon.type === 'percent') {
     return coupon.discount_value + '%'
   }
   return formatPrice(coupon.discount_value) + ' đ'

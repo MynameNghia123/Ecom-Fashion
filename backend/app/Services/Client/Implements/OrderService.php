@@ -82,7 +82,7 @@ class OrderService implements OrderServiceInterface
                     if (!$appliedCoupon->max_usage || $appliedCoupon->used_count < $appliedCoupon->max_usage) {
                         if (!$appliedCoupon->price_min_order_value || $subTotal >= $appliedCoupon->price_min_order_value) {
                             $couponId = $appliedCoupon->id;
-                            $discountAmount = $appliedCoupon->type === 'percentage'
+                            $discountAmount = $appliedCoupon->type === 'percent'
                                 ? round($subTotal * $appliedCoupon->discount_value / 100)
                                 : $appliedCoupon->discount_value;
                         }

@@ -56,7 +56,7 @@ class CouponService implements CouponServiceInterface
             return ['success' => false, 'message' => 'Don hang chua dat gia tri toi thieu.'];
         }
 
-        $discount = $coupon->type === 'percentage'
+        $discount = $coupon->type === 'percent'
             ? round($orderTotal * $coupon->discount_value / 100)
             : $coupon->discount_value;
 
