@@ -1,7 +1,7 @@
 <template>
   <div class="w-full bg-white text-black font-text min-h-[70vh]">
     <!-- Background Banner -->
-    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex flex-col items-center justify-center">
+    <div class="relative bg-[url('/img/blog/bannercategoryao.jpg')] bg-cover bg-center bg-no-repeat py-24 flex flex-col items-center justify-center">
       <div class="absolute inset-0 bg-black/40"></div>
       <h1 class="relative font-title text-[40px] md:text-[56px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
         TẠP CHÍ THỜI TRANG

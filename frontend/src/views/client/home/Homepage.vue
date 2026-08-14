@@ -69,40 +69,46 @@
       </div>
 
       <div class="relative flex items-center">
+        <!-- Prev button -->
         <button
-          @click="prevNewArrivalPage"
-          :disabled="newArrivalsPage === 0"
-          class="absolute top-[35%] -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          @click="scrollTrack(newArrivalsTrack, 'prev')"
+          class="absolute top-1/2 -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-[#111] hover:text-white hover:-translate-x-1 hover:scale-110 active:scale-95 max-sm:hidden"
           aria-label="Trang trước"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
 
-        <div class="w-full overflow-hidden">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-            <div 
-              v-for="product in visibleNewArrivals" 
-              :key="product.id"
-              class="cursor-pointer"
-            >
-              <ProductCard 
-                :id="product.id"
-                :slug="product.slug"
-                :image="product.image"
-                :name="product.name"
-                :currentPrice="product.currentPrice"
-                :originalPrice="product.originalPrice"
-                :discount="product.discount"
-                :rating="product.rating"
-              />
-            </div>
+        <!-- Drag & Scroll Product Track -->
+        <div 
+          ref="newArrivalsTrack"
+          @mousedown="startDrag($event, newArrivalsTrack)"
+          @mouseleave="stopDrag(newArrivalsTrack)"
+          @mouseup="stopDrag(newArrivalsTrack)"
+          @mousemove="doDrag($event, newArrivalsTrack)"
+          class="w-full flex gap-[30px] overflow-x-auto scrollbar-none scroll-smooth py-2 cursor-grab active:cursor-grabbing select-none"
+        >
+          <div 
+            v-for="product in newArrivals" 
+            :key="product.id"
+            class="w-[260px] sm:w-[280px] lg:w-[calc(25%-22.5px)] shrink-0"
+          >
+            <ProductCard 
+              :id="product.id"
+              :slug="product.slug"
+              :image="product.image"
+              :name="product.name"
+              :currentPrice="product.currentPrice"
+              :originalPrice="product.originalPrice"
+              :discount="product.discount"
+              :rating="product.rating"
+            />
           </div>
         </div>
 
+        <!-- Next button -->
         <button
-          @click="nextNewArrivalPage"
-          :disabled="newArrivalsPage >= totalNewArrivalPages - 1"
-          class="absolute top-[35%] -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          @click="scrollTrack(newArrivalsTrack, 'next')"
+          class="absolute top-1/2 -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-[#111] hover:text-white hover:translate-x-1 hover:scale-110 active:scale-95 max-sm:hidden"
           aria-label="Trang tiếp"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -110,57 +116,55 @@
       </div>
     </div>
 
-  
-
-  
-
-  
-
-  
-
     <!-- SẢN PHẨM NỔI BẬT Section -->
     <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
       <!-- Tiêu đề căn giữa -->
       <div class="text-center mb-12">
-        <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">S&#7843;n Ph&#7849;m N&#7893;i B&#7853;t</h2>
+        <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">Sản Phẩm Nổi Bật</h2>
         <div class="w-16 h-[3px] bg-black mx-auto mt-4"></div>
       </div>
 
       <div class="relative flex items-center">
+        <!-- Prev button -->
         <button
-          @click="prevFeaturedPage"
-          :disabled="featuredPage === 0"
-          class="absolute top-[35%] -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          @click="scrollTrack(featuredTrack, 'prev')"
+          class="absolute top-1/2 -translate-y-1/2 -left-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-[#111] hover:text-white hover:-translate-x-1 hover:scale-110 active:scale-95 max-sm:hidden"
           aria-label="Trước"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
         </button>
         
-        <div class="w-full overflow-hidden">
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[30px]">
-            <div 
-              v-for="product in visibleFeaturedProducts" 
-              :key="product.id"
-              class="cursor-pointer"
-            >
-              <ProductCard 
-                :id="product.id"
-                :slug="product.slug"
-                :image="product.image"
-                :name="product.name"
-                :currentPrice="product.currentPrice"
-                :originalPrice="product.originalPrice"
-                :discount="product.discount"
-                :rating="product.rating"
-              />
-            </div>
+        <!-- Drag & Scroll Product Track -->
+        <div 
+          ref="featuredTrack"
+          @mousedown="startDrag($event, featuredTrack)"
+          @mouseleave="stopDrag(featuredTrack)"
+          @mouseup="stopDrag(featuredTrack)"
+          @mousemove="doDrag($event, featuredTrack)"
+          class="w-full flex gap-[30px] overflow-x-auto scrollbar-none scroll-smooth py-2 cursor-grab active:cursor-grabbing select-none"
+        >
+          <div 
+            v-for="product in featuredProducts" 
+            :key="product.id"
+            class="w-[260px] sm:w-[280px] lg:w-[calc(25%-22.5px)] shrink-0"
+          >
+            <ProductCard 
+              :id="product.id"
+              :slug="product.slug"
+              :image="product.image"
+              :name="product.name"
+              :currentPrice="product.currentPrice"
+              :originalPrice="product.originalPrice"
+              :discount="product.discount"
+              :rating="product.rating"
+            />
           </div>
         </div>
         
+        <!-- Next button -->
         <button
-          @click="nextFeaturedPage"
-          :disabled="featuredPage >= totalFeaturedPages - 1"
-          class="absolute top-[35%] -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_10px_rgba(0,0,0,0.05)] transition-all duration-300 hover:bg-[#111] hover:text-white max-sm:hidden disabled:opacity-30 disabled:cursor-not-allowed"
+          @click="scrollTrack(featuredTrack, 'next')"
+          class="absolute top-1/2 -translate-y-1/2 -right-[22px] bg-white border border-[#eaeaea] rounded-full w-11 h-11 flex items-center justify-center cursor-pointer z-10 text-[#111] shadow-[0_4px_12px_rgba(0,0,0,0.08)] transition-all duration-300 hover:bg-[#111] hover:text-white hover:translate-x-1 hover:scale-110 active:scale-95 max-sm:hidden"
           aria-label="Tiếp theo"
         >
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -178,12 +182,11 @@
       </div>
     </div>
 
-
     <!-- Eco Fashion Section -->
     <div class="flex py-[100px] px-5 lg:px-20 gap-[50px] items-center bg-white max-lg:flex-col max-lg:py-[60px]">
       <div class="flex-1 max-w-[450px] max-lg:max-w-none max-lg:text-center max-lg:mb-10">
-        <h2 class="font-title text-[46px] font-normal leading-[1.2] text-[#111] m-[0_0_20px_0] tracking-[1px]">THỜI TRANG YÊU<br>THƯƠNG TRÁI ĐẤT</h2>
-        <p class="font-text text-[14px] text-[#555] leading-[1.6] mb-[35px] mt-0">Được thiết kế có trách nhiệm cho cuộc sống hàng ngày. Những đường nét tinh tế, chất liệu tự nhiên, và phong cách trường tồn vượt thời gian.</p>
+        <h2 class="font-title text-[46px] font-normal leading-[1.2] text-[#111] m-[0_0_20px_0] tracking-[1px]">CÔNG SỞ THANH LỊCH</h2>
+        <p class="font-text text-[14px] text-[#555] leading-[1.6] mb-[35px] mt-0"> Với thiết kế tinh tế, phom dáng chỉn chu và chất liệu thoải mái, sơ mi Luxury chinos cho phong cách trẻ trung. Từ những buổi họp quan trọng đến những ngày làm việc thường nhật, một chiếc sơ mi phù hợp luôn giúp bạn tự tin và nổi bật.</p>
         <button class="bg-black text-white border-none py-[15px] px-[35px] font-text text-[12px] font-bold tracking-[1px] uppercase cursor-pointer transition-colors duration-300 hover:bg-[#333]">KHÁM PHÁ NGAY</button>
       </div>
       <div class="flex-1.5 flex gap-10 items-end justify-end max-lg:w-full max-lg:justify-center">
@@ -195,7 +198,6 @@
         </div>
       </div>
     </div>
-   
 
     <!-- Blog Section -->
     <div class="pt-[60px] pb-[100px] px-5 lg:px-20 bg-white">
@@ -204,17 +206,15 @@
         <h2 class="font-title text-[24px] font-semibold m-0 tracking-[-0.5px]">Tin Tức &amp; Bài Viết</h2>
         <div class="flex items-center gap-3">
           <button
-            @click="prevBlogPage"
-            :disabled="blogPage === 0"
-            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-[#111]"
+            @click="scrollTrack(blogTrack, 'prev')"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:-translate-x-1 hover:scale-110 active:scale-95"
             aria-label="Blog trước"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
           </button>
           <button
-            @click="nextBlogPage"
-            :disabled="blogPage >= totalBlogPages - 1"
-            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:border-[#111] disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-[#111]"
+            @click="scrollTrack(blogTrack, 'next')"
+            class="w-10 h-10 rounded-full border border-[#eaeaea] bg-white flex items-center justify-center text-[#111] shadow-sm transition-all duration-300 hover:bg-[#111] hover:text-white hover:translate-x-1 hover:scale-110 active:scale-95"
             aria-label="Blog tiếp theo"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -232,19 +232,31 @@
         </div>
       </div>
       
-      <!-- Blog Grid -->
-      <div v-else-if="blogs.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-[30px]">
-        <BlogCard 
-          v-for="blog in visibleBlogs" 
+      <!-- Blog Track (Drag & Scroll) -->
+      <div 
+        v-else-if="blogs.length > 0" 
+        ref="blogTrack"
+        @mousedown="startDrag($event, blogTrack)"
+        @mouseleave="stopDrag(blogTrack)"
+        @mouseup="stopDrag(blogTrack)"
+        @mousemove="doDrag($event, blogTrack)"
+        class="w-full flex gap-[30px] overflow-x-auto scrollbar-none scroll-smooth py-2 cursor-grab active:cursor-grabbing select-none"
+      >
+        <div
+          v-for="blog in blogs" 
           :key="blog.id"
-          :id="blog.id"
-          :slug="blog.slug"
-          :image="blog.image"
-          :category="blog.category"
-          :title="blog.title"
-          :author="blog.author"
-          :date="blog.date"
-        />
+          class="w-[260px] sm:w-[280px] lg:w-[calc(25%-22.5px)] shrink-0"
+        >
+          <BlogCard 
+            :id="blog.id"
+            :slug="blog.slug"
+            :image="blog.image"
+            :category="blog.category"
+            :title="blog.title"
+            :author="blog.author"
+            :date="blog.date"
+          />
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -316,31 +328,43 @@ onUnmounted(() => {
   if (slideInterval) clearInterval(slideInterval);
 });
 
-const newArrivals = ref([]);
-const featuredProducts = ref([]);
-const newArrivalsPage = ref(0)
-const featuredPage = ref(0)
-const PRODUCTS_PER_PAGE = 4
+const newArrivals = ref([])
+const featuredProducts = ref([])
+const newArrivalsTrack = ref(null)
+const featuredTrack = ref(null)
+const blogTrack = ref(null)
 
-const totalNewArrivalPages = computed(() =>
-  Math.max(1, Math.ceil(newArrivals.value.length / PRODUCTS_PER_PAGE))
-)
-const visibleNewArrivals = computed(() => {
-  const start = newArrivalsPage.value * PRODUCTS_PER_PAGE
-  return newArrivals.value.slice(start, start + PRODUCTS_PER_PAGE)
-})
-const prevNewArrivalPage = () => { if (newArrivalsPage.value > 0) newArrivalsPage.value-- }
-const nextNewArrivalPage = () => { if (newArrivalsPage.value < totalNewArrivalPages.value - 1) newArrivalsPage.value++ }
+const scrollTrack = (trackEl, direction) => {
+  if (!trackEl) return
+  const amount = trackEl.clientWidth * 0.75
+  trackEl.scrollBy({
+    left: direction === 'next' ? amount : -amount,
+    behavior: 'smooth'
+  })
+}
 
-const totalFeaturedPages = computed(() =>
-  Math.max(1, Math.ceil(featuredProducts.value.length / PRODUCTS_PER_PAGE))
-)
-const visibleFeaturedProducts = computed(() => {
-  const start = featuredPage.value * PRODUCTS_PER_PAGE
-  return featuredProducts.value.slice(start, start + PRODUCTS_PER_PAGE)
-})
-const prevFeaturedPage = () => { if (featuredPage.value > 0) featuredPage.value-- }
-const nextFeaturedPage = () => { if (featuredPage.value < totalFeaturedPages.value - 1) featuredPage.value++ }
+let isDragging = false
+let startX = 0
+let scrollLeft = 0
+
+const startDrag = (e, trackEl) => {
+  if (!trackEl) return
+  isDragging = true
+  startX = e.pageX - trackEl.offsetLeft
+  scrollLeft = trackEl.scrollLeft
+}
+
+const stopDrag = () => {
+  isDragging = false
+}
+
+const doDrag = (e, trackEl) => {
+  if (!isDragging || !trackEl) return
+  e.preventDefault()
+  const x = e.pageX - trackEl.offsetLeft
+  const walk = (x - startX) * 1.5
+  trackEl.scrollLeft = scrollLeft - walk
+}
 
 const router = useRouter();
 
@@ -437,25 +461,7 @@ onMounted(async () => {
 
 // ─── Blog Slider ──────────────────────────────────────────────────────────────
 const blogs = ref([])
-const blogPage = ref(0)
 const loadingBlogs = ref(true)
-const BLOGS_PER_PAGE = 4
-
-const totalBlogPages = computed(() =>
-  Math.max(1, Math.ceil(blogs.value.length / BLOGS_PER_PAGE))
-)
-
-const visibleBlogs = computed(() => {
-  const start = blogPage.value * BLOGS_PER_PAGE
-  return blogs.value.slice(start, start + BLOGS_PER_PAGE)
-})
-
-const nextBlogPage = () => {
-  if (blogPage.value < totalBlogPages.value - 1) blogPage.value++
-}
-const prevBlogPage = () => {
-  if (blogPage.value > 0) blogPage.value--
-}
 
 const getBlogImageUrl = (path) => {
   if (!path) return 'https://images.unsplash.com/photo-1523206489230-c012c64b2b48?q=80&w=600&auto=format&fit=crop'
@@ -486,6 +492,14 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .marquee-wrapper {
   width: 100%;
 }

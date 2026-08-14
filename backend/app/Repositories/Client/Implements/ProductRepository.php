@@ -1,6 +1,7 @@
 <?php
 namespace App\Repositories\Client\Implements;
 use App\Models\Product;
+use App\Models\Category;
 use App\Repositories\Client\Interfaces\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -9,19 +10,45 @@ class ProductRepository implements ProductRepositoryInterface
 {
     public function __construct(private readonly Product $model) {}
 
+    /**
+     * Lấy danh sách ID của category hiện tại cùng tất cả các sub-category cấp con, cháu
+     */
+    private function getAllCategoryIds(int $categoryId): array
+    {
+        $ids = [$categoryId];
+        $currentParentIds = [$categoryId];
+
+        while (!empty($currentParentIds)) {
+            $childrenIds = Category::whereIn('parent_id', $currentParentIds)->pluck('id')->toArray();
+            $newChildren = array_diff($childrenIds, $ids);
+            if (empty($newChildren)) {
+                break;
+            }
+            $ids = array_merge($ids, $newChildren);
+            $currentParentIds = $newChildren;
+        }
+
+        return $ids;
+    }
+
     public function getActiveProducts(array $filters, string $sort, int $perPage): LengthAwarePaginator
     {
         $query = $this->model->where('is_active', true)
             ->with(['category', 'productImages', 'productVariants.attributeValues.attribute']);
 
         if (!empty($filters['category_id'])) {
-            $query->where('category_id', $filters['category_id']);
-        }
-
-        if (!empty($filters['category_slug'])) {
-            $query->whereHas('category', function ($q) use ($filters) {
-                $q->where('slug', $filters['category_slug']);
-            });
+            $categoryIds = $this->getAllCategoryIds((int) $filters['category_id']);
+            $query->whereIn('category_id', $categoryIds);
+        } elseif (!empty($filters['category_slug'])) {
+            $category = Category::where('slug', $filters['category_slug'])->first();
+            if ($category) {
+                $categoryIds = $this->getAllCategoryIds($category->id);
+                $query->whereIn('category_id', $categoryIds);
+            } else {
+                $query->whereHas('category', function ($q) use ($filters) {
+                    $q->where('slug', $filters['category_slug']);
+                });
+            }
         }
 
         if (!empty($filters['search'])) {

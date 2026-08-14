@@ -46,8 +46,13 @@
             
             <div class="flex gap-3" :class="{'pl-2': !notification.is_read}">
               <!-- Icon based on type -->
-              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center" :class="getIconConfig(notification.type).bgClass">
-                <svg class="w-5 h-5" :class="getIconConfig(notification.type).textClass" fill="none" stroke="currentColor" viewBox="0 0 24 24" v-html="getIconConfig(notification.type).svg"></svg>
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center" :class="getIconBgClass(notification.type)">
+                <svg class="w-5 h-5" :class="getIconTextClass(notification.type)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path v-if="notification.type === 'order_placed'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <path v-else-if="notification.type === 'order_status_updated'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path v-else-if="notification.type === 'return_request_updated'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
               </div>
 
               <!-- Content -->
@@ -111,14 +116,15 @@ const loadMore = () => {
 }
 
 const handleNotificationClick = async (notification) => {
+  if (!notification) return
   if (!notification.is_read) {
     await store.markAsRead(notification.id)
   }
   
-  // Navigation based on type
-  if (notification.type.includes('order')) {
+  const type = notification.type || ''
+  if (type.includes('order')) {
     router.push('/profile/orders')
-  } else if (notification.type.includes('return')) {
+  } else if (type.includes('return')) {
     router.push('/profile/returns')
   }
   
@@ -165,32 +171,29 @@ const formatTime = (dateString) => {
   }
 }
 
-const getIconConfig = (type) => {
+const getIconBgClass = (type) => {
   switch (type) {
     case 'order_placed':
-      return {
-        bgClass: 'bg-emerald-100',
-        textClass: 'text-emerald-600',
-        svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />'
-      }
+      return 'bg-emerald-100'
     case 'order_status_updated':
-      return {
-        bgClass: 'bg-blue-100',
-        textClass: 'text-blue-600',
-        svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'
-      }
+      return 'bg-blue-100'
     case 'return_request_updated':
-      return {
-        bgClass: 'bg-orange-100',
-        textClass: 'text-orange-600',
-        svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />'
-      }
+      return 'bg-orange-100'
     default:
-      return {
-        bgClass: 'bg-gray-100',
-        textClass: 'text-gray-600',
-        svg: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />'
-      }
+      return 'bg-gray-100'
+  }
+}
+
+const getIconTextClass = (type) => {
+  switch (type) {
+    case 'order_placed':
+      return 'text-emerald-600'
+    case 'order_status_updated':
+      return 'text-blue-600'
+    case 'return_request_updated':
+      return 'text-orange-600'
+    default:
+      return 'text-gray-600'
   }
 }
 </script>

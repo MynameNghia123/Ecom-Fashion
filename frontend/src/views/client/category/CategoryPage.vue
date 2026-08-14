@@ -1,9 +1,12 @@
 <template>
   <div class="w-full">
-    <div class="relative bg-[url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?q=80&w=2000&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat py-24 flex items-center justify-center">
+    <div 
+      class="relative bg-cover bg-center bg-no-repeat py-24 flex items-center justify-center transition-all duration-500"
+      :style="{ backgroundImage: `url('${categoryBannerImage}')` }"
+    >
       <div class="absolute inset-0 bg-black/40"></div>
       <h1 class="relative font-title text-[42px] md:text-[52px] font-bold text-white uppercase tracking-[1px] m-0 z-10 text-center drop-shadow-md">
-        Cửa hàng
+        {{ categoryTitle }}
       </h1>
     </div>
 
@@ -173,35 +176,50 @@
           />
         </div>
 
-        <!-- Pagination -->
-        <div v-if="lastPage > 1" class="flex justify-center items-center gap-2 mt-12 mb-8">
-          <button 
-            @click="changePage(currentPage - 1)" 
-            :disabled="currentPage === 1"
-            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            &lt;
-          </button>
-          
-          <button 
-            v-for="page in lastPage" 
-            :key="page"
-            @click="changePage(page)"
-            :class="[
-              'w-10 h-10 flex items-center justify-center text-sm font-medium border cursor-pointer transition-colors',
-              currentPage === page ? 'border-black bg-black text-white' : 'border-neutral-200 bg-white text-black hover:bg-neutral-50'
-            ]"
-          >
-            {{ page }}
-          </button>
-          
-          <button 
-            @click="changePage(currentPage + 1)" 
-            :disabled="currentPage === lastPage"
-            class="w-10 h-10 flex items-center justify-center border border-neutral-200 bg-white text-black hover:bg-neutral-50 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-          >
-            &gt;
-          </button>
+        <!-- Category Pagination Bar (Centered like Admin design) -->
+        <div v-if="products.length > 0" class="flex flex-col items-center justify-center gap-3.5 mt-12 mb-8 pt-8 border-t border-neutral-200 text-center">
+          <!-- Page Number Buttons (Centered) -->
+          <div class="flex items-center gap-1.5">
+            <!-- Prev button -->
+            <button 
+              @click="changePage(currentPage - 1)" 
+              :disabled="currentPage === 1"
+              class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-100 hover:text-black transition-all duration-200 disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:cursor-not-allowed cursor-pointer shadow-2xs active:scale-95"
+              title="Trang trước"
+              aria-label="Trang trước"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            
+            <!-- Page numbers -->
+            <button 
+              v-for="page in lastPage" 
+              :key="page"
+              @click="changePage(page)"
+              :class="[
+                'w-9 h-9 flex items-center justify-center text-xs font-bold rounded-lg border transition-all duration-200 cursor-pointer active:scale-95',
+                currentPage === page ? 'border-black bg-black text-white shadow-xs' : 'border-slate-200 bg-white text-slate-700 hover:border-slate-400 hover:text-black hover:bg-slate-50'
+              ]"
+            >
+              {{ page }}
+            </button>
+            
+            <!-- Next button -->
+            <button 
+              @click="changePage(currentPage + 1)" 
+              :disabled="currentPage === lastPage"
+              class="w-9 h-9 flex items-center justify-center border border-slate-200 rounded-lg bg-white text-slate-600 hover:bg-slate-100 hover:text-black transition-all duration-200 disabled:opacity-30 disabled:hover:bg-white disabled:hover:text-slate-600 disabled:cursor-not-allowed cursor-pointer shadow-2xs active:scale-95"
+              title="Trang tiếp theo"
+              aria-label="Trang tiếp theo"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+          </div>
+
+          <!-- Items Info Text (Centered below buttons) -->
+          <p class="font-text text-xs text-neutral-400 font-medium m-0">
+            Hiển thị <strong class="text-neutral-700 font-semibold">{{ ((currentPage - 1) * 12) + 1 }}-{{ Math.min(currentPage * 12, totalProducts) }}</strong> trong số <strong class="text-neutral-700 font-semibold">{{ totalProducts }}</strong> sản phẩm
+          </p>
         </div>
 
       </div>
@@ -211,7 +229,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { productService } from '@/services/client/productService'
 import ProductCard from '@/components/client/ui/ProductCard.vue'
@@ -236,6 +254,44 @@ const selectedBrand = ref(null)
 const minPrice = ref(null)
 const maxPrice = ref(null)
 const sortBy = ref('latest')
+
+const categoryTitle = computed(() => {
+  const slugOrId = route.params.slug
+  const currentCat = categories.value.find(c => c.id === selectedCategory.value || c.slug === slugOrId || c.id == slugOrId)
+  
+  if (currentCat) {
+    return `${currentCat.name.toUpperCase()} | LUXURY`
+  }
+
+  if (slugOrId) {
+    const lower = String(slugOrId).toLowerCase()
+    if (lower.includes('ao')) return 'ÁO | LUXURY'
+    if (lower.includes('quan')) return 'QUẦN | LUXURY'
+    if (lower.includes('phu-kien') || lower.includes('phukien')) return 'PHỤ KIỆN | LUXURY'
+  }
+
+  return 'CỬA HÀNG | LUXURY'
+})
+
+const categoryBannerImage = computed(() => {
+  const slugOrId = route.params.slug
+  const currentCat = categories.value.find(c => c.id === selectedCategory.value || c.slug === slugOrId || c.id == slugOrId)
+  
+  const slug = (currentCat?.slug || slugOrId || '').toLowerCase()
+  const name = (currentCat?.name || '').toLowerCase()
+
+  if (slug.includes('ao') || name.includes('áo')) {
+    return '/img/category/bannercategoryao.jpg'
+  }
+  if (slug.includes('quan') || name.includes('quần')) {
+    return '/img/category/bannercategoryquan.jpg'
+  }
+  if (slug.includes('phu-kien') || slug.includes('phukien') || name.includes('phụ kiện')) {
+    return '/img/category/bannercategoryphukien.jpg'
+  }
+
+  return '/img/category/bannercategoryao.jpg'
+})
 
 const formatPrice = (value) => {
   if (!value) return '0'
@@ -263,6 +319,7 @@ const fetchProducts = async () => {
   try {
     const params = {
       category_id: selectedCategory.value,
+      category_slug: !selectedCategory.value ? route.params.slug : null,
       brand: selectedBrand.value,
       min_price: minPrice.value,
       max_price: maxPrice.value,
@@ -340,7 +397,11 @@ const resetAllFilters = () => {
   maxPrice.value = null
   sortBy.value = 'latest'
   currentPage.value = 1
-  fetchProducts()
+  if (route.params.slug) {
+    router.push({ path: '/category' })
+  } else {
+    fetchProducts()
+  }
 }
 
 const changePage = (page) => {
@@ -354,6 +415,8 @@ const changePage = (page) => {
 // Watch params slug
 watch(() => route.params.slug, () => {
   syncCategoryFromRoute()
+  currentPage.value = 1
+  fetchProducts()
 })
 
 // Watch all filters and search query

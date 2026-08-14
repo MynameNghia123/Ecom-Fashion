@@ -25,7 +25,7 @@
       <!-- Header -->
       <header class="mb-10 text-center">
         <span class="inline-block text-[11px] font-bold tracking-[2px] uppercase text-neutral-400 mb-3 bg-neutral-100 px-3 py-1 rounded-full">
-          TẬP SAN LUXURY
+          TẠP CHÍ LUXURY
         </span>
         <h1 class="font-title text-[32px] md:text-[46px] font-bold leading-tight text-neutral-900 mb-6 tracking-tight">
           {{ blog.name }}

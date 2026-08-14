@@ -13,7 +13,7 @@ export const productService = {
    * Lấy danh sách danh mục sản phẩm phục vụ filter
    */
   getCategories() {
-    return api.get('/client/categories')
+    return api.get('/client/categories', { params: { per_page: 100 } })
   },
 
   /**
