@@ -84,10 +84,15 @@ class ReturnRequestController extends Controller
                 'message' => 'Gửi yêu cầu hoàn trả thành công. Chúng tôi sẽ sớm xử lý.',
             ], 201);
         } catch (\Exception $e) {
+            $code = $e->getCode();
+            // Nếu code không phải là số hoặc không nằm trong dải HTTP status hợp lệ, dùng 500
+            if (!is_numeric($code) || $code < 100 || $code > 599) {
+                $code = 500;
+            }
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], $e->getCode() ?: 422);
+            ], (int) $code);
         }
     }
 }

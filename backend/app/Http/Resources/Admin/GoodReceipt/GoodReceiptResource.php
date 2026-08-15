@@ -19,6 +19,7 @@ class GoodReceiptResource extends JsonResource
             'receipt_code' => $this->receipt_code,
             'supplier_id' => $this->supplier_id,
             'staff_id' => $this->staff_id,
+            'staff_name' => $this->staff?->full_name ?? null,
             'total_amount_price' => $this->total_amount_price,
             'status' => $this->status,
 

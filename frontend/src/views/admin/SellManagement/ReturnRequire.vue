@@ -132,7 +132,7 @@
 
       <!-- Data Table -->
       <div class="overflow-x-auto">
-        <table class="w-full text-left border-collapse">
+        <table class="w-full text-left border-collapse min-w-[1050px]">
           <thead>
             <tr class="border-b border-slate-100 bg-slate-50/50 text-[11px] font-bold uppercase tracking-wider text-slate-400">
               <th class="py-3.5 px-5 whitespace-nowrap">Mã Yêu Cầu</th>
@@ -159,21 +159,21 @@
             </tr>
             <tr v-else v-for="item in filteredRequests" :key="item.id" class="hover:bg-slate-50/80 transition-colors">
               <!-- Return Ticket Code -->
-              <td class="py-4 px-5 font-bold text-slate-800 font-mono">
+              <td class="py-4 px-5 font-bold text-slate-800 font-mono whitespace-nowrap">
                 {{ item.ticket_code }}
                 <span class="block text-[10px] font-normal text-slate-400 mt-0.5">{{ item.created_at }}</span>
               </td>
 
               <!-- Order Code -->
-              <td class="py-4 px-5 font-semibold text-blue-600 font-mono">
-                {{ item.order_code }}
+              <td class="py-4 px-5 font-semibold text-slate-800 font-mono whitespace-nowrap">
+                {{ item.order_code || 'N/A' }}
               </td>
 
               <!-- Customer Info -->
-              <td class="py-4 px-5">
+              <td class="py-4 px-5 whitespace-nowrap">
                 <div class="flex items-center gap-3">
                   <div class="w-8 h-8 rounded-full bg-slate-200 flex items-center justify-center font-bold text-slate-600 text-xs shrink-0">
-                    {{ item.customer_name.charAt(0) }}
+                    {{ item.customer_name ? item.customer_name.charAt(0) : 'K' }}
                   </div>
                   <div>
                     <p class="font-bold text-slate-800">{{ item.customer_name }}</p>
@@ -185,7 +185,7 @@
               <!-- Product Info -->
               <td class="py-4 px-5 max-w-[220px]">
                 <div class="flex items-center gap-2.5">
-                  <img :src="item.product_image" :alt="item.product_name" class="w-10 h-12 object-cover rounded-lg border border-slate-200 shrink-0" />
+                  <img v-if="item.product_image" :src="item.product_image" :alt="item.product_name" class="w-10 h-12 object-cover rounded-lg border border-slate-200 shrink-0" />
                   <div class="truncate">
                     <p class="font-semibold text-slate-800 truncate" :title="item.product_name">{{ item.product_name }}</p>
                     <p class="text-[11px] text-slate-400">Size: {{ item.variant_size }} | Màu: {{ item.variant_color }} (x{{ item.quantity }})</p>
@@ -194,7 +194,7 @@
               </td>
 
               <!-- Reason -->
-              <td class="py-4 px-5">
+              <td class="py-4 px-5 whitespace-nowrap">
                 <span class="inline-block px-2.5 py-1 bg-slate-100 text-slate-700 font-semibold rounded-md text-[11px]">
                   {{ getReasonLabel(item.reason) }}
                 </span>
@@ -202,24 +202,24 @@
               </td>
 
               <!-- Refund Value -->
-              <td class="py-4 px-5 font-bold text-emerald-700 font-mono text-sm">
+              <td class="py-4 px-5 font-bold text-emerald-700 font-mono text-sm whitespace-nowrap">
                 {{ formatPrice(item.refund_amount) }} đ
               </td>
 
               <!-- Status Badge -->
-              <td class="py-4 px-5">
-                <span :class="getStatusBadgeClass(item.status)" class="px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide inline-flex items-center gap-1.5">
-                  <span class="w-1.5 h-1.5 rounded-full" :class="getStatusDotClass(item.status)"></span>
+              <td class="py-4 px-5 whitespace-nowrap">
+                <span :class="getStatusBadgeClass(item.status)" class="px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide inline-flex items-center gap-1.5 whitespace-nowrap">
+                  <span class="w-1.5 h-1.5 rounded-full shrink-0" :class="getStatusDotClass(item.status)"></span>
                   {{ getStatusLabel(item.status) }}
                 </span>
               </td>
 
               <!-- Action buttons -->
-              <td class="py-4 px-5 text-right">
+              <td class="py-4 px-5 text-right whitespace-nowrap">
                 <div class="flex items-center justify-end gap-2">
                   <button
                     @click="openModal(item)"
-                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition-colors"
+                    class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-xs transition-colors whitespace-nowrap"
                   >
                     Chi tiết
                   </button>
@@ -238,7 +238,7 @@
         <!-- Modal Header -->
         <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
           <div>
-            <span class="text-xs font-bold font-mono text-blue-600 uppercase tracking-wider">{{ selectedRequest.ticket_code }}</span>
+            <span class="text-xs font-bold font-mono text-slate-600 uppercase tracking-wider">{{ selectedRequest.ticket_code }}</span>
             <h2 class="text-lg font-bold text-slate-800">Chi tiết Yêu cầu Đổi / Trả hàng</h2>
           </div>
           <button @click="selectedRequest = null" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-600 transition-colors">
@@ -254,20 +254,20 @@
               <p class="font-bold text-sm">Trạng thái: {{ getStatusLabel(selectedRequest.status) }}</p>
               <p class="text-[11px] opacity-80 mt-0.5">Ngày gửi yêu cầu: {{ selectedRequest.created_at }}</p>
             </div>
-            <span class="text-xs font-mono font-bold">Mã Đơn: {{ selectedRequest.order_code }}</span>
+            <span class="text-xs font-mono font-bold bg-white/80 backdrop-blur-sm px-2.5 py-1 rounded border border-slate-200 text-slate-800">Mã Đơn: {{ selectedRequest.order_code || 'N/A' }}</span>
           </div>
 
           <!-- Customer & Order Section -->
           <div class="grid grid-cols-2 gap-4 p-4 bg-slate-50 rounded-xl border border-slate-100">
             <div>
               <p class="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-1">Khách Hàng</p>
-              <p class="font-bold text-slate-800 text-sm">{{ selectedRequest.customer_name }}</p>
-              <p class="text-slate-500 font-mono mt-0.5">{{ selectedRequest.customer_phone }}</p>
-              <p class="text-slate-500 font-mono">{{ selectedRequest.customer_email }}</p>
+              <p class="font-bold text-slate-800 text-sm">{{ selectedRequest.customer_name || 'Khách vãng lai' }}</p>
+              <p class="text-slate-500 font-mono mt-0.5">SĐT: {{ selectedRequest.customer_phone || 'N/A' }}</p>
+              <p class="text-slate-500 font-mono" v-if="selectedRequest.customer_email">Email: {{ selectedRequest.customer_email }}</p>
             </div>
             <div>
               <p class="font-bold text-slate-400 uppercase tracking-wider text-[10px] mb-1">Địa chỉ lấy hàng trả</p>
-              <p class="text-slate-700 leading-relaxed font-medium">{{ selectedRequest.pickup_address }}</p>
+              <p class="text-slate-700 leading-relaxed font-medium">{{ selectedRequest.pickup_address || 'Địa chỉ giao hàng mặc định của đơn' }}</p>
             </div>
           </div>
 
@@ -275,11 +275,15 @@
           <div>
             <p class="font-bold text-slate-700 text-sm mb-3">Sản phẩm yêu cầu đổi / trả</p>
             <div class="flex items-center gap-4 p-3 bg-white border border-slate-200 rounded-xl">
-              <img :src="selectedRequest.product_image" :alt="selectedRequest.product_name" class="w-16 h-20 object-cover rounded-lg border border-slate-100 shrink-0" />
+              <img v-if="selectedRequest.product_image" :src="selectedRequest.product_image" :alt="selectedRequest.product_name" class="w-16 h-20 object-cover rounded-lg border border-slate-100 shrink-0" />
+              <div v-else class="w-16 h-20 bg-slate-100 rounded-lg flex items-center justify-center text-slate-400 shrink-0 text-[10px]">No image</div>
               <div class="grow space-y-1">
                 <p class="font-bold text-slate-800 text-sm">{{ selectedRequest.product_name }}</p>
-                <p class="text-slate-500">Kích cỡ: <span class="font-semibold text-slate-700">{{ selectedRequest.variant_size }}</span> | Màu sắc: <span class="font-semibold text-slate-700">{{ selectedRequest.variant_color }}</span></p>
-                <p class="text-slate-500">Số lượng trả: <span class="font-bold text-slate-800">x{{ selectedRequest.quantity }}</span></p>
+                <p class="text-slate-500">
+                  <span v-if="selectedRequest.variant_size">Kích cỡ: <strong class="text-slate-700">{{ selectedRequest.variant_size }}</strong></span>
+                  <span v-if="selectedRequest.variant_color" class="ml-2">Màu sắc: <strong class="text-slate-700">{{ selectedRequest.variant_color }}</strong></span>
+                </p>
+                <p class="text-slate-500">Số lượng trả: <span class="font-bold text-slate-800">x{{ selectedRequest.quantity || 1 }}</span></p>
               </div>
               <div class="text-right">
                 <p class="text-xs text-slate-400">Đơn giá</p>
@@ -292,12 +296,12 @@
           <div class="space-y-3">
             <div>
               <p class="font-bold text-slate-700 text-xs mb-1">Lý do đổi trả:</p>
-              <span class="inline-block px-3 py-1 bg-amber-50 text-amber-700 font-bold rounded-lg border border-amber-200">
+              <span class="inline-block px-3 py-1 bg-slate-100 text-slate-800 font-bold rounded-lg border border-slate-200">
                 {{ getReasonLabel(selectedRequest.reason) }}
               </span>
             </div>
 
-            <div>
+            <div v-if="selectedRequest.customer_note">
               <p class="font-bold text-slate-700 text-xs mb-1">Ghi chú từ khách hàng:</p>
               <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 text-slate-600 leading-relaxed italic">
                 "{{ selectedRequest.customer_note }}"
@@ -319,18 +323,18 @@
           </div>
 
           <!-- Refund Summary -->
-          <div class="p-4 bg-emerald-50/50 border border-emerald-100 rounded-xl space-y-2 font-mono">
+          <div class="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2 font-mono">
             <div class="flex justify-between text-slate-600">
               <span>Tổng giá trị sản phẩm:</span>
-              <span>{{ formatPrice(selectedRequest.unit_price * selectedRequest.quantity) }} đ</span>
+              <span>{{ formatPrice((selectedRequest.unit_price || 0) * (selectedRequest.quantity || 1)) }} đ</span>
             </div>
             <div class="flex justify-between text-slate-600">
               <span>Phí vận chuyển đổi trả:</span>
               <span>- 0 đ (Miễn phí)</span>
             </div>
-            <div class="border-t border-emerald-200 pt-2 flex justify-between font-bold text-emerald-800 text-sm">
+            <div class="border-t border-slate-200 pt-2 flex justify-between font-bold text-slate-900 text-sm">
               <span>TỔNG TIỀN HOÀN:</span>
-              <span>{{ formatPrice(selectedRequest.refund_amount) }} đ</span>
+              <span>{{ formatPrice(selectedRequest.refund_amount || ((selectedRequest.unit_price || 0) * (selectedRequest.quantity || 1))) }} đ</span>
             </div>
           </div>
         </div>
@@ -345,19 +349,19 @@
             <button @click="updateStatus('rejected')" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl transition-colors border border-rose-200">
               Từ chối
             </button>
-            <button @click="updateStatus('approved')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors shadow-md shadow-blue-200">
+            <button @click="updateStatus('approved')" class="px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-colors shadow-md shadow-slate-200">
               Chấp nhận yêu cầu
             </button>
           </div>
 
           <div class="flex items-center gap-2" v-else-if="selectedRequest.status === 'approved'">
-            <button @click="updateStatus('received')" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-xl transition-colors shadow-md shadow-purple-200">
+            <button @click="updateStatus('received')" class="px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-colors shadow-md shadow-slate-200">
               Xác nhận đã nhận hàng
             </button>
           </div>
 
           <div class="flex items-center gap-2" v-else-if="selectedRequest.status === 'received'">
-            <button @click="updateStatus('refunded')" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-colors shadow-md shadow-emerald-200">
+            <button @click="updateStatus('refunded')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-colors shadow-md shadow-emerald-200">
               Xác nhận hoàn tiền
             </button>
           </div>

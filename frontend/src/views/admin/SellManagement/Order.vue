@@ -17,7 +17,7 @@
     <!-- Stats Cards -->
     <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-7 gap-4">
       <!-- Total Revenue -->
-      <div class="col-span-2 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-5 flex flex-col justify-between text-white shadow-md shadow-blue-100">
+      <div class="col-span-2 bg-gradient-to-r from-slate-800 to-slate-900 rounded-2xl p-5 flex flex-col justify-between text-white shadow-md shadow-slate-100">
         <div>
           <p class="text-xs font-semibold text-white/80 uppercase tracking-wider mb-1">Tổng Doanh thu (Không hủy)</p>
           <p class="text-2xl font-bold tracking-tight">{{ formatPrice(orderStore.stats.total_revenue) }}</p>

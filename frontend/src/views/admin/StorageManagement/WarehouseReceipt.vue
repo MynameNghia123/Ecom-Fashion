@@ -185,7 +185,7 @@
               <span class="font-mono text-sm font-semibold text-slate-700">{{ receipt.receipt_code }}</span>
             </td>
             <td class="py-4 px-4 text-slate-700 font-medium">{{ findSupplierNameById(receipt.supplier_id) }}</td>
-            <td class="py-4 px-4 text-slate-500">{{ receipt.staff_id ?? 'ADMIN'}}</td>
+            <td class="py-4 px-4 text-slate-500">{{ receipt.staff_name ?? receipt.staff_id ?? 'Admin' }}</td>
             <td class="py-4 px-4 text-right font-semibold text-slate-800">{{ helperFormatCurrency(receipt.total_amount_price)}}</td>
             <td class="py-4 px-4 text-slate-500 text-xs">{{helperFomatDate(receipt.created_at) }}</td>
             <td class="py-4 px-4">

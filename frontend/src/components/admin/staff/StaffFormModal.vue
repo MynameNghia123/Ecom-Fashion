@@ -144,23 +144,6 @@
               </div>
             </div>
 
-            <!-- Quyền đặc cách -->
-            <div>
-              <label class="block text-sm font-semibold text-slate-600 mb-1.5">Quyền đặc cách (Permissions)</label>
-              <div class="grid grid-cols-2 gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50 max-h-40 overflow-y-auto">
-                <div v-for="perm in permissions" :key="perm.id" class="flex items-center gap-2">
-                  <label class="inline-flex items-center gap-2 cursor-pointer text-xs select-none">
-                    <input
-                      type="checkbox"
-                      class="rounded border-slate-300 text-black focus:ring-black/20 cursor-pointer"
-                      :value="perm.id"
-                      v-model="form.permission_ids"
-                    />
-                    <span class="font-medium text-slate-700">{{ perm.module }}.{{ perm.action }}</span>
-                  </label>
-                </div>
-              </div>
-            </div>
 
             <!-- Trạng thái -->
             <div>

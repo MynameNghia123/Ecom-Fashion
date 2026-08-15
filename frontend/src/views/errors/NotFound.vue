@@ -9,11 +9,11 @@ const goHome = () => {
 <template>
   <div class="not-found-container">
     <h1 class="error-code">404</h1>
-    <h2 class="error-title">That Page Cant Be Found</h2>
-    <p class="error-message">It looks like nothing was found at this location. Maybe try to search for what you are looking for?</p>
+    <h2 class="error-title">KHÔNG TÌM THẤY TRANG</h2>
+    <p class="error-message">Có vẻ như không có gì được tìm thấy tại địa điểm này. Có lẽ hãy thử tìm kiếm những gì bạn đang tìm kiếm?</p>
     <!-- Nếu đã dùng vue-router thì có thể thay bằng <router-link to="/"> -->
     <button class="home-button" @click="goHome">
-      GO TO HOMEPAGE
+      QUAY LẠI TRANG CHỦ
     </button>
   </div>
 </template>

@@ -31,9 +31,10 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
             $s = $filters['search'];
             $query->where(function ($q) use ($s) {
                 $q->where('ticket_code', 'like', "%{$s}%")
-                    ->orWhereHas('order', fn ($oq) => $oq->where('code', 'like', "%{$s}%"))
-                    ->orWhereHas('order.customer', fn ($cq) => $cq->where('full_name', 'like', "%{$s}%")
-                        ->orWhere('phone', 'like', "%{$s}%")
+                    ->orWhereHas('order', fn ($oq) => $oq->where('order_code', 'like', "%{$s}%"))
+                    ->orWhereHas('order.customer', fn ($cq) => $cq->where('first_name', 'like', "%{$s}%")
+                        ->orWhere('last_name', 'like', "%{$s}%")
+                        ->orWhere('phone_number', 'like', "%{$s}%")
                     );
             });
         }

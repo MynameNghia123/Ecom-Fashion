@@ -559,6 +559,11 @@ const getInitials = (first, last) => {
 
 const formatDate = (dateStr) => {
   if (!dateStr) return '—'
+  // Backend trả về chuỗi đã format "dd/MM/yyyy HH:mm" → hiển thị thẳng
+  // Nếu là ISO string thì parse bình thường
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(dateStr)) {
+    return dateStr
+  }
   try {
     return new Date(dateStr).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })
   } catch {

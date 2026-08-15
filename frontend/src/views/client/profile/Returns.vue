@@ -18,6 +18,15 @@
       <p class="text-sm text-slate-500 mt-4">Đang tải dữ liệu...</p>
     </div>
 
+    <!-- Error State -->
+    <div v-else-if="error" class="flex flex-col items-center justify-center py-16 bg-rose-50 rounded-2xl border border-rose-100">
+      <svg class="w-10 h-10 text-rose-400 mb-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <p class="text-sm font-semibold text-rose-600">{{ error }}</p>
+      <button @click="fetchReturns" class="mt-4 px-4 py-2 bg-rose-600 text-white text-xs font-semibold rounded-xl hover:bg-rose-700 transition-colors">Thử lại</button>
+    </div>
+
     <!-- Empty State -->
     <div v-else-if="returnRequests.length === 0" class="text-center py-16 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
       <div class="w-16 h-16 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-sm">
@@ -40,7 +49,7 @@
             <span class="w-1 h-1 rounded-full bg-slate-300"></span>
             <span class="text-xs text-slate-500">{{ formatDate(req.created_at) }}</span>
           </div>
-          <span :class="getStatusClass(req.status)" class="px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider">
+          <span :class="getStatusClass(req.status)">
             {{ getStatusText(req.status) }}
           </span>
         </div>
@@ -49,7 +58,7 @@
         <div class="p-5 flex flex-col md:flex-row gap-6">
           <div class="flex-1 flex gap-4">
             <div class="w-20 h-24 bg-slate-100 rounded-lg overflow-hidden shrink-0 border border-slate-200">
-              <img :src="getImageUrl(req.order_detail?.product_variant?.product?.thumbnail)" alt="Product" class="w-full h-full object-cover">
+              <img :src="getImageUrl(req.order_detail?.product_variant?.thumbnail || req.order_detail?.product_variant?.product?.thumbnail)" alt="Product" class="w-full h-full object-cover">
             </div>
             <div>
               <h4 class="text-sm font-semibold text-slate-900 line-clamp-2">{{ req.order_detail?.product_variant?.product?.name || 'Sản phẩm' }}</h4>
@@ -57,24 +66,24 @@
                 Phân loại: <span class="font-medium text-slate-700">{{ getVariantAttributes(req.order_detail?.product_variant) }}</span>
               </p>
               <div class="flex items-center gap-3 mt-2 text-xs">
-                <span class="text-slate-600">Số lượng trả: <strong class="text-slate-900">{{ req.quantity }}</strong></span>
-                <span class="text-rose-600 font-bold border border-rose-100 bg-rose-50 px-2 py-0.5 rounded">
-                  Hoàn tiền: {{ formatPrice(req.refund_amount) }}đ
+                <span class="text-slate-600">Số lượng trả: <strong class="text-slate-900">{{ req.quantity || 1 }}</strong></span>
+                <span class="text-slate-800 font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded font-mono">
+                  Hoàn tiền: {{ formatPrice(getRefundAmount(req)) }} đ
                 </span>
               </div>
             </div>
           </div>
           
-          <div class="w-full md:w-[35%] bg-slate-50 rounded-lg p-3 text-xs flex flex-col justify-center">
-            <p class="text-slate-700 mb-1"><span class="font-medium text-slate-900">Mã đơn gốc:</span> #{{ req.order?.order_code }}</p>
-            <p class="text-slate-700 mb-1"><span class="font-medium text-slate-900">Lý do:</span> {{ req.reason }}</p>
+          <div class="w-full md:w-[35%] bg-slate-50 rounded-lg p-3 text-xs flex flex-col justify-center border border-slate-100">
+            <p class="text-slate-700 mb-1"><span class="font-medium text-slate-900">Mã đơn gốc:</span> #{{ req.order?.order_code || 'N/A' }}</p>
+            <p class="text-slate-700 mb-1"><span class="font-medium text-slate-900">Lý do:</span> {{ getReasonLabel(req.reason) }}</p>
             <p v-if="req.customer_note" class="text-slate-700 italic">"{{ req.customer_note }}"</p>
           </div>
         </div>
 
         <!-- Admin Response -->
-        <div v-if="req.admin_note" class="bg-blue-50/50 border-t border-blue-100 px-5 py-3">
-          <p class="text-xs text-blue-800"><span class="font-bold">Phản hồi từ Shop:</span> {{ req.admin_note }}</p>
+        <div v-if="req.admin_note" class="bg-slate-100/70 border-t border-slate-200 px-5 py-3">
+          <p class="text-xs text-slate-800"><span class="font-bold">Phản hồi từ Shop:</span> {{ req.admin_note }}</p>
         </div>
       </div>
     </div>
@@ -87,16 +96,19 @@ import returnRequestService from '@/services/client/returnRequestService'
 
 const returnRequests = ref([])
 const loading = ref(true)
+const error = ref('')
 
 const fetchReturns = async () => {
   loading.value = true
+  error.value = ''
   try {
     const res = await returnRequestService.getReturnRequests()
     if (res.data && res.data.success) {
       returnRequests.value = res.data.data
     }
-  } catch (error) {
-    console.error("Lỗi khi tải danh sách hoàn trả:", error)
+  } catch (err) {
+    console.error("Lỗi khi tải danh sách hoàn trả:", err)
+    error.value = err.response?.data?.message || 'Có lỗi xảy ra khi tải danh sách yêu cầu hoàn trả. Vui lòng thử lại.'
   } finally {
     loading.value = false
   }
@@ -108,16 +120,30 @@ onMounted(() => {
 
 const formatDate = (dateString) => {
   if (!dateString) return ''
-  const date = new Date(dateString)
-  return new Intl.DateTimeFormat('vi-VN', {
-    hour: '2-digit', minute: '2-digit',
-    day: '2-digit', month: '2-digit', year: 'numeric'
-  }).format(date)
+  if (/^\d{2}\/\d{2}\/\d{4}/.test(dateString)) return dateString
+  try {
+    const date = new Date(dateString)
+    return new Intl.DateTimeFormat('vi-VN', {
+      hour: '2-digit', minute: '2-digit',
+      day: '2-digit', month: '2-digit', year: 'numeric'
+    }).format(date)
+  } catch {
+    return dateString
+  }
 }
 
 const formatPrice = (value) => {
   if (!value) return '0'
   return new Intl.NumberFormat('vi-VN').format(value)
+}
+
+const getRefundAmount = (req) => {
+  if (req.refund_amount && Number(req.refund_amount) > 0) {
+    return Number(req.refund_amount)
+  }
+  const unitPrice = Number(req.order_detail?.unit_price || 0)
+  const qty = Number(req.quantity || 1)
+  return unitPrice * qty
 }
 
 const getImageUrl = (path) => {
@@ -127,29 +153,31 @@ const getImageUrl = (path) => {
 }
 
 const getVariantAttributes = (variant) => {
-  if (!variant || !variant.attribute_values) return 'Mặc định'
+  if (!variant || !variant.attribute_values || variant.attribute_values.length === 0) return 'Mặc định'
   return variant.attribute_values.map(av => av.value).join(' - ')
 }
 
-const getStatusText = (status) => {
+const getReasonLabel = (reason) => {
   const map = {
-    'pending': 'Chờ xử lý',
-    'approved': 'Đã chấp nhận',
-    'received': 'Đã nhận hàng',
-    'refunded': 'Đã hoàn tiền',
-    'rejected': 'Từ chối'
+    defective: 'Sản phẩm lỗi / Rách',
+    wrong_size: 'Không vừa size',
+    wrong_item: 'Giao sai màu / mẫu',
+    change_mind: 'Đổi ý không muốn mua'
   }
-  return map[status] || status
+  return map[reason] || reason || 'Lý do khác'
 }
 
-const getStatusClass = (status) => {
-  const map = {
-    'pending': 'bg-amber-50 text-amber-600 border border-amber-200',
-    'approved': 'bg-blue-50 text-blue-600 border border-blue-200',
-    'received': 'bg-indigo-50 text-indigo-600 border border-indigo-200',
-    'refunded': 'bg-emerald-50 text-emerald-600 border border-emerald-200',
-    'rejected': 'bg-rose-50 text-rose-600 border border-rose-200'
-  }
-  return map[status] || 'bg-slate-50 text-slate-600 border border-slate-200'
+const STATUS_MAP = {
+  pending:  { text: 'CHỜ XỬ LÝ',    cls: 'border-amber-500 text-amber-600 bg-white' },
+  approved: { text: 'ĐÃ CHẤP NHẬN', cls: 'border-blue-500 text-blue-600 bg-white' },
+  received: { text: 'ĐÃ NHẬN HÀNG', cls: 'border-purple-500 text-purple-600 bg-white' },
+  refunded: { text: 'ĐÃ HOÀN TIỀN', cls: 'border-emerald-600 text-emerald-700 bg-white' },
+  rejected: { text: 'TỪ CHỐI',      cls: 'border-red-500 text-red-600 bg-white' },
 }
+
+const getStatusText = (status) => STATUS_MAP[status]?.text || (status || '').toUpperCase()
+const getStatusClass = (status) => [
+  'inline-block text-[9px] font-bold tracking-wider uppercase px-2.5 py-1 border',
+  STATUS_MAP[status]?.cls || 'border-neutral-400 text-neutral-600 bg-white'
+]
 </script>

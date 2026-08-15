@@ -1,4 +1,4 @@
-﻿<template>
+<template>
 <!-- Modal Backdrop & Container -->
     <div class="fixed inset-0 z-[9998] flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-[2px]"></div>
@@ -56,7 +56,7 @@
             </div>
             <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Nhân viên tạo</p>
-            <p class="text-sm font-semibold text-slate-700">{{ receipt?.staff_id ?? 'ADMIN' }}</p>
+            <p class="text-sm font-semibold text-slate-700">{{ receipt?.staff_name ?? receipt?.staff_id ?? 'Admin' }}</p>
             </div>
             <div>
             <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Ngày nhập</p>
@@ -66,7 +66,8 @@
 
         <!-- Product table -->
         <div class="rounded-xl border border-slate-100 overflow-hidden">
-            <table class="w-full text-sm">
+            <div class="overflow-x-auto">
+            <table class="w-full text-sm min-w-[640px]">
             <thead>
                 <tr class="bg-slate-50 border-b border-slate-100">
                 <th class="py-3 px-4 text-left text-xs font-bold text-slate-500 uppercase tracking-wider w-10">STT</th>
@@ -92,6 +93,7 @@
                 </tr>
             </tbody>
             </table>
+            </div>
         </div>
 
         <!-- Summary -->
@@ -106,10 +108,6 @@
             </div>
         </div>
 
-        <!-- Note -->
-        <div class="p-4 bg-amber-50 border border-amber-100 rounded-xl text-sm text-amber-700">
-            <span class="font-bold">Ghi chú:</span> Nhập hàng đợt 1 tháng 10
-        </div>
         </div>
 
         <!-- Footer -->

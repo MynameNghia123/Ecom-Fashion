@@ -4,7 +4,7 @@
   <Transition name="dropdown">
     <div 
       v-if="isOpen" 
-      class="absolute top-[calc(100%+10px)] right-0 md:right-16 w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[999] overflow-hidden"
+      class="absolute top-[calc(100%+10px)] right-[-30px] w-[360px] bg-white rounded-2xl shadow-xl border border-gray-100 z-[999] overflow-hidden"
     >
       <!-- Header -->
       <div class="flex items-center justify-between p-4 border-b border-gray-100 bg-gray-50/50">
@@ -12,7 +12,7 @@
         <button 
           v-if="store.unreadCount > 0"
           @click="store.markAllAsRead" 
-          class="text-xs font-semibold text-blue-600 hover:text-blue-800 bg-transparent border-none cursor-pointer"
+          class="text-xs font-semibold text-slate-700 hover:text-black bg-transparent border-none cursor-pointer underline-offset-2 hover:underline"
         >
           Đánh dấu đã đọc tất cả
         </button>
@@ -39,10 +39,10 @@
             :key="notification.id"
             @click="handleNotificationClick(notification)"
             class="p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 cursor-pointer transition-colors relative"
-            :class="{'bg-blue-50/30': !notification.is_read}"
+            :class="{'bg-slate-50': !notification.is_read}"
           >
             <!-- Unread Dot -->
-            <div v-if="!notification.is_read" class="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+            <div v-if="!notification.is_read" class="absolute left-2 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-black"></div>
             
             <div class="flex gap-3" :class="{'pl-2': !notification.is_read}">
               <!-- Icon based on type -->
@@ -191,39 +191,11 @@ const formatTime = (dateString) => {
 }
 
 const getIconBgClass = (notif) => {
-  const type = notif.type || ''
-  switch (type) {
-    case 'order_placed':
-      return 'bg-emerald-100'
-    case 'order_status_updated':
-      return 'bg-blue-100'
-    case 'return_request_updated': {
-      const title = (notif.title || '').toLowerCase()
-      if (title.includes('từ chối') || title.includes('hủy')) return 'bg-rose-100'
-      if (title.includes('duyệt') || title.includes('hoàn tiền')) return 'bg-emerald-100'
-      return 'bg-orange-100'
-    }
-    default:
-      return 'bg-gray-100'
-  }
+  return 'bg-slate-100'
 }
 
 const getIconTextClass = (notif) => {
-  const type = notif.type || ''
-  switch (type) {
-    case 'order_placed':
-      return 'text-emerald-600'
-    case 'order_status_updated':
-      return 'text-blue-600'
-    case 'return_request_updated': {
-      const title = (notif.title || '').toLowerCase()
-      if (title.includes('từ chối') || title.includes('hủy')) return 'text-rose-600'
-      if (title.includes('duyệt') || title.includes('hoàn tiền')) return 'text-emerald-600'
-      return 'text-orange-600'
-    }
-    default:
-      return 'text-gray-600'
-  }
+  return 'text-slate-800'
 }
 </script>
 

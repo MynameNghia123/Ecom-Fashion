@@ -68,6 +68,7 @@ const menuItems = [
   { name: 'Thông tin người dùng', path: '/profile/information' },
   { name: 'Địa chỉ', path: '/profile/address' },
   { name: 'Lịch sử đơn hàng', path: '/profile/order-history' },
+  { name: 'Lịch sử yêu cầu trả hàng', path: '/profile/returns' },
   { name: 'Mã khuyến mãi', path: '/profile/vouchers' },
   { name: 'Danh sách yêu thích', path: '/profile/wishlist' },
   { name: 'Đánh giá', path: '/profile/reviews' },

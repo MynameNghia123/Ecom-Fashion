@@ -104,7 +104,8 @@ class ReturnRequestController extends Controller
 
     private function formatItem(ReturnRequest $r, bool $full = false): array
     {
-        $customer = $r->order?->customer;
+        $order = $r->order;
+        $customer = $order?->customer;
         $detail = $r->orderDetail;
         $variant = $detail?->productVariant;
         $product = $variant?->product;
@@ -127,34 +128,53 @@ class ReturnRequestController extends Controller
         $thumbnail = '';
         if ($product) {
             $img = $product->productImages?->first();
-            $raw = $img?->image_url ?? $img?->url ?? $product->thumbnail ?? '';
+            $raw = $variant?->thumbnail ?? $product->thumbnail ?? $img?->image_url ?? $img?->url ?? '';
             $thumbnail = $raw ? (str_starts_with($raw, 'http') ? $raw : "http://localhost:8000/storage/{$raw}") : '';
         }
 
+        $custName = trim(($customer?->last_name ?? '') . ' ' . ($customer?->first_name ?? ''));
+        if (! $custName && $order?->shipping_name) {
+            $custName = $order->shipping_name;
+        }
+
+        $unitPrice = (float) ($detail?->unit_price ?? 0);
+        $qty = (int) ($r->quantity ?? 1);
+        $refundAmount = (float) ($r->refund_amount ?? 0);
+        if ($refundAmount <= 0 && $unitPrice > 0) {
+            $refundAmount = $unitPrice * $qty;
+        }
+
+        $evidenceImages = array_map(function ($path) {
+            if (str_starts_with($path, 'http')) {
+                return $path;
+            }
+            return "http://localhost:8000/storage/{$path}";
+        }, $r->evidence_images ?? []);
+
         $base = [
             'id' => $r->id,
-            'ticket_code' => $r->ticket_code,
-            'order_code' => $r->order?->code ?? '',
-            'customer_name' => $customer?->full_name ?? 'N/A',
-            'customer_phone' => $customer?->phone ?? '',
-            'product_name' => $product?->name ?? ($detail?->product_name ?? 'N/A'),
+            'ticket_code' => $r->ticket_code ?? ('#RET-'.str_pad($r->id, 4, '0', STR_PAD_LEFT)),
+            'order_code' => $order?->order_code ?? '',
+            'customer_name' => $custName ?: 'N/A',
+            'customer_phone' => $customer?->phone_number ?? ($order?->shipping_phone ?? ''),
+            'product_name' => $product?->name ?? 'Sản phẩm',
             'product_image' => $thumbnail,
-            'variant_size' => $size ?: ($detail?->variant_info ?? ''),
+            'variant_size' => $size,
             'variant_color' => $color,
-            'quantity' => $r->quantity,
-            'unit_price' => $detail?->price ?? 0,
-            'refund_amount' => $r->refund_amount ?? 0,
+            'quantity' => $qty,
+            'unit_price' => $unitPrice,
+            'refund_amount' => $refundAmount,
             'reason' => $r->reason,
             'customer_note' => $r->customer_note ?? '',
             'status' => $r->status,
             'admin_note' => $r->admin_note ?? '',
             'created_at' => $r->created_at?->format('d/m/Y H:i') ?? '',
+            'proof_images' => $evidenceImages,
         ];
 
         if ($full) {
             $base['customer_email'] = $customer?->email ?? '';
-            $base['pickup_address'] = $customer?->address ?? '';
-            $base['proof_images'] = $r->evidence_images ?? [];
+            $base['pickup_address'] = $order?->shipping_address ?? '';
             $base['processed_at'] = $r->processed_at?->format('d/m/Y H:i') ?? '';
         }
 
