@@ -24,12 +24,12 @@ class StatisticController extends Controller
      */
     public function dashboard(Request $request): JsonResponse
     {
-        $endDate   = $request->query('end_date',   now()->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
         $startDate = $request->query('start_date', now()->subDays(29)->format('Y-m-d'));
-        $groupBy   = $request->query('group_by',   'day');
+        $groupBy = $request->query('group_by', 'day');
 
         // Validate groupBy
-        if (!in_array($groupBy, ['day', 'week', 'month'])) {
+        if (! in_array($groupBy, ['day', 'week', 'month'])) {
             $groupBy = 'day';
         }
 
@@ -37,18 +37,18 @@ class StatisticController extends Controller
             $data = $this->statisticService->getDashboardData($startDate, $endDate, $groupBy);
 
             return response()->json([
-                'success'    => true,
-                'data'       => $data,
-                'meta'       => [
+                'success' => true,
+                'data' => $data,
+                'meta' => [
                     'start_date' => $startDate,
-                    'end_date'   => $endDate,
-                    'group_by'   => $groupBy,
+                    'end_date' => $endDate,
+                    'group_by' => $groupBy,
                 ],
             ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi lấy dữ liệu thống kê: ' . $e->getMessage(),
+                'message' => 'Lỗi khi lấy dữ liệu thống kê: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -63,21 +63,21 @@ class StatisticController extends Controller
      */
     public function topProducts(Request $request): JsonResponse
     {
-        $endDate   = $request->query('end_date',   now()->format('Y-m-d'));
+        $endDate = $request->query('end_date', now()->format('Y-m-d'));
         $startDate = $request->query('start_date', now()->subDays(29)->format('Y-m-d'));
-        $limit     = (int) $request->query('limit', 10);
+        $limit = (int) $request->query('limit', 10);
 
         try {
             $products = $this->statisticService->getTopProducts($startDate, $endDate, $limit);
 
             return response()->json([
                 'success' => true,
-                'data'    => $products,
+                'data' => $products,
             ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi lấy top sản phẩm: ' . $e->getMessage(),
+                'message' => 'Lỗi khi lấy top sản phẩm: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -92,19 +92,19 @@ class StatisticController extends Controller
     public function lowStock(Request $request): JsonResponse
     {
         $threshold = (int) $request->query('threshold', 10);
-        $limit     = (int) $request->query('limit', 15);
+        $limit = (int) $request->query('limit', 15);
 
         try {
             $products = $this->statisticService->getLowStockAlerts($threshold, $limit);
 
             return response()->json([
                 'success' => true,
-                'data'    => $products,
+                'data' => $products,
             ]);
         } catch (\Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi khi lấy dữ liệu tồn kho: ' . $e->getMessage(),
+                'message' => 'Lỗi khi lấy dữ liệu tồn kho: '.$e->getMessage(),
             ], 500);
         }
     }

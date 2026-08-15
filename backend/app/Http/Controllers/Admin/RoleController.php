@@ -6,10 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Role\RoleRequest;
 use App\Http\Requests\Admin\Role\SyncPermissionsRequest;
 use App\Http\Resources\Admin\Role\RoleResource;
+use App\Models\Role;
 use App\Services\Admin\Interfaces\RoleServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Role;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -28,7 +28,7 @@ class RoleController extends Controller
         summary: 'Lấy danh sách vai trò (có phân trang & lọc)',
         tags: ['Roles'],
         parameters: [
-            new OA\Parameter(name: 'search',   in: 'query', required: false, schema: new OA\Schema(type: 'string')),
+            new OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string')),
             new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 10)),
         ],
         responses: [
@@ -38,18 +38,18 @@ class RoleController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->roleService->getList([
-            'search'   => $request->query('search'),
+            'search' => $request->query('search'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => RoleResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => RoleResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -64,9 +64,10 @@ class RoleController extends Controller
     public function all(): JsonResponse
     {
         $roles = $this->roleService->getAll();
+
         return response()->json([
             'success' => true,
-            'data'    => RoleResource::collection($roles),
+            'data' => RoleResource::collection($roles),
         ]);
     }
 
@@ -80,9 +81,9 @@ class RoleController extends Controller
             content: new OA\JsonContent(
                 required: ['name'],
                 properties: [
-                    new OA\Property(property: 'name',           type: 'string',  example: 'Manager'),
-                    new OA\Property(property: 'description',    type: 'string',  nullable: true),
-                    new OA\Property(property: 'permission_ids', type: 'array',   items: new OA\Items(type: 'integer'), example: [1, 2, 3]),
+                    new OA\Property(property: 'name', type: 'string', example: 'Manager'),
+                    new OA\Property(property: 'description', type: 'string', nullable: true),
+                    new OA\Property(property: 'permission_ids', type: 'array', items: new OA\Items(type: 'integer'), example: [1, 2, 3]),
                 ]
             )
         ),
@@ -97,7 +98,7 @@ class RoleController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new RoleResource($role),
+            'data' => new RoleResource($role),
             'message' => 'Vai trò đã được tạo thành công.',
         ], 201);
     }
@@ -118,9 +119,10 @@ class RoleController extends Controller
     public function show(Role $role): JsonResponse
     {
         $role->load('permissions');
+
         return response()->json([
             'success' => true,
-            'data'    => new RoleResource($role),
+            'data' => new RoleResource($role),
         ]);
     }
 
@@ -136,9 +138,9 @@ class RoleController extends Controller
             required: true,
             content: new OA\JsonContent(
                 properties: [
-                    new OA\Property(property: 'name',           type: 'string'),
-                    new OA\Property(property: 'description',    type: 'string', nullable: true),
-                    new OA\Property(property: 'permission_ids', type: 'array',  items: new OA\Items(type: 'integer')),
+                    new OA\Property(property: 'name', type: 'string'),
+                    new OA\Property(property: 'description', type: 'string', nullable: true),
+                    new OA\Property(property: 'permission_ids', type: 'array', items: new OA\Items(type: 'integer')),
                 ]
             )
         ),
@@ -154,7 +156,7 @@ class RoleController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new RoleResource($updatedRole),
+            'data' => new RoleResource($updatedRole),
             'message' => 'Vai trò đã được cập nhật thành công.',
         ]);
     }
@@ -212,7 +214,7 @@ class RoleController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new RoleResource($updatedRole),
+            'data' => new RoleResource($updatedRole),
             'message' => 'Quyền hạn của vai trò đã được cập nhật thành công.',
         ]);
     }

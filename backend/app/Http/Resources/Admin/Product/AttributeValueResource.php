@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Resources\Admin\Product;
 
 use Illuminate\Http\Request;

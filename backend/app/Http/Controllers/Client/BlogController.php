@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -19,17 +20,17 @@ class BlogController extends Controller
     {
         $filters = $request->only(['search']);
         $perPage = (int) $request->query('per_page', 12);
-        
+
         $paginator = $this->blogService->getActiveBlogs($filters, $perPage);
 
         return response()->json([
             'success' => true,
-            'data'    => BlogResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => BlogResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -41,7 +42,7 @@ class BlogController extends Controller
     {
         $blog = $this->blogService->findActiveBySlug($slug);
 
-        if (!$blog) {
+        if (! $blog) {
             return response()->json([
                 'success' => false,
                 'message' => 'Bài viết không tồn tại hoặc đã bị ẩn.',
@@ -50,7 +51,7 @@ class BlogController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new BlogResource($blog),
+            'data' => new BlogResource($blog),
         ]);
     }
 }

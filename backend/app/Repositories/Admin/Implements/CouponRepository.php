@@ -11,14 +11,14 @@ class CouponRepository implements CouponRepositoryInterface
 {
     public function __construct(
         private readonly Coupon $model
-    ){}
-    
+    ) {}
+
     public function paginate(array $filters): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
-        if (!empty($filters['search'])) {
-            $query->where('code', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('code', 'like', '%'.$filters['search'].'%');
         }
 
         if (isset($filters['type']) && $filters['type'] !== '') {
@@ -31,20 +31,24 @@ class CouponRepository implements CouponRepositoryInterface
 
         return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);
     }
+
     public function findById(int $id): ?Coupon
     {
         return $this->model->find($id);
     }
+
     public function create(array $data): Coupon
     {
         return $this->model->create($data);
     }
+
     public function update(Model $model, array $data): Coupon
     {
         $model->update($data);
 
         return $model->fresh();
-    }   
+    }
+
     public function delete(Model $model): void
     {
         $model->delete();
@@ -54,6 +58,4 @@ class CouponRepository implements CouponRepositoryInterface
     {
         return $this->model->orderBy('id', 'desc')->get();
     }
-
 }
-?>

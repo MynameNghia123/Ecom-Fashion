@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Admin\Implements;
 
 use App\Models\ReturnRequest;
@@ -18,23 +19,22 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
             'orderDetail.productVariant.product.productImages',
         ])->latest();
 
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['reason'])) {
+        if (! empty($filters['reason'])) {
             $query->where('reason', $filters['reason']);
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $s = $filters['search'];
             $query->where(function ($q) use ($s) {
                 $q->where('ticket_code', 'like', "%{$s}%")
-                  ->orWhereHas('order', fn($oq) => $oq->where('code', 'like', "%{$s}%"))
-                  ->orWhereHas('order.customer', fn($cq) =>
-                      $cq->where('full_name', 'like', "%{$s}%")
-                         ->orWhere('phone', 'like', "%{$s}%")
-                  );
+                    ->orWhereHas('order', fn ($oq) => $oq->where('code', 'like', "%{$s}%"))
+                    ->orWhereHas('order.customer', fn ($cq) => $cq->where('full_name', 'like', "%{$s}%")
+                        ->orWhere('phone', 'like', "%{$s}%")
+                    );
             });
         }
 
@@ -59,8 +59,8 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
             ->toArray();
 
         return [
-            'total'    => array_sum($counts),
-            'pending'  => $counts['pending']  ?? 0,
+            'total' => array_sum($counts),
+            'pending' => $counts['pending'] ?? 0,
             'approved' => $counts['approved'] ?? 0,
             'received' => $counts['received'] ?? 0,
             'refunded' => $counts['refunded'] ?? 0,
@@ -68,8 +68,25 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
         ];
     }
 
-    public function findById(int $id): ?ReturnRequest { return $this->model->find($id); }
-    public function create(array $data): ReturnRequest { return $this->model->create($data); }
-    public function update(Model $model, array $data): ReturnRequest { $model->update($data); return $model->fresh(); }
-    public function delete(Model $model): void { $model->delete(); }
+    public function findById(int $id): ?ReturnRequest
+    {
+        return $this->model->find($id);
+    }
+
+    public function create(array $data): ReturnRequest
+    {
+        return $this->model->create($data);
+    }
+
+    public function update(Model $model, array $data): ReturnRequest
+    {
+        $model->update($data);
+
+        return $model->fresh();
+    }
+
+    public function delete(Model $model): void
+    {
+        $model->delete();
+    }
 }

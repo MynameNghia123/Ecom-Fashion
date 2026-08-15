@@ -14,11 +14,11 @@ class PermissionResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id'     => $this->id,
+            'id' => $this->id,
             'module' => $this->module,
             'action' => $this->action,
             // Label dễ đọc cho UI: "products.view"
-            'label'  => "{$this->module}.{$this->action}",
+            'label' => "{$this->module}.{$this->action}",
         ];
     }
 }

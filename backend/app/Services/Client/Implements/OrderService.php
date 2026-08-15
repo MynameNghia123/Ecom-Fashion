@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\Coupon;
 use App\Models\Order;
 use App\Models\ProductVariant;
@@ -47,6 +49,7 @@ class OrderService implements OrderServiceInterface
 
                 if ($variant->stock_quantity < $cartItem['quantity']) {
                     DB::rollBack();
+
                     return [
                         'success' => false,
                         'message' => "Sản phẩm '{$variant->sku}' không đủ số lượng tồn kho.",
@@ -69,22 +72,20 @@ class OrderService implements OrderServiceInterface
             $discountAmount = 0;
             $appliedCoupon = null;
 
-            if (!empty($data['coupon_code'])) {
+            if (! empty($data['coupon_code'])) {
                 $appliedCoupon = Coupon::where('code', strtoupper($data['coupon_code']))
                     ->where('is_active', true)
                     ->where(function ($q) {
                         $q->whereNull('expiry_date')
-                          ->orWhere('expiry_date', '>=', now()->toDateString());
+                            ->orWhere('expiry_date', '>=', now()->toDateString());
                     })
                     ->first();
 
                 if ($appliedCoupon) {
-                    if (!$appliedCoupon->max_usage || $appliedCoupon->used_count < $appliedCoupon->max_usage) {
-                        if (!$appliedCoupon->price_min_order_value || $subTotal >= $appliedCoupon->price_min_order_value) {
+                    if (! $appliedCoupon->max_usage || $appliedCoupon->used_count < $appliedCoupon->max_usage) {
+                        if (! $appliedCoupon->price_min_order_value || $subTotal >= $appliedCoupon->price_min_order_value) {
                             $couponId = $appliedCoupon->id;
-                            $discountAmount = $appliedCoupon->type === 'percent'
-                                ? round($subTotal * $appliedCoupon->discount_value / 100)
-                                : $appliedCoupon->discount_value;
+                            $discountAmount = $appliedCoupon->type->calculateDiscount($subTotal, $appliedCoupon->discount_value);
                         }
                     }
                 }
@@ -94,7 +95,7 @@ class OrderService implements OrderServiceInterface
 
             // 2. Create Order
             $order = $this->repo->createOrder([
-                'order_code' => 'ORD-' . strtoupper(Str::random(8)),
+                'order_code' => 'ORD-'.strtoupper(Str::random(8)),
                 'customer_id' => $customerId,
                 'coupon_id' => $couponId,
                 'shipping_name' => $data['shipping_name'],
@@ -112,7 +113,7 @@ class OrderService implements OrderServiceInterface
             // Increment coupon usage and track customer coupon
             if ($appliedCoupon && $couponId) {
                 $appliedCoupon->increment('used_count');
-                
+
                 DB::table('customer_coupons')->updateOrInsert(
                     [
                         'customer_id' => $customerId,
@@ -123,8 +124,8 @@ class OrderService implements OrderServiceInterface
                         // Instead of created_at/updated_at which might not exist or cause errors,
                         // we can omit them, but if they exist, let's keep them if it's an insert
                         // Actually, if we use upsert in raw query or just leave them out if they don't exist.
-                        // I will assume the table does not have created_at as seen in the migration, 
-                        // so I will just set used_at. If it fails due to missing timestamps, 
+                        // I will assume the table does not have created_at as seen in the migration,
+                        // so I will just set used_at. If it fails due to missing timestamps,
                         // we will know. The previous code had created_at and updated_at. I'll remove them.
                     ]
                 );
@@ -159,7 +160,7 @@ class OrderService implements OrderServiceInterface
                 return [
                     'success' => true,
                     'message' => 'Đặt hàng thành công!',
-                    'data'    => ['order_code' => $order->order_code],
+                    'data' => ['order_code' => $order->order_code],
                     'payment_url' => null,
                 ];
             }
@@ -181,10 +182,10 @@ class OrderService implements OrderServiceInterface
                 );
 
                 return [
-                    'success'      => true,
-                    'message'      => 'Đơn hàng đã được tạo. Vui lòng thanh toán qua chuyển khoản.',
-                    'data'         => ['order_code' => $order->order_code],
-                    'payment_url'  => null,
+                    'success' => true,
+                    'message' => 'Đơn hàng đã được tạo. Vui lòng thanh toán qua chuyển khoản.',
+                    'data' => ['order_code' => $order->order_code],
+                    'payment_url' => null,
                     'payment_info' => $paymentInfo,
                 ];
             }
@@ -215,9 +216,10 @@ class OrderService implements OrderServiceInterface
 
         } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'message' => 'Có lỗi xảy ra: ' . $e->getMessage(),
+                'message' => 'Có lỗi xảy ra: '.$e->getMessage(),
             ];
         }
     }

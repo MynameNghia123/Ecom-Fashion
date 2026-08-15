@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Admin\Staff;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -48,7 +49,7 @@ class StoreStaffRequest extends FormRequest
             'roles.array' => 'Vai trò phải là một mảng.',
             'roles.*.required' => 'Vai trò không được để trống.',
             'roles.*.exists' => 'Vai trò không tồn tại.',
-            'permission_ids.array'=> 'Danh sách quyền đặc cách phải là một mảng dữ liệu.',
+            'permission_ids.array' => 'Danh sách quyền đặc cách phải là một mảng dữ liệu.',
             'permission_ids.*.exists' => 'Quyền hạn được chọn không tồn tại trên hệ thống.',
         ];
     }

@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class Banner extends Model
 {
     protected $fillable = [
@@ -17,13 +16,14 @@ class Banner extends Model
         'start_date',
         'end_date',
     ];
+
     protected function casts(): array
     {
         return [
-           'is_active' => 'boolean',
-           'display_order' => 'integer',
-           'start_date' => 'datetime',
-           'end_date' => 'datetime'
+            'is_active' => 'boolean',
+            'display_order' => 'integer',
+            'start_date' => 'datetime',
+            'end_date' => 'datetime',
         ];
     }
 }

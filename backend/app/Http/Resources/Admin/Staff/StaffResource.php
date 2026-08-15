@@ -22,14 +22,14 @@ class StaffResource extends JsonResource
             'avatar' => $this->avatar,
             'is_active' => $this->is_active,
             'roles' => $this->whenLoaded('roles', function () {
-                return $this->roles->map(fn($r) => [
+                return $this->roles->map(fn ($r) => [
                     'id' => $r->id,
                     'name' => $r->name,
                     'description' => $r->description,
                 ]);
             }),
             'permissions' => $this->whenLoaded('permissions', function () {
-                return $this->permissions->map(fn($p) => [
+                return $this->permissions->map(fn ($p) => [
                     'id' => $p->id,
                     'module' => $p->module,
                     'action' => $p->action,

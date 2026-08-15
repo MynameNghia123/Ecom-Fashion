@@ -22,7 +22,7 @@ class ProductVariantController extends Controller
         ],
         responses: [
             new OA\Response(response: 200, description: 'Tìm kiếm thành công'),
-            new OA\Response(response: 400, description: 'Lỗi khi thiếu tham số tìm kiếm')
+            new OA\Response(response: 400, description: 'Lỗi khi thiếu tham số tìm kiếm'),
         ]
     )]
     public function search(Request $request)
@@ -33,7 +33,7 @@ class ProductVariantController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Vui lòng cung cấp từ khóa tìm kiếm.',
-                'data' => []
+                'data' => [],
             ], 400);
         }
 
@@ -42,7 +42,7 @@ class ProductVariantController extends Controller
         return response()->json([
             'success' => true,
             'data' => $variants,
-            'message' => 'Tìm kiếm thành công.'
+            'message' => 'Tìm kiếm thành công.',
         ]);
     }
 }

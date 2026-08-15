@@ -1,7 +1,8 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\OrderDetail;
-use App\Models\Review;
 use App\Repositories\Client\Interfaces\ReviewRepositoryInterface;
 use App\Services\Client\Interfaces\ReviewServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -24,7 +25,7 @@ class ReviewService implements ReviewServiceInterface
     {
         $orderDetail = OrderDetail::with('order')->find($data['order_detail_id']);
 
-        if (!$orderDetail || $orderDetail->order->customer_id !== $customerId) {
+        if (! $orderDetail || $orderDetail->order->customer_id !== $customerId) {
             return ['success' => false, 'message' => 'Không tìm thấy chi tiết đơn hàng này.'];
         }
 
@@ -40,26 +41,27 @@ class ReviewService implements ReviewServiceInterface
         $productId = $orderDetail->productVariant->product_id;
 
         $review = $this->repo->create([
-            'product_id'      => $productId,
+            'product_id' => $productId,
             'order_detail_id' => $data['order_detail_id'],
-            'customer_id'     => $customerId,
-            'rating'          => $data['rating'],
-            'comment'         => $data['comment'] ?? null,
+            'customer_id' => $customerId,
+            'rating' => $data['rating'],
+            'comment' => $data['comment'] ?? null,
         ]);
 
         return [
             'success' => true,
             'message' => 'Cảm ơn bạn đã gửi đánh giá sản phẩm!',
-            'data'    => $review,
+            'data' => $review,
         ];
     }
 
     public function checkReviewEligibility(int $customerId, int $productId): array
     {
         $orderDetail = $this->repo->getEligibleOrderDetail($customerId, $productId);
+
         return [
             'eligible' => (bool) $orderDetail,
-            'order_detail_id' => $orderDetail ? $orderDetail->id : null
+            'order_detail_id' => $orderDetail ? $orderDetail->id : null,
         ];
     }
 }

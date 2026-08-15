@@ -5,10 +5,10 @@ namespace App\Services\Client\Implements;
 use App\Models\OrderDetail;
 use App\Repositories\Client\Interfaces\ReturnRequestRepositoryInterface;
 use App\Services\Client\Interfaces\ReturnRequestServiceInterface;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Str;
 use Exception;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ReturnRequestService implements ReturnRequestServiceInterface
 {
@@ -30,7 +30,7 @@ class ReturnRequestService implements ReturnRequestServiceInterface
     {
         // 1. Kiểm tra OrderDetail có thuộc về User không
         $orderDetail = OrderDetail::with('order')->find($data['order_detail_id']);
-        if (!$orderDetail || $orderDetail->order->customer_id !== $customerId) {
+        if (! $orderDetail || $orderDetail->order->customer_id !== $customerId) {
             throw new Exception('Bạn không có quyền thao tác với sản phẩm này.', 403);
         }
 
@@ -59,20 +59,20 @@ class ReturnRequestService implements ReturnRequestServiceInterface
         }
 
         // 6. Tính toán refund amount dựa trên giá mua của sản phẩm
-        $quantity = clone $orderDetail->quantity; 
+        $quantity = clone $orderDetail->quantity;
         $refundAmount = ($orderDetail->price * $orderDetail->quantity);
 
         // 7. Tạo ReturnRequest
         $returnRequestData = [
-            'ticket_code'       => 'RET-' . strtoupper(Str::random(8)),
-            'order_id'          => $orderDetail->order_id,
-            'order_detail_id'   => $orderDetail->id,
-            'reason'            => $data['reason'],
-            'customer_note'     => $data['customer_note'] ?? null,
-            'evidence_images'   => $imagePaths,
-            'quantity'          => $quantity,
-            'refund_amount'     => $refundAmount,
-            'status'            => 'pending',
+            'ticket_code' => 'RET-'.strtoupper(Str::random(8)),
+            'order_id' => $orderDetail->order_id,
+            'order_detail_id' => $orderDetail->id,
+            'reason' => $data['reason'],
+            'customer_note' => $data['customer_note'] ?? null,
+            'evidence_images' => $imagePaths,
+            'quantity' => $quantity,
+            'refund_amount' => $refundAmount,
+            'status' => 'pending',
         ];
 
         return $this->repository->create($returnRequestData);

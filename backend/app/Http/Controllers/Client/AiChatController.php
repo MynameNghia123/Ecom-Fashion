@@ -1,12 +1,13 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\AiChat\ChatRequest;
 use App\Http\Requests\Client\AiChat\SyncGuestHistoryRequest;
 use App\Services\Client\Interfaces\AiChatServiceInterface;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class AiChatController extends Controller
 {
@@ -28,13 +29,13 @@ class AiChatController extends Controller
             $customerId
         );
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json($result, $result['code'] ?? 502);
         }
 
         return response()->json([
             'success' => true,
-            'reply' => $result['reply']
+            'reply' => $result['reply'],
         ]);
     }
 
@@ -45,7 +46,7 @@ class AiChatController extends Controller
     public function history(Request $request): JsonResponse
     {
         $user = $request->user('sanctum');
-        if (!$user) {
+        if (! $user) {
             return response()->json(['success' => false, 'message' => 'Unauthorized'], 401);
         }
 
@@ -53,7 +54,7 @@ class AiChatController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $messages
+            'data' => $messages,
         ]);
     }
 
@@ -70,7 +71,7 @@ class AiChatController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Đồng bộ lịch sử chat thành công!'
+            'message' => 'Đồng bộ lịch sử chat thành công!',
         ]);
     }
 }

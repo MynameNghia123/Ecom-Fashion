@@ -4,8 +4,8 @@ namespace App\Repositories\Client\Implements;
 
 use App\Models\ReturnRequest;
 use App\Repositories\Client\Interfaces\ReturnRequestRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
 class ReturnRequestRepository implements ReturnRequestRepositoryInterface
 {
@@ -14,9 +14,9 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
         return ReturnRequest::whereHas('order', function ($query) use ($customerId) {
             $query->where('customer_id', $customerId);
         })
-        ->with(['order', 'orderDetail.productVariant.product', 'orderDetail.productVariant.attributeValues.attribute'])
-        ->orderBy('created_at', 'desc')
-        ->paginate($perPage);
+            ->with(['order', 'orderDetail.productVariant.product', 'orderDetail.productVariant.attributeValues.attribute'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 
     public function getCustomerReturnRequestDetail(int $customerId, int $id): ?Model
@@ -24,9 +24,9 @@ class ReturnRequestRepository implements ReturnRequestRepositoryInterface
         return ReturnRequest::whereHas('order', function ($query) use ($customerId) {
             $query->where('customer_id', $customerId);
         })
-        ->with(['order', 'orderDetail.productVariant.product', 'orderDetail.productVariant.attributeValues.attribute'])
-        ->where('id', $id)
-        ->first();
+            ->with(['order', 'orderDetail.productVariant.product', 'orderDetail.productVariant.attributeValues.attribute'])
+            ->where('id', $id)
+            ->first();
     }
 
     public function findByOrderDetailId(int $orderDetailId): ?Model

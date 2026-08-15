@@ -26,10 +26,10 @@ class NotificationService implements NotificationServiceInterface
     {
         $this->repository->create([
             'customer_id' => $customerId,
-            'type'        => $type,
-            'title'       => $title,
-            'content'     => $content,
-            'is_read'     => false,
+            'type' => $type,
+            'title' => $title,
+            'content' => $content,
+            'is_read' => false,
         ]);
     }
 

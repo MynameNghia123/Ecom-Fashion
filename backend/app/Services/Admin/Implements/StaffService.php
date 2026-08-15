@@ -1,14 +1,14 @@
-<?php 
+<?php
 
 namespace App\Services\Admin\Implements;
 
 use App\Models\Staff;
 use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
 use App\Services\Admin\Interfaces\StaffServiceInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Exception;
 
 /**
  * Class StaffService
@@ -23,7 +23,6 @@ class StaffService implements StaffServiceInterface
     public function __construct(
         private readonly StaffRepositoryInterface $staffRepo
     ) {}
-
 
     public function getList(array $filters): LengthAwarePaginator
     {
@@ -42,21 +41,22 @@ class StaffService implements StaffServiceInterface
             unset($data['role_ids'], $data['permission_ids']);
 
             // Nếu frontend không gửi permission_ids nhưng có gửi role_ids, lấy permission từ roles
-            if ($permissionIds === null && !empty($roleIds)) {
+            if ($permissionIds === null && ! empty($roleIds)) {
                 $permissionIds = $this->staffRepo->getPermissionsByRoles($roleIds);
             }
 
             $staff = $this->staffRepo->create($data);
 
-            if (!empty($roleIds)) {
+            if (! empty($roleIds)) {
                 $this->staffRepo->syncRoles($staff, $roleIds);
             }
 
-            if (!empty($permissionIds)) {
+            if (! empty($permissionIds)) {
                 $this->staffRepo->syncPermissions($staff, $permissionIds);
             }
 
             DB::commit();
+
             return $staff->load(['roles', 'permissions']);
         } catch (Exception $e) {
             DB::rollBack();
@@ -77,7 +77,7 @@ class StaffService implements StaffServiceInterface
 
             // Tự động gán permissions từ roles nếu frontend không truyền permissions
             if ($permissionIds === null && $roleIds !== null) {
-                if (!empty($roleIds)) {
+                if (! empty($roleIds)) {
                     $permissionIds = $this->staffRepo->getPermissionsByRoles($roleIds);
                 } else {
                     $permissionIds = []; // Nếu xóa hết role, cũng xóa luôn permissions
@@ -95,6 +95,7 @@ class StaffService implements StaffServiceInterface
             }
 
             DB::commit();
+
             return $updatedStaff->load(['roles', 'permissions']);
         } catch (Exception $e) {
             DB::rollBack();

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -21,7 +22,7 @@ class BannerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => BannerResource::collection($banners),
+            'data' => BannerResource::collection($banners),
         ]);
     }
 }

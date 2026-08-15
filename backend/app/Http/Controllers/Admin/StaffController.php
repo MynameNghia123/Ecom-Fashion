@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Staff\StaffRequest;
 use App\Http\Resources\Admin\Staff\StaffResource;
+use App\Models\Staff;
 use App\Services\Admin\Interfaces\StaffServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Staff;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -19,7 +19,7 @@ class StaffController extends Controller
 {
     public function __construct(
         private readonly StaffServiceInterface $staffService
-    ){}
+    ) {}
 
     #[OA\Get(
         path: '/api/admin/staffs',
@@ -47,22 +47,22 @@ class StaffController extends Controller
             ),
         ]
     )]
-    public function index(Request $request) : JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $paginator = $this->staffService->getList([
-            'search'   => $request->query('search'),
-            'status'   => $request->query('status'),
+            'search' => $request->query('search'),
+            'status' => $request->query('status'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => StaffResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => StaffResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -103,9 +103,10 @@ class StaffController extends Controller
     public function store(StaffRequest $request)
     {
         $staff = $this->staffService->create($request->validated());
+
         return response()->json([
             'success' => true,
-            'data'    => new StaffResource($staff),
+            'data' => new StaffResource($staff),
             'message' => 'Nhân viên đã được thêm thành công.',
         ], 201);
     }
@@ -133,7 +134,7 @@ class StaffController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new StaffResource($staff),
+            'data' => new StaffResource($staff),
         ]);
     }
 
@@ -180,7 +181,7 @@ class StaffController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new StaffResource($updatedStaff),
+            'data' => new StaffResource($updatedStaff),
             'message' => 'Nhân viên đã được cập nhật thành công.',
         ]);
     }

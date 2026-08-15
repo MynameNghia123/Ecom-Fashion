@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Admin\Implements;
 
 use App\Models\GoodReceiptDetail;
@@ -9,7 +10,7 @@ class GoodReceiptDetailRepo implements GoodReceiptDetailRepoInterface
 {
     public function __construct(
         private readonly GoodReceiptDetail $model
-    ){}
+    ) {}
 
     public function create(array $data): GoodReceiptDetail
     {
@@ -19,6 +20,7 @@ class GoodReceiptDetailRepo implements GoodReceiptDetailRepoInterface
     public function update(Model $model, array $data): GoodReceiptDetail
     {
         $model->update($data);
+
         return $model->fresh();
     }
 
@@ -29,8 +31,10 @@ class GoodReceiptDetailRepo implements GoodReceiptDetailRepoInterface
 
     public function insertMany($data): bool
     {
-        if (empty($data)) return false;
+        if (empty($data)) {
+            return false;
+        }
+
         return $this->model->insert($data);
     }
-
 }

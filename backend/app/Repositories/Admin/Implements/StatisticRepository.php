@@ -4,8 +4,6 @@ namespace App\Repositories\Admin\Implements;
 
 use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderDetail;
-use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Repositories\Admin\Interfaces\StatisticRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +20,7 @@ class StatisticRepository implements StatisticRepositoryInterface
         if ($previous == 0) {
             return $current > 0 ? 100.0 : 0.0;
         }
+
         return round((($current - $previous) / $previous) * 100, 1);
     }
 
@@ -31,10 +30,10 @@ class StatisticRepository implements StatisticRepositoryInterface
     private function getPreviousPeriod(string $startDate, string $endDate): array
     {
         $start = new \DateTime($startDate);
-        $end   = new \DateTime($endDate);
-        $diff  = $start->diff($end)->days + 1;
+        $end = new \DateTime($endDate);
+        $diff = $start->diff($end)->days + 1;
 
-        $prevEnd   = (clone $start)->modify('-1 day');
+        $prevEnd = (clone $start)->modify('-1 day');
         $prevStart = (clone $prevEnd)->modify("-{$diff} days")->modify('+1 day');
 
         return [
@@ -47,51 +46,51 @@ class StatisticRepository implements StatisticRepositoryInterface
 
     public function getOverviewStats(string $startDate, string $endDate): array
     {
-        $start    = $startDate . ' 00:00:00';
-        $end      = $endDate   . ' 23:59:59';
+        $start = $startDate.' 00:00:00';
+        $end = $endDate.' 23:59:59';
         [$prevStart, $prevEnd] = $this->getPreviousPeriod($startDate, $endDate);
 
         // Doanh thu (loại trừ đơn đã hủy)
-        $revenue     = (float) Order::whereBetween('created_at', [$start, $end])
-                                    ->where('status', '!=', 'cancelled')
-                                    ->sum('final_amount');
+        $revenue = (float) Order::whereBetween('created_at', [$start, $end])
+            ->where('status', '!=', 'cancelled')
+            ->sum('final_amount');
         $prevRevenue = (float) Order::whereBetween('created_at', [$prevStart, $prevEnd])
-                                    ->where('status', '!=', 'cancelled')
-                                    ->sum('final_amount');
+            ->where('status', '!=', 'cancelled')
+            ->sum('final_amount');
 
         // Tổng đơn hàng
-        $orders     = Order::whereBetween('created_at', [$start, $end])->count();
+        $orders = Order::whereBetween('created_at', [$start, $end])->count();
         $prevOrders = Order::whereBetween('created_at', [$prevStart, $prevEnd])->count();
 
         // Khách hàng mới
-        $newCustomers     = Customer::whereBetween('created_at', [$start, $end])->count();
+        $newCustomers = Customer::whereBetween('created_at', [$start, $end])->count();
         $prevNewCustomers = Customer::whereBetween('created_at', [$prevStart, $prevEnd])->count();
 
         // Giá trị đơn trung bình (AOV)
-        $aov     = $orders > 0 ? $revenue / $orders : 0;
+        $aov = $orders > 0 ? $revenue / $orders : 0;
         $prevAov = $prevOrders > 0 ? $prevRevenue / $prevOrders : 0;
 
         return [
-            'total_revenue'          => $revenue,
+            'total_revenue' => $revenue,
             'revenue_change_percent' => $this->calcChangePercent($prevRevenue, $revenue),
-            'total_orders'           => $orders,
-            'orders_change_percent'  => $this->calcChangePercent($prevOrders, $orders),
-            'new_customers'          => $newCustomers,
+            'total_orders' => $orders,
+            'orders_change_percent' => $this->calcChangePercent($prevOrders, $orders),
+            'new_customers' => $newCustomers,
             'customers_change_percent' => $this->calcChangePercent($prevNewCustomers, $newCustomers),
-            'average_order_value'    => round($aov, 2),
-            'aov_change_percent'     => $this->calcChangePercent($prevAov, $aov),
+            'average_order_value' => round($aov, 2),
+            'aov_change_percent' => $this->calcChangePercent($prevAov, $aov),
         ];
     }
 
     public function getRevenueByPeriod(string $startDate, string $endDate, string $groupBy = 'day'): array
     {
-        $start = $startDate . ' 00:00:00';
-        $end   = $endDate   . ' 23:59:59';
+        $start = $startDate.' 00:00:00';
+        $end = $endDate.' 23:59:59';
 
         // Chọn format nhóm theo yêu cầu
         $dateFormat = match ($groupBy) {
             'month' => '%Y-%m',
-            'week'  => '%Y-W%u',
+            'week' => '%Y-W%u',
             default => '%Y-%m-%d',
         };
 
@@ -115,33 +114,33 @@ class StatisticRepository implements StatisticRepositoryInterface
             ->orderByRaw("DATE_FORMAT(orders.created_at, '{$dateFormat}')")
             ->get();
 
-        $labels      = [];
+        $labels = [];
         $revenueData = [];
-        $profitData  = [];
+        $profitData = [];
 
         foreach ($rows2 as $row) {
-            $labels[]      = $row->period;
+            $labels[] = $row->period;
             $revenueData[] = round((float) $row->revenue, 2);
-            $profitData[]  = round((float) $row->gross_profit, 2);
+            $profitData[] = round((float) $row->gross_profit, 2);
         }
 
         return [
-            'labels'   => $labels,
-            'revenue'  => $revenueData,
-            'profit'   => $profitData,
+            'labels' => $labels,
+            'revenue' => $revenueData,
+            'profit' => $profitData,
         ];
     }
 
     public function getRevenueByCategory(string $startDate, string $endDate): array
     {
-        $start = $startDate . ' 00:00:00';
-        $end   = $endDate   . ' 23:59:59';
+        $start = $startDate.' 00:00:00';
+        $end = $endDate.' 23:59:59';
 
         $rows = DB::table('order_details')
-            ->join('orders',           'order_details.order_id',       '=', 'orders.id')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
-            ->join('products',         'product_variants.product_id',  '=', 'products.id')
-            ->join('categories',       'products.category_id',         '=', 'categories.id')
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
+            ->join('categories', 'products.category_id', '=', 'categories.id')
             ->selectRaw('categories.name as category')
             ->selectRaw('SUM(order_details.unit_price * order_details.quantity) as revenue')
             ->where('orders.status', '!=', 'cancelled')
@@ -153,27 +152,27 @@ class StatisticRepository implements StatisticRepositoryInterface
 
         $total = $rows->sum('revenue');
 
-        $labels      = [];
-        $data        = [];
+        $labels = [];
+        $data = [];
         $percentages = [];
 
         foreach ($rows as $row) {
-            $labels[]      = $row->category;
-            $data[]        = round((float) $row->revenue, 2);
+            $labels[] = $row->category;
+            $data[] = round((float) $row->revenue, 2);
             $percentages[] = $total > 0 ? round(($row->revenue / $total) * 100, 1) : 0;
         }
 
         return [
-            'labels'      => $labels,
-            'data'        => $data,
+            'labels' => $labels,
+            'data' => $data,
             'percentages' => $percentages,
         ];
     }
 
     public function getOrderStatusDistribution(string $startDate, string $endDate): array
     {
-        $start = $startDate . ' 00:00:00';
-        $end   = $endDate   . ' 23:59:59';
+        $start = $startDate.' 00:00:00';
+        $end = $endDate.' 23:59:59';
 
         $rows = DB::table('orders')
             ->selectRaw('status, COUNT(*) as count')
@@ -183,9 +182,9 @@ class StatisticRepository implements StatisticRepositoryInterface
             ->keyBy('status');
 
         return [
-            'pending'   => (int) ($rows['pending']->count   ?? 0),
+            'pending' => (int) ($rows['pending']->count ?? 0),
             'confirmed' => (int) ($rows['confirmed']->count ?? 0),
-            'shipping'  => (int) ($rows['shipping']->count  ?? 0),
+            'shipping' => (int) ($rows['shipping']->count ?? 0),
             'completed' => (int) ($rows['completed']->count ?? 0),
             'cancelled' => (int) ($rows['cancelled']->count ?? 0),
         ];
@@ -198,28 +197,28 @@ class StatisticRepository implements StatisticRepositoryInterface
             ->limit($limit)
             ->get()
             ->map(fn ($o) => [
-                'id'           => $o->id,
-                'order_code'   => $o->order_code,
-                'customer_name'=> $o->customer
-                    ? trim(($o->customer->first_name ?? '') . ' ' . ($o->customer->last_name ?? ''))
+                'id' => $o->id,
+                'order_code' => $o->order_code,
+                'customer_name' => $o->customer
+                    ? trim(($o->customer->first_name ?? '').' '.($o->customer->last_name ?? ''))
                     : $o->shipping_name,
                 'final_amount' => (float) $o->final_amount,
-                'status'       => $o->status,
+                'status' => $o->status,
                 'payment_method' => $o->payment_method,
-                'created_at'   => $o->created_at,
+                'created_at' => $o->created_at,
             ])
             ->toArray();
     }
 
     public function getTopSellingProducts(string $startDate, string $endDate, int $limit = 10): array
     {
-        $start = $startDate . ' 00:00:00';
-        $end   = $endDate   . ' 23:59:59';
+        $start = $startDate.' 00:00:00';
+        $end = $endDate.' 23:59:59';
 
         return DB::table('order_details')
-            ->join('orders',           'order_details.order_id',           '=', 'orders.id')
+            ->join('orders', 'order_details.order_id', '=', 'orders.id')
             ->join('product_variants', 'order_details.product_variant_id', '=', 'product_variants.id')
-            ->join('products',         'product_variants.product_id',      '=', 'products.id')
+            ->join('products', 'product_variants.product_id', '=', 'products.id')
             ->selectRaw('products.id, products.name, products.thumbnail')
             ->selectRaw('SUM(order_details.quantity) as total_sold')
             ->selectRaw('SUM(order_details.unit_price * order_details.quantity) as total_revenue')
@@ -230,10 +229,10 @@ class StatisticRepository implements StatisticRepositoryInterface
             ->limit($limit)
             ->get()
             ->map(fn ($r) => [
-                'id'            => $r->id,
-                'name'          => $r->name,
-                'thumbnail'     => $r->thumbnail,
-                'total_sold'    => (int) $r->total_sold,
+                'id' => $r->id,
+                'name' => $r->name,
+                'thumbnail' => $r->thumbnail,
+                'total_sold' => (int) $r->total_sold,
                 'total_revenue' => round((float) $r->total_revenue, 2),
             ])
             ->toArray();
@@ -248,13 +247,13 @@ class StatisticRepository implements StatisticRepositoryInterface
             ->limit($limit)
             ->get()
             ->map(fn ($v) => [
-                'variant_id'     => $v->id,
-                'sku'            => $v->sku,
+                'variant_id' => $v->id,
+                'sku' => $v->sku,
                 'stock_quantity' => $v->stock_quantity,
-                'product_id'     => $v->product?->id,
-                'product_name'   => $v->product?->name,
-                'thumbnail'      => $v->product?->thumbnail,
-                'price'          => (float) $v->price,
+                'product_id' => $v->product?->id,
+                'product_name' => $v->product?->name,
+                'thumbnail' => $v->product?->thumbnail,
+                'price' => (float) $v->price,
             ])
             ->toArray();
     }

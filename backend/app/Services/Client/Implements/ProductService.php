@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\Product;
 use App\Repositories\Client\Interfaces\ProductRepositoryInterface;
 use App\Services\Client\Interfaces\ProductServiceInterface;
@@ -28,7 +30,7 @@ class ProductService implements ProductServiceInterface
     public function getFormattedProductDetail(string $idOrSlug): ?array
     {
         $product = $this->repo->findActiveByIdOrSlug($idOrSlug);
-        if (!$product) {
+        if (! $product) {
             return null;
         }
 
@@ -42,11 +44,11 @@ class ProductService implements ProductServiceInterface
                         $attrName = $attrValue->attribute->name ?? 'Unknown';
                         $attrVal = $attrValue->value;
 
-                        if (!isset($attributes[$attrName])) {
+                        if (! isset($attributes[$attrName])) {
                             $attributes[$attrName] = [];
                         }
 
-                        if (!in_array($attrVal, $attributes[$attrName])) {
+                        if (! in_array($attrVal, $attributes[$attrName])) {
                             $attributes[$attrName][] = $attrVal;
                         }
                     }
@@ -55,10 +57,11 @@ class ProductService implements ProductServiceInterface
         }
 
         $productArray['attributes'] = $attributes;
+
         return $productArray;
     }
 
-    public function getTopRated(int $limit): \Illuminate\Support\Collection
+    public function getTopRated(int $limit): Collection
     {
         return $this->repo->getTopRated($limit);
     }

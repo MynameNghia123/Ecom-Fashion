@@ -2,17 +2,17 @@
 
 namespace App\Services\Admin\Implements;
 
+use App\Models\Customer;
 use App\Models\Order;
-use App\Models\OrderDetail;
 use App\Models\ProductVariant;
 use App\Repositories\Admin\Interfaces\OrderRepositoryInterface;
 use App\Services\Admin\Interfaces\OrderServiceInterface;
 use App\Services\Client\Interfaces\NotificationServiceInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Exception;
 
 class OrderService implements OrderServiceInterface
 {
@@ -46,14 +46,14 @@ class OrderService implements OrderServiceInterface
         try {
             DB::beginTransaction();
 
-            $orderCode = 'ORD-' . strtoupper(Str::random(8));
-            
+            $orderCode = 'ORD-'.strtoupper(Str::random(8));
+
             $subTotal = 0;
             $itemsData = [];
 
             foreach ($data['items'] as $item) {
                 $variant = ProductVariant::findOrFail($item['product_variant_id']);
-                
+
                 if ($variant->stock_quantity < $item['quantity']) {
                     throw new Exception("Sản phẩm '{$variant->sku}' không đủ tồn kho (còn {$variant->stock_quantity}).");
                 }
@@ -63,9 +63,9 @@ class OrderService implements OrderServiceInterface
 
                 $itemsData[] = [
                     'product_variant_id' => $variant->id,
-                    'quantity'           => $item['quantity'],
-                    'unit_price'         => $price,
-                    'cost_price'         => $variant->cost_price ?? 0,
+                    'quantity' => $item['quantity'],
+                    'unit_price' => $price,
+                    'cost_price' => $variant->cost_price ?? 0,
                 ];
 
                 // Trừ kho
@@ -81,8 +81,8 @@ class OrderService implements OrderServiceInterface
             $shippingPhone = $data['shipping_phone'] ?? null;
             $shippingAddress = $data['shipping_address'] ?? null;
 
-            if (!empty($data['customer_id'])) {
-                $customer = \App\Models\Customer::find($data['customer_id']);
+            if (! empty($data['customer_id'])) {
+                $customer = Customer::find($data['customer_id']);
                 if ($customer && empty($shippingName)) {
                     $shippingName = $customer->name; // Note: Customer uses first_name/last_name? We'll see.
                     $shippingPhone = $customer->phone_number;
@@ -90,33 +90,33 @@ class OrderService implements OrderServiceInterface
                 $customerId = $data['customer_id'];
             } else {
                 // Tự động tạo hoặc lấy Khách lẻ (Guest) để pass qua validation DB
-                $guestCustomer = \App\Models\Customer::firstOrCreate(
+                $guestCustomer = Customer::firstOrCreate(
                     ['email' => 'khachle@ecomfashion.com'],
                     [
                         'first_name' => 'Khách',
-                        'last_name'  => 'Lẻ (POS)',
+                        'last_name' => 'Lẻ (POS)',
                         'phone_number' => '0000000000',
-                        'password'   => bcrypt(Str::random(16)),
-                        'status'     => 1 // Int instead of string
+                        'password' => bcrypt(Str::random(16)),
+                        'status' => 1, // Int instead of string
                     ]
                 );
                 $customerId = $guestCustomer->id;
             }
 
             $orderData = [
-                'order_code'       => $orderCode,
-                'customer_id'      => $customerId,
-                'shipping_name'    => $shippingName,
-                'shipping_phone'   => $shippingPhone,
+                'order_code' => $orderCode,
+                'customer_id' => $customerId,
+                'shipping_name' => $shippingName,
+                'shipping_phone' => $shippingPhone,
                 'shipping_address' => $shippingAddress,
-                'shipping_fee'     => $shippingFee,
-                'coupon_discount_amount'  => $discountAmount,
-                'sub_total_amount'        => $subTotal,
-                'final_amount'     => $finalAmount,
-                'payment_method'   => $data['payment_method'],
-                'payment_status'   => $data['payment_status'],
-                'status'           => $data['status'],
-                'note'             => $data['note'] ?? null,
+                'shipping_fee' => $shippingFee,
+                'coupon_discount_amount' => $discountAmount,
+                'sub_total_amount' => $subTotal,
+                'final_amount' => $finalAmount,
+                'payment_method' => $data['payment_method'],
+                'payment_status' => $data['payment_status'],
+                'status' => $data['status'],
+                'note' => $data['note'] ?? null,
             ];
 
             $order = $this->orderRepository->create($orderData);
@@ -153,7 +153,7 @@ class OrderService implements OrderServiceInterface
                         $detail->productVariant->increment('stock_quantity', $detail->quantity);
                     }
                 }
-                
+
                 if ($model->coupon_id && $model->customer_id) {
                     $model->load('coupon');
                     if ($model->coupon) {
@@ -184,12 +184,12 @@ class OrderService implements OrderServiceInterface
                     'completed' => 'Đã giao thành công',
                     'cancelled' => 'Đã hủy',
                 ];
-                
+
                 if (isset($statusMap[$newStatus])) {
                     $this->notificationService->notify(
                         $updated->customer_id,
                         'order_status_updated',
-                        "Đơn hàng {$updated->order_code} " . strtolower($statusMap[$newStatus]),
+                        "Đơn hàng {$updated->order_code} ".strtolower($statusMap[$newStatus]),
                         "Trạng thái đơn hàng {$updated->order_code} của bạn đã được cập nhật thành: {$statusMap[$newStatus]}."
                     );
                 }
@@ -199,7 +199,7 @@ class OrderService implements OrderServiceInterface
                 'customer',
                 'coupon',
                 'details.productVariant.product',
-                'details.productVariant.attributeValues.attribute'
+                'details.productVariant.attributeValues.attribute',
             ]);
 
             DB::commit();

@@ -1,39 +1,41 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Http;
 use App\Http\Controllers\Admin\AttributeController;
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\ProductController;
-use App\Http\Controllers\Admin\UploadController;
-use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\CouponController;
-use App\Http\Controllers\Admin\StaffController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\Admin\SupplierController;
-use App\Http\Controllers\Admin\GoodReceiptController;
-use App\Http\Controllers\Admin\ProductVariantController;
-
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\BlogController;
 use App\Http\Controllers\Admin\BannerController;
-use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\ReviewController;
-use App\Http\Controllers\Admin\StatisticController;
-use App\Http\Controllers\Client\BlogController as ClientBlogController;
-use App\Http\Controllers\Client\BannerController as ClientBannerController;
-use App\Http\Controllers\Client\AuthController as ClientAuthController;
-use App\Http\Controllers\Client\ProductController as ClientProductController;
-use App\Http\Controllers\Client\CartController as ClientCartController;
-use App\Http\Controllers\Client\OrderController as ClientOrderController;
-use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
-use App\Http\Controllers\Client\SePayController as ClientSePayController;
-use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
-use App\Http\Controllers\Client\ShippingController as ClientShippingController;
-use App\Http\Controllers\Client\NotificationController as ClientNotificationController;
+use App\Http\Controllers\Admin\BlogController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
-
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\GoodReceiptController;
+use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\ProductVariantController;
+use App\Http\Controllers\Admin\ReturnRequestController;
+use App\Http\Controllers\Admin\ReviewController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\StaffController;
+use App\Http\Controllers\Admin\StatisticController;
+use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\UploadController;
+use App\Http\Controllers\Client\AiChatController as ClientAiChatController;
+use App\Http\Controllers\Client\AuthController as ClientAuthController;
+use App\Http\Controllers\Client\BannerController as ClientBannerController;
+use App\Http\Controllers\Client\BlogController as ClientBlogController;
+use App\Http\Controllers\Client\CartController as ClientCartController;
+use App\Http\Controllers\Client\CustomerAddressController;
+use App\Http\Controllers\Client\NotificationController as ClientNotificationController;
+use App\Http\Controllers\Client\OrderController as ClientOrderController;
+use App\Http\Controllers\Client\ProductController as ClientProductController;
+use App\Http\Controllers\Client\SePayController as ClientSePayController;
+use App\Http\Controllers\Client\ShippingController as ClientShippingController;
+use App\Http\Controllers\Client\VNPayController as ClientVNPayController;
+use App\Http\Controllers\Client\WishlistController;
+use App\Models\Category;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,16 +101,16 @@ Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('reviews', ReviewController::class)->only(['index', 'destroy'])->middleware('permission:reviews');
 
     // ── Return Requests ───────────────────────────────────────────────────────
-    Route::get('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'index']);
-    Route::post('return-requests', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'store']);
-    Route::get('return-requests/{returnRequest}', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'show']);
-    Route::patch('return-requests/{returnRequest}/status', [\App\Http\Controllers\Admin\ReturnRequestController::class, 'updateStatus']);
+    Route::get('return-requests', [ReturnRequestController::class, 'index']);
+    Route::post('return-requests', [ReturnRequestController::class, 'store']);
+    Route::get('return-requests/{returnRequest}', [ReturnRequestController::class, 'show']);
+    Route::patch('return-requests/{returnRequest}/status', [ReturnRequestController::class, 'updateStatus']);
 
     // ── Statistics ────────────────────────────────────────────────────────────
     Route::prefix('statistics')->group(function () {
-        Route::get('dashboard',    [StatisticController::class, 'dashboard']);
+        Route::get('dashboard', [StatisticController::class, 'dashboard']);
         Route::get('top-products', [StatisticController::class, 'topProducts']);
-        Route::get('low-stock',    [StatisticController::class, 'lowStock']);
+        Route::get('low-stock', [StatisticController::class, 'lowStock']);
     });
 });
 
@@ -124,7 +126,7 @@ Route::prefix('client')->group(function () {
     Route::get('products/brands', [ClientProductController::class, 'brands']);
     Route::get('products/top-rated', [ClientProductController::class, 'topRated']);
     Route::get('products/{idOrSlug}', [ClientProductController::class, 'show']);
-    Route::get('products/{idOrSlug}/reviews', [\App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+    Route::get('products/{idOrSlug}/reviews', [App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
 
     // GHN Shipping proxy
     Route::prefix('shipping')->group(function () {
@@ -137,10 +139,11 @@ Route::prefix('client')->group(function () {
 
     // Categories (public — for filter sidebar & mega menu)
     Route::get('categories/tree', function () {
-        $roots = \App\Models\Category::whereNull('parent_id')
+        $roots = Category::whereNull('parent_id')
             ->with(['children.children'])
             ->orderBy('name')
             ->get();
+
         return response()->json(['success' => true, 'data' => $roots]);
     });
     Route::get('categories', [AdminCategoryController::class, 'index']);
@@ -153,6 +156,7 @@ Route::prefix('client')->group(function () {
         if ($response->failed()) {
             return response()->json(['message' => 'Brand not found'], 404);
         }
+
         return $response->json();
     });
 
@@ -166,10 +170,10 @@ Route::prefix('client')->group(function () {
     });
 
     Route::prefix('auth')->middleware(['auth:sanctum'])->group(function () {
-        Route::post('logout',           [ClientAuthController::class, 'logout']);
-        Route::get('me',                [ClientAuthController::class, 'me']);
-        Route::put('profile',           [ClientAuthController::class, 'updateProfile']);
-        Route::put('change-password',   [ClientAuthController::class, 'changePassword']);
+        Route::post('logout', [ClientAuthController::class, 'logout']);
+        Route::get('me', [ClientAuthController::class, 'me']);
+        Route::put('profile', [ClientAuthController::class, 'updateProfile']);
+        Route::put('change-password', [ClientAuthController::class, 'changePassword']);
     });
 
     // ── VNPAY (public - VNPAY server gọi không có token) ────────────────────
@@ -177,9 +181,9 @@ Route::prefix('client')->group(function () {
     Route::post('vnpay/ipn', [ClientVNPayController::class, 'ipn']);
 
     // ── SePay (public webhook + public check) ─────────────────────────────
-    Route::post('sepay/webhook',          [ClientSePayController::class, 'webhook']);
+    Route::post('sepay/webhook', [ClientSePayController::class, 'webhook']);
     Route::get('sepay/check/{orderCode}', [ClientSePayController::class, 'checkStatus']);
-    Route::get('sepay/info/{orderCode}',  [ClientSePayController::class, 'paymentInfo']);
+    Route::get('sepay/info/{orderCode}', [ClientSePayController::class, 'paymentInfo']);
 
     // ── Protected Client Routes (yêu cầu đăng nhập customer) ────────────────
     Route::middleware(['auth:sanctum'])->group(function () {
@@ -192,44 +196,44 @@ Route::prefix('client')->group(function () {
         Route::delete('cart/items/{id}', [ClientCartController::class, 'removeItem']);
 
         // Orders
-        Route::get('orders',             [ClientOrderController::class, 'index']);
-        Route::post('orders',            [ClientOrderController::class, 'store']);
-        Route::get('orders/{code}',      [ClientOrderController::class, 'show']);
+        Route::get('orders', [ClientOrderController::class, 'index']);
+        Route::post('orders', [ClientOrderController::class, 'store']);
+        Route::get('orders/{code}', [ClientOrderController::class, 'show']);
 
         // Coupons
-        Route::get('coupons',                 [\App\Http\Controllers\Client\CouponController::class, 'index']);
-        Route::get('coupons/collectable',     [\App\Http\Controllers\Client\CouponController::class, 'collectable']);
-        Route::post('coupons/collect',        [\App\Http\Controllers\Client\CouponController::class, 'collect']);
-        Route::post('coupons/apply',          [\App\Http\Controllers\Client\CouponController::class, 'apply']);
+        Route::get('coupons', [App\Http\Controllers\Client\CouponController::class, 'index']);
+        Route::get('coupons/collectable', [App\Http\Controllers\Client\CouponController::class, 'collectable']);
+        Route::post('coupons/collect', [App\Http\Controllers\Client\CouponController::class, 'collect']);
+        Route::post('coupons/apply', [App\Http\Controllers\Client\CouponController::class, 'apply']);
 
         // Addresses
-        Route::get('addresses',               [\App\Http\Controllers\Client\CustomerAddressController::class, 'index']);
-        Route::post('addresses',              [\App\Http\Controllers\Client\CustomerAddressController::class, 'store']);
-        Route::put('addresses/{id}',          [\App\Http\Controllers\Client\CustomerAddressController::class, 'update']);
-        Route::delete('addresses/{id}',       [\App\Http\Controllers\Client\CustomerAddressController::class, 'destroy']);
+        Route::get('addresses', [CustomerAddressController::class, 'index']);
+        Route::post('addresses', [CustomerAddressController::class, 'store']);
+        Route::put('addresses/{id}', [CustomerAddressController::class, 'update']);
+        Route::delete('addresses/{id}', [CustomerAddressController::class, 'destroy']);
         // Reviews
-        Route::get('reviews',                 [\App\Http\Controllers\Client\ReviewController::class, 'index']);
-        Route::post('reviews',                [\App\Http\Controllers\Client\ReviewController::class, 'store']);
-        Route::get('products/{productId}/review-eligibility', [\App\Http\Controllers\Client\ReviewController::class, 'checkEligibility']);
+        Route::get('reviews', [App\Http\Controllers\Client\ReviewController::class, 'index']);
+        Route::post('reviews', [App\Http\Controllers\Client\ReviewController::class, 'store']);
+        Route::get('products/{productId}/review-eligibility', [App\Http\Controllers\Client\ReviewController::class, 'checkEligibility']);
 
         // Wishlist
-        Route::get('wishlist',                [\App\Http\Controllers\Client\WishlistController::class, 'index']);
-        Route::post('wishlist/toggle',        [\App\Http\Controllers\Client\WishlistController::class, 'toggle']);
-        Route::delete('wishlist/{productId}', [\App\Http\Controllers\Client\WishlistController::class, 'destroy']);
+        Route::get('wishlist', [WishlistController::class, 'index']);
+        Route::post('wishlist/toggle', [WishlistController::class, 'toggle']);
+        Route::delete('wishlist/{productId}', [WishlistController::class, 'destroy']);
 
         // AI Chat History & Sync
-        Route::get('ai/history',             [ClientAiChatController::class, 'history']);
+        Route::get('ai/history', [ClientAiChatController::class, 'history']);
         Route::post('ai/sync-guest-history', [ClientAiChatController::class, 'syncGuestHistory']);
 
         // Return Requests
-        Route::get('return-requests',        [\App\Http\Controllers\Client\ReturnRequestController::class, 'index']);
-        Route::post('return-requests',       [\App\Http\Controllers\Client\ReturnRequestController::class, 'store']);
-        Route::get('return-requests/{id}',   [\App\Http\Controllers\Client\ReturnRequestController::class, 'show']);
+        Route::get('return-requests', [App\Http\Controllers\Client\ReturnRequestController::class, 'index']);
+        Route::post('return-requests', [App\Http\Controllers\Client\ReturnRequestController::class, 'store']);
+        Route::get('return-requests/{id}', [App\Http\Controllers\Client\ReturnRequestController::class, 'show']);
 
         // Notifications
-        Route::get('notifications',                  [ClientNotificationController::class, 'index']);
-        Route::get('notifications/unread-count',     [ClientNotificationController::class, 'unreadCount']);
-        Route::patch('notifications/read-all',       [ClientNotificationController::class, 'markAllAsRead']);
-        Route::patch('notifications/{id}/read',      [ClientNotificationController::class, 'markAsRead']);
+        Route::get('notifications', [ClientNotificationController::class, 'index']);
+        Route::get('notifications/unread-count', [ClientNotificationController::class, 'unreadCount']);
+        Route::patch('notifications/read-all', [ClientNotificationController::class, 'markAllAsRead']);
+        Route::patch('notifications/{id}/read', [ClientNotificationController::class, 'markAsRead']);
     });
 });

@@ -49,18 +49,18 @@ class AttributeController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->attributeService->getList([
-            'search'   => $request->query('search'),
+            'search' => $request->query('search'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => AttributeResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => AttributeResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -97,7 +97,7 @@ class AttributeController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new AttributeResource($attribute),
+            'data' => new AttributeResource($attribute),
             'message' => 'Thuộc tính đã được thêm thành công.',
         ], 201);
     }
@@ -125,7 +125,7 @@ class AttributeController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new AttributeResource($attribute),
+            'data' => new AttributeResource($attribute),
         ]);
     }
 
@@ -162,7 +162,7 @@ class AttributeController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new AttributeResource($updated),
+            'data' => new AttributeResource($updated),
             'message' => 'Thuộc tính đã được cập nhật thành công.',
         ]);
     }

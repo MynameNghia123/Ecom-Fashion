@@ -4,8 +4,8 @@ namespace App\Repositories\Client\Implements;
 
 use App\Models\Notification;
 use App\Repositories\Client\Interfaces\NotificationRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 
 class NotificationRepository implements NotificationRepositoryInterface
 {
@@ -33,12 +33,13 @@ class NotificationRepository implements NotificationRepositoryInterface
         $notification = Notification::where('customer_id', $customerId)
             ->where('id', $id)
             ->first();
-            
-        if ($notification && !$notification->is_read) {
+
+        if ($notification && ! $notification->is_read) {
             $notification->update(['is_read' => true]);
+
             return true;
         }
-        
+
         return false;
     }
 

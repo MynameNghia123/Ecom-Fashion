@@ -43,17 +43,16 @@ return [
     ],
 
     'ghn' => [
-        'url'     => env('GHN_API_URL', 'https://online-gateway.ghn.vn/shiip/public-api'),
-        'token'   => env('GHN_TOKEN'),
+        'url' => env('GHN_API_URL', 'https://online-gateway.ghn.vn/shiip/public-api'),
+        'token' => env('GHN_TOKEN'),
         'shop_id' => env('GHN_SHOP_ID'),
     ],
 
     'sepay' => [
-        'base_url'     => env('SEPAY_BASE_URL', 'https://pgapi-sandbox.sepay.vn'),
-        'secret_key'   => env('SEPAY_SECRET_KEY'),
+        'base_url' => env('SEPAY_BASE_URL', 'https://pgapi-sandbox.sepay.vn'),
+        'secret_key' => env('SEPAY_SECRET_KEY'),
         'bank_account' => env('SEPAY_BANK_ACCOUNT'),
-        'bank_name'    => env('SEPAY_BANK_NAME', 'MBBank'),
+        'bank_name' => env('SEPAY_BANK_NAME', 'MBBank'),
     ],
 
 ];
-

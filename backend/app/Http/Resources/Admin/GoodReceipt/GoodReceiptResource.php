@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Admin\GoodReceipt;
 
-use App\Http\Resources\Admin\GoodReceipt\GoodReceiptDetailResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

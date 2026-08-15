@@ -14,21 +14,21 @@ interface BaseServiceInterface
     /**
      * Lấy danh sách có filter + phân trang.
      *
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      */
     public function getList(array $filters): LengthAwarePaginator;
 
     /**
      * Tạo bản ghi mới.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Model;
 
     /**
      * Cập nhật bản ghi.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function update(Model $model, array $data): Model;
 

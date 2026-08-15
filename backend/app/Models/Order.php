@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -25,10 +26,10 @@ class Order extends Model
     ];
 
     protected $casts = [
-        'sub_total_amount'      => 'decimal:2',
-        'coupon_discount_amount'=> 'decimal:2',
-        'shipping_fee'          => 'decimal:2',
-        'final_amount'          => 'decimal:2',
+        'sub_total_amount' => 'decimal:2',
+        'coupon_discount_amount' => 'decimal:2',
+        'shipping_fee' => 'decimal:2',
+        'final_amount' => 'decimal:2',
     ];
 
     public function customer(): BelongsTo

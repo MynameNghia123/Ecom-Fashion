@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Models;
+
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -19,10 +21,10 @@ class GoodReceiptDetail extends Model
     protected function casts(): array
     {
         return [
-            'goods_receipt_id'   => 'integer',
+            'goods_receipt_id' => 'integer',
             'product_variant_id' => 'integer',
-            'quantity'           => 'integer',
-            'import_price'       => 'integer', 
+            'quantity' => 'integer',
+            'import_price' => 'integer',
         ];
     }
 
@@ -30,7 +32,7 @@ class GoodReceiptDetail extends Model
     {
         return $this->belongsTo(ProductVariant::class);
     }
-    
+
     public function goodReceipt(): BelongsTo
     {
         return $this->belongsTo(GoodReceipt::class, 'goods_receipt_id');

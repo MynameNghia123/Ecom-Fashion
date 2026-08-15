@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Admin\Implements;
 
 use App\Models\ProductImage;
@@ -10,7 +11,7 @@ class ProductImageService implements ProductImageServiceInterface
 {
     public function __construct(
         private readonly ProductImageRepositoryInterface $repo
-    ){}
+    ) {}
 
     public function create(array $data): ProductImage
     {
@@ -26,10 +27,12 @@ class ProductImageService implements ProductImageServiceInterface
     {
         $this->repo->delete($model);
     }
-   
+
     public function insertMany(array $data, int $productId): void
     {
-        if (empty($data)) return;
+        if (empty($data)) {
+            return;
+        }
 
         $now = now();
 
@@ -52,7 +55,7 @@ class ProductImageService implements ProductImageServiceInterface
     {
         // Lấy tất cả images hiện có của product, đánh index theo id
         $existingImages = $product->productImages->keyBy('id');
-        $keptImageIds   = [];
+        $keptImageIds = [];
 
         foreach ($images as $imageData) {
             $imageId = $imageData['id'] ?? null;
@@ -73,7 +76,7 @@ class ProductImageService implements ProductImageServiceInterface
 
         // ── DELETE images không còn trong danh sách ───────────────────────
         foreach ($existingImages as $oldImage) {
-            if (!in_array($oldImage->id, $keptImageIds)) {
+            if (! in_array($oldImage->id, $keptImageIds)) {
                 $this->repo->delete($oldImage);
             }
         }

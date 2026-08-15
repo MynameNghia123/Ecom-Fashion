@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\ProductVariant;
@@ -14,15 +16,15 @@ class CartService implements CartServiceInterface
     {
         $cart = $this->repo->getActiveCartByCustomerId($customerId);
         $cart = $this->repo->loadCartRelations($cart);
-        
+
         return $this->formatCart($cart);
     }
 
     public function addItem(int $customerId, int $variantId, int $quantity): array
     {
         $variant = ProductVariant::find($variantId);
-        
-        if (!$variant) {
+
+        if (! $variant) {
             return ['success' => false, 'message' => 'Sản phẩm không tồn tại.'];
         }
 
@@ -48,7 +50,7 @@ class CartService implements CartServiceInterface
         return [
             'success' => true,
             'message' => 'Đã thêm vào giỏ hàng.',
-            'data'    => $this->formatCart($cart),
+            'data' => $this->formatCart($cart),
         ];
     }
 
@@ -57,7 +59,7 @@ class CartService implements CartServiceInterface
         $cart = $this->repo->getActiveCartByCustomerId($customerId);
         $item = $this->repo->findCartItem($cart->id, $itemId);
 
-        if (!$item) {
+        if (! $item) {
             return ['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.'];
         }
 
@@ -73,7 +75,7 @@ class CartService implements CartServiceInterface
         return [
             'success' => true,
             'message' => 'Đã cập nhật số lượng.',
-            'data'    => $this->formatCart($cart),
+            'data' => $this->formatCart($cart),
         ];
     }
 
@@ -82,7 +84,7 @@ class CartService implements CartServiceInterface
         $cart = $this->repo->getActiveCartByCustomerId($customerId);
         $item = $this->repo->findCartItem($cart->id, $itemId);
 
-        if (!$item) {
+        if (! $item) {
             return ['success' => false, 'message' => 'Không tìm thấy sản phẩm trong giỏ hàng.'];
         }
 
@@ -93,7 +95,7 @@ class CartService implements CartServiceInterface
         return [
             'success' => true,
             'message' => 'Đã xóa sản phẩm khỏi giỏ hàng.',
-            'data'    => $this->formatCart($cart),
+            'data' => $this->formatCart($cart),
         ];
     }
 
@@ -110,7 +112,7 @@ class CartService implements CartServiceInterface
         return [
             'success' => true,
             'message' => 'Đồng bộ giỏ hàng thành công.',
-            'data'    => $this->formatCart($cart),
+            'data' => $this->formatCart($cart),
         ];
     }
 
@@ -120,32 +122,32 @@ class CartService implements CartServiceInterface
             $variant = $item->productVariant;
             $product = $variant->product;
 
-            $attributes = $variant->attributeValues->map(fn($av) => [
+            $attributes = $variant->attributeValues->map(fn ($av) => [
                 'attribute' => $av->attribute?->name,
-                'value'     => $av->value,
+                'value' => $av->value,
             ]);
 
             $price = $variant->sale_price ?? $variant->price;
 
             return [
-                'id'                 => $item->id,
+                'id' => $item->id,
                 'product_variant_id' => $variant->id,
-                'quantity'           => $item->quantity,
-                'price'              => $price,
-                'subtotal'           => $price * $item->quantity,
-                'product_name'       => $product?->name,
-                'product_thumbnail'  => $product?->thumbnail,
-                'sku'                => $variant->sku,
-                'stock_quantity'     => $variant->stock_quantity,
-                'attributes'         => $attributes,
+                'quantity' => $item->quantity,
+                'price' => $price,
+                'subtotal' => $price * $item->quantity,
+                'product_name' => $product?->name,
+                'product_thumbnail' => $product?->thumbnail,
+                'sku' => $variant->sku,
+                'stock_quantity' => $variant->stock_quantity,
+                'attributes' => $attributes,
             ];
         });
 
         $totalPrice = $items->sum('subtotal');
 
         return [
-            'id'          => $cart->id,
-            'items'       => $items,
+            'id' => $cart->id,
+            'items' => $items,
             'total_items' => $items->count(),
             'total_price' => $totalPrice,
         ];

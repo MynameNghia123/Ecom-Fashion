@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Admin\Implements;
 
 use App\Models\ProductImage;
@@ -9,7 +10,7 @@ class ProductImageRepository implements ProductImageRepositoryInterface
 {
     public function __construct(
         private readonly ProductImage $model
-    ){}
+    ) {}
 
     /**
      * Tìm theo ID.
@@ -18,16 +19,19 @@ class ProductImageRepository implements ProductImageRepositoryInterface
     {
         return $this->model->find($id);
     }
+
     /**
      * Chèn nhiều bức ảnh.
      */
     public function insertMany(array $data): bool
     {
-        if (empty($data))
+        if (empty($data)) {
             return false;
+        }
+
         return $this->model->insert($data);
     }
-     
+
     /**
      * INSERT bản ghi mới.
      */
@@ -51,6 +55,6 @@ class ProductImageRepository implements ProductImageRepositoryInterface
      */
     public function delete(Model $model): void
     {
-         $model->delete();
+        $model->delete();
     }
 }

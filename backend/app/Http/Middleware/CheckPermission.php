@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Staff;
 use Closure;
 use Illuminate\Http\Request;
 
@@ -26,13 +27,13 @@ class CheckPermission
     public function handle(Request $request, Closure $next, string $module)
     {
         // Require user to be authenticated (e.g. auth:sanctum or default guard)
-        /** @var \App\Models\Staff|null $user */
+        /** @var Staff|null $user */
         $user = $request->user();
 
-        // If no user is logged in, you can return 401. 
-        // For testing when auth is not fully configured, you might bypass this temporarily, 
+        // If no user is logged in, you can return 401.
+        // For testing when auth is not fully configured, you might bypass this temporarily,
         // but for security it should strictly return 401.
-        if (!$user) {
+        if (! $user) {
             return response()->json([
                 'success' => false,
                 'message' => 'Bạn chưa đăng nhập hoặc phiên đăng nhập đã hết hạn.',
@@ -43,7 +44,7 @@ class CheckPermission
         $action = $this->actionMap[$request->method()] ?? 'view';
 
         // Check if user has permission
-        if (!$user->hasPermission($module, $action)) {
+        if (! $user->hasPermission($module, $action)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Bạn không có quyền thực hiện hành động này.',

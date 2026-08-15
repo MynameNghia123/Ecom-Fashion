@@ -1,7 +1,7 @@
 <?php
+
 namespace App\Http\Resources\Admin\Product;
 
-use App\Http\Resources\Admin\Product\ProductVariantResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -14,7 +14,7 @@ class ProductResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // 										created_at			
+        // 										created_at
 
         return [
             'id' => $this->id,
@@ -26,7 +26,6 @@ class ProductResource extends JsonResource
             'thumbnail' => $this->thumbnail,
             'user_manual' => $this->user_manual,
             'is_active' => $this->is_active,
-
 
             // có nhiều image
             'images' => ProductImageResource::collection($this->whenLoaded('productImages')),

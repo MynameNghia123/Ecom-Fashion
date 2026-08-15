@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Repositories\Client\Interfaces\CartRepositoryInterface;
@@ -29,9 +31,9 @@ class CartRepository implements CartRepositoryInterface
     public function createCartItem(int $cartId, int $variantId, int $quantity): CartItem
     {
         return $this->itemModel->create([
-            'cart_id'            => $cartId,
+            'cart_id' => $cartId,
             'product_variant_id' => $variantId,
-            'quantity'           => $quantity,
+            'quantity' => $quantity,
         ]);
     }
 

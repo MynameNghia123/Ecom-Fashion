@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\Order;
 
 use Illuminate\Foundation\Http\FormRequest;

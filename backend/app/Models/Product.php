@@ -28,7 +28,7 @@ class Product extends Model
      * Tự động cast kiểu dữ liệu khi đọc từ DB.
      */
     protected $casts = [
-        'is_active'  => 'boolean',
+        'is_active' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
@@ -64,4 +64,4 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
-}
+}

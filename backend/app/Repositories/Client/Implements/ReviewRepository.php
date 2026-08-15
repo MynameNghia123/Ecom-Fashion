@@ -1,5 +1,8 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
+use App\Models\OrderDetail;
 use App\Models\Review;
 use App\Repositories\Client\Interfaces\ReviewRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -12,22 +15,22 @@ class ReviewRepository implements ReviewRepositoryInterface
     {
         return $this->model->with([
             'product',
-            'orderDetail.productVariant.attributeValues.attribute'
+            'orderDetail.productVariant.attributeValues.attribute',
         ])
-        ->where('customer_id', $customerId)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('customer_id', $customerId)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function getProductReviews(int $productId): Collection
     {
         return $this->model->with([
             'customer:id,first_name,last_name',
-            'orderDetail.productVariant.attributeValues.attribute'
+            'orderDetail.productVariant.attributeValues.attribute',
         ])
-        ->where('product_id', $productId)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('product_id', $productId)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function findByOrderDetailId(int $orderDetailId): ?Review
@@ -40,16 +43,16 @@ class ReviewRepository implements ReviewRepositoryInterface
         return $this->model->create($data);
     }
 
-    public function getEligibleOrderDetail(int $customerId, int $productId): ?\App\Models\OrderDetail
+    public function getEligibleOrderDetail(int $customerId, int $productId): ?OrderDetail
     {
-        return \App\Models\OrderDetail::whereHas('order', function ($q) use ($customerId) {
+        return OrderDetail::whereHas('order', function ($q) use ($customerId) {
             $q->where('customer_id', $customerId)
-              ->where('status', 'completed');
+                ->where('status', 'completed');
         })
-        ->whereHas('productVariant', function ($q) use ($productId) {
-            $q->where('product_id', $productId);
-        })
-        ->whereDoesntHave('review')
-        ->first();
+            ->whereHas('productVariant', function ($q) use ($productId) {
+                $q->where('product_id', $productId);
+            })
+            ->whereDoesntHave('review')
+            ->first();
     }
 }

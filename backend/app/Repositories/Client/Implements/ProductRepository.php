@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
-use App\Models\Product;
+
 use App\Models\Category;
+use App\Models\Product;
 use App\Repositories\Client\Interfaces\ProductRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
@@ -18,7 +20,7 @@ class ProductRepository implements ProductRepositoryInterface
         $ids = [$categoryId];
         $currentParentIds = [$categoryId];
 
-        while (!empty($currentParentIds)) {
+        while (! empty($currentParentIds)) {
             $childrenIds = Category::whereIn('parent_id', $currentParentIds)->pluck('id')->toArray();
             $newChildren = array_diff($childrenIds, $ids);
             if (empty($newChildren)) {
@@ -36,10 +38,10 @@ class ProductRepository implements ProductRepositoryInterface
         $query = $this->model->where('is_active', true)
             ->with(['category', 'productImages', 'productVariants.attributeValues.attribute']);
 
-        if (!empty($filters['category_id'])) {
+        if (! empty($filters['category_id'])) {
             $categoryIds = $this->getAllCategoryIds((int) $filters['category_id']);
             $query->whereIn('category_id', $categoryIds);
-        } elseif (!empty($filters['category_slug'])) {
+        } elseif (! empty($filters['category_slug'])) {
             $category = Category::where('slug', $filters['category_slug'])->first();
             if ($category) {
                 $categoryIds = $this->getAllCategoryIds($category->id);
@@ -51,21 +53,21 @@ class ProductRepository implements ProductRepositoryInterface
             }
         }
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $s = trim($filters['search']);
             $query->where(function ($q) use ($s) {
                 $q->where('name', 'like', "%{$s}%")
-                  ->orWhere('brand', 'like', "%{$s}%")
-                  ->orWhereHas('category', function ($cq) use ($s) {
-                      $cq->where('name', 'like', "%{$s}%");
-                  })
-                  ->orWhereHas('productVariants', function ($vq) use ($s) {
-                      $vq->where('sku', 'like', "%{$s}%");
-                  });
+                    ->orWhere('brand', 'like', "%{$s}%")
+                    ->orWhereHas('category', function ($cq) use ($s) {
+                        $cq->where('name', 'like', "%{$s}%");
+                    })
+                    ->orWhereHas('productVariants', function ($vq) use ($s) {
+                        $vq->where('sku', 'like', "%{$s}%");
+                    });
             });
         }
 
-        if (!empty($filters['brand'])) {
+        if (! empty($filters['brand'])) {
             $query->where('brand', $filters['brand']);
         }
 
@@ -75,7 +77,7 @@ class ProductRepository implements ProductRepositoryInterface
 
             $query->whereHas('productVariants', function ($q) use ($minPrice, $maxPrice) {
                 $q->whereRaw('COALESCE(sale_price, price) >= ?', [$minPrice])
-                  ->whereRaw('COALESCE(sale_price, price) <= ?', [$maxPrice]);
+                    ->whereRaw('COALESCE(sale_price, price) <= ?', [$maxPrice]);
             });
         }
 
@@ -96,9 +98,9 @@ class ProductRepository implements ProductRepositoryInterface
                 break;
             case 'top_rated':
                 $query->withAvg('reviews', 'rating')
-                      ->withCount('reviews')
-                      ->orderByDesc('reviews_avg_rating')
-                      ->orderByDesc('reviews_count');
+                    ->withCount('reviews')
+                    ->orderByDesc('reviews_avg_rating')
+                    ->orderByDesc('reviews_count');
                 break;
             default: // 'latest'
                 $query->latest();

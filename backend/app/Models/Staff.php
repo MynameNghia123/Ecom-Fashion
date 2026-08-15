@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
 /**
@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
  */
 class Staff extends Authenticatable
 {
-    use SoftDeletes, HasApiTokens;
+    use HasApiTokens, SoftDeletes;
 
     protected $table = 'staff';
 
@@ -33,8 +33,8 @@ class Staff extends Authenticatable
     protected function casts(): array
     {
         return [
-            'password'      => 'hashed',
-            'is_active'     => 'boolean',
+            'password' => 'hashed',
+            'is_active' => 'boolean',
             'last_login_at' => 'datetime',
         ];
     }
@@ -72,7 +72,7 @@ class Staff extends Authenticatable
     public function hasPermission(string $module, string $action): bool
     {
         // 1. Tài khoản bị khóa
-        if (!$this->is_active) {
+        if (! $this->is_active) {
             return false;
         }
 
@@ -86,7 +86,7 @@ class Staff extends Authenticatable
 
         // 3. Direct permission trên staff_permissions
         $hasDirect = $this->permissions->contains(
-            fn($p) => $p->module === $module && $p->action === $action
+            fn ($p) => $p->module === $module && $p->action === $action
         );
         if ($hasDirect) {
             return true;
@@ -95,7 +95,7 @@ class Staff extends Authenticatable
         // 4. Permission thông qua role
         foreach ($this->roles as $role) {
             $hasViaRole = $role->permissions->contains(
-                fn($p) => $p->module === $module && $p->action === $action
+                fn ($p) => $p->module === $module && $p->action === $action
             );
             if ($hasViaRole) {
                 return true;

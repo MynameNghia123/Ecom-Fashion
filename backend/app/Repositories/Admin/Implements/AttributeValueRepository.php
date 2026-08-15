@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Admin\Implements;
 
 use App\Models\AttributeValue;
@@ -9,7 +10,7 @@ class AttributeValueRepository implements AttributeValueRepositoryInterface
 {
     public function __construct(
         private readonly AttributeValue $model
-    ){}
+    ) {}
 
     /**
      * Tìm theo ID.
@@ -45,10 +46,12 @@ class AttributeValueRepository implements AttributeValueRepositoryInterface
         $model->delete();
     }
 
-    public function insertMany(array $data) : bool
+    public function insertMany(array $data): bool
     {
-        if (empty($data)) return false;
-        
+        if (empty($data)) {
+            return false;
+        }
+
         return $this->model->insert($data);
     }
 }

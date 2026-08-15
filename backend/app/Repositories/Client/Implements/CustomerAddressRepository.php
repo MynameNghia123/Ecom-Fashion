@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\CustomerAddress;
 use App\Repositories\Client\Interfaces\CustomerAddressRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;

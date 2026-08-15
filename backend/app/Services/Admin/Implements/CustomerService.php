@@ -12,8 +12,7 @@ class CustomerService implements CustomerServiceInterface
 {
     public function __construct(
         private readonly CustomerRepositoryInterface $customerRepositoryInterface
-    ) {
-    }
+    ) {}
 
     public function getList(array $filters): LengthAwarePaginator
     {

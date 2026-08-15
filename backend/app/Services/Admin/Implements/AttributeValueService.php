@@ -48,6 +48,7 @@ class AttributeValueService implements AttributeValueServiceInterface
 
         $prepareAttribute = array_map(function ($attribute) use ($variantId) {
             $attribute['product_variant_id'] = $variantId;
+
             return $attribute;
         }, $attributesData);
 
@@ -63,7 +64,7 @@ class AttributeValueService implements AttributeValueServiceInterface
     public function syncAttributes(Model $variant, array $attributeValues): void
     {
         $existingAttributes = $variant->attributeValues->keyBy('id');
-        $keptAttributeIds   = [];
+        $keptAttributeIds = [];
 
         foreach ($attributeValues as $attrData) {
             $attrId = $attrData['id'] ?? null;
@@ -84,7 +85,7 @@ class AttributeValueService implements AttributeValueServiceInterface
 
         // ── DELETE attribute_values không còn trong danh sách ─────────────
         foreach ($existingAttributes as $oldAttr) {
-            if (!in_array($oldAttr->id, $keptAttributeIds)) {
+            if (! in_array($oldAttr->id, $keptAttributeIds)) {
                 $this->repo->delete($oldAttr);
             }
         }

@@ -16,7 +16,7 @@ class ReturnRequest extends Model
 
     protected $casts = [
         'evidence_images' => 'array',
-        'processed_at'    => 'datetime',
+        'processed_at' => 'datetime',
     ];
 
     public function order(): BelongsTo

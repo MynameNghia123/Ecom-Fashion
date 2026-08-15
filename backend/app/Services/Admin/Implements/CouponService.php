@@ -12,8 +12,7 @@ class CouponService implements CouponServiceInterface
 {
     public function __construct(
         private readonly CouponRepositoryInterface $couponRepositoryInterface
-    ) {
-    }
+    ) {}
 
     public function getList(array $filters): LengthAwarePaginator
     {
@@ -22,13 +21,13 @@ class CouponService implements CouponServiceInterface
 
     public function create(array $data): Coupon
     {
-        if (!isset($data['price_min_order_value']) || $data['price_min_order_value'] === null) {
+        if (! isset($data['price_min_order_value']) || $data['price_min_order_value'] === null) {
             $data['price_min_order_value'] = 0;
         }
-        if (!isset($data['max_usage']) || $data['max_usage'] === null) {
+        if (! isset($data['max_usage']) || $data['max_usage'] === null) {
             $data['max_usage'] = 999999;
         }
-        if (!isset($data['expiry_date']) || $data['expiry_date'] === null) {
+        if (! isset($data['expiry_date']) || $data['expiry_date'] === null) {
             $data['expiry_date'] = '2037-12-31 23:59:59';
         }
 

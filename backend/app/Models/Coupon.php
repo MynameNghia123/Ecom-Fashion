@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\CouponType;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Coupon extends Model
 {
@@ -20,12 +20,13 @@ class Coupon extends Model
     ];
 
     protected $casts = [
-        'is_active'             => 'boolean',
-        'discount_value'        => 'float',
+        'type' => CouponType::class,
+        'is_active' => 'boolean',
+        'discount_value' => 'float',
         'price_min_order_value' => 'float',
-        'max_usage'             => 'integer',
-        'used_count'            => 'integer',
-        'expiry_date'           => 'date:Y-m-d',
+        'max_usage' => 'integer',
+        'used_count' => 'integer',
+        'expiry_date' => 'date:Y-m-d',
     ];
 
     public function createdByStaff()
@@ -33,4 +34,3 @@ class Coupon extends Model
         return $this->belongsTo(Staff::class, 'created_by_staff_id');
     }
 }
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                

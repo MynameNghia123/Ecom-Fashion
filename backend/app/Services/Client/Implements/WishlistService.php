@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Client\Implements;
 
 use App\Repositories\Client\Interfaces\WishlistRepositoryInterface;
@@ -9,7 +10,7 @@ class WishlistService implements WishlistServiceInterface
 {
     public function __construct(
         private readonly WishlistRepositoryInterface $repo
-    ){}
+    ) {}
 
     public function getList(int $customerId): Collection
     {
@@ -22,23 +23,24 @@ class WishlistService implements WishlistServiceInterface
 
         if ($existing) {
             $this->repo->delete($existing);
+
             return [
-                'action'  => 'removed',
+                'action' => 'removed',
                 'message' => 'Đã xóa sản phẩm khỏi danh sách yêu thích',
-                'data'    => null,
+                'data' => null,
             ];
         }
 
         $wishlist = $this->repo->create([
             'customer_id' => $customerId,
-            'product_id'  => $productId,
-            'created_at'  => now(),
+            'product_id' => $productId,
+            'created_at' => now(),
         ]);
 
         return [
-            'action'  => 'added',
+            'action' => 'added',
             'message' => 'Đã thêm sản phẩm vào danh sách yêu thích',
-            'data'    => $wishlist,
+            'data' => $wishlist,
         ];
     }
 

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Services\Admin\Implements;
 
@@ -24,6 +24,7 @@ class BlogService implements BlogServiceInterface
         if (isset($data['status'])) {
             $data['status'] = $data['status'] === 'active';
         }
+
         return $this->blogRepository->create($data);
     }
 
@@ -32,6 +33,7 @@ class BlogService implements BlogServiceInterface
         if (isset($data['status'])) {
             $data['status'] = $data['status'] === 'active';
         }
+
         return $this->blogRepository->update($model, $data);
     }
 

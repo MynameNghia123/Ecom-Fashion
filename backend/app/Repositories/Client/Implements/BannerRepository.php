@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\Banner;
 use App\Repositories\Client\Interfaces\BannerRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -20,7 +22,7 @@ class BannerRepository implements BannerRepositoryInterface
                 $q->whereNull('end_date')->orWhere('end_date', '>=', $now);
             });
 
-        if (!empty($position)) {
+        if (! empty($position)) {
             $query->where('position', $position);
         }
 

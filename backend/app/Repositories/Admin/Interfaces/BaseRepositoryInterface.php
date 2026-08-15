@@ -14,7 +14,7 @@ interface BaseRepositoryInterface
     /**
      * Lấy danh sách có filter + phân trang.
      *
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      */
     public function paginate(array $filters): LengthAwarePaginator;
 
@@ -26,14 +26,14 @@ interface BaseRepositoryInterface
     /**
      * Tạo bản ghi mới.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Model;
 
     /**
      * Cập nhật bản ghi và trả về dữ liệu mới nhất.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function update(Model $model, array $data): Model;
 

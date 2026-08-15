@@ -404,351 +404,6 @@
                 ]
             }
         },
-        "/api/admin/blogs": {
-            "get": {
-                "tags": [
-                    "Blogs"
-                ],
-                "summary": "Lấy danh sách blog (có phân trang & lọc)",
-                "operationId": "4e9918f10ebdbf6e75ed81eab1c1a146",
-                "parameters": [
-                    {
-                        "name": "search",
-                        "in": "query",
-                        "description": "Từ khóa tìm kiếm theo tên",
-                        "required": false,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "name": "status",
-                        "in": "query",
-                        "description": "Lọc theo trạng thái (active|inactive)",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "enum": [
-                                "active",
-                                "inactive"
-                            ]
-                        }
-                    },
-                    {
-                        "name": "per_page",
-                        "in": "query",
-                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
-                        "required": false,
-                        "schema": {
-                            "type": "integer",
-                            "default": 10
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Lấy danh sách thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "object"
-                                            }
-                                        },
-                                        "meta": {
-                                            "properties": {
-                                                "current_page": {
-                                                    "type": "integer",
-                                                    "example": 1
-                                                },
-                                                "per_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                },
-                                                "total": {
-                                                    "type": "integer",
-                                                    "example": 100
-                                                },
-                                                "last_page": {
-                                                    "type": "integer",
-                                                    "example": 10
-                                                }
-                                            },
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "post": {
-                "tags": [
-                    "Blogs"
-                ],
-                "summary": "Tạo bài viết Blog mới",
-                "operationId": "ecf4ff13d7d208d864d9af8afb548dd9",
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "slug",
-                                    "description",
-                                    "image",
-                                    "status"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Xu hướng thời trang 2025"
-                                    },
-                                    "slug": {
-                                        "type": "string",
-                                        "example": "xu-huong-thoi-trang-2025"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Nội dung bài viết..."
-                                    },
-                                    "image": {
-                                        "type": "string",
-                                        "example": "http://localhost/storage/images/blogs/abc.jpg"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "example": "active",
-                                        "enum": [
-                                            "active",
-                                            "inactive"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "201": {
-                        "description": "Tạo thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Bài viết đã được tạo thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "422": {
-                        "description": "Lỗi validate dữ liệu"
-                    }
-                }
-            }
-        },
-        "/api/admin/blogs/{blog}": {
-            "get": {
-                "tags": [
-                    "Blogs"
-                ],
-                "summary": "Xem chi tiết bài viết Blog",
-                "operationId": "159315094b944b3a35ac25c635725a96",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của bài viết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy bài viết"
-                    }
-                }
-            },
-            "put": {
-                "tags": [
-                    "Blogs"
-                ],
-                "summary": "Cập nhật bài viết Blog",
-                "operationId": "098c03d8ff0654f0b1d935671544aacf",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của bài viết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "required": [
-                                    "name",
-                                    "slug",
-                                    "description",
-                                    "image",
-                                    "status"
-                                ],
-                                "properties": {
-                                    "name": {
-                                        "type": "string",
-                                        "example": "Xu hướng thời trang 2025 (cập nhật)"
-                                    },
-                                    "slug": {
-                                        "type": "string",
-                                        "example": "xu-huong-thoi-trang-2025-v2"
-                                    },
-                                    "description": {
-                                        "type": "string",
-                                        "example": "Nội dung bài viết cập nhật..."
-                                    },
-                                    "image": {
-                                        "type": "string",
-                                        "example": "http://localhost/storage/images/blogs/abc.jpg"
-                                    },
-                                    "status": {
-                                        "type": "string",
-                                        "example": "active",
-                                        "enum": [
-                                            "active",
-                                            "inactive"
-                                        ]
-                                    }
-                                },
-                                "type": "object"
-                            }
-                        }
-                    }
-                },
-                "responses": {
-                    "200": {
-                        "description": "Cập nhật thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "data": {
-                                            "type": "object"
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Bài viết đã được cập nhật thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy bài viết"
-                    },
-                    "422": {
-                        "description": "Lỗi validate dữ liệu"
-                    }
-                }
-            },
-            "delete": {
-                "tags": [
-                    "Blogs"
-                ],
-                "summary": "Xóa bài viết Blog",
-                "operationId": "d518e5d819cec81ffd7ba5138abce15f",
-                "parameters": [
-                    {
-                        "name": "blog",
-                        "in": "path",
-                        "description": "ID của bài viết",
-                        "required": true,
-                        "schema": {
-                            "type": "integer"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Xóa thành công",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "success": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Bài viết đã được xóa thành công."
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Không tìm thấy bài viết"
-                    }
-                }
-            }
-        },
         "/api/admin/banners": {
             "get": {
                 "tags": [
@@ -1110,6 +765,351 @@
                     },
                     "404": {
                         "description": "Không tìm thấy banner"
+                    }
+                }
+            }
+        },
+        "/api/admin/blogs": {
+            "get": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Lấy danh sách blog (có phân trang & lọc)",
+                "operationId": "4e9918f10ebdbf6e75ed81eab1c1a146",
+                "parameters": [
+                    {
+                        "name": "search",
+                        "in": "query",
+                        "description": "Từ khóa tìm kiếm theo tên",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Lọc theo trạng thái (active|inactive)",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "active",
+                                "inactive"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "Số bản ghi mỗi trang (mặc định: 10)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Lấy danh sách thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "meta": {
+                                            "properties": {
+                                                "current_page": {
+                                                    "type": "integer",
+                                                    "example": 1
+                                                },
+                                                "per_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                },
+                                                "total": {
+                                                    "type": "integer",
+                                                    "example": 100
+                                                },
+                                                "last_page": {
+                                                    "type": "integer",
+                                                    "example": 10
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Tạo bài viết Blog mới",
+                "operationId": "ecf4ff13d7d208d864d9af8afb548dd9",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug",
+                                    "description",
+                                    "image",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Xu hướng thời trang 2025"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "xu-huong-thoi-trang-2025"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Nội dung bài viết..."
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "http://localhost/storage/images/blogs/abc.jpg"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Tạo thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bài viết đã được tạo thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            }
+        },
+        "/api/admin/blogs/{blog}": {
+            "get": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Xem chi tiết bài viết Blog",
+                "operationId": "159315094b944b3a35ac25c635725a96",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy bài viết"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Cập nhật bài viết Blog",
+                "operationId": "098c03d8ff0654f0b1d935671544aacf",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "slug",
+                                    "description",
+                                    "image",
+                                    "status"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "Xu hướng thời trang 2025 (cập nhật)"
+                                    },
+                                    "slug": {
+                                        "type": "string",
+                                        "example": "xu-huong-thoi-trang-2025-v2"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Nội dung bài viết cập nhật..."
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": "http://localhost/storage/images/blogs/abc.jpg"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "example": "active",
+                                        "enum": [
+                                            "active",
+                                            "inactive"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Cập nhật thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "data": {
+                                            "type": "object"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bài viết đã được cập nhật thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy bài viết"
+                    },
+                    "422": {
+                        "description": "Lỗi validate dữ liệu"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Blogs"
+                ],
+                "summary": "Xóa bài viết Blog",
+                "operationId": "d518e5d819cec81ffd7ba5138abce15f",
+                "parameters": [
+                    {
+                        "name": "blog",
+                        "in": "path",
+                        "description": "ID của bài viết",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Xóa thành công",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bài viết đã được xóa thành công."
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Không tìm thấy bài viết"
                     }
                 }
             }
@@ -4517,12 +4517,12 @@
             "description": "Đăng nhập & Xác thực hệ thống Admin"
         },
         {
-            "name": "Blogs",
-            "description": "Quản lý bài viết Blog"
-        },
-        {
             "name": "Banners",
             "description": "Quản lý Banner quảng cáo"
+        },
+        {
+            "name": "Blogs",
+            "description": "Quản lý bài viết Blog"
         },
         {
             "name": "Categories",

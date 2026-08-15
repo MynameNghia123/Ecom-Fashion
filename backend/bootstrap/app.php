@@ -1,14 +1,14 @@
 <?php
 
+use App\Http\Middleware\CheckPermission;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\HttpExceptionInterface;
-
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -19,7 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'permission' => \App\Http\Middleware\CheckPermission::class,
+            'permission' => CheckPermission::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -34,13 +34,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 return response()->json([
                     'success' => false,
                     'message' => 'Dữ liệu đầu vào không hợp lệ.',
-                    'errors'  => $e->errors(),
+                    'errors' => $e->errors(),
                 ], 422);
             }
 
             // ── 2. Model Not Found (404) ───────────────────────────────────
             if ($e instanceof ModelNotFoundException) {
                 $model = class_basename($e->getModel());
+
                 return response()->json([
                     'success' => false,
                     'message' => "Không tìm thấy dữ liệu {$model} hoặc đã bị xóa.",

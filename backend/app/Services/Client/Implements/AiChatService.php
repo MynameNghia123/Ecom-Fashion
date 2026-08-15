@@ -1,5 +1,8 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
+use App\Models\Category;
 use App\Models\Product;
 use App\Repositories\Client\Interfaces\AiChatRepositoryInterface;
 use App\Services\Client\Interfaces\AiChatServiceInterface;
@@ -13,11 +16,11 @@ class AiChatService implements AiChatServiceInterface
     public function chat(array $messages, ?int $productId, ?int $customerId): array
     {
         $apiKey = trim(config('services.gemini.key'));
-        if (!$apiKey) {
+        if (! $apiKey) {
             return [
                 'success' => false,
                 'message' => 'AI service chưa được cấu hình API Key.',
-                'code'    => 503,
+                'code' => 503,
             ];
         }
 
@@ -29,15 +32,15 @@ class AiChatService implements AiChatServiceInterface
         } else {
             $latestMsg = collect($messages)->last();
             $queryText = $latestMsg ? trim($latestMsg['content']) : '';
-            
+
             if (strlen($queryText) > 3) {
                 $product = Product::with(['productVariants.attributeValues.attribute', 'productImages'])
                     ->whereRaw('INSTR(?, `name`) > 0', [$queryText])
                     ->first();
 
-                if (!$product) {
+                if (! $product) {
                     preg_match_all('/[a-zA-Z0-9-]{5,}/', $queryText, $matches);
-                    if (!empty($matches[0])) {
+                    if (! empty($matches[0])) {
                         foreach ($matches[0] as $code) {
                             $product = Product::where('name', 'like', "%{$code}%")
                                 ->orWhereHas('productVariants', function ($q) use ($code) {
@@ -45,7 +48,9 @@ class AiChatService implements AiChatServiceInterface
                                 })
                                 ->with(['productVariants.attributeValues.attribute', 'productImages'])
                                 ->first();
-                            if ($product) break;
+                            if ($product) {
+                                break;
+                            }
                         }
                     }
                 }
@@ -57,61 +62,61 @@ class AiChatService implements AiChatServiceInterface
             foreach ($product->productVariants as $v) {
                 $attrs = [];
                 foreach ($v->attributeValues as $av) {
-                    $attrs[] = ($av->attribute->name ?? 'Attribute') . ': ' . $av->value;
+                    $attrs[] = ($av->attribute->name ?? 'Attribute').': '.$av->value;
                 }
                 $attrStr = implode(', ', $attrs);
-                $price = number_format($v->price) . ' VND';
-                $salePrice = $v->sale_price ? (number_format($v->sale_price) . ' VND') : 'Không có';
+                $price = number_format($v->price).' VND';
+                $salePrice = $v->sale_price ? (number_format($v->sale_price).' VND') : 'Không có';
                 $variantsInfo[] = "- SKU: {$v->sku} | Giá gốc: {$price} | Giá sale: {$salePrice} | Kho: {$v->stock_quantity} | Biến thể ({$attrStr})";
             }
             $variantsText = implode("\n", $variantsInfo);
 
             $imagesInfo = [];
             foreach ($product->productImages as $img) {
-                $url = str_starts_with($img->image_path, 'http') ? $img->image_path : "http://localhost:8000/storage/" . $img->image_path;
-                $imagesInfo[] = "- " . $url;
+                $url = str_starts_with($img->image_path, 'http') ? $img->image_path : 'http://localhost:8000/storage/'.$img->image_path;
+                $imagesInfo[] = '- '.$url;
             }
-            $imagesText = !empty($imagesInfo) ? implode("\n", $imagesInfo) : "Không có ảnh";
+            $imagesText = ! empty($imagesInfo) ? implode("\n", $imagesInfo) : 'Không có ảnh';
 
-            $productContext = "DƯỚI ĐÂY LÀ THÔNG TIN SẢN PHẨM KHÁCH HÀNG ĐANG HỎI/XEM (Hãy trả lời chính xác theo thông tin này, không tự bịa giá hoặc size):\n" .
-                "Tên sản phẩm: {$product->name}\n" .
-                "Thương hiệu: {$product->brand}\n" .
-                "Mô tả: {$product->description}\n" .
-                "Hình ảnh sản phẩm (bạn có thể gợi ý khách xem):\n" .
-                $imagesText . "\n\n" .
-                "Các biến thể/Size/Màu sắc hiện có trong kho:\n" .
-                $variantsText . "\n\n";
+            $productContext = "DƯỚI ĐÂY LÀ THÔNG TIN SẢN PHẨM KHÁCH HÀNG ĐANG HỎI/XEM (Hãy trả lời chính xác theo thông tin này, không tự bịa giá hoặc size):\n".
+                "Tên sản phẩm: {$product->name}\n".
+                "Thương hiệu: {$product->brand}\n".
+                "Mô tả: {$product->description}\n".
+                "Hình ảnh sản phẩm (bạn có thể gợi ý khách xem):\n".
+                $imagesText."\n\n".
+                "Các biến thể/Size/Màu sắc hiện có trong kho:\n".
+                $variantsText."\n\n";
         }
 
         $catalogContext = '';
-        if (!$product) {
-            $categories = \App\Models\Category::pluck('name')->toArray();
-            $productsList = \App\Models\Product::select('name', 'brand')->limit(30)->get();
-            
-            $catText = !empty($categories) ? implode(', ', $categories) : 'Thời trang nam, nữ, phụ kiện';
+        if (! $product) {
+            $categories = Category::pluck('name')->toArray();
+            $productsList = Product::select('name', 'brand')->limit(30)->get();
+
+            $catText = ! empty($categories) ? implode(', ', $categories) : 'Thời trang nam, nữ, phụ kiện';
             $prodText = '';
             foreach ($productsList as $p) {
-                $prodText .= "- {$p->name}" . ($p->brand ? " ({$p->brand})" : "") . "\n";
+                $prodText .= "- {$p->name}".($p->brand ? " ({$p->brand})" : '')."\n";
             }
 
-            $catalogContext = "HIỆN TẠI CỬA HÀNG ĐANG BÁN CÁC DANH MỤC CHÍNH SAU: {$catText}.\n\n" .
-                              "DANH SÁCH MỘT SỐ SẢN PHẨM CỬA HÀNG ĐANG CÓ:\n{$prodText}\n" .
+            $catalogContext = "HIỆN TẠI CỬA HÀNG ĐANG BÁN CÁC DANH MỤC CHÍNH SAU: {$catText}.\n\n".
+                              "DANH SÁCH MỘT SỐ SẢN PHẨM CỬA HÀNG ĐANG CÓ:\n{$prodText}\n".
                               "LƯU Ý QUAN TRỌNG: Nếu khách hỏi cửa hàng có bán những gì, HÃY DỰA VÀO DANH SÁCH TRÊN ĐỂ TRẢ LỜI. TUYỆT ĐỐI KHÔNG được tự bịa ra các sản phẩm không có trong danh sách này.\n\n";
         }
 
         $systemInstruction = [
             'parts' => [[
-                'text' => 'Bạn là Trợ lý thời trang AI của thương hiệu Ecom Fashion. ' .
-                          'Nhiệm vụ của bạn là tư vấn phong cách, gợi ý trang phục, phối đồ và giải đáp về thời trang. ' .
-                          'Luôn trả lời bằng tiếng Việt, ngắn gọn, thân thiện, lịch sự và chuyên nghiệp.' . "\n\n" .
-                          $catalogContext .
-                          $productContext
-            ]]
+                'text' => 'Bạn là Trợ lý thời trang AI của thương hiệu Ecom Fashion. '.
+                          'Nhiệm vụ của bạn là tư vấn phong cách, gợi ý trang phục, phối đồ và giải đáp về thời trang. '.
+                          'Luôn trả lời bằng tiếng Việt, ngắn gọn, thân thiện, lịch sự và chuyên nghiệp.'."\n\n".
+                          $catalogContext.
+                          $productContext,
+            ]],
         ];
 
-        $contents = collect($messages)->map(fn($msg) => [
+        $contents = collect($messages)->map(fn ($msg) => [
             'role' => $msg['role'] === 'model' ? 'model' : 'user',
-            'parts' => [['text' => $msg['content']]]
+            'parts' => [['text' => $msg['content']]],
         ])->values()->toArray();
 
         $payload = [
@@ -120,23 +125,25 @@ class AiChatService implements AiChatServiceInterface
             'generationConfig' => [
                 'maxOutputTokens' => 1024,
                 'temperature' => 0.7,
-            ]
+            ],
         ];
 
         $models = [
-            "gemini-flash-latest",
-            "gemini-2.5-flash-lite",
-            "gemini-2.0-flash-lite",
-            "gemini-pro-latest",
-            "gemini-2.0-flash",
-            "gemini-1.5-flash"
+            'gemini-flash-latest',
+            'gemini-2.5-flash-lite',
+            'gemini-2.0-flash-lite',
+            'gemini-pro-latest',
+            'gemini-2.0-flash',
+            'gemini-1.5-flash',
         ];
 
         $reply = null;
         $lastErrorMessage = '';
 
         foreach ($models as $model) {
-            if ($reply) break;
+            if ($reply) {
+                break;
+            }
 
             $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent?key={$apiKey}";
 
@@ -144,7 +151,7 @@ class AiChatService implements AiChatServiceInterface
                 $response = Http::timeout(15)
                     ->withHeaders([
                         'Content-Type' => 'application/json',
-                        'x-goog-api-key' => $apiKey
+                        'x-goog-api-key' => $apiKey,
                     ])
                     ->post($endpoint, $payload);
 
@@ -156,19 +163,20 @@ class AiChatService implements AiChatServiceInterface
                     }
                 } else {
                     $errData = $response->json();
-                    $lastErrorMessage = $errData['error']['message'] ?? ('HTTP Status ' . $response->status());
+                    $lastErrorMessage = $errData['error']['message'] ?? ('HTTP Status '.$response->status());
                 }
             } catch (\Exception $e) {
                 $lastErrorMessage = $e->getMessage();
             }
         }
 
-        if (!$reply) {
-            Log::error('Gemini API call failed. Last error: ' . $lastErrorMessage);
+        if (! $reply) {
+            Log::error('Gemini API call failed. Last error: '.$lastErrorMessage);
+
             return [
                 'success' => false,
-                'message' => 'AI service phản hồi: ' . $lastErrorMessage,
-                'code'    => 502,
+                'message' => 'AI service phản hồi: '.$lastErrorMessage,
+                'code' => 502,
             ];
         }
 
@@ -185,7 +193,7 @@ class AiChatService implements AiChatServiceInterface
 
         return [
             'success' => true,
-            'reply'   => $reply,
+            'reply' => $reply,
         ];
     }
 
@@ -193,14 +201,14 @@ class AiChatService implements AiChatServiceInterface
     {
         $session = $this->repo->findSessionByCustomerId($customerId);
 
-        if (!$session) {
+        if (! $session) {
             return [];
         }
 
-        return $session->messages->map(fn($m) => [
-            'role'       => $m->sender,
-            'content'    => $m->message,
-            'created_at' => $m->created_at
+        return $session->messages->map(fn ($m) => [
+            'role' => $m->sender,
+            'content' => $m->message,
+            'created_at' => $m->created_at,
         ])->toArray();
     }
 
@@ -213,7 +221,7 @@ class AiChatService implements AiChatServiceInterface
                 continue;
             }
 
-            if (!$this->repo->messageExists($session->id, $msg['role'], $msg['content'])) {
+            if (! $this->repo->messageExists($session->id, $msg['role'], $msg['content'])) {
                 $this->repo->createMessage($session->id, $msg['role'], $msg['content']);
             }
         }

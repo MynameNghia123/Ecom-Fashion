@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -9,9 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
-    public function __construct(private readonly OrderServiceInterface $orderService)
-    {
-    }
+    public function __construct(private readonly OrderServiceInterface $orderService) {}
 
     /**
      * POST /client/orders
@@ -24,8 +23,9 @@ class OrderController extends Controller
 
         $result = $this->orderService->placeOrder($customer->id, $validated, $clientIp);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'tồn kho') ? 422 : 500;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -57,7 +57,7 @@ class OrderController extends Controller
 
         $order = $this->orderService->getCustomerOrderDetails($customer->id, $code);
 
-        if (!$order) {
+        if (! $order) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không tìm thấy đơn hàng.',

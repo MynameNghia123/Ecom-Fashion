@@ -1,6 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
-use App\Models\CustomerAddress;
+
 use App\Repositories\Client\Interfaces\CustomerAddressRepositoryInterface;
 use App\Services\Client\Interfaces\CustomerAddressServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -31,14 +32,14 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             }
 
             $address = $this->repo->create([
-                'customer_id'    => $customerId,
-                'receiver_name'  => $data['receiver_name'],
+                'customer_id' => $customerId,
+                'receiver_name' => $data['receiver_name'],
                 'receiver_phone' => $data['receiver_phone'],
-                'province'       => $data['province'],
-                'district'       => $data['district'],
-                'ward'           => $data['ward'],
+                'province' => $data['province'],
+                'district' => $data['district'],
+                'ward' => $data['ward'],
                 'detail_address' => $data['detail_address'],
-                'is_default'     => $isDefault,
+                'is_default' => $isDefault,
             ]);
 
             DB::commit();
@@ -46,13 +47,14 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             return [
                 'success' => true,
                 'message' => 'Thêm địa chỉ mới thành công.',
-                'data'    => $address,
+                'data' => $address,
             ];
         } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'message' => 'Lỗi khi thêm địa chỉ: ' . $e->getMessage(),
+                'message' => 'Lỗi khi thêm địa chỉ: '.$e->getMessage(),
             ];
         }
     }
@@ -61,7 +63,7 @@ class CustomerAddressService implements CustomerAddressServiceInterface
     {
         $address = $this->repo->findByIdAndCustomerId($id, $customerId);
 
-        if (!$address) {
+        if (! $address) {
             return ['success' => false, 'message' => 'Không tìm thấy địa chỉ.'];
         }
 
@@ -69,11 +71,11 @@ class CustomerAddressService implements CustomerAddressServiceInterface
         try {
             $isDefault = $data['is_default'] ?? $address->is_default;
 
-            if ($isDefault && !$address->is_default) {
+            if ($isDefault && ! $address->is_default) {
                 $this->repo->resetDefaultByCustomerId($customerId);
             }
 
-            if (!$isDefault && $address->is_default) {
+            if (! $isDefault && $address->is_default) {
                 $hasOther = $this->repo->getOtherAddress($customerId, $id);
                 if ($hasOther) {
                     $this->repo->update($hasOther, ['is_default' => true]);
@@ -83,13 +85,13 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             }
 
             $this->repo->update($address, [
-                'receiver_name'  => $data['receiver_name'],
+                'receiver_name' => $data['receiver_name'],
                 'receiver_phone' => $data['receiver_phone'],
-                'province'       => $data['province'],
-                'district'       => $data['district'],
-                'ward'           => $data['ward'],
+                'province' => $data['province'],
+                'district' => $data['district'],
+                'ward' => $data['ward'],
                 'detail_address' => $data['detail_address'],
-                'is_default'     => $isDefault,
+                'is_default' => $isDefault,
             ]);
 
             DB::commit();
@@ -97,13 +99,14 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             return [
                 'success' => true,
                 'message' => 'Cập nhật địa chỉ thành công.',
-                'data'    => $address,
+                'data' => $address,
             ];
         } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'message' => 'Lỗi khi cập nhật địa chỉ: ' . $e->getMessage(),
+                'message' => 'Lỗi khi cập nhật địa chỉ: '.$e->getMessage(),
             ];
         }
     }
@@ -112,7 +115,7 @@ class CustomerAddressService implements CustomerAddressServiceInterface
     {
         $address = $this->repo->findByIdAndCustomerId($id, $customerId);
 
-        if (!$address) {
+        if (! $address) {
             return ['success' => false, 'message' => 'Không tìm thấy địa chỉ.'];
         }
 
@@ -136,9 +139,10 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             ];
         } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'message' => 'Lỗi khi xóa địa chỉ: ' . $e->getMessage(),
+                'message' => 'Lỗi khi xóa địa chỉ: '.$e->getMessage(),
             ];
         }
     }
@@ -147,7 +151,7 @@ class CustomerAddressService implements CustomerAddressServiceInterface
     {
         $address = $this->repo->findByIdAndCustomerId($id, $customerId);
 
-        if (!$address) {
+        if (! $address) {
             return ['success' => false, 'message' => 'Không tìm thấy địa chỉ.'];
         }
 
@@ -161,13 +165,14 @@ class CustomerAddressService implements CustomerAddressServiceInterface
             return [
                 'success' => true,
                 'message' => 'Đặt địa chỉ mặc định thành công.',
-                'data'    => $address,
+                'data' => $address,
             ];
         } catch (Throwable $e) {
             DB::rollBack();
+
             return [
                 'success' => false,
-                'message' => 'Lỗi khi đặt địa chỉ mặc định: ' . $e->getMessage(),
+                'message' => 'Lỗi khi đặt địa chỉ mặc định: '.$e->getMessage(),
             ];
         }
     }

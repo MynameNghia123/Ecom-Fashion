@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +16,7 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => 'required|string',
-            'new_password'     => 'required|string|min:8|confirmed',
+            'new_password' => 'required|string|min:8|confirmed',
         ];
     }
 
@@ -23,9 +24,9 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password.required' => 'Vui lòng nhập mật khẩu hiện tại.',
-            'new_password.required'     => 'Vui lòng nhập mật khẩu mới.',
-            'new_password.min'          => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
-            'new_password.confirmed'    => 'Mật khẩu xác nhận không khớp.',
+            'new_password.required' => 'Vui lòng nhập mật khẩu mới.',
+            'new_password.min' => 'Mật khẩu mới phải có ít nhất 8 ký tự.',
+            'new_password.confirmed' => 'Mật khẩu xác nhận không khớp.',
         ];
     }
 }

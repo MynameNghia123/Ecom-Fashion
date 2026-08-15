@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\Order;
 use App\Services\Client\Interfaces\PaymentServiceInterface;
 use App\Services\VNPayService;
@@ -10,29 +12,29 @@ class PaymentService implements PaymentServiceInterface
 
     public function verifyReturn(array $vnpData): array
     {
-        if (!$this->vnpay->verifySignature($vnpData)) {
+        if (! $this->vnpay->verifySignature($vnpData)) {
             return [
                 'success' => false,
                 'message' => 'Chữ ký không hợp lệ.',
-                'code'    => 'INVALID_SIGNATURE',
+                'code' => 'INVALID_SIGNATURE',
             ];
         }
 
         $orderCode = $vnpData['vnp_TxnRef'] ?? null;
-        $order     = Order::with('details.productVariant')->where('order_code', $orderCode)->first();
+        $order = Order::with('details.productVariant')->where('order_code', $orderCode)->first();
 
-        if (!$order) {
+        if (! $order) {
             return [
                 'success' => false,
                 'message' => 'Không tìm thấy đơn hàng.',
-                'code'    => 'ORDER_NOT_FOUND',
+                'code' => 'ORDER_NOT_FOUND',
             ];
         }
 
         if ($order->payment_status === 'paid') {
             return [
-                'success'    => true,
-                'message'    => 'Đơn hàng đã được thanh toán.',
+                'success' => true,
+                'message' => 'Đơn hàng đã được thanh toán.',
                 'order_code' => $order->order_code,
             ];
         }
@@ -40,20 +42,20 @@ class PaymentService implements PaymentServiceInterface
         if ($this->vnpay->isSuccess($vnpData)) {
             $order->update([
                 'payment_status' => 'paid',
-                'status'         => 'confirmed',
+                'status' => 'confirmed',
                 'transaction_id' => $vnpData['vnp_TransactionNo'] ?? null,
             ]);
 
             return [
-                'success'    => true,
-                'message'    => 'Thanh toán thành công!',
+                'success' => true,
+                'message' => 'Thanh toán thành công!',
                 'order_code' => $order->order_code,
             ];
         }
 
         $order->update([
             'payment_status' => 'failed',
-            'status'         => 'cancelled',
+            'status' => 'cancelled',
             'transaction_id' => $vnpData['vnp_TransactionNo'] ?? null,
         ]);
 
@@ -65,21 +67,21 @@ class PaymentService implements PaymentServiceInterface
 
         return [
             'success' => false,
-            'message' => 'Thanh toán thất bại hoặc bị huỷ. Mã lỗi: ' . $responseCode,
-            'code'    => 'PAYMENT_FAILED',
+            'message' => 'Thanh toán thất bại hoặc bị huỷ. Mã lỗi: '.$responseCode,
+            'code' => 'PAYMENT_FAILED',
         ];
     }
 
     public function handleIpn(array $vnpData): array
     {
-        if (!$this->vnpay->verifySignature($vnpData)) {
+        if (! $this->vnpay->verifySignature($vnpData)) {
             return ['rspCode' => '97', 'message' => 'Invalid Signature'];
         }
 
         $orderCode = $vnpData['vnp_TxnRef'] ?? null;
-        $order     = Order::with('details.productVariant')->where('order_code', $orderCode)->first();
+        $order = Order::with('details.productVariant')->where('order_code', $orderCode)->first();
 
-        if (!$order) {
+        if (! $order) {
             return ['rspCode' => '01', 'message' => 'Order Not Found'];
         }
 
@@ -87,8 +89,8 @@ class PaymentService implements PaymentServiceInterface
             return ['rspCode' => '02', 'message' => 'Order Already Confirmed'];
         }
 
-        $vnpAmount = (int)($vnpData['vnp_Amount'] ?? 0);
-        $expected  = (int)($order->final_amount * 100);
+        $vnpAmount = (int) ($vnpData['vnp_Amount'] ?? 0);
+        $expected = (int) ($order->final_amount * 100);
 
         if ($vnpAmount !== $expected) {
             return ['rspCode' => '04', 'message' => 'Invalid Amount'];
@@ -97,13 +99,13 @@ class PaymentService implements PaymentServiceInterface
         if ($this->vnpay->isSuccess($vnpData)) {
             $order->update([
                 'payment_status' => 'paid',
-                'status'         => 'confirmed',
+                'status' => 'confirmed',
                 'transaction_id' => $vnpData['vnp_TransactionNo'] ?? null,
             ]);
         } else {
             $order->update([
                 'payment_status' => 'failed',
-                'status'         => 'cancelled',
+                'status' => 'cancelled',
             ]);
 
             foreach ($order->details as $detail) {

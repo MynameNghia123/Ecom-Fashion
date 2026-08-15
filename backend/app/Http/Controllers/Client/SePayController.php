@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -23,23 +24,23 @@ class SePayController extends Controller
             ->where('payment_method', 'sepay')
             ->first();
 
-        if (!$order) {
+        if (! $order) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy đơn hàng SePay.'], 404);
         }
 
         if ($order->payment_status === 'paid') {
             return response()->json([
-                'success'  => true,
-                'paid'     => true,
-                'message'  => 'Đơn hàng đã được thanh toán.',
-                'data'     => $this->sePayService->createPaymentInfo($order),
+                'success' => true,
+                'paid' => true,
+                'message' => 'Đơn hàng đã được thanh toán.',
+                'data' => $this->sePayService->createPaymentInfo($order),
             ]);
         }
 
         return response()->json([
             'success' => true,
-            'paid'    => false,
-            'data'    => $this->sePayService->createPaymentInfo($order),
+            'paid' => false,
+            'data' => $this->sePayService->createPaymentInfo($order),
         ]);
     }
 
@@ -51,15 +52,15 @@ class SePayController extends Controller
     {
         $order = Order::where('order_code', $orderCode)->first();
 
-        if (!$order) {
+        if (! $order) {
             return response()->json(['success' => false, 'message' => 'Không tìm thấy đơn hàng.'], 404);
         }
 
         return response()->json([
-            'success'        => true,
-            'paid'           => $order->payment_status === 'paid',
+            'success' => true,
+            'paid' => $order->payment_status === 'paid',
             'payment_status' => $order->payment_status,
-            'order_status'   => $order->status,
+            'order_status' => $order->status,
         ]);
     }
 
@@ -71,8 +72,9 @@ class SePayController extends Controller
     {
         $authHeader = $request->header('Authorization', '');
 
-        if (!$this->sePayService->verifyWebhookSignature($authHeader)) {
+        if (! $this->sePayService->verifyWebhookSignature($authHeader)) {
             Log::warning('[SEPAY] Invalid webhook signature', ['auth' => $authHeader]);
+
             return response('Unauthorized', 401);
         }
 
@@ -81,15 +83,16 @@ class SePayController extends Controller
 
         $orderCode = $this->sePayService->extractOrderCodeFromWebhook($payload);
 
-        if (!$orderCode) {
+        if (! $orderCode) {
             return response(json_encode(['success' => false, 'message' => 'Cannot parse order code']), 200)
                 ->header('Content-Type', 'application/json');
         }
 
         $order = Order::where('order_code', $orderCode)->first();
 
-        if (!$order) {
+        if (! $order) {
             Log::warning('[SEPAY] Order not found for webhook', ['order_code' => $orderCode]);
+
             return response(json_encode(['success' => false, 'message' => 'Order not found']), 200)
                 ->header('Content-Type', 'application/json');
         }
@@ -97,7 +100,7 @@ class SePayController extends Controller
         if ($order->payment_status !== 'paid') {
             $order->update([
                 'payment_status' => 'paid',
-                'status'         => 'confirmed',
+                'status' => 'confirmed',
             ]);
 
             Log::info('[SEPAY] Order marked as paid', ['order_code' => $orderCode, 'amount' => $payload['transferAmount'] ?? 0]);

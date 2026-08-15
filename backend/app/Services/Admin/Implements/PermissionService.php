@@ -19,8 +19,7 @@ class PermissionService implements PermissionServiceInterface
 {
     public function __construct(
         private readonly PermissionRepositoryInterface $permissionRepo
-    ) {
-    }
+    ) {}
 
     public function getList(array $filters): LengthAwarePaginator
     {

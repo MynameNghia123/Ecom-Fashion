@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\Auth;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -25,7 +26,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'email.unique' => 'Email này đã được đăng ký sử dụng.',
-            'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự.'
+            'password.min' => 'Mật khẩu phải chứa ít nhất 8 ký tự.',
         ];
     }
 }

@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\BLog\BlogRequest;
 use App\Http\Resources\Admin\Blog\BlogResource;
+use App\Models\Blog;
 use App\Services\Admin\Interfaces\BlogServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Blog;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -49,19 +50,19 @@ class BlogController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->blogService->getList([
-            'search'   => $request->query('search'),
-            'status'   => $request->query('status'),
+            'search' => $request->query('search'),
+            'status' => $request->query('status'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => BlogResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => BlogResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -100,12 +101,11 @@ class BlogController extends Controller
     {
         $data = $request->validated();
 
-
         $blog = $this->blogService->create($data);
 
         return response()->json([
             'success' => true,
-            'data'    => new BlogResource($blog),
+            'data' => new BlogResource($blog),
             'message' => 'Bài viết đã được tạo thành công.',
         ], 201);
     }
@@ -133,7 +133,7 @@ class BlogController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new BlogResource($blog),
+            'data' => new BlogResource($blog),
         ]);
     }
 
@@ -175,12 +175,11 @@ class BlogController extends Controller
     {
         $data = $request->validated();
 
-
         $updated = $this->blogService->update($blog, $data);
 
         return response()->json([
             'success' => true,
-            'data'    => new BlogResource($updated),
+            'data' => new BlogResource($updated),
             'message' => 'Bài viết đã được cập nhật thành công.',
         ]);
     }

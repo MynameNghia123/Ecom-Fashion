@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Models\Blog;
 use App\Repositories\Client\Interfaces\BlogRepositoryInterface;
 use App\Services\Client\Interfaces\BlogServiceInterface;

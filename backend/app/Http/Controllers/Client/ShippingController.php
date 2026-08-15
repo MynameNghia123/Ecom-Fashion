@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -14,6 +15,7 @@ class ShippingController extends Controller
     public function provinces(): JsonResponse
     {
         $data = $this->shippingService->getProvinces();
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 
@@ -25,6 +27,7 @@ class ShippingController extends Controller
             return response()->json(['success' => false, 'message' => 'province_id is required'], 422);
         }
         $data = $this->shippingService->getDistricts($provinceId);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 
@@ -36,6 +39,7 @@ class ShippingController extends Controller
             return response()->json(['success' => false, 'message' => 'district_id is required'], 422);
         }
         $data = $this->shippingService->getWards($districtId);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 
@@ -44,9 +48,9 @@ class ShippingController extends Controller
     {
         $request->validate([
             'district_id' => 'required|integer',
-            'ward_code'   => 'required|string',
-            'service_id'  => 'required|integer',
-            'weight'      => 'nullable|integer|min:1',
+            'ward_code' => 'required|string',
+            'service_id' => 'required|integer',
+            'weight' => 'nullable|integer|min:1',
         ]);
 
         $result = $this->shippingService->calculateFee(
@@ -67,6 +71,7 @@ class ShippingController extends Controller
             return response()->json(['success' => false, 'message' => 'district_id is required'], 422);
         }
         $data = $this->shippingService->getAvailableServices($districtId);
+
         return response()->json(['success' => true, 'data' => $data]);
     }
 }

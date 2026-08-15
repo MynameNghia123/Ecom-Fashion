@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\Blog;
 use App\Repositories\Client\Interfaces\BlogRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -12,8 +14,8 @@ class BlogRepository implements BlogRepositoryInterface
     {
         $query = $this->model->where('status', true);
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         return $query->orderBy('id', 'desc')->paginate($perPage);

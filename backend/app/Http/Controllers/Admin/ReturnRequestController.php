@@ -3,42 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\ReturnRequest;
 use App\Http\Requests\Admin\ReturnRequest\StoreReturnRequestRequest;
 use App\Http\Requests\Admin\ReturnRequest\UpdateReturnRequestStatusRequest;
+use App\Models\ReturnRequest;
 use App\Services\Admin\Interfaces\ReturnRequestServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 
 class ReturnRequestController extends Controller
 {
     public function __construct(
         private readonly ReturnRequestServiceInterface $service
     ) {}
+
     /** GET /admin/return-requests */
     public function index(Request $request): JsonResponse
     {
         $filters = [
-            'status'   => $request->query('status'),
-            'reason'   => $request->query('reason'),
-            'search'   => $request->query('search'),
+            'status' => $request->query('status'),
+            'reason' => $request->query('reason'),
+            'search' => $request->query('search'),
             'per_page' => (int) $request->query('per_page', 15),
         ];
 
         $paginator = $this->service->getList($filters);
-        $items = array_map(fn($r) => $this->formatItem($r), $paginator->items());
+        $items = array_map(fn ($r) => $this->formatItem($r), $paginator->items());
 
         return response()->json([
             'success' => true,
-            'data'    => $items,
-            'meta'    => [
+            'data' => $items,
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
-            'stats'   => $this->service->getStats(),
+            'stats' => $this->service->getStats(),
         ]);
     }
 
@@ -47,7 +47,7 @@ class ReturnRequestController extends Controller
     {
         $returnRequest = $this->service->getDetail($id);
 
-        if (!$returnRequest) {
+        if (! $returnRequest) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không tìm thấy yêu cầu đổi trả.',
@@ -56,7 +56,7 @@ class ReturnRequestController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $this->formatItem($returnRequest, full: true),
+            'data' => $this->formatItem($returnRequest, full: true),
         ]);
     }
 
@@ -65,7 +65,7 @@ class ReturnRequestController extends Controller
     {
         $returnRequest = $this->service->getDetail($id);
 
-        if (!$returnRequest) {
+        if (! $returnRequest) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không tìm thấy yêu cầu đổi trả.',
@@ -77,7 +77,7 @@ class ReturnRequestController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data'    => $this->formatItem($updated),
+                'data' => $this->formatItem($updated),
                 'message' => 'Cập nhật trạng thái thành công.',
             ]);
         } catch (\Throwable $e) {
@@ -95,7 +95,7 @@ class ReturnRequestController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $this->formatItem($returnRequest),
+            'data' => $this->formatItem($returnRequest),
             'message' => 'Tạo yêu cầu đổi trả thành công.',
         ], 201);
     }
@@ -105,12 +105,12 @@ class ReturnRequestController extends Controller
     private function formatItem(ReturnRequest $r, bool $full = false): array
     {
         $customer = $r->order?->customer;
-        $detail   = $r->orderDetail;
-        $variant  = $detail?->productVariant;
-        $product  = $variant?->product;
+        $detail = $r->orderDetail;
+        $variant = $detail?->productVariant;
+        $product = $variant?->product;
 
         // Trích xuất size/màu từ attribute values
-        $size  = '';
+        $size = '';
         $color = '';
         if ($variant && $variant->attributeValues) {
             foreach ($variant->attributeValues as $av) {
@@ -132,34 +132,32 @@ class ReturnRequestController extends Controller
         }
 
         $base = [
-            'id'             => $r->id,
-            'ticket_code'    => $r->ticket_code,
-            'order_code'     => $r->order?->code ?? '',
-            'customer_name'  => $customer?->full_name ?? 'N/A',
+            'id' => $r->id,
+            'ticket_code' => $r->ticket_code,
+            'order_code' => $r->order?->code ?? '',
+            'customer_name' => $customer?->full_name ?? 'N/A',
             'customer_phone' => $customer?->phone ?? '',
-            'product_name'   => $product?->name ?? ($detail?->product_name ?? 'N/A'),
-            'product_image'  => $thumbnail,
-            'variant_size'   => $size ?: ($detail?->variant_info ?? ''),
-            'variant_color'  => $color,
-            'quantity'       => $r->quantity,
-            'unit_price'     => $detail?->price ?? 0,
-            'refund_amount'  => $r->refund_amount ?? 0,
-            'reason'         => $r->reason,
-            'customer_note'  => $r->customer_note ?? '',
-            'status'         => $r->status,
-            'admin_note'     => $r->admin_note ?? '',
-            'created_at'     => $r->created_at?->format('d/m/Y H:i') ?? '',
+            'product_name' => $product?->name ?? ($detail?->product_name ?? 'N/A'),
+            'product_image' => $thumbnail,
+            'variant_size' => $size ?: ($detail?->variant_info ?? ''),
+            'variant_color' => $color,
+            'quantity' => $r->quantity,
+            'unit_price' => $detail?->price ?? 0,
+            'refund_amount' => $r->refund_amount ?? 0,
+            'reason' => $r->reason,
+            'customer_note' => $r->customer_note ?? '',
+            'status' => $r->status,
+            'admin_note' => $r->admin_note ?? '',
+            'created_at' => $r->created_at?->format('d/m/Y H:i') ?? '',
         ];
 
         if ($full) {
-            $base['customer_email']   = $customer?->email ?? '';
-            $base['pickup_address']   = $customer?->address ?? '';
-            $base['proof_images']     = $r->evidence_images ?? [];
-            $base['processed_at']     = $r->processed_at?->format('d/m/Y H:i') ?? '';
+            $base['customer_email'] = $customer?->email ?? '';
+            $base['pickup_address'] = $customer?->address ?? '';
+            $base['proof_images'] = $r->evidence_images ?? [];
+            $base['processed_at'] = $r->processed_at?->format('d/m/Y H:i') ?? '';
         }
 
         return $base;
     }
-
-
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\Cart;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -15,7 +16,7 @@ class AddItemRequest extends FormRequest
     {
         return [
             'product_variant_id' => 'required|integer|exists:product_variants,id',
-            'quantity'           => 'required|integer|min:1',
+            'quantity' => 'required|integer|min:1',
         ];
     }
 }

@@ -35,19 +35,19 @@ class StaffRequest extends FormRequest
     {
         return [
             'full_name.required' => 'Họ và tên nhân viên không được để trống.',
-            'full_name.max'      => 'Họ và tên nhân viên không được vượt quá 255 ký tự.',
-            'email.required'     => 'Email nhân viên không được để trống.',
-            'email.email'        => 'Email không hợp lệ.',
-            'email.unique'       => 'Email này đã tồn tại trong hệ thống.',
-            'phone_number.max'   => 'Số điện thoại không được vượt quá 20 ký tự.',
-            'password.required'  => 'Mật khẩu không được để trống khi tạo mới.',
-            'password.min'       => 'Mật khẩu phải có ít nhất 6 ký tự.',
+            'full_name.max' => 'Họ và tên nhân viên không được vượt quá 255 ký tự.',
+            'email.required' => 'Email nhân viên không được để trống.',
+            'email.email' => 'Email không hợp lệ.',
+            'email.unique' => 'Email này đã tồn tại trong hệ thống.',
+            'phone_number.max' => 'Số điện thoại không được vượt quá 20 ký tự.',
+            'password.required' => 'Mật khẩu không được để trống khi tạo mới.',
+            'password.min' => 'Mật khẩu phải có ít nhất 6 ký tự.',
             'password.confirmed' => 'Xác nhận mật khẩu không khớp.',
             'is_active.required' => 'Trạng thái hoạt động không được để trống.',
-            'is_active.boolean'  => 'Trạng thái hoạt động không hợp lệ.',
-            'role_ids.array'     => 'Danh sách vai trò phải là một mảng.',
+            'is_active.boolean' => 'Trạng thái hoạt động không hợp lệ.',
+            'role_ids.array' => 'Danh sách vai trò phải là một mảng.',
             'role_ids.*.integer' => 'ID vai trò phải là số nguyên.',
-            'role_ids.*.exists'  => 'Một hoặc nhiều vai trò không tồn tại trong hệ thống.',
+            'role_ids.*.exists' => 'Một hoặc nhiều vai trò không tồn tại trong hệ thống.',
         ];
     }
 }

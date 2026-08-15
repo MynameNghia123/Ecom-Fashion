@@ -24,8 +24,8 @@ class RoleRepository implements RoleRepositoryInterface
     {
         $query = $this->model->newQuery()->with('permissions');
 
-        if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('name', 'like', '%'.$filters['search'].'%');
         }
 
         return $query->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);
@@ -44,6 +44,7 @@ class RoleRepository implements RoleRepositoryInterface
     public function update(Model $model, array $data): Role
     {
         $model->update($data);
+
         return $model->fresh();
     }
 

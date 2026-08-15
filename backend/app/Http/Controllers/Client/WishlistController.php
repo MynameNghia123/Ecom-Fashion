@@ -12,7 +12,7 @@ class WishlistController extends Controller
 {
     public function __construct(
         private readonly WishlistServiceInterface $wishlistService
-    ){}
+    ) {}
 
     /**
      * GET /client/wishlist — Lấy danh sách yêu thích của khách hàng.
@@ -25,7 +25,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $wishlists,
+            'data' => $wishlists,
         ]);
     }
 
@@ -41,9 +41,9 @@ class WishlistController extends Controller
 
         return response()->json([
             'success' => true,
-            'action'  => $result['action'],
+            'action' => $result['action'],
             'message' => $result['message'],
-            'data'    => $result['data'] ?? null,
+            'data' => $result['data'] ?? null,
         ], $result['action'] === 'added' ? 201 : 200);
     }
 

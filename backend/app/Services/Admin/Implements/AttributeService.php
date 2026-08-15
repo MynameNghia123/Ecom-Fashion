@@ -16,13 +16,12 @@ class AttributeService implements AttributeServiceInterface
      */
     public function __construct(
         private readonly AttributeRepositoryInterface $attributeRepository
-    ) {
-    }
+    ) {}
 
     /**
      * Lấy danh sách thuộc tính có filter + phân trang.
      *
-     * @param array{ search?: string, per_page?: int } $filters
+     * @param  array{ search?: string, per_page?: int }  $filters
      */
     public function getList(array $filters): LengthAwarePaginator
     {
@@ -32,7 +31,7 @@ class AttributeService implements AttributeServiceInterface
     /**
      * Tạo thuộc tính mới.
      *
-     * @param array{ name: string } $data
+     * @param  array{ name: string }  $data
      */
     public function create(array $data): Attribute
     {
@@ -42,7 +41,7 @@ class AttributeService implements AttributeServiceInterface
     /**
      * Cập nhật thuộc tính.
      *
-     * @param array{ name: string } $data
+     * @param  array{ name: string }  $data
      */
     public function update(Model $model, array $data): Attribute
     {

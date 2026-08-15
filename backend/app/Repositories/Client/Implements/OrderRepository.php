@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Repositories\Client\Interfaces\OrderRepositoryInterface;
@@ -23,9 +25,9 @@ class OrderRepository implements OrderRepositoryInterface
             'details.productVariant.attributeValues.attribute',
             'details.review',
         ])
-        ->where('order_code', $orderCode)
-        ->where('customer_id', $customerId)
-        ->first();
+            ->where('order_code', $orderCode)
+            ->where('customer_id', $customerId)
+            ->first();
     }
 
     public function createOrder(array $data): Order

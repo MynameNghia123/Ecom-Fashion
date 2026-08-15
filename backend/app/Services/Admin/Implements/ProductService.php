@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Services\Admin\Implements;
 
-use App\Services\Admin\Interfaces\ProductServiceInterface;
 use App\Models\Product;
 use App\Repositories\Admin\Interfaces\ProductRepositoryInterface;
+use App\Services\Admin\Interfaces\ProductImageServiceInterface;
+use App\Services\Admin\Interfaces\ProductServiceInterface;
+use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
-use App\Services\Admin\Interfaces\ProductImageServiceInterface;
-use App\Services\Admin\Interfaces\ProductVariantServiceInterface;
 use Illuminate\Support\Facades\DB;
 
 class ProductService implements ProductServiceInterface
@@ -25,7 +26,7 @@ class ProductService implements ProductServiceInterface
 
     public function create(array $data): Product
     {
-        return DB::transaction(function () use ($data){
+        return DB::transaction(function () use ($data) {
             $images = $data['images'] ?? [];
             $variants = $data['variants'] ?? [];
 
@@ -33,11 +34,11 @@ class ProductService implements ProductServiceInterface
 
             $product = $this->productRepo->create($data);
 
-            if (!empty($images)){
+            if (! empty($images)) {
                 $this->imageService->insertMany($images, $product->id);
             }
 
-            if (!empty($variants)){
+            if (! empty($variants)) {
                 $this->variantService->insertMany($variants, $product->id);
             }
 
@@ -62,6 +63,7 @@ class ProductService implements ProductServiceInterface
             return $model->load(['productImages', 'productVariants.attributeValues']);
         });
     }
+
     public function delete(Model $model): void
     {
         $this->productRepo->delete($model);

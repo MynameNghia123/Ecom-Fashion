@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Admin\Implements;
 
 use App\Models\ProductVariant;
@@ -12,7 +13,7 @@ class ProductVariantService implements ProductVariantServiceInterface
     public function __construct(
         private readonly ProductVariantRepositoryInterface $repo,
         private readonly AttributeValueServiceInterface $attributeValueService,
-    ){}
+    ) {}
 
     public function create(array $data): ProductVariant
     {
@@ -29,13 +30,12 @@ class ProductVariantService implements ProductVariantServiceInterface
         $this->repo->delete($model);
     }
 
-    public function syncVariants(Model $model,array $data) : void
+    public function syncVariants(Model $model, array $data): void
     {
         $existingVariants = $model->productVariants->keyBy('id');
         $keptVariantIds = [];
 
-        foreach ($data as $variantData)
-        {
+        foreach ($data as $variantData) {
             $attributeData = $variantData['attribute_values'] ?? [];
             unset($variantData['attribute_values']);
 
@@ -46,35 +46,36 @@ class ProductVariantService implements ProductVariantServiceInterface
                 // ── UPDATE variant cũ ─────────────────────────────────────
                 $variantModel = $existingVariants->get($variantId);
                 $this->repo->update($variantModel, $variantData);
-                $keptVariantIds[]    = $variantId;
+                $keptVariantIds[] = $variantId;
                 $currentVariantModel = $variantModel;
             } else {
                 // ── CREATE variant mới ────────────────────────────────────
                 $variantData['product_id'] = $model->id;
-                $newVariantModel           = $this->repo->create($variantData);
-                $keptVariantIds[]          = $newVariantModel->id;
-                $currentVariantModel       = $newVariantModel; // ← fix: trước đây gán nhầm $variantModel (undefined)
+                $newVariantModel = $this->repo->create($variantData);
+                $keptVariantIds[] = $newVariantModel->id;
+                $currentVariantModel = $newVariantModel; // ← fix: trước đây gán nhầm $variantModel (undefined)
             }
             $this->attributeValueService->syncAttributes($currentVariantModel, $attributeData);
         }
         foreach ($existingVariants as $oldVariantModel) {
-            if (!in_array($oldVariantModel->id, $keptVariantIds)) {
-                
-                // (Nếu DB bạn không có onDelete('cascade'), bạn phải gọi 
+            if (! in_array($oldVariantModel->id, $keptVariantIds)) {
+
+                // (Nếu DB bạn không có onDelete('cascade'), bạn phải gọi
                 // attributeValueService xóa thuộc tính con trước khi gọi dòng dưới)
-                
+
                 // Giao Object Model cho Repo đi hủy diệt
                 $this->repo->delete($oldVariantModel);
             }
         }
     }
 
-    public function insertMany(array $variantsData, int $productId) : void{
-        if (empty($variantsData)){
+    public function insertMany(array $variantsData, int $productId): void
+    {
+        if (empty($variantsData)) {
             return;
         }
 
-        foreach ($variantsData as $variantData){
+        foreach ($variantsData as $variantData) {
             $attributeValue = $variantData['attribute_values'] ?? [];
 
             unset($variantData['attribute_values']);
@@ -83,7 +84,7 @@ class ProductVariantService implements ProductVariantServiceInterface
 
             $createdVariant = $this->repo->create($variantData);
 
-            if (!empty($attributeValue)) {
+            if (! empty($attributeValue)) {
                 $this->attributeValueService->insertMany(
                     $attributeValue,
                     $createdVariant->id

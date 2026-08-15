@@ -18,10 +18,10 @@ class CustomerAddressController extends Controller
     public function index(): JsonResponse
     {
         $customer = Auth::user();
-        
+
         return response()->json([
             'success' => true,
-            'data'    => $this->addressService->getAddresses($customer->id),
+            'data' => $this->addressService->getAddresses($customer->id),
         ]);
     }
 
@@ -36,7 +36,7 @@ class CustomerAddressController extends Controller
 
         $result = $this->addressService->addAddress($customer->id, $validated);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -59,8 +59,9 @@ class CustomerAddressController extends Controller
 
         $result = $this->addressService->updateAddress($customer->id, $id, $validated);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 500;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -79,8 +80,9 @@ class CustomerAddressController extends Controller
 
         $result = $this->addressService->deleteAddress($customer->id, $id);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 500;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -99,8 +101,9 @@ class CustomerAddressController extends Controller
 
         $result = $this->addressService->setDefaultAddress($customer->id, $id);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 500;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],

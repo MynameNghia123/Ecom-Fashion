@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\CategoryRequest;
 use App\Http\Resources\Admin\CategoryResource;
+use App\Models\Category;
 use App\Services\Admin\Interfaces\CategoryServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Category;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -18,7 +19,7 @@ class CategoryController extends Controller
 {
     public function __construct(
         private readonly CategoryServiceInterface $categoryService
-    ){}
+    ) {}
 
     #[OA\Get(
         path: '/api/admin/categories',
@@ -45,23 +46,23 @@ class CategoryController extends Controller
             ),
         ]
     )]
-    public function index(Request $request) : JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $paginator = $this->categoryService->getList([
-            'search'   => $request->query('search'),
+            'search' => $request->query('search'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => CategoryResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => CategoryResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
-            'stats'   => $this->categoryService->getStats(),
+            'stats' => $this->categoryService->getStats(),
         ]);
     }
 
@@ -80,13 +81,13 @@ class CategoryController extends Controller
             ),
         ]
     )]
-    public function parents() : JsonResponse
+    public function parents(): JsonResponse
     {
         $parents = $this->categoryService->getAll();
 
         return response()->json([
             'success' => true,
-            'data'    => CategoryResource::collection($parents),
+            'data' => CategoryResource::collection($parents),
         ]);
     }
 
@@ -122,9 +123,10 @@ class CategoryController extends Controller
     public function store(CategoryRequest $request)
     {
         $category = $this->categoryService->create($request->validated());
+
         return response()->json([
             'success' => true,
-            'data'    => new CategoryResource($category),
+            'data' => new CategoryResource($category),
             'message' => 'Danh mục đã được thêm thành công.',
         ], 201);
     }
@@ -152,7 +154,7 @@ class CategoryController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new CategoryResource($category),
+            'data' => new CategoryResource($category),
         ]);
     }
 
@@ -195,7 +197,7 @@ class CategoryController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new CategoryResource($updatedCategory),
+            'data' => new CategoryResource($updatedCategory),
             'message' => 'Danh mục đã được cập nhật thành công.',
         ]);
     }

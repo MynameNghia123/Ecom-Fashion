@@ -1,10 +1,12 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Services\Client\Interfaces\PaymentServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class VNPayController extends Controller
 {
@@ -17,8 +19,9 @@ class VNPayController extends Controller
     {
         $result = $this->paymentService->verifyReturn($request->query());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = isset($result['code']) && $result['code'] === 'ORDER_NOT_FOUND' ? 404 : 400;
+
             return response()->json($result, $status);
         }
 
@@ -28,7 +31,7 @@ class VNPayController extends Controller
     /**
      * POST /api/client/vnpay/ipn
      */
-    public function ipn(Request $request): \Illuminate\Http\Response
+    public function ipn(Request $request): Response
     {
         $result = $this->paymentService->handleIpn($request->query());
 

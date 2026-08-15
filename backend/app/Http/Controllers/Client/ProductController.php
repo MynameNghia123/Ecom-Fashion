@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
@@ -16,7 +17,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $filters = $request->only([
-            'category_id', 'category_slug', 'search', 'brand', 'min_price', 'max_price'
+            'category_id', 'category_slug', 'search', 'brand', 'min_price', 'max_price',
         ]);
         $sort = $request->query('sort', 'latest');
         $perPage = (int) $request->query('per_page', 12);
@@ -25,13 +26,13 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $products->items(),
-            'meta'    => [
+            'data' => $products->items(),
+            'meta' => [
                 'current_page' => $products->currentPage(),
-                'per_page'     => $products->perPage(),
-                'total'        => $products->total(),
-                'last_page'    => $products->lastPage(),
-            ]
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+                'last_page' => $products->lastPage(),
+            ],
         ]);
     }
 
@@ -44,7 +45,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $brands
+            'data' => $brands,
         ]);
     }
 
@@ -55,16 +56,16 @@ class ProductController extends Controller
     {
         $product = $this->productService->getFormattedProductDetail($idOrSlug);
 
-        if (!$product) {
+        if (! $product) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sản phẩm không tồn tại.'
+                'message' => 'Sản phẩm không tồn tại.',
             ], 404);
         }
 
         return response()->json([
             'success' => true,
-            'data'    => $product
+            'data' => $product,
         ]);
     }
 
@@ -80,7 +81,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $products,
+            'data' => $products,
         ]);
     }
 }

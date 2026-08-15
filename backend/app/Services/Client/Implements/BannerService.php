@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Implements;
+
 use App\Repositories\Client\Interfaces\BannerRepositoryInterface;
 use App\Services\Client\Interfaces\BannerServiceInterface;
 use Illuminate\Database\Eloquent\Collection;

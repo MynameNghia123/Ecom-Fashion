@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Staff;
-use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Staff;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -23,10 +23,10 @@ class StaffSeeder extends Seeder
         $admin = Staff::updateOrCreate(
             ['email' => 'admin@ecom.com'],
             [
-                'full_name'    => 'Super Administrator',
-                'password'     => Hash::make('password123'),
+                'full_name' => 'Super Administrator',
+                'password' => Hash::make('password123'),
                 'phone_number' => '0987654321',
-                'is_active'    => true,
+                'is_active' => true,
             ]
         );
         if ($adminRole) {
@@ -37,10 +37,10 @@ class StaffSeeder extends Seeder
         $manager = Staff::updateOrCreate(
             ['email' => 'manager@ecom.com'],
             [
-                'full_name'    => 'Store Manager',
-                'password'     => Hash::make('password123'),
+                'full_name' => 'Store Manager',
+                'password' => Hash::make('password123'),
                 'phone_number' => '0912345678',
-                'is_active'    => true,
+                'is_active' => true,
             ]
         );
         if ($managerRole) {
@@ -51,20 +51,20 @@ class StaffSeeder extends Seeder
         $staff = Staff::updateOrCreate(
             ['email' => 'staff@ecom.com'],
             [
-                'full_name'    => 'Normal Staff',
-                'password'     => Hash::make('password123'),
+                'full_name' => 'Normal Staff',
+                'password' => Hash::make('password123'),
                 'phone_number' => '0922334455',
-                'is_active'    => true,
+                'is_active' => true,
             ]
         );
-        
+
         // Ví dụ: Chỉ cho staff này quyền Đọc đơn hàng và Đọc sản phẩm
         $viewOrders = Permission::where('module', 'orders')->where('action', 'view')->first();
         $viewProducts = Permission::where('module', 'products')->where('action', 'view')->first();
-        
+
         $directPerms = array_filter([$viewOrders?->id, $viewProducts?->id]);
-        
-        if (!empty($directPerms)) {
+
+        if (! empty($directPerms)) {
             // Gán trực tiếp qua bảng trung gian staff_permissions (quan hệ permissions() trong Staff model)
             $staff->permissions()->syncWithoutDetaching($directPerms);
         }

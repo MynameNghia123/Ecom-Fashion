@@ -3,11 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Auth\LoginRequest;
 use App\Http\Resources\Admin\Staff\StaffResource;
+use App\Models\Staff;
 use App\Services\Admin\Interfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Http\Requests\Admin\Auth\LoginRequest;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -30,7 +31,7 @@ class AuthController extends Controller
             content: new OA\JsonContent(
                 required: ['email', 'password'],
                 properties: [
-                    new OA\Property(property: 'email',    type: 'string', format: 'email', example: 'admin@ecomfashion.com'),
+                    new OA\Property(property: 'email', type: 'string', format: 'email', example: 'admin@ecomfashion.com'),
                     new OA\Property(property: 'password', type: 'string', example: 'password123'),
                 ]
             )
@@ -41,8 +42,8 @@ class AuthController extends Controller
                 description: 'Đăng nhập thành công',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'success', type: 'boolean', example: true),
-                    new OA\Property(property: 'token',   type: 'string', example: '1|abcdef123456...'),
-                    new OA\Property(property: 'user',    type: 'object'),
+                    new OA\Property(property: 'token', type: 'string', example: '1|abcdef123456...'),
+                    new OA\Property(property: 'user', type: 'object'),
                 ])
             ),
             new OA\Response(response: 401, description: 'Sai email hoặc mật khẩu'),
@@ -53,7 +54,7 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->only(['email', 'password']));
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -63,8 +64,8 @@ class AuthController extends Controller
         return response()->json([
             'success' => true,
             'message' => $result['message'],
-            'token'   => $result['token'],
-            'user'    => new StaffResource($result['user']),
+            'token' => $result['token'],
+            'user' => new StaffResource($result['user']),
         ]);
     }
 
@@ -81,9 +82,9 @@ class AuthController extends Controller
     )]
     public function logout(Request $request): JsonResponse
     {
-        /** @var \App\Models\Staff $user */
+        /** @var Staff $user */
         $user = $request->user();
-        
+
         if ($user) {
             $this->authService->logout($user);
         }
@@ -107,12 +108,12 @@ class AuthController extends Controller
     )]
     public function me(Request $request): JsonResponse
     {
-        /** @var \App\Models\Staff $user */
+        /** @var Staff $user */
         $user = $request->user();
 
         return response()->json([
             'success' => true,
-            'data'    => new StaffResource($this->authService->me($user)),
+            'data' => new StaffResource($this->authService->me($user)),
         ]);
     }
 }

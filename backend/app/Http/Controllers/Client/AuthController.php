@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Client\Auth\RegisterRequest;
-use App\Http\Requests\Client\Auth\LoginRequest;
+use App\Http\Requests\Client\Auth\ChangePasswordRequest;
 use App\Http\Requests\Client\Auth\ForgotPasswordRequest;
-use App\Http\Requests\Client\Auth\VerifyOtpRequest;
+use App\Http\Requests\Client\Auth\LoginRequest;
+use App\Http\Requests\Client\Auth\RegisterRequest;
 use App\Http\Requests\Client\Auth\ResetPasswordRequest;
 use App\Http\Requests\Client\Auth\UpdateProfileRequest;
-use App\Http\Requests\Client\Auth\ChangePasswordRequest;
+use App\Http\Requests\Client\Auth\VerifyOtpRequest;
 use App\Services\Client\Interfaces\AuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -28,8 +29,9 @@ class AuthController extends Controller
     {
         $result = $this->authService->login($request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'bị khóa') ? 403 : 401;
+
             return response()->json($result, $status);
         }
 
@@ -52,7 +54,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'success' => true,
-            'user' => $request->user()
+            'user' => $request->user(),
         ]);
     }
 
@@ -60,7 +62,7 @@ class AuthController extends Controller
     {
         $result = $this->authService->forgotPassword($request->validated()['email']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json($result, 500);
         }
 
@@ -72,7 +74,7 @@ class AuthController extends Controller
         $validated = $request->validated();
         $result = $this->authService->verifyOtp($validated['email'], $validated['otp_code']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json($result, 422);
         }
 
@@ -84,8 +86,9 @@ class AuthController extends Controller
         $validated = $request->validated();
         $result = $this->authService->resetPassword($validated['token'], $validated['password']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 422;
+
             return response()->json($result, $status);
         }
 
@@ -111,7 +114,7 @@ class AuthController extends Controller
         $customer = $request->user();
         $result = $this->authService->changePassword($customer, $request->validated());
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json($result, 400);
         }
 

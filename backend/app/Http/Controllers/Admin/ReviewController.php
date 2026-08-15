@@ -12,14 +12,15 @@ class ReviewController extends Controller
     public function __construct(
         private readonly ReviewServiceInterface $service
     ) {}
+
     /**
      * GET /admin/reviews — Lấy danh sách đánh giá của hệ thống (phân trang & bộ lọc).
      */
     public function index(Request $request): JsonResponse
     {
         $filters = [
-            'rating'   => $request->query('rating'),
-            'search'   => $request->query('search'),
+            'rating' => $request->query('rating'),
+            'search' => $request->query('search'),
             'per_page' => (int) $request->input('per_page', 10),
         ];
 
@@ -28,15 +29,15 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $reviews->items(),
-            'meta'    => [
+            'data' => $reviews->items(),
+            'meta' => [
                 'current_page' => $reviews->currentPage(),
-                'per_page'     => $reviews->perPage(),
-                'total'        => $reviews->total(),
-                'last_page'    => $reviews->lastPage(),
-                'average'      => $stats['average'],
-                'star_stats'   => $stats['star_stats']
-            ]
+                'per_page' => $reviews->perPage(),
+                'total' => $reviews->total(),
+                'last_page' => $reviews->lastPage(),
+                'average' => $stats['average'],
+                'star_stats' => $stats['star_stats'],
+            ],
         ]);
     }
 

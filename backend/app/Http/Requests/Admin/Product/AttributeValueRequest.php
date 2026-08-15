@@ -25,7 +25,7 @@ class AttributeValueRequest extends FormRequest
                 'max:255',
                 Rule::unique('attribute_values')->where(function ($query) {
                     return $query->where('attribute_id', $this->attribute_id)
-                                 ->where('product_variant_id', $this->product_variant_id);
+                        ->where('product_variant_id', $this->product_variant_id);
                 })->ignore($attributeValueId),
             ],
         ];

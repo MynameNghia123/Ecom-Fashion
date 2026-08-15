@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Product\StoreProductRequest;
 use App\Http\Requests\Admin\Product\UpdateProductRequest;
 use App\Http\Resources\Admin\Product\ProductResource;
+use App\Models\Product;
 use App\Services\Admin\Interfaces\ProductServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Product;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -20,7 +21,7 @@ class ProductController extends Controller
     public function __construct(
         private readonly ProductServiceInterface $productService,
 
-    ){}
+    ) {}
 
     #[OA\Get(
         path: '/api/admin/products',
@@ -47,24 +48,25 @@ class ProductController extends Controller
             ),
         ]
     )]
-    public function index(Request $request) : JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $paginator = $this->productService->getList([
-            'search'      => $request->query('search'),
+            'search' => $request->query('search'),
             'category_id' => $request->query('category_id'),
-            'is_active'   => $request->query('is_active'),
-            'per_page'    => (int) $request->query('per_page', 10),
+            'is_active' => $request->query('is_active'),
+            'per_page' => (int) $request->query('per_page', 10),
         ]);
+
         return response()->json([
             'success' => true,
-            'data'    => ProductResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => ProductResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
-            'stats'   => $this->productService->getStats(),
+            'stats' => $this->productService->getStats(),
         ]);
     }
 
@@ -147,9 +149,10 @@ class ProductController extends Controller
         $data = $request->validated();
         $data['created_by_staff_id'] = $request->user()->id;
         $product = $this->productService->create($data);
+
         return response()->json([
             'success' => true,
-            'data'    => new ProductResource($product),
+            'data' => new ProductResource($product),
             'message' => 'Thêm sản phẩm thành công.',
         ], 201);
     }
@@ -173,10 +176,11 @@ class ProductController extends Controller
             new OA\Response(response: 404, description: 'Không tìm thấy sản phẩm'),
         ]
     )]
-    public function show(Product $product){
+    public function show(Product $product)
+    {
         return response()->json([
             'success' => true,
-            'data' => new ProductResource($product)
+            'data' => new ProductResource($product),
         ]);
     }
 
@@ -265,7 +269,7 @@ class ProductController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new ProductResource($updatedProduct),
+            'data' => new ProductResource($updatedProduct),
             'message' => 'Sản phẩm đã được cập nhật thành công.',
         ]);
     }
@@ -289,14 +293,14 @@ class ProductController extends Controller
             new OA\Response(response: 404, description: 'Không tìm thấy sản phẩm'),
         ]
     )]
-    public function destroy(Product $product){
+    public function destroy(Product $product)
+    {
 
         $this->productService->delete($product);
 
         return response()->json([
             'success' => true,
             'message' => 'Sản phẩm đã được xóa thành công.',
-        ], 200); 
+        ], 200);
     }
-
 }

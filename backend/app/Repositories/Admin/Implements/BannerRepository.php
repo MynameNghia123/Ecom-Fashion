@@ -11,14 +11,14 @@ class BannerRepository implements BannerRepositoryInterface
 {
     public function __construct(
         private readonly Banner $model,
-    ){}
-    
+    ) {}
+
     public function paginate(array $filters): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
-        if (!empty($filters['search'])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%');
+        if (! empty($filters['search'])) {
+            $query->where('title', 'like', '%'.$filters['search'].'%');
         }
 
         if (isset($filters['position']) && $filters['position'] !== '') {
@@ -27,20 +27,24 @@ class BannerRepository implements BannerRepositoryInterface
 
         return $query->orderBy('display_order', 'asc')->orderBy('id', 'desc')->paginate($filters['per_page'] ?? 10);
     }
+
     public function findById(int $id): ?Banner
     {
         return $this->model->find($id);
     }
+
     public function create(array $data): Banner
     {
         return $this->model->create($data);
     }
+
     public function update(Model $model, array $data): Banner
     {
         $model->update($data);
 
         return $model->fresh();
-    }   
+    }
+
     public function delete(Model $model): void
     {
         $model->delete();
@@ -50,6 +54,4 @@ class BannerRepository implements BannerRepositoryInterface
     {
         return $this->model->orderBy('id', 'desc')->get();
     }
-
 }
-?>

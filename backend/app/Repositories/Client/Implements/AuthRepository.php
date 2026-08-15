@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
+
 use App\Models\Customer;
 use App\Repositories\Client\Interfaces\AuthRepositoryInterface;
 use Illuminate\Support\Facades\DB;
@@ -49,8 +51,8 @@ class AuthRepository implements AuthRepositoryInterface
     public function createOtpRecord(string $email, string $otp): void
     {
         DB::table('customer_password_otps')->insert([
-            'email'      => $email,
-            'otp'        => $otp,
+            'email' => $email,
+            'otp' => $otp,
             'expires_at' => now()->addMinutes(10),
             'created_at' => now(),
             'updated_at' => now(),

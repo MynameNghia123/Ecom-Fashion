@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Services\Client\Interfaces;
 
 use App\Models\Wishlist;

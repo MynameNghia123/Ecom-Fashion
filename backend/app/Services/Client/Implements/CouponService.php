@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Services\Client\Implements;
-use App\Models\Coupon;
+
 use App\Repositories\Client\Interfaces\CouponRepositoryInterface;
 use App\Services\Client\Interfaces\CouponServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\DB;
 
 class CouponService implements CouponServiceInterface
 {
@@ -25,14 +27,14 @@ class CouponService implements CouponServiceInterface
         // Wait, if used_at is not nullable, this will throw an error in DB.
         // Let's set used_at to NULL if possible, or if it fails, we will know we must alter the table.
         // We will do an updateOrInsert in case they somehow have it.
-        \Illuminate\Support\Facades\DB::table('customer_coupons')->updateOrInsert(
+        DB::table('customer_coupons')->updateOrInsert(
             [
                 'customer_id' => $customerId,
                 'coupon_id' => $couponId,
             ],
             [
                 // we don't set used_at because they haven't used it!
-                // if mysql complains about used_at not having a default value, 
+                // if mysql complains about used_at not having a default value,
                 // we will have to alter the table to make it nullable.
             ]
         );
@@ -44,7 +46,7 @@ class CouponService implements CouponServiceInterface
     {
         $coupon = $this->repo->findActiveByCode($code);
 
-        if (!$coupon) {
+        if (! $coupon) {
             return ['success' => false, 'message' => 'Ma giam gia khong hop le hoac da het han.'];
         }
 
@@ -56,14 +58,12 @@ class CouponService implements CouponServiceInterface
             return ['success' => false, 'message' => 'Don hang chua dat gia tri toi thieu.'];
         }
 
-        $discount = $coupon->type === 'percent'
-            ? round($orderTotal * $coupon->discount_value / 100)
-            : $coupon->discount_value;
+        $discount = $coupon->type->calculateDiscount($orderTotal, $coupon->discount_value);
 
         return [
-            'success'  => true,
-            'message'  => 'Ap dung ma giam gia thanh cong!',
-            'coupon'   => $coupon,
+            'success' => true,
+            'message' => 'Ap dung ma giam gia thanh cong!',
+            'coupon' => $coupon,
             'discount' => $discount,
         ];
     }

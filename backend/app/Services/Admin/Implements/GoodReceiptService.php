@@ -1,13 +1,14 @@
 <?php
+
 namespace App\Services\Admin\Implements;
 
-use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
 use App\Models\GoodReceipt;
 use App\Repositories\Admin\Interfaces\GoodReceiptRepoInterface;
-use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
 use App\Repositories\Admin\Interfaces\ProductVariantRepositoryInterface;
-use Illuminate\Database\Eloquent\Model;
+use App\Services\Admin\Interfaces\GoodReceiptDetailServiceInterface;
+use App\Services\Admin\Interfaces\GoodReceiptServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
 class GoodReceiptService implements GoodReceiptServiceInterface
@@ -16,7 +17,7 @@ class GoodReceiptService implements GoodReceiptServiceInterface
         private readonly GoodReceiptRepoInterface $repo,
         private readonly GoodReceiptDetailServiceInterface $good_receipt_detail_service,
         private readonly ProductVariantRepositoryInterface $product_variant_repo
-    ){}
+    ) {}
 
     public function getList(array $filters): LengthAwarePaginator
     {
@@ -25,15 +26,15 @@ class GoodReceiptService implements GoodReceiptServiceInterface
 
     public function create(array $data): GoodReceipt
     {
-        return DB::transaction(function () use ($data){
+        return DB::transaction(function () use ($data) {
             $details = $data['good_receipt_details'] ?? [];
 
             unset($data['good_receipt_details']);
 
-            $created = $this->repo->create($data);            
-            if (!empty($details)){
+            $created = $this->repo->create($data);
+            if (! empty($details)) {
                 $this->good_receipt_detail_service->insertMany($details, $created->id);
-                
+
                 if (($data['status'] ?? 'pending') === 'completed') {
                     foreach ($details as $detail) {
                         if (isset($detail['product_variant_id']) && isset($detail['quantity'])) {
@@ -49,17 +50,17 @@ class GoodReceiptService implements GoodReceiptServiceInterface
 
     public function update(Model $model, array $data): GoodReceipt
     {
-        return DB::transaction(function () use($model, $data){
+        return DB::transaction(function () use ($model, $data) {
             $oldStatus = $model->status;
             $newStatus = $data['status'] ?? $oldStatus;
-            
+
             $details = $data['good_receipt_details'] ?? [];
 
             unset($data['good_receipt_details']);
 
             $updated = $this->repo->update($model, $data);
 
-            if (!empty($details)){
+            if (! empty($details)) {
                 $this->good_receipt_detail_service->syncDetail($model, $details);
             }
 

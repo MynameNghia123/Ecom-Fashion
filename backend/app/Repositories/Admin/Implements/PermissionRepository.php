@@ -25,20 +25,20 @@ class PermissionRepository implements PermissionRepositoryInterface
     {
         $query = $this->model->newQuery();
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $keyword = $filters['search'];
             $query->where(function ($q) use ($keyword) {
                 $q->where('module', 'like', "%{$keyword}%")
-                  ->orWhere('action', 'like', "%{$keyword}%");
+                    ->orWhere('action', 'like', "%{$keyword}%");
             });
         }
 
-        if (!empty($filters['module'])) {
+        if (! empty($filters['module'])) {
             $query->where('module', $filters['module']);
         }
 
         return $query->orderBy('module')->orderBy('action')
-                     ->paginate($filters['per_page'] ?? 20);
+            ->paginate($filters['per_page'] ?? 20);
     }
 
     /**

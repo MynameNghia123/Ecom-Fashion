@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Seeder;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\Staff;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
 {
@@ -57,7 +56,7 @@ class PermissionSeeder extends Seeder
             ['name' => 'manager'],
             ['description' => 'Manager role with catalog & order management permissions']
         );
-        
+
         // Find permission IDs for products, categories, orders, and customers
         $managerPermissions = Permission::whereIn('module', ['products', 'categories', 'orders', 'customers'])
             ->pluck('id')
@@ -76,7 +75,7 @@ class PermissionSeeder extends Seeder
         );
 
         // Attach Admin Role to Admin Staff if not already attached
-        if (!$adminStaff->roles()->where('role_id', $adminRole->id)->exists()) {
+        if (! $adminStaff->roles()->where('role_id', $adminRole->id)->exists()) {
             $adminStaff->roles()->attach($adminRole->id);
         }
 
@@ -92,7 +91,7 @@ class PermissionSeeder extends Seeder
         );
 
         // Attach Manager Role to Manager Staff if not already attached
-        if (!$managerStaff->roles()->where('role_id', $managerRole->id)->exists()) {
+        if (! $managerStaff->roles()->where('role_id', $managerRole->id)->exists()) {
             $managerStaff->roles()->attach($managerRole->id);
         }
     }

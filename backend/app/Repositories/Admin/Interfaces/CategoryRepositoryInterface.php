@@ -4,6 +4,7 @@ namespace App\Repositories\Admin\Interfaces;
 
 use App\Models\Category;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -15,7 +16,7 @@ interface CategoryRepositoryInterface extends BaseRepositoryInterface
     /**
      * {@inheritdoc}
      *
-     * @param array{ search?: string, per_page?: int } $filters
+     * @param  array{ search?: string, per_page?: int }  $filters
      */
     public function paginate(array $filters): LengthAwarePaginator;
 
@@ -27,21 +28,21 @@ interface CategoryRepositoryInterface extends BaseRepositoryInterface
     /**
      * {@inheritdoc}
      *
-     * @param array{ name: string } $data
+     * @param  array{ name: string }  $data
      */
     public function create(array $data): Category;
 
     /**
      * {@inheritdoc}
      *
-     * @param array{ name: string } $data
+     * @param  array{ name: string }  $data
      */
     public function update(Model $model, array $data): Category;
 
     /**
      * Lấy toàn bộ danh mục không phân trang.
      *
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return Collection
      */
     public function getAll();
 

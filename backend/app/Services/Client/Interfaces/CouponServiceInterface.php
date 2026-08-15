@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services\Client\Interfaces;
+
 use App\Models\Coupon;
 use Illuminate\Database\Eloquent\Collection;
 

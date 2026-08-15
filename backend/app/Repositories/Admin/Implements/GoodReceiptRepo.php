@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Admin\Implements;
 
 use App\Models\GoodReceipt;
@@ -10,16 +11,16 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
 {
     public function __construct(
         private readonly GoodReceipt $model
-    ){}
+    ) {}
 
     public function paginate(array $filters): LengthAwarePaginator
     {
         $query = $this->model->newQuery();
 
-        if (!empty($filters['search'])){
+        if (! empty($filters['search'])) {
             $keyword = $filters['search'];
 
-            $query->where(function ($q) use ($keyword){
+            $query->where(function ($q) {
                 // $q->where('name', 'like', $keyword. '%')
                 //     ->orWhere('phone', 'like', $keyword . '%')
                 //     ->orWhere('address', 'like', $keyword. '%')
@@ -35,7 +36,6 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
         return $this->model->with('goodReceiptDetail.productVariant.product')->find($id);
     }
 
-
     public function create(array $data): GoodReceipt
     {
         return $this->model->create($data);
@@ -44,6 +44,7 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
     public function update(Model $model, array $data): GoodReceipt
     {
         $model->update($data);
+
         return $model->fresh();
     }
 
@@ -60,9 +61,9 @@ class GoodReceiptRepo implements GoodReceiptRepoInterface
         $pending_total_amount = $this->model->where('status', 'pending')->sum('total_amount_price');
 
         return [
-            'total'                => $total,
-            'total_import_value'   => $total_import_value,
-            'pending'              => $pending,
+            'total' => $total,
+            'total_import_value' => $total_import_value,
+            'pending' => $pending,
             'pending_total_amount' => $pending_total_amount,
         ];
     }

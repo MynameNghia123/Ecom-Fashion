@@ -1,14 +1,14 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Banner\BannerRequest;
-use App\Http\Requests\Admin\Banner\StoreBannerRequest;
 use App\Http\Resources\Admin\Banner\BannerResource;
+use App\Models\Banner;
 use App\Services\Admin\Interfaces\BannerServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Banner;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -50,19 +50,19 @@ class BannerController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->bannerService->getList([
-            'search'   => $request->query('search'),
+            'search' => $request->query('search'),
             'position' => $request->query('position'),
             'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => BannerResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => BannerResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -106,7 +106,7 @@ class BannerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new BannerResource($banner),
+            'data' => new BannerResource($banner),
             'message' => 'Banner đã được tạo thành công.',
         ], 201);
     }
@@ -134,7 +134,7 @@ class BannerController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new BannerResource($banner),
+            'data' => new BannerResource($banner),
         ]);
     }
 
@@ -181,7 +181,7 @@ class BannerController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => new BannerResource($updated),
+            'data' => new BannerResource($updated),
             'message' => 'Banner đã được cập nhật thành công.',
         ]);
     }

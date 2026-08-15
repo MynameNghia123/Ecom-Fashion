@@ -1,37 +1,29 @@
 <?php
+
 namespace App\Repositories\Admin\Interfaces;
 
 use App\Models\AttributeValue;
-use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Model;
+
 /**
  * AttributeValue Repository Interface — extends Base, thêm các method đặc thù của AttributeValue.
  * Dùng return type cụ thể (AttributeValue) thay vì Model chung.
  */
-interface AttributeValueRepositoryInterface 
+interface AttributeValueRepositoryInterface
 {
     public function insertMany(array $data): bool;
-    /**
-     * {@inheritdoc}
-     */
+
     public function findById(int $id): ?AttributeValue;
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array{ attribute_id: int, value: string } $data
+     * @param  array{ attribute_id: int, value: string }  $data
      */
     public function create(array $data): AttributeValue;
 
     /**
-     * {@inheritdoc}
-     *
-     * @param array{ attribute_id: int, value: string } $data
+     * @param  array{ attribute_id: int, value: string }  $data
      */
-    public function update(\Illuminate\Database\Eloquent\Model $model, array $data): AttributeValue;
+    public function update(Model $model, array $data): AttributeValue;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function delete(\Illuminate\Database\Eloquent\Model $model): void;
-
+    public function delete(Model $model): void;
 }

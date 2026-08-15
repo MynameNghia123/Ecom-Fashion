@@ -1,10 +1,11 @@
 <?php
+
 namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Cart\AddItemRequest;
-use App\Http\Requests\Client\Cart\UpdateItemRequest;
 use App\Http\Requests\Client\Cart\SyncCartRequest;
+use App\Http\Requests\Client\Cart\UpdateItemRequest;
 use App\Services\Client\Interfaces\CartServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -19,10 +20,10 @@ class CartController extends Controller
     public function index(): JsonResponse
     {
         $customer = Auth::user();
-        
+
         return response()->json([
             'success' => true,
-            'data'    => $this->cartService->getCart($customer->id),
+            'data' => $this->cartService->getCart($customer->id),
         ]);
     }
 
@@ -33,7 +34,7 @@ class CartController extends Controller
     {
         $customer = Auth::user();
         $validated = $request->validated();
-        
+
         // Items may be empty if LocalStorage was empty
         $items = $validated['items'] ?? [];
 
@@ -52,7 +53,7 @@ class CartController extends Controller
 
         $result = $this->cartService->addItem($customer->id, $validated['product_variant_id'], $validated['quantity']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -72,8 +73,9 @@ class CartController extends Controller
 
         $result = $this->cartService->updateItem($customer->id, $id, $validated['quantity']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 422;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -92,7 +94,7 @@ class CartController extends Controller
 
         $result = $this->cartService->removeItem($customer->id, $id);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],

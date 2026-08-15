@@ -1,10 +1,13 @@
 <?php
+
 namespace App\Services\Client\Interfaces;
+
+use Illuminate\Support\Collection;
 
 interface CartServiceInterface
 {
     /**
-     * @return array{id: int, items: \Illuminate\Support\Collection, total_items: int, total_price: float|int}
+     * @return array{id: int, items: Collection, total_items: int, total_price: float|int}
      */
     public function getCart(int $customerId): array;
 
@@ -22,5 +25,6 @@ interface CartServiceInterface
      * @return array{success: bool, message: string, data?: array}
      */
     public function removeItem(int $customerId, int $itemId): array;
+
     public function syncCart(int $customerId, array $items): array;
 }

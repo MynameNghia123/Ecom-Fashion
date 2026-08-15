@@ -5,11 +5,11 @@ namespace App\Services\Admin\Implements;
 use App\Models\Role;
 use App\Repositories\Admin\Interfaces\RoleRepositoryInterface;
 use App\Services\Admin\Interfaces\RoleServiceInterface;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Exception;
 
 /**
  * Class RoleService
@@ -44,11 +44,12 @@ class RoleService implements RoleServiceInterface
             $role = $this->roleRepo->create($data);
 
             $permissionIds = $data['permission_ids'] ?? [];
-            if (!empty($permissionIds)) {
+            if (! empty($permissionIds)) {
                 $this->roleRepo->syncPermissions($role, $permissionIds);
             }
 
             DB::commit();
+
             return $role->load('permissions');
         } catch (Exception $e) {
             DB::rollBack();
@@ -70,6 +71,7 @@ class RoleService implements RoleServiceInterface
             }
 
             DB::commit();
+
             return $updatedRole->load('permissions');
         } catch (Exception $e) {
             DB::rollBack();
@@ -93,6 +95,7 @@ class RoleService implements RoleServiceInterface
     {
         $permissionIds = $data['permission_ids'] ?? [];
         $this->roleRepo->syncPermissions($role, $permissionIds);
+
         return $role->fresh()->load('permissions');
     }
 }

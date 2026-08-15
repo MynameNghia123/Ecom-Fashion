@@ -14,23 +14,23 @@ class StoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id'      => ['nullable', 'integer', 'exists:customers,id'],
-            'shipping_name'    => ['required_without:customer_id', 'nullable', 'string', 'max:255'],
-            'shipping_phone'   => ['required_without:customer_id', 'nullable', 'string', 'max:20'],
+            'customer_id' => ['nullable', 'integer', 'exists:customers,id'],
+            'shipping_name' => ['required_without:customer_id', 'nullable', 'string', 'max:255'],
+            'shipping_phone' => ['required_without:customer_id', 'nullable', 'string', 'max:20'],
             'shipping_address' => ['required_without:customer_id', 'nullable', 'string', 'max:500'],
-            
-            'shipping_fee'     => ['required', 'numeric', 'min:0'],
-            'discount_amount'  => ['nullable', 'numeric', 'min:0'],
-            
-            'payment_method'   => ['required', 'in:cod,vnpay,cash,bank_transfer'],
-            'payment_status'   => ['required', 'in:pending,paid,failed'],
-            'status'           => ['required', 'in:pending,processing,shipping,delivered,completed,cancelled'],
-            
-            'items'            => ['required', 'array', 'min:1'],
+
+            'shipping_fee' => ['required', 'numeric', 'min:0'],
+            'discount_amount' => ['nullable', 'numeric', 'min:0'],
+
+            'payment_method' => ['required', 'in:cod,vnpay,cash,bank_transfer'],
+            'payment_status' => ['required', 'in:pending,paid,failed'],
+            'status' => ['required', 'in:pending,processing,shipping,delivered,completed,cancelled'],
+
+            'items' => ['required', 'array', 'min:1'],
             'items.*.product_variant_id' => ['required', 'integer', 'exists:product_variants,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
-            
-            'note'             => ['nullable', 'string', 'max:1000'],
+
+            'note' => ['nullable', 'string', 'max:1000'],
         ];
     }
 

@@ -6,22 +6,23 @@ use App\Models\Staff;
 use App\Repositories\Admin\Interfaces\StaffRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class StaffRepository implements StaffRepositoryInterface
 {
     public function __construct(
         private readonly Staff $model
-    ){}
-    
+    ) {}
+
     public function paginate(array $filters): LengthAwarePaginator
     {
         $query = $this->model->newQuery()->with(['roles', 'permissions']);
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $query->where(function ($q) use ($filters) {
-                $q->where('full_name', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('email', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('phone_number', 'like', '%' . $filters['search'] . '%');
+                $q->where('full_name', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('email', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('phone_number', 'like', '%'.$filters['search'].'%');
             });
         }
 
@@ -57,7 +58,7 @@ class StaffRepository implements StaffRepositoryInterface
         } else {
             unset($data['password']);
         }
-        
+
         $model->update($data);
 
         return $model->fresh();
@@ -82,7 +83,7 @@ class StaffRepository implements StaffRepositoryInterface
 
     public function getPermissionsByRoles(array $roleIds): array
     {
-        return \Illuminate\Support\Facades\DB::table('role_permissions')
+        return DB::table('role_permissions')
             ->whereIn('role_id', $roleIds)
             ->pluck('permission_id')
             ->unique()

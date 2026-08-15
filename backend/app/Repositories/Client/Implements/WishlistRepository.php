@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
 
 use App\Models\Wishlist;
@@ -9,7 +10,7 @@ class WishlistRepository implements WishlistRepositoryInterface
 {
     public function __construct(
         private readonly Wishlist $model
-    ){}
+    ) {}
 
     public function getByCustomerId(int $customerId): Collection
     {
@@ -17,9 +18,9 @@ class WishlistRepository implements WishlistRepositoryInterface
             'product.category',
             'product.productVariants.attributeValues.attribute',
         ])
-        ->where('customer_id', $customerId)
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where('customer_id', $customerId)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
     public function findByCustomerAndProduct(int $customerId, int $productId): ?Wishlist

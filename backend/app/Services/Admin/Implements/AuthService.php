@@ -17,19 +17,19 @@ class AuthService implements AuthServiceInterface
     {
         $staff = $this->staffRepo->findByEmail($credentials['email']);
 
-        if (!$staff || !Hash::check($credentials['password'], $staff->password)) {
+        if (! $staff || ! Hash::check($credentials['password'], $staff->password)) {
             return [
                 'success' => false,
                 'message' => 'Email hoặc mật khẩu không chính xác.',
-                'status_code' => 401
+                'status_code' => 401,
             ];
         }
 
-        if (!$staff->is_active) {
+        if (! $staff->is_active) {
             return [
                 'success' => false,
                 'message' => 'Tài khoản của bạn đã bị khóa.',
-                'status_code' => 403
+                'status_code' => 403,
             ];
         }
 
@@ -47,8 +47,8 @@ class AuthService implements AuthServiceInterface
         return [
             'success' => true,
             'message' => 'Đăng nhập thành công.',
-            'token'   => $token,
-            'user'    => $user,
+            'token' => $token,
+            'user' => $user,
         ];
     }
 
@@ -61,6 +61,7 @@ class AuthService implements AuthServiceInterface
     {
         $staff = $this->staffRepo->findById($user->id);
         $staff->load(['roles', 'permissions']);
+
         return $staff;
     }
 }

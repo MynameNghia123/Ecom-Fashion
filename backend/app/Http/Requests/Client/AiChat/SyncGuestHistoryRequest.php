@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\AiChat;
 
 use Illuminate\Foundation\Http\FormRequest;

@@ -1,8 +1,7 @@
 <?php
+
 namespace App\Http\Resources\Admin\Product;
 
-use App\Http\Resources\Admin\Product\AttributeValueResource;
-use App\Http\Resources\Admin\Product\ProductImageResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,7 +14,7 @@ class ProductVariantResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // 										created_at			
+        // 										created_at
 
         return [
             'id' => $this->id,

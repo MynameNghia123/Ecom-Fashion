@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Repositories\Client\Implements;
-use App\Models\ChatSession;
+
 use App\Models\ChatMessage;
+use App\Models\ChatSession;
 use App\Repositories\Client\Interfaces\AiChatRepositoryInterface;
 
 class AiChatRepository implements AiChatRepositoryInterface
@@ -25,8 +27,8 @@ class AiChatRepository implements AiChatRepositoryInterface
     {
         $this->messageModel->create([
             'chat_session_id' => $sessionId,
-            'sender'          => $sender,
-            'message'         => $message,
+            'sender' => $sender,
+            'message' => $message,
         ]);
     }
 

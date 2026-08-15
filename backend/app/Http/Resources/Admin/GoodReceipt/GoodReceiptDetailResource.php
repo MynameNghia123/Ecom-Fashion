@@ -1,9 +1,10 @@
 <?php
+
 namespace App\Http\Resources\Admin\GoodReceipt;
 
+use App\Http\Resources\Admin\Product\ProductVariantResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use App\Http\Resources\Admin\Product\ProductVariantResource;
 
 class GoodReceiptDetailResource extends JsonResource
 {

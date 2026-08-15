@@ -30,8 +30,8 @@ class AttributeRequest extends FormRequest
     {
         return [
             'name.required' => 'Tên thuộc tính không được để trống.',
-            'name.max'      => 'Tên thuộc tính không được vượt quá 255 ký tự.',
-            'name.unique'   => 'Tên thuộc tính này đã tồn tại trong hệ thống.',
+            'name.max' => 'Tên thuộc tính không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên thuộc tính này đã tồn tại trong hệ thống.',
         ];
     }
 }

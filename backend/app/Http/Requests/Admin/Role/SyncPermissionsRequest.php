@@ -18,7 +18,7 @@ class SyncPermissionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'permission_ids'   => ['required', 'array'],
+            'permission_ids' => ['required', 'array'],
             'permission_ids.*' => ['integer', 'exists:permissions,id'],
         ];
     }
@@ -26,10 +26,10 @@ class SyncPermissionsRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'permission_ids.required'  => 'Danh sách quyền không được để trống.',
-            'permission_ids.array'     => 'Danh sách quyền phải là một mảng.',
+            'permission_ids.required' => 'Danh sách quyền không được để trống.',
+            'permission_ids.array' => 'Danh sách quyền phải là một mảng.',
             'permission_ids.*.integer' => 'ID quyền phải là số nguyên.',
-            'permission_ids.*.exists'  => 'Một hoặc nhiều quyền không tồn tại trong hệ thống.',
+            'permission_ids.*.exists' => 'Một hoặc nhiều quyền không tồn tại trong hệ thống.',
         ];
     }
 }

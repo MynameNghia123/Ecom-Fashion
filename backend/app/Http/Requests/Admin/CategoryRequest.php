@@ -38,11 +38,11 @@ class CategoryRequest extends FormRequest
     {
         return [
             'name.required' => 'Tên danh mục không được để trống.',
-            'name.max'      => 'Tên danh mục không được vượt quá 255 ký tự.',
-            'name.unique'   => 'Tên danh mục này đã tồn tại trong hệ thống.',
+            'name.max' => 'Tên danh mục không được vượt quá 255 ký tự.',
+            'name.unique' => 'Tên danh mục này đã tồn tại trong hệ thống.',
             'slug.required' => 'Slug danh mục không được để trống.',
-            'slug.max'      => 'Slug danh mục không được vượt quá 255 ký tự.',
-            'slug.unique'   => 'Slug danh mục này đã tồn tại trong hệ thống.',
+            'slug.max' => 'Slug danh mục không được vượt quá 255 ký tự.',
+            'slug.unique' => 'Slug danh mục này đã tồn tại trong hệ thống.',
             'parent_id.exists' => 'Danh mục cha không tồn tại.',
             'description.max' => 'Mô tả danh mục không được vượt quá 255 ký tự.',
         ];

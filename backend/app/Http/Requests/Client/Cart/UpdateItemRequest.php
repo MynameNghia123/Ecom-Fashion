@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Requests\Client\Cart;
 
 use Illuminate\Foundation\Http\FormRequest;

@@ -25,8 +25,8 @@ class PermissionController extends Controller
         summary: 'Lấy danh sách quyền hạn có phân trang',
         tags: ['Permissions'],
         parameters: [
-            new OA\Parameter(name: 'search',   in: 'query', required: false, schema: new OA\Schema(type: 'string'), description: 'Tìm theo module hoặc action'),
-            new OA\Parameter(name: 'module',   in: 'query', required: false, schema: new OA\Schema(type: 'string'), description: 'Lọc theo module cụ thể'),
+            new OA\Parameter(name: 'search', in: 'query', required: false, schema: new OA\Schema(type: 'string'), description: 'Tìm theo module hoặc action'),
+            new OA\Parameter(name: 'module', in: 'query', required: false, schema: new OA\Schema(type: 'string'), description: 'Lọc theo module cụ thể'),
             new OA\Parameter(name: 'per_page', in: 'query', required: false, schema: new OA\Schema(type: 'integer', default: 20)),
         ],
         responses: [
@@ -36,19 +36,19 @@ class PermissionController extends Controller
     public function index(Request $request): JsonResponse
     {
         $paginator = $this->permissionService->getList([
-            'search'   => $request->query('search'),
-            'module'   => $request->query('module'),
+            'search' => $request->query('search'),
+            'module' => $request->query('module'),
             'per_page' => (int) $request->query('per_page', 20),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => PermissionResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => PermissionResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -66,10 +66,10 @@ class PermissionController extends Controller
                     new OA\Property(property: 'success', type: 'boolean', example: true),
                     new OA\Property(property: 'data', type: 'array', items: new OA\Items(
                         properties: [
-                            new OA\Property(property: 'id',     type: 'integer', example: 1),
-                            new OA\Property(property: 'module', type: 'string',  example: 'products'),
-                            new OA\Property(property: 'action', type: 'string',  example: 'view'),
-                            new OA\Property(property: 'label',  type: 'string',  example: 'products.view'),
+                            new OA\Property(property: 'id', type: 'integer', example: 1),
+                            new OA\Property(property: 'module', type: 'string', example: 'products'),
+                            new OA\Property(property: 'action', type: 'string', example: 'view'),
+                            new OA\Property(property: 'label', type: 'string', example: 'products.view'),
                         ]
                     )),
                 ])
@@ -82,7 +82,7 @@ class PermissionController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => PermissionResource::collection($permissions),
+            'data' => PermissionResource::collection($permissions),
         ]);
     }
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Client\Coupon\ApplyCouponRequest;
 use App\Services\Client\Interfaces\CouponServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class CouponController extends Controller
 {
@@ -20,32 +21,32 @@ class CouponController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $coupons,
+            'data' => $coupons,
         ]);
     }
 
     /**
      * GET /client/coupons/collectable
      */
-    public function collectable(\Illuminate\Http\Request $request): JsonResponse
+    public function collectable(Request $request): JsonResponse
     {
         $customerId = $request->user()->id;
         $coupons = $this->couponService->getCollectableCoupons($customerId);
 
         return response()->json([
             'success' => true,
-            'data'    => $coupons,
+            'data' => $coupons,
         ]);
     }
 
     /**
      * POST /client/coupons/collect
      */
-    public function collect(\Illuminate\Http\Request $request): JsonResponse
+    public function collect(Request $request): JsonResponse
     {
         $request->validate(['coupon_id' => 'required|integer']);
         $customerId = $request->user()->id;
-        
+
         $result = $this->couponService->collectCoupon($customerId, $request->coupon_id);
 
         return response()->json($result);
@@ -57,17 +58,17 @@ class CouponController extends Controller
     public function apply(ApplyCouponRequest $request): JsonResponse
     {
         $validated = $request->validated();
-        
+
         $result = $this->couponService->applyCoupon($validated['code'], $validated['order_total']);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             return response()->json(['success' => false, 'message' => $result['message']], 422);
         }
 
         return response()->json([
-            'success'  => true,
-            'message'  => $result['message'],
-            'coupon'   => $result['coupon'],
+            'success' => true,
+            'message' => $result['message'],
+            'coupon' => $result['coupon'],
             'discount' => $result['discount'],
         ]);
     }

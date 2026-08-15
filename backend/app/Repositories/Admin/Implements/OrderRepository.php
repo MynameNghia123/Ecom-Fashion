@@ -11,30 +11,30 @@ class OrderRepository implements OrderRepositoryInterface
 {
     public function __construct(
         private readonly Order $model
-    ){}
+    ) {}
 
     public function paginate(array $filters): LengthAwarePaginator
     {
         $query = $this->model->with(['customer']);
 
-        if (!empty($filters['search'])) {
+        if (! empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('order_code', 'like', "%{$search}%")
-                  ->orWhere('shipping_name', 'like', "%{$search}%")
-                  ->orWhere('shipping_phone', 'like', "%{$search}%");
+                    ->orWhere('shipping_name', 'like', "%{$search}%")
+                    ->orWhere('shipping_phone', 'like', "%{$search}%");
             });
         }
 
-        if (!empty($filters['status'])) {
+        if (! empty($filters['status'])) {
             $query->where('status', $filters['status']);
         }
 
-        if (!empty($filters['payment_status'])) {
+        if (! empty($filters['payment_status'])) {
             $query->where('payment_status', $filters['payment_status']);
         }
 
-        if (!empty($filters['payment_method'])) {
+        if (! empty($filters['payment_method'])) {
             $query->where('payment_method', $filters['payment_method']);
         }
 
@@ -52,7 +52,7 @@ class OrderRepository implements OrderRepositoryInterface
             'shipping' => $this->model->where('status', 'shipping')->count(),
             'completed' => $this->model->where('status', 'completed')->count(),
             'cancelled' => $this->model->where('status', 'cancelled')->count(),
-            'total_revenue' => (double) $this->model->where('status', '!=', 'cancelled')->sum('final_amount')
+            'total_revenue' => (float) $this->model->where('status', '!=', 'cancelled')->sum('final_amount'),
         ];
     }
 
@@ -62,7 +62,7 @@ class OrderRepository implements OrderRepositoryInterface
             'customer',
             'coupon',
             'details.productVariant.product',
-            'details.productVariant.attributeValues.attribute'
+            'details.productVariant.attributeValues.attribute',
         ])->find($id);
     }
 
@@ -79,6 +79,7 @@ class OrderRepository implements OrderRepositoryInterface
     public function update(Model $model, array $data): Order
     {
         $model->update($data);
+
         return $model->fresh();
     }
 

@@ -22,8 +22,9 @@ class ReviewController extends Controller
 
         $result = $this->reviewService->storeReview($customer->id, $validated);
 
-        if (!$result['success']) {
+        if (! $result['success']) {
             $status = str_contains($result['message'], 'Không tìm thấy') ? 404 : 400;
+
             return response()->json([
                 'success' => false,
                 'message' => $result['message'],
@@ -33,7 +34,7 @@ class ReviewController extends Controller
         return response()->json([
             'success' => true,
             'message' => $result['message'],
-            'data'    => $result['data'],
+            'data' => $result['data'],
         ], 201);
     }
 
@@ -48,10 +49,9 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $reviews,
+            'data' => $reviews,
         ]);
     }
-
 
     /**
      * GET /products/{productId}/reviews — Lấy danh sách đánh giá công khai của sản phẩm.
@@ -64,9 +64,9 @@ class ReviewController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $reviews,
+            'data' => $reviews,
             'average_rating' => $avgRating,
-            'total_reviews'  => $reviews->count(),
+            'total_reviews' => $reviews->count(),
         ]);
     }
 
@@ -77,10 +77,10 @@ class ReviewController extends Controller
     {
         $customer = Auth::user();
         $eligibility = $this->reviewService->checkReviewEligibility($customer->id, $productId);
-        
+
         return response()->json([
             'success' => true,
-            'data'    => $eligibility
+            'data' => $eligibility,
         ]);
     }
 }

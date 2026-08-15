@@ -20,18 +20,18 @@ class ReturnRequestController extends Controller
     public function index(Request $request): JsonResponse
     {
         $user = $request->user();
-        
+
         $perPage = (int) $request->query('per_page', 10);
         $returnRequests = $this->service->getCustomerReturnRequests($user->id, $perPage);
 
         return response()->json([
             'success' => true,
-            'data'    => $returnRequests->items(),
-            'meta'    => [
+            'data' => $returnRequests->items(),
+            'meta' => [
                 'current_page' => $returnRequests->currentPage(),
-                'per_page'     => $returnRequests->perPage(),
-                'total'        => $returnRequests->total(),
-                'last_page'    => $returnRequests->lastPage(),
+                'per_page' => $returnRequests->perPage(),
+                'total' => $returnRequests->total(),
+                'last_page' => $returnRequests->lastPage(),
             ],
         ]);
     }
@@ -45,7 +45,7 @@ class ReturnRequestController extends Controller
 
         $returnRequest = $this->service->getCustomerReturnRequestDetail($user->id, $id);
 
-        if (!$returnRequest) {
+        if (! $returnRequest) {
             return response()->json([
                 'success' => false,
                 'message' => 'Không tìm thấy yêu cầu hoàn trả.',
@@ -54,7 +54,7 @@ class ReturnRequestController extends Controller
 
         return response()->json([
             'success' => true,
-            'data'    => $returnRequest,
+            'data' => $returnRequest,
         ]);
     }
 
@@ -65,7 +65,7 @@ class ReturnRequestController extends Controller
     {
         $user = $request->user();
         $validated = $request->validated();
-        
+
         $images = [];
         if ($request->hasFile('evidence_images')) {
             $images = $request->file('evidence_images');
@@ -80,7 +80,7 @@ class ReturnRequestController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data'    => $returnRequest,
+                'data' => $returnRequest,
                 'message' => 'Gửi yêu cầu hoàn trả thành công. Chúng tôi sẽ sớm xử lý.',
             ], 201);
         } catch (\Exception $e) {

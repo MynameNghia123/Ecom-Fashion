@@ -1,14 +1,15 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Coupon\StoreCouponRequest;
 use App\Http\Requests\Admin\Coupon\UpdateCouponRequest;
 use App\Http\Resources\Admin\Coupon\CouponResource;
+use App\Models\Coupon;
 use App\Services\Admin\Interfaces\CouponServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\Coupon;
 use OpenApi\Attributes as OA;
 
 #[OA\Tag(
@@ -19,7 +20,7 @@ class CouponController extends Controller
 {
     public function __construct(
         private readonly CouponServiceInterface $couponService
-    ){}
+    ) {}
 
     #[OA\Get(
         path: '/api/admin/coupons',
@@ -48,23 +49,23 @@ class CouponController extends Controller
             ),
         ]
     )]
-    public function index(Request $request) : JsonResponse
+    public function index(Request $request): JsonResponse
     {
         $paginator = $this->couponService->getList([
-            'search'    => $request->query('search'),
-            'type'      => $request->query('type'),
+            'search' => $request->query('search'),
+            'type' => $request->query('type'),
             'is_active' => $request->query('is_active'),
-            'per_page'  => (int) $request->query('per_page', 10),
+            'per_page' => (int) $request->query('per_page', 10),
         ]);
 
         return response()->json([
             'success' => true,
-            'data'    => CouponResource::collection($paginator->items()),
-            'meta'    => [
+            'data' => CouponResource::collection($paginator->items()),
+            'meta' => [
                 'current_page' => $paginator->currentPage(),
-                'per_page'     => $paginator->perPage(),
-                'total'        => $paginator->total(),
-                'last_page'    => $paginator->lastPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
             ],
         ]);
     }
@@ -84,13 +85,13 @@ class CouponController extends Controller
             ),
         ]
     )]
-    public function parents() : JsonResponse
+    public function parents(): JsonResponse
     {
         $parents = $this->couponService->getAll();
 
         return response()->json([
             'success' => true,
-            'data'    => CouponResource::collection($parents),
+            'data' => CouponResource::collection($parents),
         ]);
     }
 
@@ -131,12 +132,11 @@ class CouponController extends Controller
         $data = $request->validated();
         $data['created_by_staff_id'] = $request->user()->id;
 
-
-
         $coupon = $this->couponService->create($data);
+
         return response()->json([
             'success' => true,
-            'data'    => new CouponResource($coupon),
+            'data' => new CouponResource($coupon),
             'message' => 'Mã giảm giá đã được thêm thành công.',
         ], 201);
     }
@@ -164,7 +164,7 @@ class CouponController extends Controller
     {
         return response()->json([
             'success' => true,
-            'data'    => new CouponResource($coupon),
+            'data' => new CouponResource($coupon),
         ]);
     }
 
@@ -208,13 +208,11 @@ class CouponController extends Controller
     {
         $data = $request->validated();
 
-
-
         $updatedCoupon = $this->couponService->update($coupon, $data);
 
         return response()->json([
             'success' => true,
-            'data'    => new CouponResource($updatedCoupon),
+            'data' => new CouponResource($updatedCoupon),
             'message' => 'Mã giảm giá đã được cập nhật thành công.',
         ]);
     }

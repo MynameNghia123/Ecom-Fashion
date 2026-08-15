@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -59,17 +60,17 @@ class UploadController extends Controller
     public function upload(Request $request): JsonResponse
     {
         $request->validate([
-            'file'   => 'required|file|image|mimes:jpeg,png,webp,gif|max:10240', // tối đa 10MB
+            'file' => 'required|file|image|mimes:jpeg,png,webp,gif|max:10240', // tối đa 10MB
             'folder' => 'nullable|string|max:50|alpha_dash',
         ]);
 
         $folder = $request->input('folder', 'products');
-        
+
         $file = $request->file('file');
-        
+
         // Tạo tên file duy nhất: uuid + đuôi gốc
         $extension = $file->getClientOriginalExtension() ?: 'jpg';
-        $filename  = Str::uuid() . '.' . $extension;
+        $filename = Str::uuid().'.'.$extension;
 
         try {
             // Lưu vào storage/app/public/images/{folder}/{filename}
@@ -80,23 +81,24 @@ class UploadController extends Controller
                 'public'
             );
 
-            if (!$path) {
+            if (! $path) {
                 throw new \Exception('Không thể ghi file vào storage.');
             }
 
             // Xây dựng URL đầy đủ: APP_URL + /storage/ + path
-            $url = rtrim(config('app.url'), '/') . '/storage/' . $path;
+            $url = rtrim(config('app.url'), '/').'/storage/'.$path;
 
             return response()->json([
                 'success' => true,
-                'url'     => $url,
-                'path'    => $path,   // đường dẫn tương đối (để xóa sau nếu cần)
+                'url' => $url,
+                'path' => $path,   // đường dẫn tương đối (để xóa sau nếu cần)
             ], 201);
         } catch (\Exception $e) {
-            \Log::error('Lỗi upload image: ' . $e->getMessage());
+            \Log::error('Lỗi upload image: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Lỗi lưu trữ hình ảnh: ' . $e->getMessage(),
+                'message' => 'Lỗi lưu trữ hình ảnh: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -149,7 +151,7 @@ class UploadController extends Controller
         $path = $request->input('path');
 
         // Bảo vệ: chỉ cho phép xóa trong thư mục images/
-        if (!str_starts_with($path, 'images/')) {
+        if (! str_starts_with($path, 'images/')) {
             return response()->json([
                 'success' => false,
                 'message' => 'Đường dẫn không hợp lệ.',

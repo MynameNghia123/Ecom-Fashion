@@ -2,9 +2,9 @@
 
 namespace App\Repositories\Admin\Interfaces;
 
+use App\Models\Coupon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Coupon;
 
 /**
  * Coupon Repository Interface — định nghĩa CRUD chuẩn cho mọi repository.
@@ -15,7 +15,7 @@ interface CouponRepositoryInterface extends BaseRepositoryInterface
     /**
      * Lấy danh sách có filter + phân trang.
      *
-     * @param array<string, mixed> $filters
+     * @param  array<string, mixed>  $filters
      */
     public function paginate(array $filters): LengthAwarePaginator;
 
@@ -27,14 +27,14 @@ interface CouponRepositoryInterface extends BaseRepositoryInterface
     /**
      * Tạo bản ghi mới.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function create(array $data): Coupon;
 
     /**
      * Cập nhật bản ghi và trả về dữ liệu mới nhất.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function update(Model $model, array $data): Coupon;
 
@@ -42,5 +42,6 @@ interface CouponRepositoryInterface extends BaseRepositoryInterface
      * Xóa bản ghi.
      */
     public function delete(Model $model): void;
+
     public function getAll();
 }
