@@ -227,11 +227,6 @@
               </td>
             </tr>
 
-            <tr v-if="filteredRequests.length === 0">
-              <td colspan="8" class="text-center py-12 text-slate-400 font-medium">
-                Không tìm thấy yêu cầu đổi trả nào phù hợp.
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>

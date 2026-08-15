@@ -34,8 +34,8 @@ class ReturnRequestService implements ReturnRequestServiceInterface
             throw new Exception('Bạn không có quyền thao tác với sản phẩm này.', 403);
         }
 
-        // 2. Kiểm tra trạng thái đơn hàng (chỉ cho phép Delivered)
-        if ($orderDetail->order->status !== 'delivered') {
+        // 2. Kiểm tra trạng thái đơn hàng (chỉ cho phép 'completed' = đã giao hàng)
+        if ($orderDetail->order->status !== 'completed') {
             throw new Exception('Chỉ có thể yêu cầu hoàn trả cho đơn hàng đã giao thành công.', 422);
         }
 
@@ -59,8 +59,8 @@ class ReturnRequestService implements ReturnRequestServiceInterface
         }
 
         // 6. Tính toán refund amount dựa trên giá mua của sản phẩm
-        $quantity = clone $orderDetail->quantity;
-        $refundAmount = ($orderDetail->price * $orderDetail->quantity);
+        $quantity = $orderDetail->quantity; // Fix: integer không cần clone
+        $refundAmount = ($orderDetail->price * $quantity);
 
         // 7. Tạo ReturnRequest
         $returnRequestData = [

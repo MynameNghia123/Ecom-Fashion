@@ -92,8 +92,13 @@ const formatPrice = (val) => {
   return new Intl.NumberFormat('vi-VN').format(val)
 }
 
+const COUPON_TYPE = {
+  PERCENT: 'percent',
+  FIXED: 'fixed'
+}
+
 const formatDiscount = (coupon) => {
-  if (coupon.type === 'percent') {
+  if (coupon.type === COUPON_TYPE.PERCENT) {
     return coupon.discount_value + '%'
   }
   return formatPrice(coupon.discount_value) + ' đ'

@@ -231,7 +231,7 @@
 
     <!-- Return Modal -->
     <transition name="fade">
-      <div v-if="isReturnModalOpen" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 font-text">
+      <div v-if="isReturnModalOpen" class="fixed inset-0 z-50 flex items-start justify-center bg-black/50 pt-[200px] px-4 pb-4 font-text overflow-y-auto">
         <div class="bg-white border border-neutral-200 w-full max-w-[500px] p-6 space-y-6 relative animate-scale-in max-h-[90vh] overflow-y-auto">
           <!-- Close button -->
           <button @click="closeReturnModal" class="absolute top-4 right-4 text-neutral-400 hover:text-black cursor-pointer bg-transparent border-none">
@@ -256,7 +256,7 @@
 
           <!-- Alert -->
           <div v-if="returnAlert.show" :class="['px-4 py-2.5 text-xs font-medium border', returnAlert.type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-rose-50 border-rose-200 text-rose-700']">
-            {{ returnAlert.message }}
+            <div v-html="returnAlert.message"></div>
           </div>
 
           <!-- Return Form -->
@@ -472,10 +472,20 @@ const submitReturn = async () => {
       }, 1500)
     }
   } catch (err) {
+    let errorMsg = err.response?.data?.message || 'Có lỗi xảy ra. Có thể bạn đã gửi yêu cầu cho sản phẩm này rồi.'
+    
+    // Nếu có lỗi validation chi tiết (422)
+    if (err.response?.status === 422 && err.response?.data?.errors) {
+      const errorList = Object.values(err.response.data.errors).flat()
+      if (errorList.length > 0) {
+        errorMsg = '<strong>Lỗi xác thực dữ liệu:</strong><br/>&bull; ' + errorList.join('<br/>&bull; ')
+      }
+    }
+
     returnAlert.value = { 
       show: true, 
       type: 'error', 
-      message: err.response?.data?.message || 'Có lỗi xảy ra. Có thể bạn đã gửi yêu cầu cho sản phẩm này rồi.'
+      message: errorMsg
     }
   } finally {
     submittingReturn.value = false

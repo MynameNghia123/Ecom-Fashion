@@ -46,10 +46,12 @@
             
             <div class="flex gap-3" :class="{'pl-2': !notification.is_read}">
               <!-- Icon based on type -->
-              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center" :class="getIconBgClass(notification.type)">
-                <svg class="w-5 h-5" :class="getIconTextClass(notification.type)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center" :class="getIconBgClass(notification)">
+                <svg class="w-5 h-5" :class="getIconTextClass(notification)" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path v-if="notification.type === 'order_placed'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                   <path v-else-if="notification.type === 'order_status_updated'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path v-else-if="notification.type === 'return_request_updated' && (notification.title || '').toLowerCase().includes('từ chối')" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                  <path v-else-if="notification.type === 'return_request_updated' && ((notification.title || '').toLowerCase().includes('duyệt') || (notification.title || '').toLowerCase().includes('hoàn tiền'))" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                   <path v-else-if="notification.type === 'return_request_updated'" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
                   <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
@@ -82,7 +84,7 @@
 </template>
 
 <script setup>
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotificationStore } from '@/stores/client/notificationStore'
 
@@ -98,12 +100,21 @@ const emit = defineEmits(['close'])
 const store = useNotificationStore()
 const router = useRouter()
 
+// Fetch unread count khi component khởi tạo
 onMounted(() => {
   store.fetchUnreadCount()
-  if (props.isOpen && store.notifications.length === 0) {
-    store.fetchNotifications()
-  }
 })
+
+// Mỗi lần dropdown được mở → reset về trang 1 và fetch lại từ API
+watch(
+  () => props.isOpen,
+  (opened) => {
+    if (opened) {
+      store.fetchNotifications(1)
+    }
+  },
+  { immediate: true }
+)
 
 const close = () => {
   emit('close')
@@ -122,10 +133,18 @@ const handleNotificationClick = async (notification) => {
   }
   
   const type = notification.type || ''
-  if (type.includes('order')) {
-    router.push('/profile/orders')
-  } else if (type.includes('return')) {
+  
+  if (type === 'order_placed' || type === 'order_status_updated') {
+    const match = notification.content?.match(/ORD-[A-Z0-9]+/) || notification.title?.match(/ORD-[A-Z0-9]+/)
+    if (match) {
+      router.push({ name: 'CheckoutSuccess', query: { code: match[0] } })
+    } else {
+      router.push('/profile/order-history')
+    }
+  } else if (type === 'return_request_updated') {
     router.push('/profile/returns')
+  } else {
+    router.push('/profile/order-history')
   }
   
   close()
@@ -171,27 +190,37 @@ const formatTime = (dateString) => {
   }
 }
 
-const getIconBgClass = (type) => {
+const getIconBgClass = (notif) => {
+  const type = notif.type || ''
   switch (type) {
     case 'order_placed':
       return 'bg-emerald-100'
     case 'order_status_updated':
       return 'bg-blue-100'
-    case 'return_request_updated':
+    case 'return_request_updated': {
+      const title = (notif.title || '').toLowerCase()
+      if (title.includes('từ chối') || title.includes('hủy')) return 'bg-rose-100'
+      if (title.includes('duyệt') || title.includes('hoàn tiền')) return 'bg-emerald-100'
       return 'bg-orange-100'
+    }
     default:
       return 'bg-gray-100'
   }
 }
 
-const getIconTextClass = (type) => {
+const getIconTextClass = (notif) => {
+  const type = notif.type || ''
   switch (type) {
     case 'order_placed':
       return 'text-emerald-600'
     case 'order_status_updated':
       return 'text-blue-600'
-    case 'return_request_updated':
+    case 'return_request_updated': {
+      const title = (notif.title || '').toLowerCase()
+      if (title.includes('từ chối') || title.includes('hủy')) return 'text-rose-600'
+      if (title.includes('duyệt') || title.includes('hoàn tiền')) return 'text-emerald-600'
       return 'text-orange-600'
+    }
     default:
       return 'text-gray-600'
   }
