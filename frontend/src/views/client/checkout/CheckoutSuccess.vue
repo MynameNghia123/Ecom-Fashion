@@ -75,29 +75,38 @@
               <span class="font-semibold text-black mb-2 sm:mb-0">{{ formatPrice(detail.unit_price * detail.quantity) }}đ</span>
               
               <div class="flex items-center gap-2">
-                <!-- Nút Đổi trả -->
-                <button 
-                  v-if="order.status === 'completed'" 
-                  @click="openReturnModal(detail)"
-                  class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border border-rose-500 text-rose-500 bg-white hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-text"
+                <!-- Nếu sản phẩm đã tạo yêu cầu đổi trả -->
+                <span 
+                  v-if="detail.return_request || detail.returnRequest"
+                  class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border border-amber-400 text-amber-700 bg-amber-50 font-text"
                 >
-                  Hoàn / Trả
-                </button>
+                  Đã yêu cầu hoàn trả
+                </span>
 
-                <!-- Đánh giá nút -->
-              <button 
-                v-if="order.status === 'completed'" 
-                @click="openReviewModal(detail)"
-                :disabled="detail.review"
-                :class="[
-                  'px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-all cursor-pointer font-text',
-                  detail.review 
-                    ? 'border-neutral-200 text-neutral-400 bg-neutral-50 cursor-not-allowed'
-                    : 'border-black text-black bg-white hover:bg-black hover:text-white'
-                ]"
-              >
-                {{ detail.review ? 'Đã đánh giá' : 'Đánh giá' }}
-              </button>
+                <!-- Nếu chưa đổi trả và đơn hàng đã giao -->
+                <template v-else-if="order.status === 'completed'">
+                  <!-- Nút Đổi trả -->
+                  <button 
+                    @click="openReturnModal(detail)"
+                    class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border border-rose-500 text-rose-500 bg-white hover:bg-rose-500 hover:text-white transition-all cursor-pointer font-text"
+                  >
+                    Hoàn / Trả
+                  </button>
+
+                  <!-- Đánh giá nút (chỉ hiện khi sản phẩm chưa đổi trả) -->
+                  <button 
+                    @click="openReviewModal(detail)"
+                    :disabled="detail.review"
+                    :class="[
+                      'px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest border transition-all cursor-pointer font-text',
+                      detail.review 
+                        ? 'border-neutral-200 text-neutral-400 bg-neutral-50 cursor-not-allowed'
+                        : 'border-black text-black bg-white hover:bg-black hover:text-white'
+                    ]"
+                  >
+                    {{ detail.review ? 'Đã đánh giá' : 'Đánh giá' }}
+                  </button>
+                </template>
               </div>
             </div>
           </div>
@@ -467,6 +476,9 @@ const submitReturn = async () => {
     
     if (res.data && res.data.success) {
       returnAlert.value = { show: true, type: 'success', message: 'Gửi yêu cầu thành công!' }
+      if (selectedReturnDetail.value) {
+        selectedReturnDetail.value.return_request = true
+      }
       setTimeout(() => {
         closeReturnModal()
       }, 1500)

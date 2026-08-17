@@ -45,35 +45,38 @@ class ReturnRequestService implements ReturnRequestServiceInterface
 
     public function updateStatus(ReturnRequest $model, array $data): ReturnRequest
     {
-        $validTransitions = [
-            'pending' => ['approved', 'rejected'],
-            'approved' => ['received'],
-            'received' => ['refunded'],
-        ];
+        $newStatus = $data['status'] ?? $model->status;
+        $statusChanged = $newStatus !== $model->status;
 
-        $allowed = $validTransitions[$model->status] ?? [];
-        if (! in_array($data['status'], $allowed)) {
-            throw new Exception("Không thể chuyển từ '{$model->status}' sang '{$data['status']}'.");
+        if ($statusChanged) {
+            $validTransitions = [
+                'pending' => ['approved', 'rejected'],
+                'approved' => ['received', 'rejected'],
+                'received' => ['refunded', 'rejected'],
+                'rejected' => ['approved', 'pending'],
+                'refunded' => ['refunded'],
+            ];
+
+            $allowed = $validTransitions[$model->status] ?? ['approved', 'received', 'refunded', 'rejected'];
+            if (! in_array($newStatus, $allowed)) {
+                throw new Exception("Không thể chuyển từ '{$model->status}' sang '{$newStatus}'.");
+            }
+
+            $data['status'] = $newStatus;
+            $data['processed_by_staff_id'] = Auth::id();
+            $data['processed_at'] = now();
         }
-
-        $data['processed_by_staff_id'] = Auth::id();
-        $data['processed_at'] = now();
 
         $updatedModel = $this->repository->update($model, $data);
 
-        // KHÔNG CỘNG LẠI TỒN KHO vì hàng lỗi/hỏng không bán lại được
-
-        if ($data['status'] === 'refunded') {
+        if ($statusChanged && $newStatus === 'refunded') {
             $updatedModel->load('order');
-            if ($updatedModel->order && clone $updatedModel->order) {
-                // Nếu đơn hoàn toàn, có thể set payment_status = refunded.
-                // Tùy theo nghiệp vụ (hoàn 1 phần hay toàn phần). Ở đây set cho order.
+            if ($updatedModel->order) {
                 $updatedModel->order->update(['payment_status' => 'refunded']);
             }
         }
 
-        $updatedModel->load('order');
-        if ($updatedModel->order && $updatedModel->order->customer_id) {
+        if ($statusChanged && $updatedModel->order && $updatedModel->order->customer_id) {
             $statusMap = [
                 'approved' => 'Đã được duyệt',
                 'rejected' => 'Đã bị từ chối',
@@ -81,12 +84,12 @@ class ReturnRequestService implements ReturnRequestServiceInterface
                 'refunded' => 'Đã hoàn tiền',
             ];
 
-            if (isset($statusMap[$data['status']])) {
+            if (isset($statusMap[$newStatus])) {
                 $this->notificationService->notify(
                     $updatedModel->order->customer_id,
                     'return_request_updated',
-                    "Yêu cầu hoàn trả {$updatedModel->ticket_code} ".strtolower($statusMap[$data['status']]),
-                    "Trạng thái yêu cầu hoàn trả {$updatedModel->ticket_code} của bạn đã được cập nhật thành: {$statusMap[$data['status']]}."
+                    "Yêu cầu hoàn trả {$updatedModel->ticket_code} ".strtolower($statusMap[$newStatus]),
+                    "Trạng thái yêu cầu hoàn trả {$updatedModel->ticket_code} của bạn đã được cập nhật thành: {$statusMap[$newStatus]}."
                 );
             }
         }

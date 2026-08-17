@@ -127,6 +127,7 @@ Route::prefix('client')->group(function () {
     Route::get('products/top-rated', [ClientProductController::class, 'topRated']);
     Route::get('products/{idOrSlug}', [ClientProductController::class, 'show']);
     Route::get('products/{idOrSlug}/reviews', [App\Http\Controllers\Client\ReviewController::class, 'productReviews']);
+    Route::get('products/{idOrSlug}/related', [ClientProductController::class, 'related']);
 
     // GHN Shipping proxy
     Route::prefix('shipping')->group(function () {

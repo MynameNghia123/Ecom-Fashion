@@ -52,5 +52,14 @@ export const productService = {
    */
   getTopRatedProducts(limit = 8) {
     return api.get('/client/products/top-rated', { params: { per_page: limit } })
+  },
+
+  /**
+   * Lấy sản phẩm liên quan cùng category (chính xác, không mở rộng sub-category)
+   * @param {String|Number} idOrSlug - ID hoặc slug của sản phẩm hiện tại
+   * @param {Number} limit
+   */
+  getRelatedProducts(idOrSlug, limit = 4) {
+    return api.get(`/client/products/${idOrSlug}/related`, { params: { per_page: limit } })
   }
 }

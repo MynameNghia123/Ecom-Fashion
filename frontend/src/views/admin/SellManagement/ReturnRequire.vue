@@ -337,32 +337,62 @@
               <span>{{ formatPrice(selectedRequest.refund_amount || ((selectedRequest.unit_price || 0) * (selectedRequest.quantity || 1))) }} đ</span>
             </div>
           </div>
+
+          <!-- Admin Note Section -->
+          <div class="space-y-2 pt-2 border-t border-slate-100">
+            <label class="font-bold text-slate-800 text-xs flex items-center justify-between">
+              <span>Ghi chú xử lý của Admin (Hiển thị cho Khách hàng):</span>
+            </label>
+            <textarea
+              v-model="adminNoteInput"
+              placeholder="Nhập phản hồi hoặc ghi chú từ Admin (ví dụ: Đã nhận hàng hoàn, sản phẩm hợp lệ, tiến hành hoàn tiền...)"
+              rows="3"
+              class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:bg-white focus:outline-none focus:border-slate-400 transition-colors"
+            ></textarea>
+          </div>
+
+          <!-- Inline Status Notification (No native browser alerts!) -->
+          <div v-if="actionSuccessMessage" class="p-3 bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold rounded-xl flex items-center gap-2">
+            <svg class="w-4 h-4 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+            <span>{{ actionSuccessMessage }}</span>
+          </div>
+
+          <div v-if="actionErrorMessage" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold rounded-xl flex items-center gap-2">
+            <svg class="w-4 h-4 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            <span>{{ actionErrorMessage }}</span>
+          </div>
         </div>
 
         <!-- Modal Actions Footer -->
-        <div class="p-5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-3">
+        <div class="p-5 border-t border-slate-100 bg-slate-50/50 flex flex-wrap items-center justify-between gap-3">
           <button @click="selectedRequest = null" class="px-4 py-2 bg-white border border-slate-200 rounded-xl font-semibold text-slate-600 hover:bg-slate-100 transition-colors">
             Đóng
           </button>
           
-          <div class="flex items-center gap-2" v-if="selectedRequest.status === 'pending'">
-            <button @click="updateStatus('rejected')" class="px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl transition-colors border border-rose-200">
-              Từ chối
-            </button>
-            <button @click="updateStatus('approved')" class="px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-colors shadow-md shadow-slate-200">
-              Chấp nhận yêu cầu
-            </button>
-          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <!-- Direct Status Select Option -->
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-medium text-slate-500 whitespace-nowrap">Trạng thái:</span>
+              <select
+                v-model="modalStatusSelect"
+                class="px-3 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-slate-400 transition-colors cursor-pointer"
+              >
+                <option value="pending">Chờ xử lý</option>
+                <option value="approved">Đã chấp nhận</option>
+                <option value="received">Đã nhận hàng</option>
+                <option value="refunded">Đã hoàn tiền</option>
+                <option value="rejected">Từ chối</option>
+              </select>
+            </div>
 
-          <div class="flex items-center gap-2" v-else-if="selectedRequest.status === 'approved'">
-            <button @click="updateStatus('received')" class="px-4 py-2 bg-slate-900 hover:bg-black text-white font-bold rounded-xl transition-colors shadow-md shadow-slate-200">
-              Xác nhận đã nhận hàng
-            </button>
-          </div>
-
-          <div class="flex items-center gap-2" v-else-if="selectedRequest.status === 'received'">
-            <button @click="updateStatus('refunded')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-xl transition-colors shadow-md shadow-emerald-200">
-              Xác nhận hoàn tiền
+            <!-- Single Save Button (Updates Status + Admin Note cleanly without alerts) -->
+            <button 
+              @click="updateStatus(modalStatusSelect)" 
+              :disabled="updatingStatus"
+              class="px-5 py-2 bg-slate-900 hover:bg-black disabled:bg-slate-300 text-white font-bold rounded-xl transition-colors shadow-md shadow-slate-200 whitespace-nowrap flex items-center gap-2"
+            >
+              <span v-if="updatingStatus">Đang lưu...</span>
+              <span v-else>Cập nhật & Lưu ghi chú</span>
             </button>
           </div>
         </div>
@@ -380,6 +410,12 @@ const searchQuery = ref('')
 const selectedStatus = ref('')
 const selectedReason = ref('')
 const selectedRequest = ref(null)
+
+const adminNoteInput = ref('')
+const modalStatusSelect = ref('')
+const actionSuccessMessage = ref('')
+const actionErrorMessage = ref('')
+const updatingStatus = ref(false)
 
 // Refresh / Filter trigger
 const fetchWithFilters = () => {
@@ -464,18 +500,40 @@ const getStatusBannerClass = (status) => {
 
 const openModal = (item) => {
   selectedRequest.value = item
+  adminNoteInput.value = item.admin_note || ''
+  modalStatusSelect.value = item.status
+  actionSuccessMessage.value = ''
+  actionErrorMessage.value = ''
 }
 
-const updateStatus = async (newStatus) => {
-  if (selectedRequest.value) {
-    try {
-      await returnStore.updateStatus(selectedRequest.value.id, newStatus)
-      selectedRequest.value.status = newStatus
-      fetchWithFilters() // Reload stats and list
-      alert('Cập nhật trạng thái thành công!')
-    } catch (err) {
-      alert('Lỗi cập nhật trạng thái: ' + err.message)
-    }
+const updateStatus = async (targetStatus = null) => {
+  if (!selectedRequest.value || updatingStatus.value) return
+  updatingStatus.value = true
+  actionSuccessMessage.value = ''
+  actionErrorMessage.value = ''
+  
+  const statusToUpdate = targetStatus || modalStatusSelect.value
+  
+  try {
+    const res = await returnStore.updateStatus(
+      selectedRequest.value.id,
+      statusToUpdate,
+      adminNoteInput.value
+    )
+    selectedRequest.value.status = statusToUpdate
+    selectedRequest.value.admin_note = adminNoteInput.value
+    modalStatusSelect.value = statusToUpdate
+    
+    fetchWithFilters() // Reload stats and list
+    actionSuccessMessage.value = 'Đã cập nhật trạng thái và ghi chú xử lý thành công!'
+    
+    setTimeout(() => {
+      actionSuccessMessage.value = ''
+    }, 3000)
+  } catch (err) {
+    actionErrorMessage.value = 'Lỗi cập nhật: ' + (err.response?.data?.message || err.message)
+  } finally {
+    updatingStatus.value = false
   }
 }
 

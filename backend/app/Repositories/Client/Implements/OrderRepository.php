@@ -24,6 +24,7 @@ class OrderRepository implements OrderRepositoryInterface
             'details.productVariant.product',
             'details.productVariant.attributeValues.attribute',
             'details.review',
+            'details.returnRequest',
         ])
             ->where('order_code', $orderCode)
             ->where('customer_id', $customerId)

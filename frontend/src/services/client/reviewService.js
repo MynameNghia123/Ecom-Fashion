@@ -6,6 +6,10 @@ export const reviewService = {
     return api.post('/client/reviews', payload)
   },
 
+  createReview(payload) {
+    return api.post('/client/reviews', payload)
+  },
+
   /** Lấy danh sách đánh giá của khách hàng hiện tại */
   getMyReviews() {
     return api.get('/client/reviews')

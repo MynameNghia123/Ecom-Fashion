@@ -143,4 +143,17 @@ class ProductRepository implements ProductRepositoryInterface
             ->limit($limit)
             ->get();
     }
+
+    public function getRelatedProducts(int $excludeProductId, int $categoryId, int $limit): Collection
+    {
+        // Lấy sản phẩm cùng CHÍNH XÁC category_id (không mở rộng sub-category)
+        // để đảm bảo Áo thun chỉ hiện Áo thun, không hiện Áo sơ mi
+        return $this->model->where('is_active', true)
+            ->where('category_id', $categoryId)
+            ->where('id', '!=', $excludeProductId)
+            ->with(['productImages', 'productVariants'])
+            ->inRandomOrder()
+            ->limit($limit)
+            ->get();
+    }
 }

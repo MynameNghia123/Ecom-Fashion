@@ -15,4 +15,6 @@ interface ProductRepositoryInterface
     public function findActiveByIdOrSlug(string $idOrSlug): ?Product;
 
     public function getTopRated(int $limit): Collection;
+
+    public function getRelatedProducts(int $excludeProductId, int $categoryId, int $limit): Collection;
 }

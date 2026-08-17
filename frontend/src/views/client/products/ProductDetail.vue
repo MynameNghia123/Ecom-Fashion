@@ -206,8 +206,6 @@
         :reviews="reviews" 
         :average-rating="averageRating" 
         :rating-stats="ratingStats" 
-        :is-eligible-to-review="isEligibleToReview"
-        :eligible-order-detail-id="eligibleOrderDetailId"
         v-show="activeTab === 'reviews'" 
       />
 
@@ -387,34 +385,33 @@ onMounted(async () => {
       console.warn('Chưa có đánh giá hoặc lỗi khi tải đánh giá:', e)
     }
 
-    // Fetch related products from same category
+    // Fetch related products — cùng category chính xác (không cross category)
     try {
-      const categoryId = product.value?.category_id
-      if (categoryId) {
-        const relRes = await productService.getProducts({ category_id: categoryId, per_page: 4 })
-        if (relRes.data && relRes.data.success) {
-          const allCatProducts = relRes.data.data?.data || relRes.data.data || []
-          relatedProducts.value = allCatProducts
-            .filter(p => p.id !== product.value?.id)
-            .slice(0, 4)
-            .map(p => {
-              const variants = p.product_variants || p.productVariants || []
-              const prices = variants.map(v => v.sale_price ?? v.salePrice ?? v.price).filter(Boolean)
-              const minPrice = prices.length > 0 ? Math.min(...prices) : 0
-              const originalPrices = variants.map(v => v.price).filter(Boolean)
-              const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0
-              const hasSale = minPrice > 0 && maxOriginal > 0 && minPrice < maxOriginal
-              return {
-                id: p.id,
-                slug: p.slug,
-                name: p.name,
-                image: p.thumbnail,
-                currentPrice: minPrice,
-                originalPrice: hasSale ? maxOriginal : null,
-                discount: hasSale ? Math.round((1 - minPrice / maxOriginal) * 100) : null
-              }
-            })
-        }
+      const relRes = await productService.getRelatedProducts(slug, 4)
+      if (relRes.data && relRes.data.success) {
+        const allRelated = relRes.data.data || []
+        relatedProducts.value = allRelated.map(p => {
+          const variants = p.product_variants || p.productVariants || []
+          const prices = variants.map(v => v.sale_price ?? v.salePrice ?? v.price).filter(Boolean)
+          const minPrice = prices.length > 0 ? Math.min(...prices) : 0
+          const originalPrices = variants.map(v => v.price).filter(Boolean)
+          const maxOriginal = originalPrices.length > 0 ? Math.max(...originalPrices) : 0
+          const hasSale = minPrice > 0 && maxOriginal > 0 && minPrice < maxOriginal
+
+          // Thumbnail: lấy từ product_images hoặc thumbnail field
+          const images = p.product_images || p.productImages || []
+          const thumbnail = p.thumbnail || (images.length > 0 ? images[0].image_path : null)
+
+          return {
+            id: p.id,
+            slug: p.slug,
+            name: p.name,
+            image: thumbnail,
+            currentPrice: minPrice,
+            originalPrice: hasSale ? maxOriginal : null,
+            discount: hasSale ? Math.round((1 - minPrice / maxOriginal) * 100) : null
+          }
+        })
       }
     } catch (e) {
       console.warn('Lỗi tải sản phẩm liên quan:', e)

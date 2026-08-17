@@ -65,4 +65,9 @@ class ProductService implements ProductServiceInterface
     {
         return $this->repo->getTopRated($limit);
     }
+
+    public function getRelatedProducts(int $excludeProductId, int $categoryId, int $limit): Collection
+    {
+        return $this->repo->getRelatedProducts($excludeProductId, $categoryId, $limit);
+    }
 }

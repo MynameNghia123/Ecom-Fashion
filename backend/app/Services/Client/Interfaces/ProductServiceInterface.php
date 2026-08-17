@@ -17,4 +17,6 @@ interface ProductServiceInterface
     public function getFormattedProductDetail(string $idOrSlug): ?array;
 
     public function getTopRated(int $limit): Collection;
+
+    public function getRelatedProducts(int $excludeProductId, int $categoryId, int $limit): Collection;
 }

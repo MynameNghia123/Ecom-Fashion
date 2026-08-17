@@ -84,4 +84,26 @@ class ProductController extends Controller
             'data' => $products,
         ]);
     }
+
+    /**
+     * GET /client/products/{idOrSlug}/related — Lấy sản phẩm liên quan cùng category, loại trừ sản phẩm hiện tại.
+     */
+    public function related($idOrSlug, Request $request): JsonResponse
+    {
+        $product = $this->productService->findActiveByIdOrSlug($idOrSlug);
+
+        if (! $product) {
+            return response()->json(['success' => false, 'message' => 'Sản phẩm không tồn tại.'], 404);
+        }
+
+        $limit = (int) $request->query('per_page', 4);
+        $limit = min($limit, 12);
+
+        $related = $this->productService->getRelatedProducts($product->id, $product->category_id, $limit);
+
+        return response()->json([
+            'success' => true,
+            'data' => $related,
+        ]);
+    }
 }

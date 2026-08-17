@@ -32,4 +32,9 @@ class OrderDetail extends Model
     {
         return $this->hasOne(Review::class);
     }
+
+    public function returnRequest(): HasOne
+    {
+        return $this->hasOne(ReturnRequest::class, 'order_detail_id');
+    }
 }

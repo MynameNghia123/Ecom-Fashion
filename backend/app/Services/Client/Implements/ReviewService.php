@@ -33,6 +33,11 @@ class ReviewService implements ReviewServiceInterface
             return ['success' => false, 'message' => 'Bạn chỉ có thể đánh giá sản phẩm của đơn hàng đã giao thành công.'];
         }
 
+        $existingReturn = \App\Models\ReturnRequest::where('order_detail_id', $data['order_detail_id'])->first();
+        if ($existingReturn) {
+            return ['success' => false, 'message' => 'Sản phẩm này đã tạo yêu cầu đổi/trả nên không thể gửi đánh giá.'];
+        }
+
         $existingReview = $this->repo->findByOrderDetailId($data['order_detail_id']);
         if ($existingReview) {
             return ['success' => false, 'message' => 'Bạn đã gửi đánh giá cho sản phẩm này trong đơn hàng rồi.'];
