@@ -7,6 +7,7 @@ use App\Repositories\Client\Interfaces\ProductRepositoryInterface;
 use App\Services\Client\Interfaces\ProductServiceInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 
 class ProductService implements ProductServiceInterface
 {
@@ -19,7 +20,9 @@ class ProductService implements ProductServiceInterface
 
     public function getActiveBrands(): Collection
     {
-        return $this->repo->getActiveBrands();
+        return Cache::remember('active_brands', 3600, function () {
+            return $this->repo->getActiveBrands();
+        });
     }
 
     public function findActiveByIdOrSlug(string $idOrSlug): ?Product
@@ -63,7 +66,9 @@ class ProductService implements ProductServiceInterface
 
     public function getTopRated(int $limit): Collection
     {
-        return $this->repo->getTopRated($limit);
+        return Cache::remember("top_rated_products_{$limit}", 3600, function () use ($limit) {
+            return $this->repo->getTopRated($limit);
+        });
     }
 
     public function getRelatedProducts(int $excludeProductId, int $categoryId, int $limit): Collection

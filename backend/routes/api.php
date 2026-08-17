@@ -25,6 +25,7 @@ use App\Http\Controllers\Client\AuthController as ClientAuthController;
 use App\Http\Controllers\Client\BannerController as ClientBannerController;
 use App\Http\Controllers\Client\BlogController as ClientBlogController;
 use App\Http\Controllers\Client\CartController as ClientCartController;
+use App\Http\Controllers\Client\CategoryController as ClientCategoryController;
 use App\Http\Controllers\Client\CustomerAddressController;
 use App\Http\Controllers\Client\NotificationController as ClientNotificationController;
 use App\Http\Controllers\Client\OrderController as ClientOrderController;
@@ -36,6 +37,7 @@ use App\Http\Controllers\Client\WishlistController;
 use App\Models\Category;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Cache;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,7 +46,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ── Public Admin Auth (không cần token) ─────────────────────────────────────
-Route::post('admin/auth/login', [AuthController::class, 'login']);
+Route::post('admin/auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 
 // ── Protected Admin Routes ───────────────────────────────────────────────────
 Route::prefix('admin')->middleware(['auth:sanctum'])->group(function () {
@@ -139,35 +141,20 @@ Route::prefix('client')->group(function () {
     });
 
     // Categories (public — for filter sidebar & mega menu)
-    Route::get('categories/tree', function () {
-        $roots = Category::whereNull('parent_id')
-            ->with(['children.children'])
-            ->orderBy('name')
-            ->get();
-
-        return response()->json(['success' => true, 'data' => $roots]);
-    });
+    Route::get('categories/tree', [ClientCategoryController::class, 'getTree']);
     Route::get('categories', [AdminCategoryController::class, 'index']);
 
     // AI Chat proxy
     Route::post('ai/chat', [ClientAiChatController::class, 'chat']);
-    Route::get('brands/{domain}', function ($domain) {
-        $apiKey = config('services.brandfetch.key');
-        $response = Http::withToken($apiKey)->get("https://api.brandfetch.io/v2/brands/domain/{$domain}");
-        if ($response->failed()) {
-            return response()->json(['message' => 'Brand not found'], 404);
-        }
-
-        return $response->json();
-    });
+    Route::get('brands/{domain}', [ClientProductController::class, 'getBrandInfo']);
 
     // ── Public Client Auth ───────────────────────────────────────────────────
     Route::prefix('auth')->group(function () {
         Route::post('register', [ClientAuthController::class, 'register']);
-        Route::post('login', [ClientAuthController::class, 'login']);
-        Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword']);
-        Route::post('verify-otp', [ClientAuthController::class, 'verifyOtp']);
-        Route::post('reset-password', [ClientAuthController::class, 'resetPassword']);
+        Route::post('login', [ClientAuthController::class, 'login'])->middleware('throttle:login');
+        Route::post('forgot-password', [ClientAuthController::class, 'forgotPassword'])->middleware('throttle:otp');
+        Route::post('verify-otp', [ClientAuthController::class, 'verifyOtp'])->middleware('throttle:otp');
+        Route::post('reset-password', [ClientAuthController::class, 'resetPassword'])->middleware('throttle:otp');
     });
 
     Route::prefix('auth')->middleware(['auth:sanctum'])->group(function () {
@@ -198,7 +185,7 @@ Route::prefix('client')->group(function () {
 
         // Orders
         Route::get('orders', [ClientOrderController::class, 'index']);
-        Route::post('orders', [ClientOrderController::class, 'store']);
+        Route::post('orders', [ClientOrderController::class, 'store'])->middleware('throttle:checkout');
         Route::get('orders/{code}', [ClientOrderController::class, 'show']);
 
         // Coupons

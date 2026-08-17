@@ -106,4 +106,19 @@ class ProductController extends Controller
             'data' => $related,
         ]);
     }
+
+    /**
+     * Lấy thông tin chi tiết brand qua Brandfetch API (Proxy)
+     */
+    public function getBrandInfo($domain): JsonResponse
+    {
+        $apiKey = config('services.brandfetch.key');
+        $response = \Illuminate\Support\Facades\Http::withToken($apiKey)->get("https://api.brandfetch.io/v2/brands/domain/{$domain}");
+        
+        if ($response->failed()) {
+            return response()->json(['message' => 'Brand not found'], 404);
+        }
+
+        return response()->json($response->json());
+    }
 }
