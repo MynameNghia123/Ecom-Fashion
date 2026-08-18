@@ -1,4 +1,4 @@
-import api from '@/plugins/axios'
+import api from '@/services/shared/http'
 
 export const profileService = {
   /** Cập nhật thông tin cá nhân */

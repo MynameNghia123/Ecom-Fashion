@@ -1,5 +1,5 @@
 
-import api from '@/plugins/axios'
+import api from '@/services/shared/http'
 export const authService = {
   register:       (data) => api.post('/client/auth/register',        data),
   login:          (data) => api.post('/client/auth/login',           data),

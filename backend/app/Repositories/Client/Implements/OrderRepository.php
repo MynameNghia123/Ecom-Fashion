@@ -31,6 +31,16 @@ class OrderRepository implements OrderRepositoryInterface
             ->first();
     }
 
+    public function getOrderByCode(string $orderCode): ?Order
+    {
+        return $this->model->where('order_code', $orderCode)->first();
+    }
+
+    public function updateOrder(Order $order, array $data): bool
+    {
+        return $order->update($data);
+    }
+
     public function createOrder(array $data): Order
     {
         return $this->model->create($data);

@@ -11,6 +11,10 @@ interface OrderRepositoryInterface
 
     public function getCustomerOrderByCode(int $customerId, string $orderCode): ?Order;
 
+    public function getOrderByCode(string $orderCode): ?Order;
+
+    public function updateOrder(Order $order, array $data): bool;
+
     public function createOrder(array $data): Order;
 
     public function createOrderDetail(array $data): void;

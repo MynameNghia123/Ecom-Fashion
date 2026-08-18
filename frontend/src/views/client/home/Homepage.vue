@@ -276,7 +276,7 @@ import ProductCard from '@/components/client/ui/ProductCard.vue';
 import BlogCard from '@/components/client/ui/BlogCard.vue';
 import { productService } from '@/services/client/productService';
 import { blogService } from '@/services/client/blogService';
-import api from '@/plugins/axios';
+import api from '@/services/shared/http';
 
 const slides = [
   {

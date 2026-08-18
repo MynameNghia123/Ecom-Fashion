@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Order;
+use App\Repositories\Client\Interfaces\OrderRepositoryInterface;
 use Illuminate\Support\Facades\Log;
 
 class SePayService
@@ -13,11 +14,103 @@ class SePayService
 
     private string $secretKey;
 
-    public function __construct()
+    public function __construct(private readonly OrderRepositoryInterface $orderRepository)
     {
         $this->bankAccount = config('services.sepay.bank_account', '');
         $this->bankName = config('services.sepay.bank_name', 'MBBank');
         $this->secretKey = config('services.sepay.secret_key', '');
+    }
+
+    /**
+     * Lấy dữ liệu thanh toán cho API /sepay/info/{orderCode}
+     */
+    public function getPaymentInfoData(string $orderCode): array
+    {
+        $order = $this->orderRepository->getOrderByCode($orderCode);
+
+        if (! $order || $order->payment_method !== 'sepay') {
+            return ['status' => 404, 'data' => ['success' => false, 'message' => 'Không tìm thấy đơn hàng SePay.']];
+        }
+
+        if ($order->payment_status === 'paid') {
+            return [
+                'status' => 200,
+                'data' => [
+                    'success' => true,
+                    'paid' => true,
+                    'message' => 'Đơn hàng đã được thanh toán.',
+                    'data' => $this->createPaymentInfo($order),
+                ]
+            ];
+        }
+
+        return [
+            'status' => 200,
+            'data' => [
+                'success' => true,
+                'paid' => false,
+                'data' => $this->createPaymentInfo($order),
+            ]
+        ];
+    }
+
+    /**
+     * Kiểm tra trạng thái thanh toán cho API /sepay/check/{orderCode}
+     */
+    public function checkPaymentStatus(string $orderCode): array
+    {
+        $order = $this->orderRepository->getOrderByCode($orderCode);
+
+        if (! $order) {
+            return ['status' => 404, 'data' => ['success' => false, 'message' => 'Không tìm thấy đơn hàng.']];
+        }
+
+        return [
+            'status' => 200,
+            'data' => [
+                'success' => true,
+                'paid' => $order->payment_status === 'paid',
+                'payment_status' => $order->payment_status,
+                'order_status' => $order->status,
+            ]
+        ];
+    }
+
+    /**
+     * Xử lý webhook từ SePay
+     */
+    public function processWebhook(array $payload, string $authHeader): array
+    {
+        if (! $this->verifyWebhookSignature($authHeader)) {
+            Log::warning('[SEPAY] Invalid webhook signature', ['auth' => $authHeader]);
+            return ['status' => 401, 'data' => 'Unauthorized'];
+        }
+
+        Log::info('[SEPAY] Webhook received', $payload);
+
+        $orderCode = $this->extractOrderCodeFromWebhook($payload);
+
+        if (! $orderCode) {
+            return ['status' => 200, 'data' => ['success' => false, 'message' => 'Cannot parse order code']];
+        }
+
+        $order = $this->orderRepository->getOrderByCode($orderCode);
+
+        if (! $order) {
+            Log::warning('[SEPAY] Order not found for webhook', ['order_code' => $orderCode]);
+            return ['status' => 200, 'data' => ['success' => false, 'message' => 'Order not found']];
+        }
+
+        if ($order->payment_status !== 'paid') {
+            $this->orderRepository->updateOrder($order, [
+                'payment_status' => 'paid',
+                'status' => 'confirmed',
+            ]);
+
+            Log::info('[SEPAY] Order marked as paid', ['order_code' => $orderCode, 'amount' => $payload['transferAmount'] ?? 0]);
+        }
+
+        return ['status' => 200, 'data' => ['success' => true, 'message' => 'OK']];
     }
 
     /**
@@ -52,7 +145,7 @@ class SePayService
      * Xác thực webhook từ SePay khi thanh toán được xác nhận.
      * SePay gửi POST với header Authorization: Apikey {secret}
      */
-    public function verifyWebhookSignature(string $authHeader): bool
+    private function verifyWebhookSignature(string $authHeader): bool
     {
         if (empty($this->secretKey)) {
             return true; // Dev mode: skip validation
@@ -65,7 +158,7 @@ class SePayService
      * Xử lý webhook payload từ SePay.
      * Trả về order_code được tìm thấy từ nội dung chuyển khoản.
      */
-    public function extractOrderCodeFromWebhook(array $payload): ?string
+    private function extractOrderCodeFromWebhook(array $payload): ?string
     {
         // SePay gửi: content (nội dung chuyển khoản), transferAmount
         $content = $payload['content'] ?? $payload['description'] ?? '';

@@ -1,4 +1,4 @@
-import axios from '@/plugins/axios'
+import axios from '@/services/shared/http'
 
 export const notificationService = {
   getNotifications(page = 1, perPage = 10) {

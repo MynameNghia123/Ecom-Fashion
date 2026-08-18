@@ -122,7 +122,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '@/plugins/axios'
+import api from '@/services/shared/http'
 
 const props = defineProps({
   orderCode: { type: String, required: true }

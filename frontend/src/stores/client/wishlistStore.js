@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
-import api from '@/plugins/axios'
+import api from '@/services/shared/http'
 import { useClientAuthStore } from '@/stores/client/authStore'
 
 const STORAGE_KEY = 'ecom_wishlist'

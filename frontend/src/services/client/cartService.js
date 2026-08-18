@@ -1,4 +1,4 @@
-import api from '@/plugins/axios'
+import api from '@/services/shared/http'
 
 export const cartService = {
   /** Lấy giỏ hàng từ server (yêu cầu đăng nhập) */
