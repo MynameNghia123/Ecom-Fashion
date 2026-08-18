@@ -36,7 +36,11 @@ php artisan l5-swagger:generate 2>/dev/null || true
 php artisan config:clear 2>/dev/null || true
 php artisan route:clear 2>/dev/null || true
 
-echo "✅ [entrypoint] Setup complete! Starting server..."
+# ── Chạy migrate (bắt buộc để cập nhật schema DB khi deploy) ─────────
+echo "🗄️  [entrypoint] Running migrations..."
+php artisan migrate --force || true
 
-# ── Chạy CMD ─────────────────────────────────────────────────────────
-exec "$@"
+echo "✅ [entrypoint] Setup complete! Starting server on port ${PORT:-8000}..."
+
+# ── Start server, luôn dùng $PORT do Render cấp động ──────────────────
+exec php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
