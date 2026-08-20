@@ -32,17 +32,25 @@ class CategorySeeder extends Seeder
         ];
 
         foreach ($categories as $parentName => $children) {
-            $parent = Category::factory()->create([
-                'name' => $parentName,
-                'slug' => Str::slug($parentName),
-            ]);
+            $parentSlug = Str::slug($parentName);
+            $parent = Category::where('slug', $parentSlug)->first();
+            
+            if (!$parent) {
+                $parent = Category::factory()->create([
+                    'name' => $parentName,
+                    'slug' => $parentSlug,
+                ]);
+            }
 
             foreach ($children as $childName) {
-                Category::factory()->create([
-                    'name' => $childName,
-                    'slug' => Str::slug($childName),
-                    'parent_id' => $parent->id,
-                ]);
+                $childSlug = Str::slug($childName);
+                if (!Category::where('slug', $childSlug)->exists()) {
+                    Category::factory()->create([
+                        'name' => $childName,
+                        'slug' => $childSlug,
+                        'parent_id' => $parent->id,
+                    ]);
+                }
             }
         }
     }

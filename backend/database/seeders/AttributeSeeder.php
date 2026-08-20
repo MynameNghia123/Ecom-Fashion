@@ -12,9 +12,11 @@ class AttributeSeeder extends Seeder
         $attributes = ['Màu sắc', 'Kích cỡ'];
 
         foreach ($attributes as $attr) {
-            Attribute::factory()->create([
-                'name' => $attr,
-            ]);
+            if (!Attribute::where('name', $attr)->exists()) {
+                Attribute::factory()->create([
+                    'name' => $attr,
+                ]);
+            }
         }
     }
 }
