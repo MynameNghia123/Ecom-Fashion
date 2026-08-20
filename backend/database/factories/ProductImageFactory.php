@@ -14,9 +14,9 @@ class ProductImageFactory extends Factory
         return [
             'product_id' => null,
             'product_variant_id' => null,
-            'alt_text' => $this->faker->words(3, true),
+            'alt_text' => fake()->words(3, true),
             'image_url' => null, // Gán trong Seeder
-            'display_order' => $this->faker->numberBetween(1, 10),
+            'display_order' => fake()->numberBetween(1, 10),
             'is_thumbnail' => false,
         ];
     }
