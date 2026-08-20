@@ -72,6 +72,10 @@ class ProductRepository implements ProductRepositoryInterface
      */
     public function delete(Model $model): void
     {
+        // Thêm hậu tố vào slug để tránh lỗi trùng lặp khi tạo sản phẩm mới cùng tên
+        $model->slug = $model->slug . '-deleted-' . time();
+        $model->save();
+
         $model->delete();
     }
 
