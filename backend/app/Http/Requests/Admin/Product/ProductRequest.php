@@ -23,7 +23,9 @@ class ProductRequest extends FormRequest
                 'required',
                 'string',
                 'max:255',
-                Rule::unique('products', 'slug')->ignore($productId),
+                Rule::unique('products', 'slug')
+                    ->ignore($productId)
+                    ->whereNull('deleted_at'),
             ],
             'description' => ['nullable', 'string'],
             'brand' => ['nullable', 'string', 'max:255'],
