@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\BLog\BlogRequest;
+use App\Http\Requests\Admin\Blog\BlogRequest;
 use App\Http\Resources\Admin\Blog\BlogResource;
 use App\Models\Blog;
 use App\Services\Admin\Interfaces\BlogServiceInterface;

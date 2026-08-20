@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\BLog;
+namespace App\Http\Requests\Admin\Blog;
 
 use App\Models\Blog;
 use Illuminate\Foundation\Http\FormRequest;
