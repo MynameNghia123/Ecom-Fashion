@@ -20,7 +20,7 @@ class ProductService implements ProductServiceInterface
 
     public function getActiveBrands(): Collection
     {
-        return Cache::remember('active_brands', 3600, function () {
+        return Cache::remember('active_brands_v2', 3600, function () {
             return $this->repo->getActiveBrands();
         });
     }
@@ -66,7 +66,7 @@ class ProductService implements ProductServiceInterface
 
     public function getTopRated(int $limit): Collection
     {
-        return Cache::remember("top_rated_products_{$limit}", 3600, function () use ($limit) {
+        return Cache::remember("top_rated_products_v2_{$limit}", 3600, function () use ($limit) {
             return $this->repo->getTopRated($limit);
         });
     }
