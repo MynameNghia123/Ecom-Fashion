@@ -4452,9 +4452,9 @@
                                 ],
                                 "properties": {
                                     "path": {
-                                        "description": "Đường dẫn tương đối nhận từ response upload. Phải bắt đầu bằng images/.",
+                                        "description": "Đường dẫn tương đối nhận từ response upload. Đây là public_id trên Cloudinary.",
                                         "type": "string",
-                                        "example": "images/products/550e8400-e29b-41d4-a716-446655440000.jpg"
+                                        "example": "products/550e8400-e29b-41d4-a716-446655440000"
                                     }
                                 },
                                 "type": "object"
@@ -4484,7 +4484,7 @@
                         }
                     },
                     "422": {
-                        "description": "Đường dẫn không hợp lệ (không bắt đầu bằng images/)",
+                        "description": "Đường dẫn không hợp lệ",
                         "content": {
                             "application/json": {
                                 "schema": {

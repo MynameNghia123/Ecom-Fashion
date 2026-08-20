@@ -61,7 +61,7 @@
 
 
     <!-- Hàng Mới Về Section -->
-    <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
+    <div v-if="newArrivals.length > 0" class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
       <!-- Tiêu đề căn giữa -->
       <div class="text-center mb-12">
         <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">Hàng Mới Về</h2>
@@ -117,7 +117,7 @@
     </div>
 
     <!-- SẢN PHẨM NỔI BẬT Section -->
-    <div class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
+    <div v-if="featuredProducts.length > 0" class="py-[60px] px-5 lg:px-20 bg-white text-black max-md:py-10">
       <!-- Tiêu đề căn giữa -->
       <div class="text-center mb-12">
         <h2 class="font-title text-[28px] font-bold m-0 tracking-[2px] uppercase">Sản Phẩm Nổi Bật</h2>
