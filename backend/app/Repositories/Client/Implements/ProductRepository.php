@@ -126,7 +126,11 @@ class ProductRepository implements ProductRepositoryInterface
         return $this->model->where('is_active', true)
             ->with(['category', 'productImages', 'productVariants.attributeValues.attribute'])
             ->where(function ($query) use ($idOrSlug) {
-                $query->where('id', $idOrSlug)->orWhere('slug', $idOrSlug);
+                if (is_numeric($idOrSlug)) {
+                    $query->where('id', $idOrSlug)->orWhere('slug', $idOrSlug);
+                } else {
+                    $query->where('slug', $idOrSlug);
+                }
             })
             ->first();
     }
