@@ -95,7 +95,8 @@ class ProductSeeder extends Seeder
     private function getRandomImage(array $seedImages, string $destDir): ?string
     {
         if (empty($seedImages)) {
-            return null; // Trả về null nếu không có ảnh mẫu
+            // Trả về placeholder image nếu không có ảnh mẫu
+            return 'https://via.placeholder.com/600x800.png?text=Product+Image';
         }
 
         $sourceFile = app(\Faker\Generator::class)->randomElement($seedImages);
