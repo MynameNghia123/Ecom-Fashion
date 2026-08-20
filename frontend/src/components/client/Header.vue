@@ -63,7 +63,7 @@
               :class="navLinkClass"
               @click="goToCategory(cat)"
             >
-              {{ cat.name.toUpperCase() }}
+              {{ cat.name?.toUpperCase() || '' }}
               <svg
                 v-if="cat.children && cat.children.length"
                 width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -210,7 +210,7 @@
           
           <li v-for="cat in rootCategories" :key="cat.id" class="flex flex-col gap-2">
             <button @click="goToCategory(cat); isMobileMenuOpen = false" class="text-sm font-bold tracking-widest text-black border-none bg-transparent text-left cursor-pointer p-0">
-              {{ cat.name.toUpperCase() }}
+              {{ cat.name?.toUpperCase() || '' }}
             </button>
           </li>
           

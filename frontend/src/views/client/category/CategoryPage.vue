@@ -258,9 +258,8 @@ const sortBy = ref('latest')
 const categoryTitle = computed(() => {
   const slugOrId = route.params.slug
   const currentCat = categories.value.find(c => c.id === selectedCategory.value || c.slug === slugOrId || c.id == slugOrId)
-  
   if (currentCat) {
-    return `${currentCat.name.toUpperCase()} | LUXURY`
+    return `${(currentCat.name || '').toUpperCase()} | LUXURY`
   }
 
   if (slugOrId) {
