@@ -86,18 +86,33 @@ class StatisticRepository implements StatisticRepositoryInterface
     {
         $start = $startDate.' 00:00:00';
         $end = $endDate.' 23:59:59';
+        $driver = DB::connection()->getDriverName();
 
-        // Chọn format nhóm theo yêu cầu
-        $dateFormat = match ($groupBy) {
-            'month' => '%Y-%m',
-            'week' => '%Y-W%u',
-            default => '%Y-%m-%d',
-        };
+        if ($driver === 'pgsql') {
+            $dateFormat = match ($groupBy) {
+                'month' => 'YYYY-MM',
+                'week' => 'IYYY-IW',
+                default => 'YYYY-MM-DD',
+            };
+            $dateFunc = "TO_CHAR(created_at, '{$dateFormat}')";
+            $ordersDateFunc = "TO_CHAR(orders.created_at, '{$dateFormat}')";
+            $ifNullFunc = 'COALESCE';
+        } else {
+            // MySQL
+            $dateFormat = match ($groupBy) {
+                'month' => '%Y-%m',
+                'week' => '%Y-W%u',
+                default => '%Y-%m-%d',
+            };
+            $dateFunc = "DATE_FORMAT(created_at, '{$dateFormat}')";
+            $ordersDateFunc = "DATE_FORMAT(orders.created_at, '{$dateFormat}')";
+            $ifNullFunc = 'IFNULL';
+        }
 
         $rows = DB::table('orders')
-            ->selectRaw("DATE_FORMAT(created_at, '{$dateFormat}') as period")
+            ->selectRaw("{$dateFunc} as period")
             ->selectRaw('SUM(CASE WHEN status != \'cancelled\' THEN final_amount ELSE 0 END) as revenue')
-            ->selectRaw('SUM(CASE WHEN status != \'cancelled\' THEN final_amount ELSE 0 END) - SUM(CASE WHEN status != \'cancelled\' THEN (SELECT IFNULL(SUM(od.cost_price * od.quantity), 0) FROM order_details od WHERE od.order_id = orders.id) ELSE 0 END) as gross_profit')
+            ->selectRaw("SUM(CASE WHEN status != 'cancelled' THEN final_amount ELSE 0 END) - SUM(CASE WHEN status != 'cancelled' THEN (SELECT {$ifNullFunc}(SUM(od.cost_price * od.quantity), 0) FROM order_details od WHERE od.order_id = orders.id) ELSE 0 END) as gross_profit")
             ->whereBetween('created_at', [$start, $end])
             ->groupBy('period')
             ->orderBy('period')
@@ -106,12 +121,12 @@ class StatisticRepository implements StatisticRepositoryInterface
         // Tính gross_profit đơn giản: revenue - cost
         $rows2 = DB::table('orders')
             ->join('order_details', 'orders.id', '=', 'order_details.order_id')
-            ->selectRaw("DATE_FORMAT(orders.created_at, '{$dateFormat}') as period")
+            ->selectRaw("{$ordersDateFunc} as period")
             ->selectRaw('SUM(CASE WHEN orders.status != \'cancelled\' THEN orders.final_amount ELSE 0 END) as revenue')
             ->selectRaw('SUM(CASE WHEN orders.status != \'cancelled\' THEN (order_details.unit_price - order_details.cost_price) * order_details.quantity ELSE 0 END) as gross_profit')
             ->whereBetween('orders.created_at', [$start, $end])
-            ->groupByRaw("DATE_FORMAT(orders.created_at, '{$dateFormat}')")
-            ->orderByRaw("DATE_FORMAT(orders.created_at, '{$dateFormat}')")
+            ->groupByRaw($ordersDateFunc)
+            ->orderByRaw($ordersDateFunc)
             ->get();
 
         $labels = [];
