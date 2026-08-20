@@ -12,11 +12,11 @@ class CategoryFactory extends Factory
 
     public function definition(): array
     {
-        $name = fake()->unique()->words(2, true);
+        $name = app(\Faker\Generator::class)->unique()->words(2, true);
         return [
             'name' => ucfirst($name),
             'slug' => Str::slug($name),
-            'description' => fake()->sentence(),
+            'description' => app(\Faker\Generator::class)->sentence(),
             'parent_id' => null,
         ];
     }

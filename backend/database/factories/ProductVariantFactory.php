@@ -12,8 +12,8 @@ class ProductVariantFactory extends Factory
 
     public function definition(): array
     {
-        $price = fake()->numberBetween(10, 100) * 10000;
-        $salePrice = fake()->boolean(30) ? $price * 0.8 : null;
+        $price = app(\Faker\Generator::class)->numberBetween(10, 100) * 10000;
+        $salePrice = app(\Faker\Generator::class)->boolean(30) ? $price * 0.8 : null;
 
         return [
             'product_id' => null, // Gán trong Seeder
@@ -21,7 +21,7 @@ class ProductVariantFactory extends Factory
             'price' => $price,
             'sale_price' => $salePrice,
             'cost_price' => $price * 0.6,
-            'stock_quantity' => fake()->numberBetween(10, 100),
+            'stock_quantity' => app(\Faker\Generator::class)->numberBetween(10, 100),
             'thumbnail' => null, // Gán trong Seeder
             'is_active' => true,
         ];

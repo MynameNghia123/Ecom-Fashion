@@ -12,15 +12,15 @@ class ProductFactory extends Factory
 
     public function definition(): array
     {
-        $name = fake()->unique()->words(3, true);
+        $name = app(\Faker\Generator::class)->unique()->words(3, true);
         return [
             'category_id' => null, // Sẽ được gán trong Seeder
             'name' => ucfirst($name),
             'slug' => Str::slug($name),
-            'description' => '<p>' . implode('</p><p>', fake()->paragraphs(3)) . '</p>',
-            'brand' => fake()->company(),
+            'description' => '<p>' . implode('</p><p>', app(\Faker\Generator::class)->paragraphs(3)) . '</p>',
+            'brand' => app(\Faker\Generator::class)->company(),
             'thumbnail' => null, // Sẽ được gán trong Seeder
-            'user_manual' => fake()->text(),
+            'user_manual' => app(\Faker\Generator::class)->text(),
             'is_active' => true,
         ];
     }

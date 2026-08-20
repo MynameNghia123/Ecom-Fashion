@@ -62,8 +62,8 @@ class ProductSeeder extends Seeder
             }
 
             // Create variants
-            $productColors = fake()->randomElements($colors, rand(1, 3));
-            $productSizes = fake()->randomElements($sizes, rand(2, 4));
+            $productColors = app(\Faker\Generator::class)->randomElements($colors, rand(1, 3));
+            $productSizes = app(\Faker\Generator::class)->randomElements($sizes, rand(2, 4));
 
             foreach ($productColors as $color) {
                 foreach ($productSizes as $size) {
@@ -98,7 +98,7 @@ class ProductSeeder extends Seeder
             return null; // Trả về null nếu không có ảnh mẫu
         }
 
-        $sourceFile = fake()->randomElement($seedImages);
+        $sourceFile = app(\Faker\Generator::class)->randomElement($seedImages);
         $extension = pathinfo($sourceFile, PATHINFO_EXTENSION);
         $newFilename = Str::uuid() . '.' . $extension;
         $destFile = $destDir . '/' . $newFilename;
