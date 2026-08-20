@@ -40,11 +40,11 @@ php artisan route:clear 2>/dev/null || true
 echo "🗄️  [entrypoint] Running migrations..."
 php artisan migrate --force || true
 
-# Nếu biến môi trường SEED_DB=true thì chạy seed
-if [ "$SEED_DB" = "true" ]; then
-    echo "🌱  [entrypoint] Running database seeders..."
-    php artisan db:seed --force || true
-fi
+# Bỏ chạy seeder tự động theo yêu cầu
+# if [ "$SEED_DB" = "true" ]; then
+#     echo "🌱  [entrypoint] Running database seeders..."
+#     php artisan db:seed --force || true
+# fi
 
 echo "✅ [entrypoint] Setup complete! Starting server on port ${PORT:-8000}..."
 
