@@ -12,7 +12,9 @@ const http = axios.create({
 // ─── Request Interceptor: Đính kèm Bearer token ───────────────────────────
 http.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('admin_token')
+    const isAdminRoute = config.url && config.url.includes('/admin')
+    const token = isAdminRoute ? localStorage.getItem('admin_token') : localStorage.getItem('customer_token')
+    
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
@@ -39,12 +41,19 @@ http.interceptors.response.use(
 
     // 401 → Xóa token & redirect về trang đăng nhập
     if (status === 401) {
-      localStorage.removeItem('admin_token')
-      localStorage.removeItem('admin_user')
+      const isAdminRoute = error.config && error.config.url && error.config.url.includes('/admin')
       
-      // Không reload nếu đang ở trang đăng nhập (để tránh mất thông báo lỗi)
-      if (!window.location.pathname.includes('/admin/signin')) {
-        window.location.href = '/admin/signin'
+      if (isAdminRoute) {
+        localStorage.removeItem('admin_token')
+        localStorage.removeItem('admin_user')
+        
+        // Không reload nếu đang ở trang đăng nhập (để tránh mất thông báo lỗi)
+        if (!window.location.pathname.includes('/admin/signin')) {
+          window.location.href = '/admin/signin'
+        }
+      } else {
+        localStorage.removeItem('customer_token')
+        localStorage.removeItem('customer_user')
       }
     }
 
