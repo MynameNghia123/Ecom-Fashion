@@ -65,33 +65,25 @@ class UploadController extends Controller
         ]);
 
         $folder = $request->input('folder', 'products');
-
         $file = $request->file('file');
 
-        // Tạo tên file duy nhất: uuid + đuôi gốc
-        $extension = $file->getClientOriginalExtension() ?: 'jpg';
-        $filename = Str::uuid().'.'.$extension;
-
         try {
-            // Lưu vào storage/app/public/images/{folder}/{filename}
-            // → Accessible qua /storage/images/{folder}/{filename} (sau khi php artisan storage:link)
-            $path = $file->storeAs(
-                "images/{$folder}",
-                $filename,
-                'public'
-            );
+            // Khởi tạo Cloudinary (tự động lấy CLOUDINARY_URL từ env)
+            $cloudinary = new \Cloudinary\Cloudinary(env('CLOUDINARY_URL'));
 
-            if (! $path) {
-                throw new \Exception('Không thể ghi file vào storage.');
-            }
+            // Upload ảnh lên Cloudinary
+            $response = $cloudinary->uploadApi()->upload($file->getRealPath(), [
+                'folder' => $folder,
+            ]);
 
-            // Xây dựng URL đầy đủ: APP_URL + /storage/ + path
-            $url = rtrim(config('app.url'), '/').'/storage/'.$path;
+            // Lấy URL và public_id từ response
+            $url = $response['secure_url'];
+            $publicId = $response['public_id'];
 
             return response()->json([
                 'success' => true,
                 'url' => $url,
-                'path' => $path,   // đường dẫn tương đối (để xóa sau nếu cần)
+                'path' => $publicId,   // dùng public_id làm path để xóa sau này
             ], 201);
         } catch (\Exception $e) {
             \Log::error('Lỗi upload image: '.$e->getMessage());
@@ -107,7 +99,7 @@ class UploadController extends Controller
      * Xóa một file ảnh đã upload (dùng khi user bỏ ảnh trước khi lưu SP)
      *
      * DELETE /admin/upload-image
-     * Body: { path: "images/products/xxx.webp" }
+     * Body: { path: "products/xxx" } // đây là public_id của Cloudinary
      */
     #[OA\Delete(
         path: '/api/admin/upload-image',
@@ -119,7 +111,7 @@ class UploadController extends Controller
             content: new OA\JsonContent(
                 required: ['path'],
                 properties: [
-                    new OA\Property(property: 'path', type: 'string', example: 'images/products/550e8400-e29b-41d4-a716-446655440000.jpg', description: 'Đường dẫn tương đối nhận từ response upload. Phải bắt đầu bằng images/.'),
+                    new OA\Property(property: 'path', type: 'string', example: 'products/550e8400-e29b-41d4-a716-446655440000', description: 'Đường dẫn tương đối nhận từ response upload. Đây là public_id trên Cloudinary.'),
                 ]
             )
         ),
@@ -134,7 +126,7 @@ class UploadController extends Controller
             ),
             new OA\Response(
                 response: 422,
-                description: 'Đường dẫn không hợp lệ (không bắt đầu bằng images/)',
+                description: 'Đường dẫn không hợp lệ',
                 content: new OA\JsonContent(properties: [
                     new OA\Property(property: 'success', type: 'boolean', example: false),
                     new OA\Property(property: 'message', type: 'string', example: 'Đường dẫn không hợp lệ.'),
@@ -148,18 +140,13 @@ class UploadController extends Controller
             'path' => 'required|string|max:500',
         ]);
 
-        $path = $request->input('path');
+        $publicId = $request->input('path');
 
-        // Bảo vệ: chỉ cho phép xóa trong thư mục images/
-        if (! str_starts_with($path, 'images/')) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Đường dẫn không hợp lệ.',
-            ], 422);
-        }
-
-        if (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
+        try {
+            $cloudinary = new \Cloudinary\Cloudinary(env('CLOUDINARY_URL'));
+            $cloudinary->uploadApi()->destroy($publicId);
+        } catch (\Exception $e) {
+            \Log::error('Lỗi xóa image Cloudinary: '.$e->getMessage());
         }
 
         return response()->json([
